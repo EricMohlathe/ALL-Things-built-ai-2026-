@@ -105,3 +105,6 @@ Brief §21 + §24 sets the realistic ceiling: **76–78% sustained win rate, +1.
 The brief is the sovereign specification. Brief content synthesised from: Fabio Valentini AMT Strategy Guide, Wyckoff 2.0 (Villahermosa), Mind Math Money 83-min OFT course, Darius FX foundations, Fractal Flow Volume Profile masterclass, Chart Fanatics live sessions, JacobS369 Absorption Signals, ICT/SMC integration, Trader Dale Volume Profile Insider Guide, plus the 69+ document research corpus referenced in Order Flow Dive 2.0.
 
 See `docs/architecture.md` for module-level wiring, `docs/confluence_examples.md` for five worked notification cascades, and `docs/parameter_tuning.md` for the optimisation order.
+
+
+<!-- PR: GODMODE_OFEA initial build — see CHANGELOG.md -->
