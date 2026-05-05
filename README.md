@@ -1,3 +1,4 @@
+<!-- GODMODE_OFEA build branch -->
 # GODMODE_OFEA
 
 Production-grade order-flow trading EA delivered as two behaviourally-identical, parameter-mirrored builds:
