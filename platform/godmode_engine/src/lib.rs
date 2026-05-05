@@ -50,6 +50,9 @@ pub mod setups;
 pub mod engine;
 pub mod replay;
 
+#[cfg(feature = "ffi")]
+pub mod ffi;
+
 pub use common::{
     GateResult, SetupCandidate, Tick, Bar, AccountState, OrderIntent,
     OpMode, Session, SubTier, ProfileShape, MarketState, HtfBias,

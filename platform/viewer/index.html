@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>GODMODE_OFEA — Replay Viewer</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<style>
+  :root {
+    --bg: #0b0e14;
+    --panel: #11161f;
+    --line: #1f2530;
+    --text: #c5cad4;
+    --dim: #6b7280;
+    --bull: #2bbc8a;
+    --bear: #e35d6a;
+    --warn: #f0a84a;
+    --ok: #2bbc8a;
+    --fail: #e35d6a;
+    --accent: #6aa9ff;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0; background: var(--bg); color: var(--text);
+    font: 13px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    height: 100%;
+  }
+  header {
+    padding: 10px 16px; border-bottom: 1px solid var(--line);
+    display: flex; align-items: center; gap: 16px;
+  }
+  header h1 { font-size: 14px; margin: 0; letter-spacing: 0.3px; }
+  header .badge { font-family: var(--mono); font-size: 11px; padding: 2px 6px; border: 1px solid var(--line); border-radius: 3px; color: var(--dim); }
+  header .controls { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+  button, label.fakebtn {
+    background: var(--panel); color: var(--text); border: 1px solid var(--line);
+    padding: 4px 10px; border-radius: 3px; font-size: 12px; cursor: pointer;
+    font-family: inherit;
+  }
+  button:hover { border-color: var(--accent); }
+  input[type=file] { display: none; }
+  main {
+    display: grid; grid-template-columns: 1fr 320px; height: calc(100% - 49px);
+  }
+  #chart-wrap { position: relative; }
+  #chart { width: 100%; height: 100%; display: block; }
+  aside {
+    border-left: 1px solid var(--line); background: var(--panel);
+    overflow-y: auto; padding: 12px;
+  }
+  aside h2 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;
+             color: var(--dim); margin: 12px 0 6px 0; }
+  .row { display: flex; justify-content: space-between; padding: 2px 0; font-family: var(--mono); font-size: 12px; }
+  .row .k { color: var(--dim); }
+  .gate-list { max-height: 240px; overflow-y: auto; }
+  .gate-row { font-family: var(--mono); font-size: 11px; padding: 3px 4px;
+              border-radius: 2px; display: flex; gap: 6px; align-items: baseline; }
+  .gate-row.fail { background: rgba(227, 93, 106, 0.08); }
+  .gate-row.pass { background: rgba(43, 188, 138, 0.05); }
+  .gate-row .g { color: var(--accent); width: 16px; }
+  .gate-row .n { width: 80px; color: var(--dim); }
+  .gate-row .r { color: var(--text); }
+  .notif-list { max-height: 200px; overflow-y: auto; }
+  .notif-row { font-family: var(--mono); font-size: 11px; padding: 2px 4px; }
+  .notif-row .tag { color: var(--accent); }
+  .legend { font-size: 11px; color: var(--dim); margin-top: 8px; }
+  .legend span { display: inline-block; width: 8px; height: 8px; vertical-align: middle; margin-right: 4px; border-radius: 50%; }
+  #status { font-family: var(--mono); font-size: 11px; color: var(--dim); }
+</style>
+</head>
+<body>
+<header>
+  <h1>GODMODE_OFEA</h1>
+  <span class="badge">Phase-1 Replay Viewer</span>
+  <div class="controls">
+    <span id="status">no file</span>
+    <label class="fakebtn">Load events.jsonl
+      <input id="file-events" type="file" accept=".jsonl,.json,.txt" />
+    </label>
+    <label class="fakebtn">Load bars.csv
+      <input id="file-bars" type="file" accept=".csv" />
+    </label>
+    <button id="demo-btn">Demo</button>
+  </div>
+</header>
+<main>
+  <section id="chart-wrap">
+    <canvas id="chart"></canvas>
+  </section>
+  <aside>
+    <h2>Latest dashboard</h2>
+    <div id="dashboard"><div class="row"><span class="k">— no data yet —</span></div></div>
+    <h2>Gate trace (last bar)</h2>
+    <div id="gate-list" class="gate-list"></div>
+    <h2>Notifications</h2>
+    <div id="notif-list" class="notif-list"></div>
+    <h2>Counts</h2>
+    <div id="counts"></div>
+    <div class="legend">
+      <div><span style="background: var(--bull)"></span>Bull bar</div>
+      <div><span style="background: var(--bear)"></span>Bear bar</div>
+      <div><span style="background: var(--ok)"></span>A+ ready (N-I)</div>
+      <div><span style="background: var(--fail)"></span>Kill switch (N-L)</div>
+      <div><span style="background: var(--warn)"></span>Order placed (N-J)</div>
+    </div>
+  </aside>
+</main>
+<script src="viewer.js"></script>
+</body>
+</html>

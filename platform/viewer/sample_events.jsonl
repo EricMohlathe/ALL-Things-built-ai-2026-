@@ -1,0 +1,77 @@
+{"Gate":{"gate":0,"name":"Kill","result":{"passed":true,"reason":"ok","value":0.0}}}
+{"Notify":{"kind":"KillZone","tag":"N-C","msg":"Kill zone active: LDN_MAIN","ts":"2026-05-05T09:00:00Z"}}
+{"Gate":{"gate":1,"name":"F2·Session","result":{"passed":true,"reason":"ok","value":0.0}}}
+{"Notify":{"kind":"ProfileState","tag":"N-F","msg":"Shape UNK state 0","ts":"2026-05-05T09:00:00Z"}}
+{"Gate":{"gate":2,"name":"F5·State","result":{"passed":false,"reason":"Model M2MeanRev mismatched state Unknown","value":0.0}}}
+{"Gate":{"gate":0,"name":"Kill","result":{"passed":true,"reason":"ok","value":0.0}}}
+{"Gate":{"gate":1,"name":"F2·Session","result":{"passed":true,"reason":"ok","value":0.0}}}
+{"Notify":{"kind":"ProfileState","tag":"N-F","msg":"Shape UNK state 0","ts":"2026-05-05T09:15:00Z"}}
+{"Gate":{"gate":2,"name":"F5·State","result":{"passed":false,"reason":"Model M2MeanRev mismatched state Unknown","value":0.0}}}
+{"Gate":{"gate":0,"name":"Kill","result":{"passed":true,"reason":"ok","value":0.0}}}
+{"Gate":{"gate":1,"name":"F2·Session","result":{"passed":true,"reason":"ok","value":0.0}}}
+{"Notify":{"kind":"ProfileState","tag":"N-F","msg":"Shape UNK state 0","ts":"2026-05-05T09:30:00Z"}}
+{"Gate":{"gate":2,"name":"F5·State","result":{"passed":false,"reason":"Model M2MeanRev mismatched state Unknown","value":0.0}}}
+{"Gate":{"gate":0,"name":"Kill","result":{"passed":true,"reason":"ok","value":0.0}}}
+{"Gate":{"gate":1,"name":"F2·Session","result":{"passed":true,"reason":"ok","value":0.0}}}
+{"Notify":{"kind":"ProfileState","tag":"N-F","msg":"Shape UNK state 0","ts":"2026-05-05T09:45:00Z"}}
+{"Gate":{"gate":2,"name":"F5·State","result":{"passed":false,"reason":"Model M2MeanRev mismatched state Unknown","value":0.0}}}
+{"Gate":{"gate":0,"name":"Kill","result":{"passed":true,"reason":"ok","value":0.0}}}
+{"Gate":{"gate":1,"name":"F2·Session","result":{"passed":true,"reason":"ok","value":0.0}}}
+{"Notify":{"kind":"ProfileState","tag":"N-F","msg":"Shape UNK state 0","ts":"2026-05-05T10:00:00Z"}}
+{"Gate":{"gate":2,"name":"F5·State","result":{"passed":false,"reason":"Model M2MeanRev mismatched state Unknown","value":0.0}}}
+{"Gate":{"gate":0,"name":"Kill","result":{"passed":true,"reason":"ok","value":0.0}}}
+{"Gate":{"gate":1,"name":"F2·Session","result":{"passed":true,"reason":"ok","value":0.0}}}
+{"Notify":{"kind":"ProfileState","tag":"N-F","msg":"Shape UNK state 0","ts":"2026-05-05T10:15:00Z"}}
+{"Gate":{"gate":2,"name":"F5·State","result":{"passed":false,"reason":"Model M2MeanRev mismatched state Unknown","value":0.0}}}
+{"Gate":{"gate":0,"name":"Kill","result":{"passed":true,"reason":"ok","value":0.0}}}
+{"Gate":{"gate":1,"name":"F2·Session","result":{"passed":true,"reason":"ok","value":0.0}}}
+{"Notify":{"kind":"ProfileState","tag":"N-F","msg":"Shape UNK state 0","ts":"2026-05-05T10:30:00Z"}}
+{"Gate":{"gate":2,"name":"F5·State","result":{"passed":false,"reason":"Model M2MeanRev mismatched state Unknown","value":0.0}}}
+{"Gate":{"gate":0,"name":"Kill","result":{"passed":true,"reason":"ok","value":0.0}}}
+{"Gate":{"gate":1,"name":"F2·Session","result":{"passed":true,"reason":"ok","value":0.0}}}
+{"Notify":{"kind":"ProfileState","tag":"N-F","msg":"Shape UNK state 0","ts":"2026-05-05T10:45:00Z"}}
+{"Gate":{"gate":2,"name":"F5·State","result":{"passed":false,"reason":"Model M2MeanRev mismatched state Unknown","value":0.0}}}
+{"Gate":{"gate":0,"name":"Kill","result":{"passed":true,"reason":"ok","value":0.0}}}
+{"Gate":{"gate":1,"name":"F2·Session","result":{"passed":true,"reason":"ok","value":0.0}}}
+{"Notify":{"kind":"ProfileState","tag":"N-F","msg":"Shape UNK state 0","ts":"2026-05-05T11:00:00Z"}}
+{"Gate":{"gate":2,"name":"F5·State","result":{"passed":false,"reason":"Model M2MeanRev mismatched state Unknown","value":0.0}}}
+{"Gate":{"gate":0,"name":"Kill","result":{"passed":true,"reason":"ok","value":0.0}}}
+{"Gate":{"gate":1,"name":"F2·Session","result":{"passed":true,"reason":"ok","value":0.0}}}
+{"Notify":{"kind":"ProfileState","tag":"N-F","msg":"Shape UNK state 0","ts":"2026-05-05T11:15:00Z"}}
+{"Gate":{"gate":2,"name":"F5·State","result":{"passed":false,"reason":"Model M2MeanRev mismatched state Unknown","value":0.0}}}
+{"Gate":{"gate":0,"name":"Kill","result":{"passed":true,"reason":"ok","value":0.0}}}
+{"Gate":{"gate":1,"name":"F2·Session","result":{"passed":true,"reason":"ok","value":0.0}}}
+{"Notify":{"kind":"ProfileState","tag":"N-F","msg":"Shape UNK state 0","ts":"2026-05-05T11:30:00Z"}}
+{"Gate":{"gate":2,"name":"F5·State","result":{"passed":false,"reason":"Model M2MeanRev mismatched state Unknown","value":0.0}}}
+{"Gate":{"gate":0,"name":"Kill","result":{"passed":true,"reason":"ok","value":0.0}}}
+{"Gate":{"gate":1,"name":"F2·Session","result":{"passed":true,"reason":"ok","value":0.0}}}
+{"Notify":{"kind":"ProfileState","tag":"N-F","msg":"Shape UNK state 0","ts":"2026-05-05T11:45:00Z"}}
+{"Gate":{"gate":2,"name":"F5·State","result":{"passed":false,"reason":"Model M2MeanRev mismatched state Unknown","value":0.0}}}
+{"Gate":{"gate":0,"name":"Kill","result":{"passed":true,"reason":"ok","value":0.0}}}
+{"Gate":{"gate":1,"name":"F2·Session","result":{"passed":true,"reason":"ok","value":0.0}}}
+{"Notify":{"kind":"ProfileState","tag":"N-F","msg":"Shape UNK state 0","ts":"2026-05-05T12:00:00Z"}}
+{"Gate":{"gate":2,"name":"F5·State","result":{"passed":false,"reason":"Model M2MeanRev mismatched state Unknown","value":0.0}}}
+{"Gate":{"gate":0,"name":"Kill","result":{"passed":true,"reason":"ok","value":0.0}}}
+{"Gate":{"gate":1,"name":"F2·Session","result":{"passed":true,"reason":"ok","value":0.0}}}
+{"Notify":{"kind":"ProfileState","tag":"N-F","msg":"Shape UNK state 0","ts":"2026-05-05T12:15:00Z"}}
+{"Gate":{"gate":2,"name":"F5·State","result":{"passed":false,"reason":"Model M2MeanRev mismatched state Unknown","value":0.0}}}
+{"Gate":{"gate":0,"name":"Kill","result":{"passed":true,"reason":"ok","value":0.0}}}
+{"Gate":{"gate":1,"name":"F2·Session","result":{"passed":true,"reason":"ok","value":0.0}}}
+{"Notify":{"kind":"ProfileState","tag":"N-F","msg":"Shape UNK state 0","ts":"2026-05-05T12:30:00Z"}}
+{"Gate":{"gate":2,"name":"F5·State","result":{"passed":false,"reason":"Model M2MeanRev mismatched state Unknown","value":0.0}}}
+{"Gate":{"gate":0,"name":"Kill","result":{"passed":true,"reason":"ok","value":0.0}}}
+{"Gate":{"gate":1,"name":"F2·Session","result":{"passed":true,"reason":"ok","value":0.0}}}
+{"Notify":{"kind":"ProfileState","tag":"N-F","msg":"Shape UNK state 0","ts":"2026-05-05T12:45:00Z"}}
+{"Gate":{"gate":2,"name":"F5·State","result":{"passed":false,"reason":"Model M2MeanRev mismatched state Unknown","value":0.0}}}
+{"Gate":{"gate":0,"name":"Kill","result":{"passed":true,"reason":"ok","value":0.0}}}
+{"Gate":{"gate":1,"name":"F2·Session","result":{"passed":true,"reason":"ok","value":0.0}}}
+{"Notify":{"kind":"ProfileState","tag":"N-F","msg":"Shape UNK state 0","ts":"2026-05-05T13:00:00Z"}}
+{"Gate":{"gate":2,"name":"F5·State","result":{"passed":false,"reason":"Model M2MeanRev mismatched state Unknown","value":0.0}}}
+{"Gate":{"gate":0,"name":"Kill","result":{"passed":true,"reason":"ok","value":0.0}}}
+{"Gate":{"gate":1,"name":"F2·Session","result":{"passed":true,"reason":"ok","value":0.0}}}
+{"Notify":{"kind":"ProfileState","tag":"N-F","msg":"Shape UNK state 0","ts":"2026-05-05T13:15:00Z"}}
+{"Gate":{"gate":2,"name":"F5·State","result":{"passed":false,"reason":"Model M2MeanRev mismatched state Unknown","value":0.0}}}
+{"Gate":{"gate":0,"name":"Kill","result":{"passed":true,"reason":"ok","value":0.0}}}
+{"Gate":{"gate":1,"name":"F2·Session","result":{"passed":false,"reason":"NY-Open blackout","value":0.0}}}
+{"Gate":{"gate":0,"name":"Kill","result":{"passed":true,"reason":"ok","value":0.0}}}
+{"Gate":{"gate":1,"name":"F2·Session","result":{"passed":false,"reason":"NY-Open blackout","value":0.0}}}

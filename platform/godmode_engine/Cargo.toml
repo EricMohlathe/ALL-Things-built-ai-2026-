@@ -10,6 +10,12 @@ description = "Platform-agnostic core for the GODMODE_OFEA order-flow trading sy
 [lib]
 name = "godmode_engine"
 path = "src/lib.rs"
+crate-type = ["rlib", "cdylib"]
+
+[features]
+default = []
+# Enables the minimal extern "C" FFI surface for wasm32 / cdylib targets.
+ffi = []
 
 [[bin]]
 name = "godmode-replay"
@@ -25,6 +31,13 @@ csv = { workspace = true }
 clap = { workspace = true }
 tracing = { workspace = true }
 tracing-subscriber = { workspace = true }
+once_cell = "1"
 
 [dev-dependencies]
 approx = "0.5"
+proptest = "1"
+criterion = { version = "0.5", features = ["html_reports"] }
+
+[[bench]]
+name = "engine_bench"
+harness = false
