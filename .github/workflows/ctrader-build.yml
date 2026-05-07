@@ -4,8 +4,8 @@ name: Build cTrader .algo
 # uploaded as a GitHub Actions artifact that operators (especially Mac users
 # who can't compile locally) can download directly.
 #
-# This workflow does NOT run on Linux/Mac runners — cTrader's NuGet package
-# is Windows-only.
+# Runs on ubuntu-latest (free runner) - dotnet + cTrader.Automate NuGet
+# work fine on Linux; no Windows runner required.
 
 on:
   push:
@@ -21,7 +21,7 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
@@ -35,56 +35,31 @@ jobs:
 
       - name: Restore + build
         working-directory: ctrader/GODMODE_OFEA
-        shell: pwsh
         run: |
-          # Restore NuGet packages (cTrader.Automate). If your broker still
-          # ships the legacy cAlgo.API package, edit GODMODE_OFEA.csproj per
-          # the comment in that file.
           dotnet restore
           dotnet build --configuration Release --no-restore
 
       - name: Package as .algo
         working-directory: ctrader/GODMODE_OFEA
-        shell: pwsh
         run: |
-          # cTrader's .algo file format is a zip containing the assembly DLL
-          # plus a small manifest. The official Desktop IDE wraps this in
-          # signed metadata; the CI build is functionally equivalent but
-          # unsigned.
-          $bin = "bin/Release/net6.0"
-          if (-not (Test-Path "$bin/GODMODE_OFEA.dll")) {
-            Write-Error "Build did not produce GODMODE_OFEA.dll under $bin"
+          BIN="bin/Release/net6.0"
+          if [ ! -f "$BIN/GODMODE_OFEA.dll" ]; then
+            echo "::error::Build did not produce GODMODE_OFEA.dll under $BIN"
             exit 1
-          }
-
-          # Manifest. cTrader Desktop reads minimal metadata from this file.
-          $manifest = @{
-            Name        = "GODMODE_OFEA"
-            Version     = "1.1.0"
-            Description = "Order-flow EA — see brief §1–§25"
-            Type        = "Robot"
-          } | ConvertTo-Json
-          $manifest | Out-File -Encoding utf8 "$bin/Manifest.json"
-
-          # Stage all files we want in the .algo.
-          $stage = "stage_algo"
-          New-Item -ItemType Directory -Force -Path $stage | Out-Null
-          Copy-Item "$bin/GODMODE_OFEA.dll" $stage/
-          Copy-Item "$bin/Manifest.json"   $stage/
-
-          # Zip and rename to .algo.
-          $algo = "GODMODE_OFEA.algo"
-          if (Test-Path $algo) { Remove-Item $algo }
-          Compress-Archive -Path "$stage/*" -DestinationPath "$algo.zip"
-          Rename-Item "$algo.zip" $algo
-
-          # Sanity check.
-          if (-not (Test-Path $algo)) {
-            Write-Error "Failed to produce $algo"
+          fi
+          printf '{"Name":"GODMODE_OFEA","Version":"1.1.0","Description":"Order-flow EA","Type":"Robot"}\n' > "$BIN/Manifest.json"
+          mkdir -p stage_algo
+          cp "$BIN/GODMODE_OFEA.dll" stage_algo/
+          cp "$BIN/Manifest.json" stage_algo/
+          ALGO="GODMODE_OFEA.algo"
+          rm -f "$ALGO"
+          cd stage_algo && zip -r "../$ALGO" . && cd ..
+          if [ ! -f "$ALGO" ]; then
+            echo "::error::Failed to produce $ALGO"
             exit 1
-          }
-          $size = (Get-Item $algo).Length
-          Write-Host "Built $algo ($size bytes)"
+          fi
+          SIZE=$(stat -c%s "$ALGO")
+          echo "Built $ALGO ($SIZE bytes)"
 
       - name: Upload .algo artifact
         uses: actions/upload-artifact@v4
@@ -95,14 +70,11 @@ jobs:
           retention-days: 90
 
       - name: Build summary
-        shell: pwsh
         run: |
-          $algoPath = "ctrader/GODMODE_OFEA/GODMODE_OFEA.algo"
-          if (Test-Path $algoPath) {
-            $size = (Get-Item $algoPath).Length
-            "## ■ cTrader build succeeded" | Out-File -Append -Encoding utf8 $env:GITHUB_STEP_SUMMARY
-            "" | Out-File -Append -Encoding utf8 $env:GITHUB_STEP_SUMMARY
-            "Artifact: ``GODMODE_OFEA.algo`` ($size bytes)" | Out-File -Append -Encoding utf8 $env:GITHUB_STEP_SUMMARY
-            "" | Out-File -Append -Encoding utf8 $env:GITHUB_STEP_SUMMARY
-            "Mac users: download from the **Artifacts** section above, unzip, and drop into Mac cTrader via **Automate → + Add cBot → Add Existing**." | Out-File -Append -Encoding utf8 $env:GITHUB_STEP_SUMMARY
-          }
+          ALGO="ctrader/GODMODE_OFEA/GODMODE_OFEA.algo"
+          if [ -f "$ALGO" ]; then
+            SIZE=$(stat -c%s "$ALGO")
+            echo "## cTrader build succeeded" >> $GITHUB_STEP_SUMMARY
+            echo "Artifact: GODMODE_OFEA.algo ($SIZE bytes)" >> $GITHUB_STEP_SUMMARY
+            echo "Mac users: download from the Artifacts section, unzip, drop into Mac cTrader via Automate > Add cBot > Add Existing." >> $GITHUB_STEP_SUMMARY
+          fi
