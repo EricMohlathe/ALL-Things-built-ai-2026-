@@ -1,0 +1,8 @@
+# Allow .algo files to be committed manually (release artifacts).
+# Ignore intermediate build outputs from local dotnet build attempts.
+bin/
+obj/
+*.dll
+*.pdb
+*.deps.json
+*.runtimeconfig.json
