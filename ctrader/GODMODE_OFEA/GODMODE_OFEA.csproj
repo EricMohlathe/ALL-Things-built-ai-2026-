@@ -21,15 +21,14 @@
 
          If your broker still uses the legacy cAlgo.API package, swap the
          PackageReference to:
-             <PackageReference Include="cAlgo.API" Version="1.0.6" />
+           <PackageReference Include="cAlgo.API" Version="1.0.6" />
     -->
     <PackageReference Include="cTrader.Automate" Version="1.0.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <!-- Sources live alongside this project file. -->
-    <Compile Include="GODMODE_OFEA.cs" />
-    <Compile Include="Modules\**\*.cs" />
-  </ItemGroup>
+  <!-- Sources (GODMODE_OFEA.cs and Modules/**/*.cs) are auto-included by the
+       SDK because EnableDefaultCompileItems=true. Do NOT add explicit
+       <Compile Include ... /> entries here or the build will fail with
+       'Duplicate Compile items were included'. -->
 
 </Project>
