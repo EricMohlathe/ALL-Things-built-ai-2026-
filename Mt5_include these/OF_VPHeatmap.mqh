@@ -15,7 +15,7 @@ private:
    int               m_w;
    int               m_h;
 
-   uint              ARGB(const color clr, const uchar a) { return ColorToARGB(clr, a); }
+   uint              ToARGB(const color clr, const uchar a) { return ColorToARGB(clr, a); }
 
 public:
    bool              Init(const string name = OF_PREFIX + "VPHeat",
@@ -51,10 +51,10 @@ public:
          int yBot = (int)((bins - i) * rowH);
          uchar a = (uchar)(OF_ALPHA_LIGHT + pct * (OF_ALPHA_HEAVY - OF_ALPHA_LIGHT));
          color clr = (i == poc_idx) ? OF_POC : OF_ACCENT;
-         m_c.FillRectangle(2, yTop, 2 + barW, yBot, ARGB(clr, a));
+         m_c.FillRectangle(2, yTop, 2 + barW, yBot, ToARGB(clr, a));
         }
       // outer frame
-      m_c.Rectangle(0, 0, m_w - 1, m_h - 1, ARGB(OF_LINE, OF_ALPHA_MED));
+      m_c.Rectangle(0, 0, m_w - 1, m_h - 1, ToARGB(OF_LINE, OF_ALPHA_MED));
       m_c.Update();
      }
   };

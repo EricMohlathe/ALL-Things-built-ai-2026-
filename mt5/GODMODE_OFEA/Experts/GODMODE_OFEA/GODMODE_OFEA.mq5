@@ -20,20 +20,20 @@
 #property description "Order-flow EA — 5 gates + 25 setups + dashboard + cascade"
 #property strict
 
-#include "../../Include/OF_Common.mqh"
-#include "../../Include/OF_Logger.mqh"
-#include "../../Include/OF_DeltaEngine.mqh"
-#include "../../Include/OF_VolumeProfile.mqh"
-#include "../../Include/OF_FootprintAnalyzer.mqh"
-#include "../../Include/OF_AbsorptionStars.mqh"
-#include "../../Include/OF_SessionGate.mqh"
-#include "../../Include/OF_HTFAlignment.mqh"
-#include "../../Include/OF_RiskManager.mqh"
-#include "../../Include/OF_TradeManager.mqh"
-#include "../../Include/OF_NotificationCenter.mqh"
-#include "../../Include/OF_Dashboard.mqh"
-#include "../../Include/OF_ChartViz.mqh"
-#include "../../Include/OF_SetupDetectors.mqh"
+#include <OF_Common.mqh>
+#include <OF_Logger.mqh>
+#include <OF_DeltaEngine.mqh>
+#include <OF_VolumeProfile.mqh>
+#include <OF_FootprintAnalyzer.mqh>
+#include <OF_AbsorptionStars.mqh>
+#include <OF_SessionGate.mqh>
+#include <OF_HTFAlignment.mqh>
+#include <OF_RiskManager.mqh>
+#include <OF_TradeManager.mqh>
+#include <OF_NotificationCenter.mqh>
+#include <OF_Dashboard.mqh>
+#include <OF_ChartViz.mqh>
+#include <OF_SetupDetectors.mqh>
 
 //=== MODE & PLATFORM ===
 input ENUM_OPMODE OperatingMode      = OPMODE_MANUAL;     // brief §0 default
