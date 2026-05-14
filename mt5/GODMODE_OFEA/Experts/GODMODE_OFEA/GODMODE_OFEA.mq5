@@ -34,6 +34,12 @@
 #include <OF_Dashboard.mqh>
 #include <OF_ChartViz.mqh>
 #include <OF_SetupDetectors.mqh>
+#include <OF_AutoRiskReward.mqh>
+#include <OF_BookmapBridge.mqh>
+#include <OF_GoogleSheetsLevels.mqh>
+#include <OF_IcebergTracker.mqh>
+#include <OF_PaceOfTape.mqh>
+#include <OF_SierraChartBridge.mqh>
 
 //=== MODE & PLATFORM ===
 input ENUM_OPMODE OperatingMode      = OPMODE_MANUAL;     // brief §0 default
