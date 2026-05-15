@@ -106,7 +106,7 @@ namespace GodmodeOfea
         [Parameter("Max DD Pct", Group = "Risk", DefaultValue = 5.0)]
         public double MaxDDPct { get; set; }
         [Parameter("Max Consec Losses", Group = "Risk", DefaultValue = 3)]
-        public int MaxConsecLosses { get; set; 
+        public int MaxConsecLosses { get; set; }
         [Parameter("Max Spread Mult", Group = "Risk", DefaultValue = 2.0)]
         public double MaxSpreadMult { get; set; }
         [Parameter("Magic Number", Group = "Risk", DefaultValue = 202604)]
