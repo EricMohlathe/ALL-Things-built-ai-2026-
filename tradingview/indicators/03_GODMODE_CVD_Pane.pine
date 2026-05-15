@@ -1,0 +1,109 @@
+// 03_GODMODE_CVD_Pane.pine
+// Dedicated sub-window CVD indicator with divergence detection. Uses
+// volumedelta() when available, falls back to lower-TF aggregation then to
+// close-position proxy. Identical delta source to the Dashboard indicator.
+//
+// Add this to a chart as a SEPARATE indicator (it lives in its own pane).
+//
+//@version=6
+indicator("03 GODMODE CVD Pane", "OFEA·CVD", overlay=false,
+     max_lines_count=500, max_labels_count=500, format=format.volume)
+
+deltaSrc = input.string("AUTO","Bar-delta source",
+     options=["AUTO","volumedelta() (best)","Lower-TF aggregation","Close-position proxy"])
+subTF    = input.timeframe("1","Lower-TF for sub-bar aggregation")
+DLook    = input.int(20,"Z-score lookback")
+ResetMode= input.string("Daily","CVD reset", options=["Daily","Weekly","None"])
+ShowDiv  = input.bool(true,"Show divergence arrows")
+ShowMA   = input.bool(true,"Show CVD moving average")
+MALen    = input.int(20,"MA length")
+
+// Three delta strategies (same as Dashboard).
+[buyVD, sellVD] = ta.requestVolumeDelta(subTF, "1m")
+deltaVD = buyVD - sellVD
+trueVD_av = not na(deltaVD) and deltaVD != 0
+
+subD() =>
+    sr = high - low
+    sw = sr > 0 ? (close - low) / sr : 0.5
+    volume * (sw - (1.0 - sw))
+arr = request.security_lower_tf(syminfo.tickerid, subTF, subD())
+sumSub = 0.0
+if array.size(arr) > 0
+    for i = 0 to array.size(arr) - 1
+        sumSub += array.get(arr, i)
+
+rng = high - low
+bW  = rng > 0 ? (close - low) / rng : 0.5
+proxy = volume * (bW - (1.0 - bW))
+
+barDelta = deltaSrc == "AUTO" ? (trueVD_av ? deltaVD : array.size(arr) > 0 ? sumSub : proxy) : deltaSrc == "volumedelta() (best)" ? nz(deltaVD, proxy) : deltaSrc == "Lower-TF aggregation" ? (array.size(arr) > 0 ? sumSub : proxy) : proxy
+
+// CVD with optional reset.
+resetEvt = ResetMode == "Daily" ? ta.change(time("D")) != 0 : ResetMode == "Weekly" ? ta.change(time("W")) != 0 : false
+var float cvd = 0.0
+cvd := resetEvt ? barDelta : nz(cvd[1], 0.0) + barDelta
+
+// Z-scores.
+volMean = ta.sma(volume, DLook)
+volStd  = ta.stdev(volume, DLook)
+volZ    = volStd > 0 ? (volume - volMean) / volStd : 0.0
+dMean   = ta.sma(barDelta, DLook)
+dStd    = ta.stdev(barDelta, DLook)
+deltaZ  = dStd > 0 ? (barDelta - dMean) / dStd : 0.0
+
+// Divergence detection (price LL with CVD HL = bullish, vice-versa).
+pLL = ta.lowest(low, 20)  == low
+pHH = ta.highest(high, 20) == high
+cLL = ta.lowest(cvd, 20)  == cvd
+cHH = ta.highest(cvd, 20) == cvd
+bullDiv = pLL and not cLL
+bearDiv = pHH and not cHH
+
+// ── Plots ──────────────────────────────────────────────
+cvdMA = ta.sma(cvd, MALen)
+
+plot(cvd, "CVD", color=cvd >= cvd[1] ? color.lime : color.red, linewidth=2)
+plot(ShowMA ? cvdMA : na, "CVD MA", color=color.new(color.yellow, 30), linewidth=1)
+hline(0, "Zero", color=color.new(color.gray, 50))
+
+// Color bars by aggression sign.
+plot(barDelta, "Bar Delta", color=barDelta >= 0 ? color.new(color.lime, 70) : color.new(color.red, 70), style=plot.style_columns)
+
+// Divergence arrows.
+plotshape(ShowDiv and bullDiv, "Bullish Div", shape.triangleup,   location.bottom, color.lime, text="DIV", textcolor=color.lime, size=size.small)
+plotshape(ShowDiv and bearDiv, "Bearish Div", shape.triangledown, location.top,    color.red,  text="DIV", textcolor=color.red,  size=size.small)
+
+// Pop-up label on every divergence with tooltip explaining why.
+if ShowDiv and bullDiv and barstate.isconfirmed
+    label.new(bar_index, cvd, "Bull Div",
+              color=color.new(color.lime, 30), textcolor=color.white, size=size.tiny,
+              style=label.style_label_up,
+              tooltip="Price made a 20-bar low but CVD did not. Sellers exhausted — buyers absorbing. " +
+                       "Statistically reliable bullish reversal signal at VP support levels.")
+if ShowDiv and bearDiv and barstate.isconfirmed
+    label.new(bar_index, cvd, "Bear Div",
+              color=color.new(color.red, 30), textcolor=color.white, size=size.tiny,
+              style=label.style_label_down,
+              tooltip="Price made a 20-bar high but CVD did not. Buyers exhausted — sellers absorbing. " +
+                       "Statistically reliable bearish reversal signal at VP resistance levels.")
+
+// Aggression spike marker.
+aggSpike = volZ >= 2.0
+plotshape(aggSpike, "Aggression", shape.circle, location.absolute, color.purple, size=size.tiny)
+
+// ── Z-score overlay panel (small table top-right of CVD pane) ──
+var table z = table.new(position.top_right, columns=2, rows=4, bgcolor=color.new(#0b0e14, 20), border_width=1, border_color=#1f2530)
+if barstate.islast
+    table.cell(z, 0, 0, "Vol Z",    text_color=color.silver, text_size=size.small)
+    table.cell(z, 1, 0, str.tostring(volZ, "0.00"), text_color=volZ >= 1.5 ? color.lime : color.silver, text_size=size.small)
+    table.cell(z, 0, 1, "Delta Z",  text_color=color.silver, text_size=size.small)
+    table.cell(z, 1, 1, str.tostring(deltaZ, "0.00"), text_color=math.abs(deltaZ) >= 2.0 ? color.lime : color.silver, text_size=size.small)
+    table.cell(z, 0, 2, "Bar Δ",    text_color=color.silver, text_size=size.small)
+    table.cell(z, 1, 2, str.tostring(barDelta, "#,###"), text_color=barDelta >= 0 ? color.lime : color.red, text_size=size.small)
+    table.cell(z, 0, 3, "Source",   text_color=color.silver, text_size=size.small)
+    table.cell(z, 1, 3, deltaSrc == "AUTO" ? (trueVD_av ? "VD" : array.size(arr) > 0 ? "subTF" : "proxy") : "manual", text_color=color.silver, text_size=size.small)
+
+alertcondition(bullDiv, "Bullish CVD divergence", "Bullish CVD divergence — buyers absorbing")
+alertcondition(bearDiv, "Bearish CVD divergence", "Bearish CVD divergence — sellers absorbing")
+alertcondition(aggSpike, "Aggression spike",      "Aggression spike — volume Z ≥ 2.0")

@@ -1,0 +1,79 @@
+// 02_GODMODE_Footprint.pine
+// Sub-bar footprint visualization using Pine v6 request.security_lower_tf().
+// On a 5m chart with 1m sub-bars, each main bar shows 5 colored cells stacked
+// at the bar's right edge — each cell coloured by that sub-bar's bullish or
+// bearish aggression. Closest thing Pine can do to DeepCharts/Sierra Chart
+// footprint without true tick data.
+//
+//@version=6
+indicator("02 GODMODE Footprint", "OFEA·FP", overlay=true,
+     max_lines_count=500, max_labels_count=500, max_boxes_count=500)
+
+gG = "Footprint"
+subTF      = input.timeframe("1","Sub-bar TF", group=gG,
+     tooltip="Use a TF smaller than the chart TF. e.g. 1m on a 5m chart = 5 sub-bars per cell column")
+ShowDelta  = input.bool(true,"Show sub-bar delta numbers", group=gG)
+ShowImb    = input.bool(true,"Highlight stacked imbalances", group=gG)
+ImbRatio   = input.float(3.0,"Imbalance ratio", step=0.1, group=gG, tooltip="Sub-bar delta vs avg must exceed this multiple")
+CellWidth  = input.int(3,    "Cell width in bars", minval=1, maxval=10, group=gG)
+GapBars    = input.int(1,    "Gap between cells", minval=0, maxval=5, group=gG)
+MaxColumns = input.int(40,   "Max columns drawn", minval=10, maxval=200, group=gG,
+     tooltip="Pine has a 500-box limit; lower this if you hit the cap")
+
+ColorBull  = input.color(#2bbc8a,"Bull cell", group="Colors")
+ColorBear  = input.color(#e35d6a,"Bear cell", group="Colors")
+ColorImbBull = input.color(#00ff00,"Imb bull",group="Colors")
+ColorImbBear = input.color(#ff0000,"Imb bear",group="Colors")
+ColorNeutral = input.color(color.new(#888888, 60),"Neutral",group="Colors")
+
+// Sub-bar delta proxy (same formula as main dashboard for consistency).
+subDelta() =>
+    sr = high - low
+    sw = sr > 0 ? (close - low) / sr : 0.5
+    volume * (sw - (1.0 - sw))
+
+subDeltaArr = request.security_lower_tf(syminfo.tickerid, subTF, subDelta())
+subVolArr   = request.security_lower_tf(syminfo.tickerid, subTF, volume)
+subCloseArr = request.security_lower_tf(syminfo.tickerid, subTF, close)
+
+// Persistent storage to limit draws.
+var array<box>   cells    = array.new<box>()
+var array<label> deltaLbls= array.new<label>()
+
+// Trim oldest if over cap.
+trimOld() =>
+    while array.size(cells) > MaxColumns * 5
+        box.delete(array.shift(cells))
+    while array.size(deltaLbls) > MaxColumns * 5
+        label.delete(array.shift(deltaLbls))
+
+if barstate.isconfirmed and array.size(subDeltaArr) > 0
+    nSub = array.size(subDeltaArr)
+    // Find the dominant delta magnitude in the bar for imbalance highlighting.
+    avgAbs = 0.0
+    for i = 0 to nSub - 1
+        avgAbs += math.abs(array.get(subDeltaArr, i))
+    avgAbs /= nSub > 0 ? nSub : 1
+    // Render N cells stacked vertically.
+    barRange = high - low
+    cellH = nSub > 0 ? barRange / nSub : 0.0
+    for i = 0 to nSub - 1
+        d = array.get(subDeltaArr, i)
+        // Cell bounds: vertically stacked from bar low up, horizontally to the right of bar.
+        yTop = low + (i + 1) * cellH
+        yBot = low + i * cellH
+        // Cell x: right of current bar, shifted by sub-bar index.
+        xL = bar_index + 1 + i * (CellWidth + GapBars)
+        xR = xL + CellWidth - 1
+        // Color by sign + imbalance.
+        isImb = ShowImb and math.abs(d) >= ImbRatio * avgAbs
+        c = d > 0 ? (isImb ? ColorImbBull : ColorBull) : d < 0 ? (isImb ? ColorImbBear : ColorBear) : ColorNeutral
+        b = box.new(xL, yTop, xR, yBot, border_color=color.new(#000000, 85), bgcolor=color.new(c, 30))
+        array.push(cells, b)
+        if ShowDelta and math.abs(d) > 0
+            lbl = label.new(xL + math.floor(CellWidth / 2), (yTop + yBot) / 2,
+                            text=str.tostring(int(d / 100) * 100), color=color.new(#000000, 100),
+                            textcolor=color.white, size=size.tiny, style=label.style_label_center,
+                            tooltip="Sub-bar " + str.tostring(i + 1) + "/" + str.tostring(nSub) + "\nDelta: " + str.tostring(d, "#,###") + "\nSub-TF: " + subTF + (isImb ? "\n★ Stacked imbalance" : ""))
+            array.push(deltaLbls, lbl)
+    trimOld()

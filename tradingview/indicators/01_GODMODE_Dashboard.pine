@@ -1,0 +1,412 @@
+// 01_GODMODE_Dashboard.pine
+// Main dashboard + 5-gate confluence indicator. Uses Pine v6's volumedelta()
+// when the symbol publishes it (CME futures, some stocks/FX) and falls back
+// to request.security_lower_tf() sub-bar aggregation otherwise. The simple
+// close-position proxy from v1 is the last-resort fallback.
+//
+// Apply this indicator ONCE per chart. Add the Coach, VP, CVD, Footprint
+// indicators on top — they all read the same volume primitives but render
+// their own visuals.
+//
+//@version=6
+indicator("01 GODMODE Dashboard", "OFEA·Dash", overlay=true,
+     max_lines_count=500, max_labels_count=500, max_boxes_count=500)
+
+// ── INPUTS ────────────────────────────────────────────────────
+gM   = "Mode"
+OpMode    = input.string("MANUAL","Operating Mode", options=["MANUAL","AUTO"], group=gM)
+
+gD   = "Delta source"
+deltaSrc = input.string("AUTO","Bar-delta source",
+     options=["AUTO","volumedelta() (best)","Lower-TF aggregation","Close-position proxy"], group=gD,
+     tooltip="AUTO = volumedelta() if symbol supports it, else lower-TF aggregation, else close-position proxy")
+subTF    = input.timeframe("1","Lower-TF for sub-bar aggregation", group=gD, tooltip="Only used when source = Lower-TF. 1m within 5m gives ~5 sub-bars.")
+
+gS   = "Sessions (SAST UTC+2)"
+TradeLDN  = input.bool(true, "Trade LDN Main 11:00-15:30", group=gS)
+TradeNY   = input.bool(true, "Trade NY Main 17:30-21:00",  group=gS)
+NYBlackout= input.int(20,    "NY Open blackout (mins)",    group=gS)
+SAST_off  = input.int(0,     "Broker offset from UTC (hrs)", group=gS)
+
+gV   = "Volume Profile"
+VPLen = input.int(100,"VP lookback bars", group=gV)
+VPBins= input.int(50, "VP bins", minval=10, maxval=100, group=gV)
+VAPct = input.float(0.70,"Value Area %", step=0.01, group=gV)
+LVNr  = input.float(0.20,"LVN ratio",    step=0.05, group=gV)
+HVNr  = input.float(0.70,"HVN ratio",    step=0.05, group=gV)
+LocTol= input.float(0.5, "Loc tol × ATR(14)", step=0.05, group=gV)
+
+gH   = "HTF alignment"
+H4TF = input.timeframe("240","HTF Bias TF",    group=gH)
+D1TF = input.timeframe("D",  "HTF Confirm TF", group=gH)
+
+gO   = "Order Flow"
+VolZThr   = input.float(1.5,"Vol Z threshold", step=0.1, group=gO)
+DeltaZThr = input.float(2.0,"Delta Z threshold", step=0.1, group=gO)
+MinStars  = input.int(3,    "Min absorption stars", minval=1, maxval=5, group=gO)
+DLookback = input.int(20,   "Delta lookback bars", group=gO)
+PaceWin   = input.int(60,   "Pace-of-Tape window bars", group=gO)
+PaceThr   = input.float(0.85,"Pace-of-Tape threshold", step=0.05, group=gO)
+
+gR   = "Risk (advisory)"
+RiskPct   = input.float(0.5,"Risk %", minval=0.0, maxval=2.0, step=0.1, group=gR)
+MinRR     = input.float(2.0,"Min R:R", step=0.1, group=gR)
+
+gZ   = "Visualisation"
+ShowDash       = input.bool(true,"Show dashboard",        group=gZ)
+ShowVP         = input.bool(true,"Show POC/VAH/VAL",      group=gZ)
+ShowSessions   = input.bool(true,"Show session shading",  group=gZ)
+ShowMarkers    = input.bool(true,"Show signal markers",   group=gZ)
+ShowPopups     = input.bool(true,"Show explanatory pop-ups", group=gZ, tooltip="On-chart labels explaining each gate transition + setup")
+ColorOK    = input.color(#2bbc8a,"OK",      group=gZ)
+ColorFail  = input.color(#e35d6a,"Fail",    group=gZ)
+ColorWait  = input.color(#f0a84a,"Wait",    group=gZ)
+ColorAcc   = input.color(#6aa9ff,"Accent",  group=gZ)
+ColorPOC   = input.color(#c850dc,"POC",     group=gZ)
+ColorVA    = input.color(#6aa9ff,"VAH/VAL", group=gZ)
+ColorBG    = input.color(color.new(#0b0e14, 12),"Dashboard BG", group=gZ)
+
+gL   = "Manual key levels (replace §25 Google Sheets)"
+ML1 = input.price(0.0,"Level 1", group=gL)
+ML1_lbl = input.string("","Level 1 label", group=gL)
+ML2 = input.price(0.0,"Level 2", group=gL)
+ML2_lbl = input.string("","Level 2 label", group=gL)
+ML3 = input.price(0.0,"Level 3", group=gL)
+ML3_lbl = input.string("","Level 3 label", group=gL)
+ML4 = input.price(0.0,"Level 4", group=gL)
+ML4_lbl = input.string("","Level 4 label", group=gL)
+ML5 = input.price(0.0,"Level 5", group=gL)
+ML5_lbl = input.string("","Level 5 label", group=gL)
+
+// ── BAR DELTA (three strategies) ─────────────────────────────
+// Strategy 1: volumedelta() — best, when symbol exposes it.
+[trueBuy, trueSell] = ta.requestVolumeDelta(subTF, "1m")
+deltaFromVD = trueBuy - trueSell
+trueVD_available = not na(deltaFromVD) and deltaFromVD != 0
+
+// Strategy 2: lower-TF sub-bar aggregation. Each sub-bar's delta is
+// estimated by its own close-position (the v1 proxy applied per sub-bar
+// is far more accurate when 5+ sub-bars exist).
+subDelta() =>
+    sr  = high - low
+    sw  = sr > 0 ? (close - low) / sr : 0.5
+    volume * (sw - (1.0 - sw))
+subDeltas = request.security_lower_tf(syminfo.tickerid, subTF, subDelta())
+subSum = 0.0
+if array.size(subDeltas) > 0
+    for i = 0 to array.size(subDeltas) - 1
+        subSum += array.get(subDeltas, i)
+
+// Strategy 3: close-position proxy (last resort).
+range_ = high - low
+buyW   = range_ > 0 ? (close - low) / range_ : 0.5
+proxyDelta = volume * (buyW - (1.0 - buyW))
+
+barDelta = deltaSrc == "AUTO" ? (trueVD_available ? deltaFromVD : array.size(subDeltas) > 0 ? subSum : proxyDelta) : deltaSrc == "volumedelta() (best)" ? nz(deltaFromVD, proxyDelta) : deltaSrc == "Lower-TF aggregation" ? (array.size(subDeltas) > 0 ? subSum : proxyDelta) : proxyDelta
+
+deltaSourceName = deltaSrc == "AUTO" ? (trueVD_available ? "volumedelta()" : array.size(subDeltas) > 0 ? "sub-TF agg" : "close-pos proxy") : deltaSrc
+
+// ── CVD running sum (daily reset) ────────────────────────────
+isNewDay = ta.change(time("D")) != 0
+var float cvd = 0.0
+cvd := isNewDay ? barDelta : nz(cvd[1], 0.0) + barDelta
+
+// Z-scores.
+volMean = ta.sma(volume, DLookback)
+volStd  = ta.stdev(volume, DLookback)
+volZ    = volStd > 0 ? (volume - volMean) / volStd : 0.0
+dMean   = ta.sma(barDelta, DLookback)
+dStd    = ta.stdev(barDelta, DLookback)
+deltaZ  = dStd > 0 ? (barDelta - dMean) / dStd : 0.0
+
+// Divergences.
+priceLL = ta.lowest(low, 20) == low
+priceHH = ta.highest(high, 20) == high
+cvdLL   = ta.lowest(cvd, 20) == cvd
+cvdHH   = ta.highest(cvd, 20) == cvd
+bullDiv = priceLL and not cvdLL
+bearDiv = priceHH and not cvdHH
+
+// Pace-of-Tape (rolling-max proxy).
+paceMax = ta.highest(volume, PaceWin)
+pace    = paceMax > 0 ? volume / paceMax : 0.0
+
+// ── VOLUME PROFILE ──────────────────────────────────────────
+var array<float> binVol  = array.new<float>(VPBins, 0.0)
+var array<bool>  lvnFlag = array.new<bool>(VPBins, false)
+var array<bool>  hvnFlag = array.new<bool>(VPBins, false)
+var float vpHi = na, vpLo = na, poc = na, vah = na, val_ = na, binSize = na
+var string profShape = "UNK"
+var string marketState = "UNKNOWN"
+
+if barstate.isconfirmed and bar_index >= VPLen
+    hi = ta.highest(high, VPLen)
+    lo = ta.lowest(low,   VPLen)
+    if hi > lo
+        vpHi := hi
+        vpLo := lo
+        binSize := (hi - lo) / VPBins
+        for i = 0 to VPBins - 1
+            array.set(binVol, i, 0.0)
+        for j = 0 to VPLen - 1
+            idx = math.min(VPBins - 1, math.max(0, int((close[j] - lo) / binSize)))
+            array.set(binVol, idx, array.get(binVol, idx) + volume[j])
+        pocBin = 0
+        pocVol = array.get(binVol, 0)
+        for k = 1 to VPBins - 1
+            v = array.get(binVol, k)
+            if v > pocVol
+                pocVol := v
+                pocBin := k
+        poc := lo + (pocBin + 0.5) * binSize
+        tot = 0.0
+        for m = 0 to VPBins - 1
+            tot += array.get(binVol, m)
+        tgt = tot * VAPct
+        acc = pocVol
+        hiB = pocBin
+        loB = pocBin
+        while acc < tgt and (hiB < VPBins - 1 or loB > 0)
+            up_ = hiB < VPBins - 1 ? array.get(binVol, hiB + 1) : -1.0
+            dn_ = loB > 0           ? array.get(binVol, loB - 1) : -1.0
+            if up_ >= dn_ and up_ >= 0
+                hiB += 1
+                acc += up_
+            else if dn_ >= 0
+                loB -= 1
+                acc += dn_
+            else
+                break
+        vah := lo + (hiB + 1) * binSize
+        val_ := lo + loB * binSize
+        for n = 0 to VPBins - 1
+            v3 = array.get(binVol, n)
+            array.set(lvnFlag, n, v3 < pocVol * LVNr)
+            array.set(hvnFlag, n, v3 > pocVol * HVNr)
+        // Shape classifier (§11.3).
+        firstNz = -1
+        lastNz  = -1
+        for o = 0 to VPBins - 1
+            if array.get(binVol, o) > 0
+                if firstNz == -1
+                    firstNz := o
+                lastNz := o
+        if firstNz >= 0
+            midBin = math.floor((firstNz + lastNz) / 2)
+            upper = 0.0
+            lower = 0.0
+            for p = midBin to lastNz
+                upper += array.get(binVol, p)
+            for q = firstNz to midBin - 1
+                lower += array.get(binVol, q)
+            tot2 = upper + lower
+            skew = tot2 > 0 ? (upper - lower) / tot2 : 0.0
+            nzC = 0
+            nzS = 0.0
+            for r = 0 to VPBins - 1
+                vR = array.get(binVol, r)
+                if vR > 0
+                    nzS += vR
+                    nzC += 1
+            peak = nzC > 0 and nzS > 0 ? pocVol / (nzS / nzC) : 1.0
+            profShape := math.abs(skew) < 0.10 and peak > 2.0 ? "D" : skew > 0.20 ? "P" : skew < -0.20 ? "b" : peak < 1.3 ? "THIN" : "D"
+            marketState := profShape == "D" ? "BALANCED" : "IMBALANCED"
+
+vpLoc(price, tol) =>
+    string loc = "OUT"
+    if not na(poc) and not na(vah) and not na(val_) and not na(binSize)
+        if math.abs(price - poc) < tol
+            loc := "POC"
+        else if math.abs(price - vah) < tol
+            loc := "VAH"
+        else if math.abs(price - val_) < tol
+            loc := "VAL"
+        else
+            i2 = int((price - vpLo) / binSize)
+            if i2 >= 0 and i2 < VPBins
+                if array.get(lvnFlag, i2)
+                    loc := "LVN"
+                else if array.get(hvnFlag, i2)
+                    loc := "HVN"
+    loc
+
+// ── SESSIONS ────────────────────────────────────────────────
+sastMin = (hour(time, "UTC") + 2 + SAST_off) * 60 + minute(time, "UTC")
+sastMin := sastMin >= 1440 ? sastMin - 1440 : sastMin < 0 ? sastMin + 1440 : sastMin
+session_ = sastMin >= 660 and sastMin < 930 ? "LDN_MAIN" : sastMin >= 1050 and sastMin < 1260 ? "NY_MAIN" : sastMin >= 930 and sastMin < 930 + NYBlackout ? "NY_BLACKOUT" : sastMin >= 600 and sastMin < 660 ? "LDN_OPEN" : sastMin >= 930 and sastMin < 1050 ? "NY_OPEN" : sastMin >= 120 and sastMin < 600 ? "ASIAN" : "AFTER"
+sessionOk = (session_ == "LDN_MAIN" and TradeLDN) or (session_ == "NY_MAIN" and TradeNY)
+inBlackout = session_ == "NY_BLACKOUT"
+
+// ── HTF ALIGNMENT ───────────────────────────────────────────
+h4C = request.security(syminfo.tickerid, H4TF, close)
+h4E = request.security(syminfo.tickerid, H4TF, ta.ema(close, 20))
+d1C = request.security(syminfo.tickerid, D1TF, close)
+d1E = request.security(syminfo.tickerid, D1TF, ta.ema(close, 50))
+h4B = h4C > h4E * 1.0001 ? "BULL" : h4C < h4E * 0.9999 ? "BEAR" : "NEUTRAL"
+d1B = d1C > d1E * 1.0001 ? "BULL" : d1C < d1E * 0.9999 ? "BEAR" : "NEUTRAL"
+htfCombined = h4B == d1B ? h4B : "NEUTRAL"
+
+// ── ABSORPTION STARS ────────────────────────────────────────
+stars(isL) =>
+    int s = 0
+    if volZ >= 1.0
+        s := 1
+    s += volZ >= 2.0 ? 1 : 0
+    s += volZ >= 3.0 ? 1 : 0
+    s += math.abs(deltaZ) >= 2.0 ? 1 : 0
+    wp = range_ > 0 ? (isL ? (math.min(open, close) - low) / range_ : (high - math.max(open, close)) / range_) : 0.0
+    s += wp >= 0.4 ? 1 : 0
+    math.min(s, 5)
+
+// ── ATR + LOCATION ──────────────────────────────────────────
+atr14 = ta.atr(14)
+locTol = atr14 * LocTol
+curLoc = vpLoc(close, locTol)
+
+// Manual level proximity (with operator labels).
+manLvl(price, lblIn) =>
+    not na(price) and price > 0 and math.abs(close - price) < locTol ? (str.length(lblIn) > 0 ? lblIn : "Manual") : ""
+manName = manLvl(ML1, ML1_lbl) != "" ? manLvl(ML1, ML1_lbl) : manLvl(ML2, ML2_lbl) != "" ? manLvl(ML2, ML2_lbl) : manLvl(ML3, ML3_lbl) != "" ? manLvl(ML3, ML3_lbl) : manLvl(ML4, ML4_lbl) != "" ? manLvl(ML4, ML4_lbl) : manLvl(ML5, ML5_lbl)
+atManLevel = manName != ""
+
+// ── SETUP DETECTORS (subset, priority chain) ───────────────
+bullAbs = barDelta < 0 and volZ >= VolZThr and close >= open
+bearAbs = barDelta > 0 and volZ >= VolZThr and close <= open
+aggressionSpike = volZ >= 2.0
+
+det1 = (curLoc == "VAL" or curLoc == "LVN" or atManLevel) and bullAbs and stars(true)  >= MinStars ? "LONG_AbsBot" : ""
+det2 = (curLoc == "VAH" or curLoc == "HVN" or atManLevel) and bearAbs and stars(false) >= MinStars ? "SHORT_AbsTop" : ""
+det3 = bullDiv ? "LONG_CVDBull" : ""
+det4 = bearDiv ? "SHORT_CVDBear" : ""
+det5 = curLoc == "VAL" and close > open and barDelta > 0 ? "LONG_VALBnc" : ""
+det6 = curLoc == "VAH" and close < open and barDelta < 0 ? "SHORT_VAHFade" : ""
+det7 = curLoc == "POC" ? (barDelta >= 0 ? "LONG_POCRet" : "SHORT_POCRet") : ""
+det14 = low < ta.lowest(low, 30)[1] and close > ta.lowest(low, 30)[1] and bullDiv ? "LONG_Spring" : ""
+det15 = high > ta.highest(high, 30)[1] and close < ta.highest(high, 30)[1] and bearDiv ? "SHORT_Upthrust" : ""
+det18 = high > ta.highest(high, 50)[1] and close < ta.highest(high, 50)[1] ? "SHORT_LiqSwp" : low < ta.lowest(low, 50)[1] and close > ta.lowest(low, 50)[1] ? "LONG_LiqSwp" : ""
+
+setupRaw = det1 != "" ? det1 : det2 != "" ? det2 : det14 != "" ? det14 : det15 != "" ? det15 : det18 != "" ? det18 : det5 != "" ? det5 : det6 != "" ? det6 : det7 != "" ? det7 : det3 != "" ? det3 : det4 != "" ? det4 : ""
+isLong   = str.startswith(setupRaw, "LONG")
+isShort  = str.startswith(setupRaw, "SHORT")
+hasSetup = setupRaw != ""
+setupLabel = hasSetup ? str.substring(setupRaw, str.contains(setupRaw, "_") ? str.pos(setupRaw, "_") + 1 : 0) : ""
+
+// ── GATES ───────────────────────────────────────────────────
+g0 = not inBlackout
+g1 = sessionOk
+g2 = (session_ == "LDN_MAIN" and marketState == "BALANCED") or (session_ == "NY_MAIN" and marketState == "IMBALANCED") or atManLevel
+g3 = curLoc != "OUT" or atManLevel
+g4 = isLong ? htfCombined == "BULL" : isShort ? htfCombined == "BEAR" : false
+g5 = isLong ? cvd > nz(cvd[5], cvd) : isShort ? cvd < nz(cvd[5], cvd) : false
+g6 = hasSetup
+g7 = aggressionSpike
+
+slPrice = isLong ? low - 2 * syminfo.mintick : isShort ? high + 2 * syminfo.mintick : na
+tpPrice = isLong ? (na(poc) ? close + atr14 * 3 : poc) : isShort ? (na(poc) ? close - atr14 * 3 : poc) : na
+rr      = not na(slPrice) and not na(tpPrice) ? math.abs(tpPrice - close) / math.abs(close - slPrice) : 0.0
+
+allPass = g0 and g1 and g2 and g3 and g4 and g5 and g6 and g7 and rr >= MinRR
+score   = (g3 ? 1 : 0) + (volZ >= VolZThr ? 1 : 0) + ((isLong and bullDiv) or (isShort and bearDiv) ? 1 : 0) + (g6 and stars(isLong) >= MinStars ? 1 : 0) + (session_ == "LDN_MAIN" or session_ == "NY_MAIN" or session_ == "LDN_OPEN" ? 1 : 0)
+
+// ── DASHBOARD ───────────────────────────────────────────────
+var table dash = table.new(position.top_right, columns=2, rows=15, bgcolor=ColorBG, border_width=1, border_color=#1f2530)
+dotC(ok) => ok ? ColorOK : ColorFail
+waitC(w, ok) => w ? ColorWait : (ok ? ColorOK : ColorFail)
+
+if barstate.islast and ShowDash
+    table.cell(dash, 0, 0,  "GODMODE — " + syminfo.ticker + " · " + OpMode, bgcolor=color.new(ColorAcc, 78), text_color=color.white, text_size=size.normal)
+    table.cell(dash, 1, 0,  "Δ:" + deltaSourceName, bgcolor=color.new(ColorAcc, 78), text_color=color.white, text_size=size.tiny)
+    table.cell(dash, 0, 1,  "① State",     text_color=color.silver, text_size=size.small)
+    table.cell(dash, 1, 1,  marketState,    text_color=dotC(g2), text_size=size.small)
+    table.cell(dash, 0, 2,  "② Kill Zone", text_color=color.silver, text_size=size.small)
+    table.cell(dash, 1, 2,  session_,       text_color=dotC(g1 and g0), text_size=size.small)
+    table.cell(dash, 0, 3,  "③ HTF",       text_color=color.silver, text_size=size.small)
+    table.cell(dash, 1, 3,  htfCombined,    text_color=dotC(g4), text_size=size.small)
+    table.cell(dash, 0, 4,  "④ VP Loc",    text_color=color.silver, text_size=size.small)
+    table.cell(dash, 1, 4,  atManLevel ? "MAN:" + manName : curLoc, text_color=dotC(g3), text_size=size.small)
+    table.cell(dash, 0, 5,  "⑤ CVD",       text_color=color.silver, text_size=size.small)
+    table.cell(dash, 1, 5,  isLong ? "BULL" : isShort ? "BEAR" : "FLAT", text_color=dotC(g5), text_size=size.small)
+    table.cell(dash, 0, 6,  "⑥ Footprint",text_color=color.silver, text_size=size.small)
+    table.cell(dash, 1, 6,  hasSetup ? setupLabel + " ★" + str.tostring(stars(isLong)) : "WAITING", text_color=waitC(not hasSetup, g6), text_size=size.small)
+    table.cell(dash, 0, 7,  "⑦ Aggression",text_color=color.silver, text_size=size.small)
+    table.cell(dash, 1, 7,  str.tostring(volZ, "0.0") + "σ" + (aggressionSpike ? "★" : ""), text_color=dotC(g7), text_size=size.small)
+    table.cell(dash, 0, 8,  "⑧ R:R",       text_color=color.silver, text_size=size.small)
+    table.cell(dash, 1, 8,  na(slPrice) ? "-" : str.tostring(rr, "0.0") + ":1", text_color=dotC(rr >= MinRR), text_size=size.small)
+    table.cell(dash, 0, 9,  "CONF",         text_color=color.silver, text_size=size.small)
+    table.cell(dash, 1, 9,  str.tostring(score) + "/5", text_color=dotC(score >= 4), text_size=size.small)
+    table.cell(dash, 0, 10, "Pace-of-Tape", text_color=color.silver, text_size=size.small)
+    table.cell(dash, 1, 10, str.tostring(pace, "0.00"), text_color=dotC(pace >= PaceThr), text_size=size.small)
+    table.cell(dash, 0, 11, "POC/VAH/VAL",  text_color=color.silver, text_size=size.small)
+    table.cell(dash, 1, 11, na(poc) ? "-" : str.tostring(poc, format.mintick) + "/" + str.tostring(vah, format.mintick) + "/" + str.tostring(val_, format.mintick), text_color=color.silver, text_size=size.tiny)
+    table.cell(dash, 0, 12, "SL → TP",      text_color=color.silver, text_size=size.small)
+    table.cell(dash, 1, 12, na(slPrice) ? "-" : str.tostring(slPrice, format.mintick) + " → " + str.tostring(tpPrice, format.mintick), text_color=color.silver, text_size=size.tiny)
+    table.cell(dash, 0, 13, "Risk %", text_color=color.silver, text_size=size.small)
+    table.cell(dash, 1, 13, str.tostring(RiskPct, "0.0") + "%", text_color=color.silver, text_size=size.tiny)
+    table.cell(dash, 0, 14, "VERDICT",     text_color=color.silver, text_size=size.normal)
+    table.cell(dash, 1, 14, allPass ? "A+ READY" : hasSetup ? "WAIT" : "SKIP", text_color=allPass ? ColorOK : hasSetup ? ColorWait : color.silver, text_size=size.normal)
+
+// ── VISUAL LAYER ────────────────────────────────────────────
+plot(ShowVP ? poc  : na, "POC", color=ColorPOC, linewidth=2)
+plot(ShowVP ? vah  : na, "VAH", color=ColorVA, style=plot.style_circles)
+plot(ShowVP ? val_ : na, "VAL", color=ColorVA, style=plot.style_circles)
+
+plot(ML1 > 0 ? ML1 : na, ML1_lbl != "" ? ML1_lbl : "ManLvl 1", color=color.yellow, style=plot.style_linebr)
+plot(ML2 > 0 ? ML2 : na, ML2_lbl != "" ? ML2_lbl : "ManLvl 2", color=color.yellow, style=plot.style_linebr)
+plot(ML3 > 0 ? ML3 : na, ML3_lbl != "" ? ML3_lbl : "ManLvl 3", color=color.yellow, style=plot.style_linebr)
+plot(ML4 > 0 ? ML4 : na, ML4_lbl != "" ? ML4_lbl : "ManLvl 4", color=color.yellow, style=plot.style_linebr)
+plot(ML5 > 0 ? ML5 : na, ML5_lbl != "" ? ML5_lbl : "ManLvl 5", color=color.yellow, style=plot.style_linebr)
+
+bgcolor(ShowSessions and session_ == "LDN_MAIN" ? color.new(#3050a0, 92) : ShowSessions and session_ == "NY_MAIN" ? color.new(#c87828, 92) : ShowSessions and session_ == "NY_BLACKOUT" ? color.new(#404040, 88) : na, title="Session")
+
+plotshape(ShowMarkers and bullAbs and stars(true)  >= MinStars, "Abs Bot", shape.star, location.belowbar, ColorOK,   size=size.small)
+plotshape(ShowMarkers and bearAbs and stars(false) >= MinStars, "Abs Top", shape.star, location.abovebar, ColorFail, size=size.small)
+plotshape(ShowMarkers and aggressionSpike, "Aggression", shape.diamond, location.abovebar, color.purple, size=size.tiny)
+plotshape(ShowMarkers and allPass and isLong,  "A+ LONG",  shape.labelup,   location.belowbar, ColorOK,   text="A+", textcolor=color.white, size=size.normal)
+plotshape(ShowMarkers and allPass and isShort, "A+ SHORT", shape.labeldown, location.abovebar, ColorFail, text="A+", textcolor=color.white, size=size.normal)
+
+// ── EXPLANATORY POP-UPS (the Coach layer) ────────────────────
+popupLabel(txt, c, tip) =>
+    label.new(bar_index, high * 1.001, txt, color=c, textcolor=color.white,
+              size=size.small, style=label.style_label_down, tooltip=tip,
+              yloc=yloc.abovebar)
+
+// Track FALSE→TRUE edges for each gate.
+edge_g1 = g1 and not g1[1]
+edge_g3 = g3 and not g3[1]
+edge_g4 = g4 and not g4[1]
+edge_g6 = hasSetup and not hasSetup[1]
+edge_g7 = aggressionSpike and not aggressionSpike[1]
+edge_aPlus = allPass and not allPass[1]
+
+if ShowPopups and barstate.isconfirmed
+    if edge_g1
+        popupLabel("KZ", ColorAcc, "Kill zone " + session_ + " active. This is when 80%+ of A+ setups occur.")
+    if edge_g3
+        popupLabel("VP " + curLoc, ColorAcc, "Price reached VP level: " + curLoc + ". This is one of the three required ingredients (Location).")
+    if edge_g4
+        popupLabel("HTF✓", ColorAcc, "H4 + D1 both " + htfCombined + ". HTF alignment gives ~20-25% win rate uplift.")
+    if edge_g6
+        popupLabel(setupLabel + " ★" + str.tostring(stars(isLong)), ColorWait, "Footprint setup: " + setupLabel + ". Absorption stars: " + str.tostring(stars(isLong)) + "/5. " + (stars(isLong) >= MinStars ? "Meets threshold." : "Below threshold."))
+    if edge_g7
+        popupLabel("AGG " + str.tostring(volZ, "0.0") + "σ", color.purple, "Aggression spike: volume Z-score " + str.tostring(volZ, "0.00") + ". Institutional print at this level.")
+    if edge_aPlus
+        popupLabel("A+ " + (isLong ? "LONG" : "SHORT"), allPass ? ColorOK : ColorFail, "ALL 8 GATES PASS. Setup: " + setupLabel + "  R:R " + str.tostring(rr, "0.0") + ":1  Score: " + str.tostring(score) + "/5  Entry: " + str.tostring(close, format.mintick) + "  SL: " + str.tostring(slPrice, format.mintick) + "  TP: " + str.tostring(tpPrice, format.mintick))
+
+// ── ALERTS (still emitted; Coach indicator amplifies these) ──
+if barstate.isconfirmed
+    if edge_g3
+        alert("N-A · VP " + curLoc + " touch @ " + str.tostring(close, format.mintick) + " · " + syminfo.ticker, alert.freq_once_per_bar)
+    if edge_g4
+        alert("N-D · HTF aligned: " + htfCombined,    alert.freq_once_per_bar)
+    if edge_g6
+        alert("N-G · Footprint " + setupLabel + " ★" + str.tostring(stars(isLong)), alert.freq_once_per_bar)
+    if edge_g7
+        alert("N-H · Aggression volZ=" + str.tostring(volZ, "0.00"), alert.freq_once_per_bar)
+    if edge_aPlus
+        alert("N-I · A+ READY " + (isLong ? "LONG" : "SHORT") + " " + syminfo.ticker + " setup=" + setupLabel + " score=" + str.tostring(score) + " R:R=" + str.tostring(rr, "0.0") + " SL=" + str.tostring(slPrice, format.mintick) + " TP=" + str.tostring(tpPrice, format.mintick), alert.freq_once_per_bar)
+    if pace >= PaceThr and not (nz(pace[1], 0) >= PaceThr)
+        alert("N-V · Pace-of-Tape elevated " + str.tostring(pace, "0.00"), alert.freq_once_per_bar)
+
+// ── Log line for journal pane ─────────────────────────────
+if edge_aPlus and barstate.isconfirmed
+    log.info("A+ ENTRY," + syminfo.ticker + "," + (isLong ? "LONG" : "SHORT") + "," + setupLabel + ",score=" + str.tostring(score) + ",RR=" + str.tostring(rr, "0.00") + ",SL=" + str.tostring(slPrice, format.mintick) + ",TP=" + str.tostring(tpPrice, format.mintick) + ",POC=" + str.tostring(poc, format.mintick) + ",volZ=" + str.tostring(volZ, "0.00") + ",delta=" + deltaSourceName)
