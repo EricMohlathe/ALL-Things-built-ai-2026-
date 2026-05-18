@@ -24,7 +24,8 @@ private:
    double m_d[];            // rolling bar-delta window
    double m_p[];            // rolling price window
    double m_c[];             // rolling cvd window
-   int    m_len, m_idx;
+   int    m_len;
+   ulong  m_idx;             // unsigned wraps cleanly; long-running EAs safe
 public:
    DeltaEnhancedState st;
 
@@ -39,17 +40,18 @@ public:
    void OnBar(double barDelta, double closePrice, double climaxThr=2.0, int flipBars=3)
    {
       st.cvd += barDelta;
-      m_d[m_idx % m_len] = barDelta;
-      m_p[m_idx % m_len] = closePrice;
-      m_c[m_idx % m_len] = st.cvd;
+      m_d[(int)(m_idx % (ulong)m_len)] = barDelta;
+      m_p[(int)(m_idx % (ulong)m_len)] = closePrice;
+      m_c[(int)(m_idx % (ulong)m_len)] = st.cvd;
       m_idx++;
 
       // z-score
-      int n = MathMin(m_idx, m_len);
+      int n = (int)MathMin((double)m_idx, (double)m_len);
       double sum = 0, sum2 = 0;
       for (int i = 0; i < n; i++) { sum += m_d[i]; sum2 += m_d[i] * m_d[i]; }
       double mu = n > 0 ? sum / n : 0;
       double var = n > 0 ? (sum2 / n) - (mu * mu) : 0;
+      if (var < 0) var = 0;                           // FP cancellation guard
       double sd  = var > 0 ? MathSqrt(var) : 0;
       st.zScore = sd > 0 ? (barDelta - mu) / sd : 0;
       st.climax = MathAbs(st.zScore) >= climaxThr;
@@ -57,8 +59,8 @@ public:
       // slope
       if (n >= 2)
       {
-         int iNow = (m_idx - 1) % m_len;
-         int iPast = (m_idx - n) % m_len;
+         int iNow  = (int)((m_idx - 1)        % (ulong)m_len);
+         int iPast = (int)((m_idx - (ulong)n) % (ulong)m_len);
          st.cvdSlope = (m_c[iNow] - m_c[iPast]) / (double)n;
       }
       else st.cvdSlope = 0;
@@ -70,7 +72,7 @@ public:
          int signNow = barDelta > 0 ? 1 : (barDelta < 0 ? -1 : 0);
          for (int k = 1; k <= flipBars && k < n; k++)
          {
-            double d = m_d[(m_idx - 1 - k) % m_len];
+            double d = m_d[(int)((m_idx - 1 - (ulong)k) % (ulong)m_len)];
             int s = d > 0 ? 1 : (d < 0 ? -1 : 0);
             if (s != 0 && signNow != 0 && s == -signNow) { st.deltaFlipped = true; break; }
          }
@@ -82,10 +84,10 @@ public:
 private:
    void ClassifyRegime()
    {
-      int n = MathMin(m_idx, m_len);
+      int n = (int)MathMin((double)m_idx, (double)m_len);
       if (n < m_len) { st.regime = CVD_NEUTRAL; return; }
-      int iNow = (m_idx - 1) % m_len;
-      int iPast = (m_idx - n) % m_len;
+      int iNow  = (int)((m_idx - 1)        % (ulong)m_len);
+      int iPast = (int)((m_idx - (ulong)n) % (ulong)m_len);
       double dPrice = m_p[iNow] - m_p[iPast];
       double dCVD   = m_c[iNow] - m_c[iPast];
       // sign-agreement gives 4 states:

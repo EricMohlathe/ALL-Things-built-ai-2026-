@@ -41,12 +41,15 @@ fvgUp   = low > high[2]
 fvgDown = high < low[2]
 
 // Drawing only on confirmed bars to avoid runaway object counts.
+// math.max guards against negative bar_index on the very first bars of a replay.
 if barstate.isconfirmed
+    leftEq  = math.max(0, bar_index - lkb)
+    leftFvg = math.max(0, bar_index - 1)
     if showEQ and hasEqH
-        line.new(bar_index - lkb, lastSH, bar_index, lastSH, color=color.orange, style=line.style_dashed)
+        line.new(leftEq, lastSH, bar_index, lastSH, color=color.orange, style=line.style_dashed)
     if showEQ and hasEqL
-        line.new(bar_index - lkb, lastSL, bar_index, lastSL, color=color.orange, style=line.style_dashed)
+        line.new(leftEq, lastSL, bar_index, lastSL, color=color.orange, style=line.style_dashed)
     if showFVG and fvgUp
-        box.new(bar_index - 1, low, bar_index + 5, high[2], border_color=color.new(color.lime, 50), bgcolor=color.new(color.lime, 85))
+        box.new(leftFvg, low,  bar_index + 5, high[2], border_color=color.new(color.lime, 50), bgcolor=color.new(color.lime, 85))
     if showFVG and fvgDown
-        box.new(bar_index - 1, high, bar_index + 5, low[2], border_color=color.new(color.red,  50), bgcolor=color.new(color.red,  85))
+        box.new(leftFvg, high, bar_index + 5, low[2],  border_color=color.new(color.red,  50), bgcolor=color.new(color.red,  85))

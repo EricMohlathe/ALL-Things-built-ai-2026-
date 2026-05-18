@@ -47,6 +47,22 @@ namespace GodmodeOfea
             _fontSize = fontSize;
             _lineWidth = lineWidth;
             _showCurrencyValue = showCurrencyValue;
+            // Purge any legacy chart objects from a previous cBot session.
+            // Position IDs can collide across restarts, otherwise stale labels stack.
+            PurgeLegacyObjects();
+        }
+
+        private void PurgeLegacyObjects()
+        {
+            try
+            {
+                var stale = new System.Collections.Generic.List<string>();
+                foreach (var o in _chart.Objects)
+                    if (o.Name != null && o.Name.StartsWith("godmode_rr_"))
+                        stale.Add(o.Name);
+                foreach (var name in stale) _chart.RemoveObject(name);
+            }
+            catch { /* chart not ready yet — first OnPositionOpened will clear */ }
         }
 
         public void OnPositionOpened(Position p)

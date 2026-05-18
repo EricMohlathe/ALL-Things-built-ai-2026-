@@ -23,6 +23,7 @@ namespace GodmodeOfea.Enhanced
             {
                 Value = CumPV / CumV;
                 var v = (CumPV2 / CumV) - (Value * Value);
+                if (v < 0 || double.IsNaN(v) || double.IsInfinity(v)) v = 0;
                 Sd = v > 0 ? Math.Sqrt(v) : 0;
             }
         }

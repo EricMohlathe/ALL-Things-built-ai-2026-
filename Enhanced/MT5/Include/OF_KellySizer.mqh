@@ -8,15 +8,18 @@
 class COF_KellySizer
 {
 public:
-   // Full Kelly: f* = (p*(b+1) - 1) / b
+   // Full Kelly: f* = (p*(b+1) - 1) / b. Inputs validated — garbage in
+   // would otherwise propagate silently into RiskPct (brief §12 rule 2).
    static double FullKelly(double winProb, double payoffOdds)
    {
       if (payoffOdds <= 0) return 0;
+      if (winProb < 0 || winProb > 1.0) return 0;
       return (winProb * (payoffOdds + 1.0) - 1.0) / payoffOdds;
    }
    // Fractional Kelly: f_use = κ × f*. κ ∈ {0.25, 0.5} for safety.
    static double FractionalKelly(double winProb, double payoffOdds, double kappa=0.25)
    {
+      if (kappa <= 0) return 0;
       double f = FullKelly(winProb, payoffOdds);
       return MathMax(0.0, f) * MathMax(0.0, MathMin(kappa, 1.0));
    }

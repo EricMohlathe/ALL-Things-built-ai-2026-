@@ -98,6 +98,9 @@ namespace cAlgo.Robots
 
         private double ComputeCompositeProbability()
         {
+            // Snapshot the live bid once — cAlgo's Symbol properties are volatile
+            // and can change between reads, biasing VWAP z-score evaluation.
+            var bidSnap = Symbol.Bid;
             double g1 = (_pa.EqualHighsCluster || _pa.EqualLowsCluster) ? 1 : 0;
             double g2 = 1.0;
             double g3 = 1.0;
@@ -105,7 +108,7 @@ namespace cAlgo.Robots
             double g5 = 1.0;
             double g6 = _reg.JustTransitioned ? 1 : 0.5;
             double g7 = _sw.Last.PreconditionsPassed / 6.0;
-            double g8 = Math.Abs(_vwap.ZScore(Symbol.Bid)) < 2.0 ? 1 : 0;
+            double g8 = Math.Abs(_vwap.ZScore(bidSnap)) < 2.0 ? 1 : 0;
             double g9 = (_pa.FvgUp || _pa.FvgDown) ? 1 : 0;
             double g10 = 0.5;
             double g11 = _ba.SpreadAcceptable(SpreadMaxZ) ? 1 : 0;

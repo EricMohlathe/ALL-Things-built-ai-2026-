@@ -17,7 +17,7 @@ class COF_BidAsk
 {
 private:
    double m_buf[];          // rolling spread window
-   int    m_idx;
+   ulong  m_idx;             // unsigned wraps cleanly under multi-year use
    int    m_len;
 public:
    BidAskState st;
@@ -34,14 +34,15 @@ public:
       st.spread = st.ask - st.bid;
       st.spreadPts = st.spread / SymbolInfoDouble(sym, SYMBOL_POINT);
 
-      m_buf[m_idx % m_len] = st.spreadPts;
+      m_buf[(int)(m_idx % (ulong)m_len)] = st.spreadPts;
       m_idx++;
 
-      int n = MathMin(m_idx, m_len);
+      int n = (int)MathMin((double)m_idx, (double)m_len);
       double sum = 0, sum2 = 0;
       for (int i = 0; i < n; i++) { sum += m_buf[i]; sum2 += m_buf[i] * m_buf[i]; }
       st.meanSpreadPts = n > 0 ? sum / n : 0;
       double v = n > 0 ? (sum2 / n) - (st.meanSpreadPts * st.meanSpreadPts) : 0;
+      if (v < 0) v = 0;                              // FP cancellation guard
       st.sdSpreadPts = v > 0 ? MathSqrt(v) : 0;
       st.zSpread = st.sdSpreadPts > 0 ? (st.spreadPts - st.meanSpreadPts) / st.sdSpreadPts : 0;
    }

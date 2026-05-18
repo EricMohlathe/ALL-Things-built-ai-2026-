@@ -37,6 +37,9 @@ public:
       {
          st.vwap = st.cumPV / st.cumV;
          double var = (st.cumPV2 / st.cumV) - (st.vwap * st.vwap);
+         // FP cancellation (var slightly negative when prices nearly constant) → 0.
+         // Inf/NaN guard for extreme-priced symbols accumulating for very long.
+         if (var < 0 || !MathIsValidNumber(var)) var = 0;
          st.sd   = var > 0 ? MathSqrt(var) : 0;
       }
    }

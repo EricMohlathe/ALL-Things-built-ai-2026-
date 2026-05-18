@@ -7,7 +7,7 @@ namespace GodmodeOfea.Enhanced
     public class DeltaEnhanced
     {
         private readonly double[] _d, _p, _c;
-        private int _idx;
+        private ulong _idx;            // ulong wraps cleanly; year-scale safe
         public double Cvd, CvdSlope, ZScore;
         public bool Climax, DeltaFlipped;
         public CvdRegime Regime;
@@ -17,23 +17,24 @@ namespace GodmodeOfea.Enhanced
         public void OnBar(double barDelta, double closePrice, double climaxThr = 2.0, int flipBars = 3)
         {
             Cvd += barDelta;
-            int L = _d.Length;
-            _d[_idx % L] = barDelta;
-            _p[_idx % L] = closePrice;
-            _c[_idx % L] = Cvd;
+            ulong L = (ulong)_d.Length;
+            _d[(int)(_idx % L)] = barDelta;
+            _p[(int)(_idx % L)] = closePrice;
+            _c[(int)(_idx % L)] = Cvd;
             _idx++;
-            int n = Math.Min(_idx, L);
+            int n = (int)Math.Min(_idx, L);
             double sum = 0, sum2 = 0;
             for (int i = 0; i < n; i++) { sum += _d[i]; sum2 += _d[i] * _d[i]; }
             var mu = n > 0 ? sum / n : 0;
             var v  = n > 0 ? (sum2 / n) - (mu * mu) : 0;
+            if (v < 0 || double.IsNaN(v) || double.IsInfinity(v)) v = 0;  // FP guard
             var sd = v > 0 ? Math.Sqrt(v) : 0;
             ZScore = sd > 0 ? (barDelta - mu) / sd : 0;
             Climax = Math.Abs(ZScore) >= climaxThr;
             if (n >= 2)
             {
-                int iNow = (_idx - 1) % L;
-                int iPast = (_idx - n) % L;
+                int iNow  = (int)((_idx - 1)        % L);
+                int iPast = (int)((_idx - (ulong)n) % L);
                 CvdSlope = (_c[iNow] - _c[iPast]) / (double)n;
             }
             DeltaFlipped = false;
@@ -42,7 +43,7 @@ namespace GodmodeOfea.Enhanced
                 int signNow = barDelta > 0 ? 1 : (barDelta < 0 ? -1 : 0);
                 for (int k = 1; k <= flipBars && k < n; k++)
                 {
-                    double d = _d[(_idx - 1 - k) % L];
+                    double d = _d[(int)((_idx - 1 - (ulong)k) % L)];
                     int s = d > 0 ? 1 : (d < 0 ? -1 : 0);
                     if (s != 0 && signNow != 0 && s == -signNow) { DeltaFlipped = true; break; }
                 }
@@ -51,10 +52,10 @@ namespace GodmodeOfea.Enhanced
         }
         private void ClassifyRegime(int n)
         {
-            int L = _d.Length;
-            if (n < L) { Regime = CvdRegime.Neutral; return; }
-            int iNow = (_idx - 1) % L;
-            int iPast = (_idx - n) % L;
+            ulong L = (ulong)_d.Length;
+            if ((ulong)n < L) { Regime = CvdRegime.Neutral; return; }
+            int iNow  = (int)((_idx - 1)        % L);
+            int iPast = (int)((_idx - (ulong)n) % L);
             double dPrice = _p[iNow] - _p[iPast];
             double dCVD   = _c[iNow] - _c[iPast];
             bool same = (dPrice > 0 && dCVD > 0) || (dPrice < 0 && dCVD < 0);

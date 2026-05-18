@@ -90,7 +90,8 @@ subD() =>
     volume * (sw - (1.0 - sw))
 subArr = request.security_lower_tf(syminfo.tickerid, subTF, subD())
 sumSub = 0.0
-if array.size(subArr) > 0
+// Sum sub-bars only on confirmed parent bars — prevents intra-bar repaint.
+if barstate.isconfirmed and array.size(subArr) > 0
     for i = 0 to array.size(subArr) - 1
         sumSub += array.get(subArr, i)
 
