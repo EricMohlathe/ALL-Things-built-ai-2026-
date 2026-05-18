@@ -10,7 +10,7 @@ indicator("03 GODMODE CVD Pane", "OFEA·CVD", overlay=false,
      max_lines_count=500, max_labels_count=500, format=format.volume)
 
 deltaSrc = input.string("AUTO","Bar-delta source",
-     options=["AUTO","volumedelta() (best)","Lower-TF aggregation","Close-position proxy"])
+     options=["AUTO","Lower-TF aggregation","Close-position proxy"])
 subTF    = input.timeframe("1","Lower-TF for sub-bar aggregation")
 DLook    = input.int(20,"Z-score lookback")
 ResetMode= input.string("Daily","CVD reset", options=["Daily","Weekly","None"])
@@ -18,11 +18,7 @@ ShowDiv  = input.bool(true,"Show divergence arrows")
 ShowMA   = input.bool(true,"Show CVD moving average")
 MALen    = input.int(20,"MA length")
 
-// Three delta strategies (same as Dashboard).
-[buyVD, sellVD] = ta.requestVolumeDelta(subTF, "1m")
-deltaVD = buyVD - sellVD
-trueVD_av = not na(deltaVD) and deltaVD != 0
-
+// Two delta strategies (same as Dashboard).
 subD() =>
     sr = high - low
     sw = sr > 0 ? (close - low) / sr : 0.5
@@ -37,7 +33,7 @@ rng = high - low
 bW  = rng > 0 ? (close - low) / rng : 0.5
 proxy = volume * (bW - (1.0 - bW))
 
-barDelta = deltaSrc == "AUTO" ? (trueVD_av ? deltaVD : array.size(arr) > 0 ? sumSub : proxy) : deltaSrc == "volumedelta() (best)" ? nz(deltaVD, proxy) : deltaSrc == "Lower-TF aggregation" ? (array.size(arr) > 0 ? sumSub : proxy) : proxy
+barDelta = deltaSrc == "AUTO" ? (array.size(arr) > 0 ? sumSub : proxy) : deltaSrc == "Lower-TF aggregation" ? (array.size(arr) > 0 ? sumSub : proxy) : proxy
 
 // CVD with optional reset.
 resetEvt = ResetMode == "Daily" ? ta.change(time("D")) != 0 : ResetMode == "Weekly" ? ta.change(time("W")) != 0 : false
@@ -102,7 +98,7 @@ if barstate.islast
     table.cell(z, 0, 2, "Bar Δ",    text_color=color.silver, text_size=size.small)
     table.cell(z, 1, 2, str.tostring(barDelta, "#,###"), text_color=barDelta >= 0 ? color.lime : color.red, text_size=size.small)
     table.cell(z, 0, 3, "Source",   text_color=color.silver, text_size=size.small)
-    table.cell(z, 1, 3, deltaSrc == "AUTO" ? (trueVD_av ? "VD" : array.size(arr) > 0 ? "subTF" : "proxy") : "manual", text_color=color.silver, text_size=size.small)
+    table.cell(z, 1, 3, deltaSrc == "AUTO" ? (array.size(arr) > 0 ? "subTF" : "proxy") : "manual", text_color=color.silver, text_size=size.small)
 
 alertcondition(bullDiv, "Bullish CVD divergence", "Bullish CVD divergence — buyers absorbing")
 alertcondition(bearDiv, "Bearish CVD divergence", "Bearish CVD divergence — sellers absorbing")

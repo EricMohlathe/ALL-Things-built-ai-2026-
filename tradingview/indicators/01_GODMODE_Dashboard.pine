@@ -18,8 +18,8 @@ OpMode    = input.string("MANUAL","Operating Mode", options=["MANUAL","AUTO"], g
 
 gD   = "Delta source"
 deltaSrc = input.string("AUTO","Bar-delta source",
-     options=["AUTO","volumedelta() (best)","Lower-TF aggregation","Close-position proxy"], group=gD,
-     tooltip="AUTO = volumedelta() if symbol supports it, else lower-TF aggregation, else close-position proxy")
+     options=["AUTO","Lower-TF aggregation","Close-position proxy"], group=gD,
+     tooltip="AUTO = lower-TF aggregation if available, else close-position proxy")
 subTF    = input.timeframe("1","Lower-TF for sub-bar aggregation", group=gD, tooltip="Only used when source = Lower-TF. 1m within 5m gives ~5 sub-bars.")
 
 gS   = "Sessions (SAST UTC+2)"
@@ -78,15 +78,15 @@ ML4_lbl = input.string("","Level 4 label", group=gL)
 ML5 = input.price(0.0,"Level 5", group=gL)
 ML5_lbl = input.string("","Level 5 label", group=gL)
 
-// ── BAR DELTA (three strategies) ─────────────────────────────
-// Strategy 1: volumedelta() — best, when symbol exposes it.
-[trueBuy, trueSell] = ta.requestVolumeDelta(subTF, "1m")
-deltaFromVD = trueBuy - trueSell
-trueVD_available = not na(deltaFromVD) and deltaFromVD != 0
+// ── BAR DELTA (two strategies) ───────────────────────────────
+// Pine has no built-in tick-level buy/sell classifier. The TradingView/ta
+// library's requestVolumeDelta() exists but is unreliable on retail FX and
+// requires importing an external lib. We use sub-TF aggregation (good when
+// the symbol has lower-TF data) and fall back to the close-position proxy.
 
-// Strategy 2: lower-TF sub-bar aggregation. Each sub-bar's delta is
-// estimated by its own close-position (the v1 proxy applied per sub-bar
-// is far more accurate when 5+ sub-bars exist).
+// Strategy 1: lower-TF sub-bar aggregation. Each sub-bar's delta is
+// estimated by its own close-position. 5+ sub-bars give a decent proxy
+// for true delta.
 subDelta() =>
     sr  = high - low
     sw  = sr > 0 ? (close - low) / sr : 0.5
@@ -97,14 +97,14 @@ if array.size(subDeltas) > 0
     for i = 0 to array.size(subDeltas) - 1
         subSum += array.get(subDeltas, i)
 
-// Strategy 3: close-position proxy (last resort).
+// Strategy 2: close-position proxy (last resort).
 range_ = high - low
 buyW   = range_ > 0 ? (close - low) / range_ : 0.5
 proxyDelta = volume * (buyW - (1.0 - buyW))
 
-barDelta = deltaSrc == "AUTO" ? (trueVD_available ? deltaFromVD : array.size(subDeltas) > 0 ? subSum : proxyDelta) : deltaSrc == "volumedelta() (best)" ? nz(deltaFromVD, proxyDelta) : deltaSrc == "Lower-TF aggregation" ? (array.size(subDeltas) > 0 ? subSum : proxyDelta) : proxyDelta
+barDelta = deltaSrc == "AUTO" ? (array.size(subDeltas) > 0 ? subSum : proxyDelta) : deltaSrc == "Lower-TF aggregation" ? (array.size(subDeltas) > 0 ? subSum : proxyDelta) : proxyDelta
 
-deltaSourceName = deltaSrc == "AUTO" ? (trueVD_available ? "volumedelta()" : array.size(subDeltas) > 0 ? "sub-TF agg" : "close-pos proxy") : deltaSrc
+deltaSourceName = deltaSrc == "AUTO" ? (array.size(subDeltas) > 0 ? "sub-TF agg" : "close-pos proxy") : deltaSrc
 
 // ── CVD running sum (daily reset) ────────────────────────────
 isNewDay = ta.change(time("D")) != 0

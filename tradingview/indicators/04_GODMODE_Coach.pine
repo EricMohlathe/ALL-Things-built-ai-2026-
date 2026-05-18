@@ -48,10 +48,6 @@ MinRR     = input.float(2.0,"Min R:R", step=0.1, group=gI)
 // (Pine indicators cannot read other indicators' internal vars unless plotted
 // and selected as a Source — for simplicity we recompute. Numerically identical.)
 
-[trueBuy, trueSell] = ta.requestVolumeDelta("1", "1m")
-deltaVD = trueBuy - trueSell
-trueVD_av = not na(deltaVD) and deltaVD != 0
-
 subD() =>
     sr = high - low
     sw = sr > 0 ? (close - low) / sr : 0.5
@@ -65,8 +61,8 @@ if array.size(subArr) > 0
 rng_ = high - low
 bw   = rng_ > 0 ? (close - low) / rng_ : 0.5
 proxy = volume * (bw - (1.0 - bw))
-barDelta = trueVD_av ? deltaVD : array.size(subArr) > 0 ? subSum : proxy
-deltaSrcName = trueVD_av ? "volumedelta()" : array.size(subArr) > 0 ? "sub-TF" : "proxy"
+barDelta = array.size(subArr) > 0 ? subSum : proxy
+deltaSrcName = array.size(subArr) > 0 ? "sub-TF" : "proxy"
 
 isNewDay = ta.change(time("D")) != 0
 var float cvd = 0.0
