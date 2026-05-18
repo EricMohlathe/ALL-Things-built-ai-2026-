@@ -1,0 +1,26 @@
+// 05_Enhanced_SessionLight.pine — SAST session highlighter
+//@version=6
+indicator("GODMODE Session Light", "OFEA·Sess", overlay=true)
+
+shadeBg = input.bool(true, "Shade chart background by session")
+
+sastOffsetMin(int h, int m) => h * 60 + m
+nowMin = hour(time, "Africa/Johannesburg") * 60 + minute(time, "Africa/Johannesburg")
+
+ldnMain  = nowMin >= sastOffsetMin(11, 0)  and nowMin <  sastOffsetMin(15, 30)
+nyBlack  = nowMin >= sastOffsetMin(17, 30) and nowMin <  sastOffsetMin(17, 50)
+nyMain   = nowMin >= sastOffsetMin(17, 50) and nowMin <= sastOffsetMin(21, 0)
+asian    = nowMin >= sastOffsetMin(2, 0)   and nowMin <  sastOffsetMin(9, 0)
+
+bgcolor(shadeBg and ldnMain ? color.new(color.green,  92) : na, title="LDN_MAIN")
+bgcolor(shadeBg and nyBlack ? color.new(color.red,    88) : na, title="NY_BLACKOUT")
+bgcolor(shadeBg and nyMain  ? color.new(color.blue,   92) : na, title="NY_MAIN")
+bgcolor(shadeBg and asian   ? color.new(color.orange, 94) : na, title="ASIAN")
+
+sessName = ldnMain ? "LDN_MAIN" : nyBlack ? "NY_BLACKOUT" : nyMain ? "NY_MAIN" : asian ? "ASIAN" : "AFTER"
+sessCol  = ldnMain ? color.lime : nyBlack ? color.red : nyMain ? color.aqua : asian ? color.orange : color.gray
+
+var table light = table.new(position.bottom_right, 1, 2, bgcolor=color.new(#0b0e14, 0))
+if barstate.islast
+    table.cell(light, 0, 0, "SESSION",  bgcolor=color.new(#6aa9ff, 70), text_color=color.white)
+    table.cell(light, 0, 1, sessName,   bgcolor=sessCol,                text_color=color.black, text_size=size.large)

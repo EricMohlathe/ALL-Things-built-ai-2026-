@@ -1,0 +1,28 @@
+// 01_Enhanced_VWAP.pine — Session VWAP + ±1σ / ±2σ bands
+//@version=6
+indicator("GODMODE VWAP + Bands", "OFEA·VWAP", overlay=true)
+
+k1 = input.float(1.0, "Inner σ")
+k2 = input.float(2.0, "Outer σ")
+showBand1 = input.bool(true,  "Show ±1σ")
+showBand2 = input.bool(true,  "Show ±2σ")
+
+newSess = ta.change(time("D")) != 0
+var float cumPV = 0.0
+var float cumV  = 0.0
+var float cumPV2 = 0.0
+
+typ = (high + low + close) / 3.0
+cumPV  := newSess ? typ * volume          : cumPV  + typ * volume
+cumV   := newSess ? volume                : cumV   + volume
+cumPV2 := newSess ? typ * typ * volume    : cumPV2 + typ * typ * volume
+
+vwap = cumV > 0 ? cumPV / cumV : na
+varV = cumV > 0 ? (cumPV2 / cumV) - vwap * vwap : 0
+sd   = varV > 0 ? math.sqrt(varV) : 0
+
+plot(vwap,            "VWAP", color=color.yellow, linewidth=2)
+plot(showBand1 ? vwap + k1*sd : na, "+1σ", color=color.new(color.aqua, 30))
+plot(showBand1 ? vwap - k1*sd : na, "-1σ", color=color.new(color.aqua, 30))
+plot(showBand2 ? vwap + k2*sd : na, "+2σ", color=color.new(color.purple, 30), style=plot.style_circles)
+plot(showBand2 ? vwap - k2*sd : na, "-2σ", color=color.new(color.purple, 30), style=plot.style_circles)
