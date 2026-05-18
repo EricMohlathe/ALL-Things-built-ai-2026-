@@ -31,11 +31,18 @@ namespace GodmodeOfea.Enhanced
             var sd = v > 0 ? Math.Sqrt(v) : 0;
             ZScore = sd > 0 ? (barDelta - mu) / sd : 0;
             Climax = Math.Abs(ZScore) >= climaxThr;
+            // Slope — normalised by mean absolute delta so CvdSlope ∈ ~[-1, +1]
+            // and is unit-independent of symbol volume. cvdSlopeThr=0.5 then
+            // means "more than half the lookback bars pull in one direction".
             if (n >= 2)
             {
                 int iNow  = (int)((_idx - 1)        % L);
                 int iPast = (int)((_idx - (ulong)n) % L);
-                CvdSlope = (_c[iNow] - _c[iPast]) / (double)n;
+                double rawSlope = (_c[iNow] - _c[iPast]) / (double)n;
+                double sumAbs = 0;
+                for (int j = 0; j < n; j++) sumAbs += Math.Abs(_d[j]);
+                double meanAbsBd = n > 0 ? sumAbs / n : 0;
+                CvdSlope = meanAbsBd > 0 ? rawSlope / meanAbsBd : 0;
             }
             DeltaFlipped = false;
             if (n > flipBars)

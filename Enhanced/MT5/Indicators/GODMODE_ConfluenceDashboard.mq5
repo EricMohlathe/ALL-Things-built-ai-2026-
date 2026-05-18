@@ -28,6 +28,8 @@ input bool   ShowSessionLight   = true;
 input bool   ShowHTFStrength    = true;
 input bool   ShowTPSLLevels     = true;
 
+input int    BrokerOffsetFromSAST = 0;  // hours: e.g. -2 if broker is UTC, you trade SAST (UTC+2)
+
 input int    DashX              = 12;
 input int    DashY              = 28;
 input int    DashFontSize       = 9;
@@ -225,7 +227,9 @@ void DrawSetupCard(double price)
 void DrawSessionLight()
 {
    // SAST hours: ASIAN, LDN_MAIN, NY_MAIN, NY_BLACKOUT, AFTER.
-   datetime now = TimeCurrent();
+   // Translate broker server time to SAST so session windows are correct
+   // regardless of broker timezone.
+   datetime now = TimeCurrent() - (datetime)BrokerOffsetFromSAST * 3600;
    MqlDateTime dt; TimeToStruct(now, dt);
    int sm = dt.hour * 60 + dt.min;
    string sess; color c;

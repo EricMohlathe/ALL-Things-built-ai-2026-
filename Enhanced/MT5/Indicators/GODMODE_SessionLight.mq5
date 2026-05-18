@@ -7,9 +7,10 @@
 #property indicator_plots 0
 #property strict
 
-input int X = 12;
-input int Y = 460;
+input int  X = 12;
+input int  Y = 460;
 input bool ShadeBackground = true;
+input int  BrokerOffsetFromSAST = 0;  // hours: e.g. -2 if broker server is on UTC and you trade SAST (UTC+2)
 
 string pref = "GME_SES_";
 
@@ -30,7 +31,9 @@ struct Sess { int hStart, mStart, hEnd, mEnd; string name; color col; };
 void Paint(const datetime &time[], int rt, const double &low[], const double &high[])
 {
    ObjectsDeleteAll(0, pref);
-   datetime now = TimeCurrent();
+   // Convert broker server time to SAST so session windows are correct
+   // regardless of broker timezone. Operator sets BrokerOffsetFromSAST.
+   datetime now = TimeCurrent() - (datetime)BrokerOffsetFromSAST * 3600;
    MqlDateTime dt; TimeToStruct(now, dt);
    int sm = dt.hour * 60 + dt.min;
 

@@ -33,6 +33,7 @@ namespace cAlgo.Robots
         private PoolResilience  _pool;
         private ProbabilityScore _prob;
         private DateTime _lastBar;
+        private bool _seeded;
         private AverageTrueRange _atr14;
 
         protected override void OnStart()
@@ -52,6 +53,9 @@ namespace cAlgo.Robots
         protected override void OnTick()
         {
             _ba.Update(Symbol);
+            // First-tick seed: skip the first comparison so we don't fire
+            // OnBarClose on a half-formed bar before any rollover has happened.
+            if (!_seeded) { _lastBar = Bars.OpenTimes.LastValue; _seeded = true; return; }
             if (Bars.OpenTimes.LastValue == _lastBar) return;
             _lastBar = Bars.OpenTimes.LastValue;
             OnBarClose();
@@ -119,7 +123,10 @@ namespace cAlgo.Robots
         private void FireTradeIfReady()
         {
             double p = _sw.EmpiricalWinRate();
-            double b = _sw.ExpectedR() > 0 ? _sw.ExpectedR() + 1.0 : 2.0;
+            // Kelly's b = AvgWin/AvgLoss = R-multiple of the setup. ExpectedR()
+            // returns that directly (1.18 at 6/6 preconditions); do NOT add 1.0
+            // — that previously inflated b by ~85% and oversized positions.
+            double b = _sw.ExpectedR() > 0 ? _sw.ExpectedR() : 2.0;
             double riskPct = Math.Min(RiskPctMax, KellySizer.RiskPctFromKelly(p, b, KellyKappa));
             Print($"[ENHANCED] would-fire: kellyRiskPct={riskPct:F3}");
         }

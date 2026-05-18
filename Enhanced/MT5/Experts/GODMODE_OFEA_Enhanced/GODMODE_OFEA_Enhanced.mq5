@@ -79,8 +79,12 @@ void OnTick()
 {
    g_ba.Update(_Symbol);
    // Defer the per-bar logic to OnBar() — call via new-bar detection.
+   // First-tick seed: skip the first comparison so we don't fire OnBarClose
+   // on a half-formed bar before any historical bar has rolled over.
    static datetime lastBar = 0;
+   static bool seeded = false;
    datetime t0[1]; CopyTime(_Symbol, _Period, 0, 1, t0);
+   if (!seeded) { lastBar = t0[0]; seeded = true; return; }
    if (t0[0] == lastBar) return;
    lastBar = t0[0];
    OnBarClose();
@@ -145,7 +149,10 @@ void FireTradeIfReady(const MqlRates &r[])
    // SL placed 2 ticks beyond aggression candle per brief §15.
    // Sizing: fractional Kelly capped at RiskPctMax (≤ 2.0 per §12 rule 2).
    double winProb = g_sw.EmpiricalWinRate();
-   double payoff  = g_sw.ExpectedR() > 0 ? g_sw.ExpectedR() + 1.0 : 2.0;
+   // Kelly's b = AvgWin/AvgLoss = R-multiple of the setup. ExpectedR() returns
+   // that directly (1.18 at 6/6 preconditions per the empirical edge table);
+   // do NOT add 1.0 — that previously inflated b by ~85%, oversizing positions.
+   double payoff  = g_sw.ExpectedR() > 0 ? g_sw.ExpectedR() : 2.0;
    double riskPct = COF_KellySizer::RiskPctFromKelly(winProb, payoff, KellyKappa);
    riskPct = MathMin(riskPct, RiskPctMax);
    PrintFormat("[ENHANCED] would-fire: kellyRiskPct=%.3f", riskPct);

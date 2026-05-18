@@ -56,12 +56,18 @@ public:
       st.zScore = sd > 0 ? (barDelta - mu) / sd : 0;
       st.climax = MathAbs(st.zScore) >= climaxThr;
 
-      // slope
+      // Slope — normalised by mean absolute delta so cvdSlope ∈ ~[-1, +1] and
+      // is unit-independent of symbol volume. cvdSlopeThr=0.5 then means
+      // "more than half the lookback bars are pulling in one direction".
       if (n >= 2)
       {
          int iNow  = (int)((m_idx - 1)        % (ulong)m_len);
          int iPast = (int)((m_idx - (ulong)n) % (ulong)m_len);
-         st.cvdSlope = (m_c[iNow] - m_c[iPast]) / (double)n;
+         double rawSlope = (m_c[iNow] - m_c[iPast]) / (double)n;
+         double sumAbs = 0;
+         for (int j = 0; j < n; j++) sumAbs += MathAbs(m_d[j]);
+         double meanAbsBd = n > 0 ? sumAbs / n : 0;
+         st.cvdSlope = meanAbsBd > 0 ? rawSlope / meanAbsBd : 0;
       }
       else st.cvdSlope = 0;
 

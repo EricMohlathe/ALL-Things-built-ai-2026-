@@ -48,7 +48,10 @@ public:
    double Lower(double k=1.0) const { return st.vwap - k * st.sd; }
 
    // Distance from VWAP in units of σ — used as a "premium/discount" gate
-   double ZScore(double price) const { return st.sd > 0 ? (price - st.vwap) / st.sd : 0; }
+   // Guard against price=0 (broker quote disconnect) — would otherwise return
+   // -vwap/sd which is a false strong-negative signal.
+   double ZScore(double price) const
+   { return (price > 0 && st.sd > 0) ? (price - st.vwap) / st.sd : 0; }
 };
 
 #endif

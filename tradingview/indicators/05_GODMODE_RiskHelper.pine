@@ -48,9 +48,13 @@ atr14 = ta.atr(14)
 
 tpFinal = TPMode == "Manual" and TPManual > 0 ? TPManual : TPMode == "ATR multiple" ? (isLong ? EntryPrice + atr14 * TPATRMult : EntryPrice - atr14 * TPATRMult) : TPMode == "R multiple" ? (isLong ? EntryPrice + math.abs(EntryPrice - SLPrice) * TPRMult : EntryPrice - math.abs(EntryPrice - SLPrice) * TPRMult) : na
 
+// Reject TP on the wrong side of entry (operator-error guard).
+// Long: TP must be above entry; Short: TP must be below entry.
+tpValid = not na(tpFinal) and (isLong ? tpFinal > EntryPrice : tpFinal < EntryPrice)
+
 risk = ready ? math.abs(EntryPrice - SLPrice) : 0.0
-reward = ready and not na(tpFinal) ? math.abs(tpFinal - EntryPrice) : 0.0
-rr = risk > 0 ? reward / risk : 0.0
+reward = ready and tpValid ? math.abs(tpFinal - EntryPrice) : 0.0
+rr = risk > 0 and tpValid ? reward / risk : 0.0
 
 // Position sizing per brief §11.8.
 riskPctClamped = math.min(RiskPct, 2.0)
@@ -138,5 +142,6 @@ if ShowSummary and barstate.islast
     table.cell(riskTbl, 0, 8, "SL distance",   text_color=color.silver, text_size=size.small)
     table.cell(riskTbl, 1, 8, str.tostring(slPips, "0.0") + " pips", text_color=color.white, text_size=size.small)
     table.cell(riskTbl, 0, 9, "Verdict",       text_color=color.silver, text_size=size.normal)
-    table.cell(riskTbl, 1, 9, not ready ? "set Entry + SL" : passRR ? "✓ TAKE" : "✗ SKIP (RR too low)",
-               text_color=not ready ? color.silver : passRR ? ColorOK : ColorFail, text_size=size.normal)
+    verdictTxt = not ready ? "set Entry + SL" : not tpValid ? "✗ SKIP (TP wrong side)" : passRR ? "✓ TAKE" : "✗ SKIP (RR too low)"
+    verdictCol = not ready ? color.silver : not tpValid ? ColorFail : passRR ? ColorOK : ColorFail
+    table.cell(riskTbl, 1, 9, verdictTxt, text_color=verdictCol, text_size=size.normal)

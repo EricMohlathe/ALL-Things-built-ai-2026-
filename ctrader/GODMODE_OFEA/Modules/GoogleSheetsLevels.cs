@@ -74,16 +74,49 @@ namespace GodmodeOfea
                 string url = _baseUrl + "/gviz/tq?tqx=out:csv";
                 using (var http = new HttpClient { Timeout = TimeSpan.FromSeconds(15) })
                 {
-                    string body = await http.GetStringAsync(url);
+                    var resp = await http.GetAsync(url);
+                    if (!resp.IsSuccessStatusCode)
+                    {
+                        // Translate HTTP status codes to operator-friendly errors
+                        // so the dashboard shows useful context, not raw exceptions.
+                        switch ((int)resp.StatusCode)
+                        {
+                            case 401:
+                            case 403:
+                                _lastError = "Permission denied — set the Sheet to 'Anyone with link can view'.";
+                                break;
+                            case 404:
+                                _lastError = "Sheet not found (404) — check the URL/ID.";
+                                break;
+                            case 429:
+                                _lastError = "Rate-limited by Google — increase RefreshIntervalSec.";
+                                break;
+                            default:
+                                _lastError = $"HTTP {(int)resp.StatusCode} {resp.ReasonPhrase}";
+                                break;
+                        }
+                        return false;
+                    }
+                    string body = await resp.Content.ReadAsStringAsync();
                     var fresh = ParseCsv(body);
                     _levels = fresh;
                     _lastError = string.Empty;
                     return true;
                 }
             }
+            catch (TaskCanceledException)
+            {
+                _lastError = "Network timeout (15s) — Google Sheets unreachable.";
+                return false;
+            }
+            catch (HttpRequestException e)
+            {
+                _lastError = "Network error: " + e.Message;
+                return false;
+            }
             catch (Exception e)
             {
-                _lastError = e.Message;
+                _lastError = "Sheet parse failure: " + e.Message;
                 return false;
             }
         }

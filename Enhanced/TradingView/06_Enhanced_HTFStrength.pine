@@ -8,7 +8,7 @@ adxLen   = input.int(14, "ADX length")
 f_strength(tf) =>
     [_o, _h, _l, _c] = request.security(syminfo.tickerid, tf, [open, high, low, close], lookahead=barmerge.lookahead_off)
     e   = request.security(syminfo.tickerid, tf, ta.ema(close, emaLen), lookahead=barmerge.lookahead_off)
-    a   = request.security(syminfo.tickerid, tf, ta.rma(ta.tr, adxLen), lookahead=barmerge.lookahead_off)  // simplified ATR
+    a   = request.security(syminfo.tickerid, tf, ta.rma(ta.tr, adxLen), lookahead=barmerge.lookahead_off)  // Wilder's ATR (RMA of TR)
     [_o, _h, _l, _c, e, a]
 
 [oM15, hM15, lM15, cM15, eM15, aM15] = f_strength("15")

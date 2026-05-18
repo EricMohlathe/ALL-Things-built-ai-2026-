@@ -39,6 +39,10 @@ public:
      {
       m_c.Erase(0x00000000);
       int bins = ArraySize(bin_vol);
+      // Clamp to a safe upper bound — pixel-fill is O(bins) per render and
+      // unbounded bin counts can stall the chart on attach.
+      const int MaxBins = 500;
+      if(bins > MaxBins) bins = MaxBins;
       if(bins == 0) { m_c.Update(); return; }
       double maxV = 0; for(int i = 0; i < bins; i++) if(bin_vol[i] > maxV) maxV = bin_vol[i];
       if(maxV <= 0) maxV = 1;

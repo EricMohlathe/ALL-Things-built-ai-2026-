@@ -15,6 +15,7 @@ private:
    int               m_h;
    string            m_name;
    int               m_corner;
+   bool              m_ready;  // tracks successful CreateBitmapLabel
 
    uint              C(const color clr, const uchar a = OF_ALPHA_HEAVY)
      { return ColorToARGB(clr, a); }
@@ -54,21 +55,25 @@ public:
                           const int corner = OF_DASH_CORNER,
                           const int x = OF_DASH_X, const int y = OF_DASH_Y)
      {
-      m_name = name; m_w = width; m_h = height; m_corner = corner;
+      m_name = name; m_w = width; m_h = height; m_corner = corner; m_ready = false;
       if(!m_c.CreateBitmapLabel(name, x, y, width, height, COLOR_FORMAT_ARGB_NORMALIZE))
          return(false);
       ObjectSetInteger(0, name, OBJPROP_CORNER, corner);
       ObjectSetInteger(0, name, OBJPROP_SELECTABLE, false);
       ObjectSetInteger(0, name, OBJPROP_HIDDEN, true);
+      m_ready = true;
       Clear();
       m_c.Update();
       return(true);
      }
 
-   void              Destroy() { m_c.Destroy(); ObjectDelete(0, m_name); }
+   bool              IsReady() const { return m_ready; }
+
+   void              Destroy() { m_c.Destroy(); ObjectDelete(0, m_name); m_ready = false; }
 
    void              Clear()
      {
+      if(!m_ready) return;
       m_c.Erase(0x00000000);
       // panel
       RoundRect(0, 0, m_w, m_h, 8, C(OF_BG, OF_ALPHA_HEAVY));
@@ -80,12 +85,14 @@ public:
 
    void              Title(const string text, const int y = 10)
      {
+      if(!m_ready) return;
       m_c.FontSet(OF_FONT_TITLE, -13 * 10, FW_SEMIBOLD);
       m_c.TextOut(OF_DASH_PAD, y, text, C(OF_TEXT));
      }
 
    void              Row(const int idx, const string label, const string value, const color dot = OF_DIM)
      {
+      if(!m_ready) return;
       int y = 36 + idx * OF_DASH_ROW_H;
       m_c.FillCircle(OF_DASH_PAD + 4, y + 7, 4, C(dot));
       m_c.FontSet(OF_FONT, -OF_FONT_SIZE * 10, FW_NORMAL);
@@ -93,8 +100,8 @@ public:
       m_c.TextOut(m_w - OF_DASH_PAD - 4 - m_c.TextWidth(value), y, value, C(OF_TEXT));
      }
 
-   void              Sep(const int y) { m_c.LineHorizontal(8, m_w - 8, y, C(OF_LINE, OF_ALPHA_LIGHT)); }
-   void              Update() { m_c.Update(); }
+   void              Sep(const int y) { if(m_ready) m_c.LineHorizontal(8, m_w - 8, y, C(OF_LINE, OF_ALPHA_LIGHT)); }
+   void              Update() { if(m_ready) m_c.Update(); }
    CCanvas*          Canvas() { return GetPointer(m_c); }
   };
 //+------------------------------------------------------------------+

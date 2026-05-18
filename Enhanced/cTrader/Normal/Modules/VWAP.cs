@@ -29,6 +29,8 @@ namespace GodmodeOfea.Enhanced
         }
         public double Upper(double k = 1.0) => Value + k * Sd;
         public double Lower(double k = 1.0) => Value - k * Sd;
-        public double ZScore(double price) => Sd > 0 ? (price - Value) / Sd : 0;
+        // Guard against price=0 (quote disconnect) — would otherwise return
+        // -vwap/sd, a false strong-negative signal feeding into the prob bar.
+        public double ZScore(double price) => (price > 0 && Sd > 0) ? (price - Value) / Sd : 0;
     }
 }
