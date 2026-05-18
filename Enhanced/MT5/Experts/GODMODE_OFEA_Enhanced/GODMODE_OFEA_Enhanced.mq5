@@ -56,16 +56,24 @@ COF_PriceAction      g_pa;
 COF_SweepDetector    g_sw;
 COF_PoolResilience   g_pool;
 COF_ProbabilityScore g_prob;
+int                  g_hAtr = INVALID_HANDLE;
 
 int OnInit()
 {
    g_ba.Init();
    g_dE.Init(BarDeltaLookback);
    g_reg.Init();
+   g_vwap.Reset(TimeCurrent());
+   g_hAtr = iATR(_Symbol, _Period, 14);
+   if (g_hAtr == INVALID_HANDLE) return INIT_FAILED;
    PrintFormat("GODMODE_OFEA Enhanced initialised — mode=%s κ=%.2f", EnumToString(OpMode), KellyKappa);
    return INIT_SUCCEEDED;
 }
-void OnDeinit(const int r) { PrintFormat("GODMODE_OFEA Enhanced shutdown (reason=%d)", r); }
+void OnDeinit(const int r)
+{
+   if (g_hAtr != INVALID_HANDLE) IndicatorRelease(g_hAtr);
+   PrintFormat("GODMODE_OFEA Enhanced shutdown (reason=%d)", r);
+}
 
 void OnTick()
 {
@@ -102,7 +110,8 @@ void OnBarClose()
    CopyHigh(_Symbol, _Period, 0, 50, H);
    CopyLow(_Symbol, _Period, 0, 50, L);
    CopyClose(_Symbol, _Period, 0, 50, C);
-   double atrV[1]; CopyBuffer(iATR(_Symbol, _Period, 14), 0, 0, 1, atrV);
+   double atrV[1];
+   if (CopyBuffer(g_hAtr, 0, 0, 1, atrV) < 1) atrV[0] = 0;
    g_pa.Update(H, L, C, 20, 0.10, atrV[0]);
 
    // 5) Composite probability.

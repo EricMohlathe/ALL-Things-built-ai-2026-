@@ -21,13 +21,14 @@ sd  = ta.stdev(bd, lookback)
 z   = sd > 0 ? (bd - mu) / sd : 0
 climax = math.abs(z) >= climaxZ
 
-// delta flip detection (last `flipBars` bars)
+// delta flip detection (last `flipBars` bars) — early-exit on first flip
 flipped = false
+s1 = math.sign(bd)
 for i = 1 to flipBars
-    s1 = math.sign(bd)
     s0 = math.sign(bd[i])
     if s1 != 0 and s0 != 0 and s1 != s0
         flipped := true
+        break
 
 // CVD-price divergence detection
 pLL = ta.lowest(low,  20) == low

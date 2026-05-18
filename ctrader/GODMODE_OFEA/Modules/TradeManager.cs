@@ -12,7 +12,7 @@ namespace GodmodeOfea
 {
     public sealed class TradeManager
     {
-        private readonly Algo _robot;
+        private readonly Robot _robot;
         private readonly Symbol _symbol;
         private readonly string _label;
         private readonly bool _partialClose;
@@ -20,7 +20,7 @@ namespace GodmodeOfea
         private readonly bool _useTrail, _exitAtPoc;
         private readonly AverageTrueRange _atr;
 
-        public TradeManager(Algo robot, Symbol symbol, string label,
+        public TradeManager(Robot robot, Symbol symbol, string label,
             bool partial, double partialPct, double partialAtR, double beAtR,
             bool useTrail, double trailAtr, bool exitPoc, AverageTrueRange atr)
         {

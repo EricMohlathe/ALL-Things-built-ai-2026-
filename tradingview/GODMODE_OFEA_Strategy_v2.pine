@@ -28,7 +28,7 @@ EnableShorts = input.bool(true,  "Enable shorts", group=gM)
 
 gD   = "Delta source (mirrors dashboard)"
 deltaSrc = input.string("AUTO","Bar-delta source",
-     options=["AUTO","volumedelta() (best)","Lower-TF aggregation","Close-position proxy"], group=gD)
+     options=["AUTO","Lower-TF aggregation","Close-position proxy"], group=gD)
 subTF    = input.timeframe("1","Lower-TF for sub-bar aggregation", group=gD)
 
 gS   = "Sessions (SAST)"
@@ -82,10 +82,8 @@ En03_CVDBear  = input.bool(true,"03 CVD Bear Div", group=gZ)
 En04_CVDBull  = input.bool(true,"04 CVD Bull Div", group=gZ)
 
 // ── DELTA SOURCE CHAIN (same as 01_GODMODE_Dashboard) ──────
-[trueBuy, trueSell] = ta.requestVolumeDelta(subTF, "1m")
-deltaVD = trueBuy - trueSell
-trueVD_av = not na(deltaVD) and deltaVD != 0
-
+// ta.requestVolumeDelta() isn't a v6 built-in and would compile-error here.
+// Use sub-TF aggregation + close-position proxy as in 01_GODMODE_Dashboard.
 subD() =>
     sr = high - low
     sw = sr > 0 ? (close - low) / sr : 0.5
@@ -100,7 +98,7 @@ rng_ = high - low
 bw   = rng_ > 0 ? (close - low) / rng_ : 0.5
 proxy = volume * (bw - (1.0 - bw))
 
-barDelta = deltaSrc == "AUTO" ? (trueVD_av ? deltaVD : array.size(subArr) > 0 ? sumSub : proxy) : deltaSrc == "volumedelta() (best)" ? nz(deltaVD, proxy) : deltaSrc == "Lower-TF aggregation" ? (array.size(subArr) > 0 ? sumSub : proxy) : proxy
+barDelta = deltaSrc == "AUTO" ? (array.size(subArr) > 0 ? sumSub : proxy) : deltaSrc == "Lower-TF aggregation" ? (array.size(subArr) > 0 ? sumSub : proxy) : proxy
 
 // CVD with daily reset.
 isNewDay = ta.change(time("D")) != 0
@@ -222,10 +220,10 @@ sessionOk = (session_ == "LDN_MAIN" and TradeLDN) or (session_ == "NY_MAIN" and 
 inBlackout = session_ == "NY_BLACKOUT"
 
 // ── HTF ALIGNMENT ───────────────────────────────────────────
-h4C = request.security(syminfo.tickerid, H4TF, close)
-h4E = request.security(syminfo.tickerid, H4TF, ta.ema(close, 20))
-d1C = request.security(syminfo.tickerid, D1TF, close)
-d1E = request.security(syminfo.tickerid, D1TF, ta.ema(close, 50))
+h4C = request.security(syminfo.tickerid, H4TF, close,             barmerge.gaps_off, barmerge.lookahead_off)
+h4E = request.security(syminfo.tickerid, H4TF, ta.ema(close, 20), barmerge.gaps_off, barmerge.lookahead_off)
+d1C = request.security(syminfo.tickerid, D1TF, close,             barmerge.gaps_off, barmerge.lookahead_off)
+d1E = request.security(syminfo.tickerid, D1TF, ta.ema(close, 50), barmerge.gaps_off, barmerge.lookahead_off)
 h4B = h4C > h4E * 1.0001 ? "BULL" : h4C < h4E * 0.9999 ? "BEAR" : "NEUTRAL"
 d1B = d1C > d1E * 1.0001 ? "BULL" : d1C < d1E * 0.9999 ? "BEAR" : "NEUTRAL"
 htf = h4B == d1B ? h4B : "NEUTRAL"

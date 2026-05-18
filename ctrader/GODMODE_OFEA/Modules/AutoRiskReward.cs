@@ -22,7 +22,7 @@ namespace GodmodeOfea
 {
     public sealed class AutoRiskReward
     {
-        private readonly Algo _robot;
+        private readonly Robot _robot;
         private readonly Chart _chart;
         private readonly Symbol _symbol;
         private readonly bool _showCurrencyValue;
@@ -38,7 +38,7 @@ namespace GodmodeOfea
         private string _tpRectKey = string.Empty;
         private string _labelKey = string.Empty;
 
-        public AutoRiskReward(Algo robot, Chart chart, Symbol symbol,
+        public AutoRiskReward(Robot robot, Chart chart, Symbol symbol,
                               int fontSize = 11, int lineWidth = 1, bool showCurrencyValue = true)
         {
             _robot = robot;

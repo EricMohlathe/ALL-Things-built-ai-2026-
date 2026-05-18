@@ -36,7 +36,7 @@ public:
      {
       m_sym = sym; m_magic = magic;
       m_riskPct = MathMin(riskPct, 2.0);   // brief §12 rule 2 hard cap
-      m_riskHalfPct = riskHalf;
+      m_riskHalfPct = MathMin(riskHalf, 2.0);  // §12 rule 2 applies to half-mode too
       m_maxDDPct = maxDD;
       m_maxConsecLosses = maxConsec;
       m_maxSpreadMult = spreadMult;
@@ -64,8 +64,8 @@ public:
       m_spreadIdx = (m_spreadIdx + 1) % 100;
       if(m_spreadIdx == 0) m_spreadFilled = true;
 
-      // recompute median
-      const int n = m_spreadFilled ? 100 : (m_spreadIdx == 0 ? 1 : m_spreadIdx);
+      // recompute median — sample count is the post-increment idx, or 100 once filled
+      const int n = m_spreadFilled ? 100 : (m_spreadIdx > 0 ? m_spreadIdx : 1);
       double sorted[100]; ArrayInitialize(sorted, 0);
       for(int i = 0; i < n; i++) sorted[i] = m_spreadHist[i];
       ArraySort(sorted);

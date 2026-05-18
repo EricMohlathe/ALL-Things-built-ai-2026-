@@ -18,9 +18,18 @@ input bool    ShowStructure = true;
 COF_PriceAction g_pa;
 string pref = "GME_PA_";
 datetime lastBar = 0;
+int      g_hAtr = INVALID_HANDLE;
 
-int OnInit() { return INIT_SUCCEEDED; }
-void OnDeinit(const int reason) { ObjectsDeleteAll(0, pref); }
+int OnInit()
+{
+   g_hAtr = iATR(_Symbol, _Period, 14);
+   return g_hAtr == INVALID_HANDLE ? INIT_FAILED : INIT_SUCCEEDED;
+}
+void OnDeinit(const int reason)
+{
+   if (g_hAtr != INVALID_HANDLE) IndicatorRelease(g_hAtr);
+   ObjectsDeleteAll(0, pref);
+}
 
 int OnCalculate(const int rates_total, const int prev_calculated,
                 const datetime &time[], const double &open[], const double &high[],
@@ -36,7 +45,8 @@ int OnCalculate(const int rates_total, const int prev_calculated,
    CopyHigh(_Symbol, _Period, 0, 50, H);
    CopyLow(_Symbol, _Period, 0, 50, L);
    CopyClose(_Symbol, _Period, 0, 50, C);
-   double atrV[1]; CopyBuffer(iATR(_Symbol, _Period, 14), 0, 0, 1, atrV);
+   double atrV[1];
+   if (CopyBuffer(g_hAtr, 0, 0, 1, atrV) < 1) atrV[0] = 0;
    g_pa.Update(H, L, C, SwingLookback, TolEqualATR, atrV[0]);
 
    ObjectsDeleteAll(0, pref);

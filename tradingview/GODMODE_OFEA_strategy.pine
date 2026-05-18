@@ -145,11 +145,11 @@ sastMin := sastMin >= 1440 ? sastMin - 1440 : sastMin < 0 ? sastMin + 1440 : sas
 session_ = sastMin >= 660 and sastMin < 930 ? "LDN_MAIN" : sastMin >= 1050 and sastMin < 1260 ? "NY_MAIN" : sastMin >= 930 and sastMin < 930 + NYBlackout ? "NY_BLACKOUT" : "OTHER"
 sessionOk = (session_ == "LDN_MAIN" and TradeLDN) or (session_ == "NY_MAIN" and TradeNY)
 
-// HTF alignment.
-h4C = request.security(syminfo.tickerid, HTFBias_TF, close)
-h4E = request.security(syminfo.tickerid, HTFBias_TF, ta.ema(close, 20))
-d1C = request.security(syminfo.tickerid, HTFConf_TF, close)
-d1E = request.security(syminfo.tickerid, HTFConf_TF, ta.ema(close, 50))
+// HTF alignment — barmerge.lookahead_off prevents future-leak / repaint.
+h4C = request.security(syminfo.tickerid, HTFBias_TF, close,             barmerge.gaps_off, barmerge.lookahead_off)
+h4E = request.security(syminfo.tickerid, HTFBias_TF, ta.ema(close, 20), barmerge.gaps_off, barmerge.lookahead_off)
+d1C = request.security(syminfo.tickerid, HTFConf_TF, close,             barmerge.gaps_off, barmerge.lookahead_off)
+d1E = request.security(syminfo.tickerid, HTFConf_TF, ta.ema(close, 50), barmerge.gaps_off, barmerge.lookahead_off)
 h4Bias = h4C > h4E ? "BULL" : "BEAR"
 d1Bias = d1C > d1E ? "BULL" : "BEAR"
 htf    = h4Bias == d1Bias ? h4Bias : "NEUTRAL"

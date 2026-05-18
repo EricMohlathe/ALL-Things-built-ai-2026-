@@ -238,10 +238,10 @@ sessionOk = (session_ == "LDN_MAIN" and TradeLDN) or (session_ == "NY_MAIN" and 
 inBlackout = session_ == "NY_BLACKOUT"
 
 // ── HTF ALIGNMENT ───────────────────────────────────────────
-h4C = request.security(syminfo.tickerid, H4TF, close)
-h4E = request.security(syminfo.tickerid, H4TF, ta.ema(close, 20))
-d1C = request.security(syminfo.tickerid, D1TF, close)
-d1E = request.security(syminfo.tickerid, D1TF, ta.ema(close, 50))
+h4C = request.security(syminfo.tickerid, H4TF, close,             barmerge.gaps_off, barmerge.lookahead_off)
+h4E = request.security(syminfo.tickerid, H4TF, ta.ema(close, 20), barmerge.gaps_off, barmerge.lookahead_off)
+d1C = request.security(syminfo.tickerid, D1TF, close,             barmerge.gaps_off, barmerge.lookahead_off)
+d1E = request.security(syminfo.tickerid, D1TF, ta.ema(close, 50), barmerge.gaps_off, barmerge.lookahead_off)
 h4B = h4C > h4E * 1.0001 ? "BULL" : h4C < h4E * 0.9999 ? "BEAR" : "NEUTRAL"
 d1B = d1C > d1E * 1.0001 ? "BULL" : d1C < d1E * 0.9999 ? "BEAR" : "NEUTRAL"
 htfCombined = h4B == d1B ? h4B : "NEUTRAL"

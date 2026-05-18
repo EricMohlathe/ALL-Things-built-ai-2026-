@@ -33,6 +33,7 @@ namespace cAlgo.Robots
         private PoolResilience  _pool;
         private ProbabilityScore _prob;
         private DateTime _lastBar;
+        private AverageTrueRange _atr14;
 
         protected override void OnStart()
         {
@@ -44,6 +45,7 @@ namespace cAlgo.Robots
             _sw   = new SweepDetector();
             _pool = new PoolResilience();
             _prob = new ProbabilityScore();
+            _atr14 = Indicators.AverageTrueRange(14, MovingAverageType.Simple);
             Print($"GODMODE_OFEA Enhanced initialised — mode={OpMode} κ={KellyKappa:F2}");
         }
 
@@ -85,7 +87,7 @@ namespace cAlgo.Robots
                 L[i] = Bars.LowPrices[idx];
                 C[i] = Bars.ClosePrices[idx];
             }
-            double atr = Indicators.AverageTrueRange(14, MovingAverageType.Simple).Result.LastValue;
+            double atr = _atr14.Result.LastValue;
             _pa.Update(H, L, C, 20, 0.10, atr);
 
             double pct = ComputeCompositeProbability();

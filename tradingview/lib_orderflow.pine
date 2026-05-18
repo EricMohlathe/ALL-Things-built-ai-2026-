@@ -60,10 +60,10 @@ export sast_session() =>
 
 // §11.7 — Dual-EMA HTF bias.
 export htf_bias(simple string biasTF, simple string confTF) =>
-    h4C = request.security(syminfo.tickerid, biasTF, close)
-    h4E = request.security(syminfo.tickerid, biasTF, ta.ema(close, 20))
-    d1C = request.security(syminfo.tickerid, confTF, close)
-    d1E = request.security(syminfo.tickerid, confTF, ta.ema(close, 50))
+    h4C = request.security(syminfo.tickerid, biasTF, close,             barmerge.gaps_off, barmerge.lookahead_off)
+    h4E = request.security(syminfo.tickerid, biasTF, ta.ema(close, 20), barmerge.gaps_off, barmerge.lookahead_off)
+    d1C = request.security(syminfo.tickerid, confTF, close,             barmerge.gaps_off, barmerge.lookahead_off)
+    d1E = request.security(syminfo.tickerid, confTF, ta.ema(close, 50), barmerge.gaps_off, barmerge.lookahead_off)
     h4B = h4C > h4E * 1.0001 ? "BULL" : h4C < h4E * 0.9999 ? "BEAR" : "NEUTRAL"
     d1B = d1C > d1E * 1.0001 ? "BULL" : d1C < d1E * 0.9999 ? "BEAR" : "NEUTRAL"
     h4B == d1B ? h4B : "NEUTRAL"

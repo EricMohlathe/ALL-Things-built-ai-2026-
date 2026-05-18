@@ -9,12 +9,12 @@ namespace GodmodeOfea
 {
     public sealed class NotificationCenter
     {
-        private readonly Algo _robot;
+        private readonly Robot _robot;
         private readonly bool _sound, _push, _email, _enable;
         private readonly Dictionary<string, DateTime> _lastBarFired = new();
         private readonly Func<DateTime> _currentBarTime;
 
-        public NotificationCenter(Algo robot, bool enable, bool sound, bool push, bool email,
+        public NotificationCenter(Robot robot, bool enable, bool sound, bool push, bool email,
             Func<DateTime> currentBarTime)
         {
             _robot = robot; _enable = enable; _sound = sound; _push = push; _email = email;

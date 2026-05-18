@@ -49,8 +49,8 @@ COF_ProbabilityScore g_prob;
 string g_pref = "GME_DASH_";
 datetime g_lastBar = 0;
 
-// HTF EMA buffers (M15/H1/H4/D1)
-int    h_emaM15, h_emaH1, h_emaH4, h_emaD1;
+// HTF EMA buffers (M15/H1/H4/D1) + reused ATR handle
+int    h_emaM15, h_emaH1, h_emaH4, h_emaD1, h_atr;
 double bufM15[1], bufH1[1], bufH4[1], bufD1[1];
 
 int OnInit()
@@ -58,11 +58,17 @@ int OnInit()
    g_ba.Init();
    g_d.Init();
    g_reg.Init();
+   g_vwap.Reset(TimeCurrent());          // initialise VWAP state on attach
 
-   h_emaM15 = iMA(_Symbol, PERIOD_M15, 20, 0, MODE_EMA, PRICE_CLOSE);
-   h_emaH1  = iMA(_Symbol, PERIOD_H1,  20, 0, MODE_EMA, PRICE_CLOSE);
-   h_emaH4  = iMA(_Symbol, PERIOD_H4,  20, 0, MODE_EMA, PRICE_CLOSE);
-   h_emaD1  = iMA(_Symbol, PERIOD_D1,  50, 0, MODE_EMA, PRICE_CLOSE);
+   h_emaM15 = iMA (_Symbol, PERIOD_M15, 20, 0, MODE_EMA, PRICE_CLOSE);
+   h_emaH1  = iMA (_Symbol, PERIOD_H1,  20, 0, MODE_EMA, PRICE_CLOSE);
+   h_emaH4  = iMA (_Symbol, PERIOD_H4,  20, 0, MODE_EMA, PRICE_CLOSE);
+   h_emaD1  = iMA (_Symbol, PERIOD_D1,  50, 0, MODE_EMA, PRICE_CLOSE);
+   h_atr    = iATR(_Symbol, _Period, 14);
+
+   if (h_emaM15 == INVALID_HANDLE || h_emaH1 == INVALID_HANDLE ||
+       h_emaH4  == INVALID_HANDLE || h_emaD1 == INVALID_HANDLE || h_atr == INVALID_HANDLE)
+      return INIT_FAILED;
 
    EventSetTimer(1);
    return INIT_SUCCEEDED;
@@ -76,6 +82,7 @@ void OnDeinit(const int reason)
    IndicatorRelease(h_emaH1);
    IndicatorRelease(h_emaH4);
    IndicatorRelease(h_emaD1);
+   IndicatorRelease(h_atr);
 }
 
 int OnCalculate(const int rates_total, const int prev_calculated,
@@ -111,9 +118,23 @@ int OnCalculate(const int rates_total, const int prev_calculated,
    CopyHigh(_Symbol, _Period, 0, 30, H);
    CopyLow(_Symbol, _Period, 0, 30, L);
    CopyClose(_Symbol, _Period, 0, 30, C);
-   double atr = iATR(_Symbol, _Period, 14);
-   double atrVal[1]; CopyBuffer(iATR(_Symbol, _Period, 14), 0, 0, 1, atrVal);
+   double atrVal[1];
+   if (CopyBuffer(h_atr, 0, 0, 1, atrVal) < 1) atrVal[0] = 0;
    g_pa.Update(H, L, C, 20, 0.10, atrVal[0]);
+
+   // Drive the 6-precondition sweep detector from the modules we've already
+   // computed. We don't have HTF-level proximity or absorption directly here
+   // (the full EA does), so pass the conservative subset; this still gives a
+   // meaningful preconditionsPassed count for the probability bar.
+   int    dir       = g_d.st.cvdSlope > 0 ? +1 : -1;
+   double extreme   = dir > 0 ? high[0] : low[0];
+   bool   eqLevel   = g_pa.st.equalHighsCluster || g_pa.st.equalLowsCluster;
+   bool   inKZ      = false;   // bound to OF_SessionGate in EA; conservative false here
+   bool   htfNear   = false;   // bound to OF_HTFAlignment in EA
+   bool   momExh    = (g_d.st.regime == CVD_DIVERGENT) || g_d.st.climax;
+   bool   absorbed  = g_reg.st.current == OFR_ABSORPTION;
+   bool   flipped   = g_d.st.deltaFlipped;
+   g_sw.Evaluate(eqLevel, htfNear, inKZ, momExh, absorbed, flipped, dir, extreme, 0);
 
    Render(rates_total, time, high, low, close);
    return rates_total;
@@ -243,7 +264,8 @@ void DrawHTFStrength()
 
 void DrawTPSLLevels(double price, double high, double low, datetime t)
 {
-   double atrV[1]; CopyBuffer(iATR(_Symbol, _Period, 14), 0, 0, 1, atrV);
+   double atrV[1];
+   if (CopyBuffer(h_atr, 0, 0, 1, atrV) < 1) return;
    double atr = atrV[0];
    if (atr <= 0) return;
 

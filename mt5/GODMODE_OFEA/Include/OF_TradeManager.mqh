@@ -110,7 +110,10 @@ public:
             const double newSl = m_dir == DIR_LONG ? cur - atr * m_trailAtrMult
                                                    : cur + atr * m_trailAtrMult;
             const double curSl = PositionGetDouble(POSITION_SL);
-            const bool tighter = m_dir == DIR_LONG ? newSl > curSl : newSl < curSl || curSl == 0;
+            // Symmetric tighter-or-unset check for both directions (precedence-safe).
+            const bool tighter = (m_dir == DIR_LONG)
+                                 ? (curSl == 0 || newSl > curSl)
+                                 : (curSl == 0 || newSl < curSl);
             if(tighter) m_trade.PositionModify(m_pos, newSl, PositionGetDouble(POSITION_TP));
            }
         }
