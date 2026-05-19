@@ -96,15 +96,22 @@ pub struct ReplayConfig {
 /// Drive an engine through a sequence of bars. Each entry's `bars` slice is
 /// expected to be newest-first (`bars[0]` = the bar just closed). The
 /// helper builds those slices for you when given a flat oldest-first input.
-pub fn replay_bars(engine: &mut Engine, bars_chronological: &[Bar], cfg: ReplayConfig) -> Vec<EngineEvent> {
+///
+/// Implementation note: we maintain a single newest-first `view` buffer and
+/// push each incoming bar to the *front* (via insertion at index 0). This
+/// keeps the engine-facing slice in the correct orientation without
+/// rebuilding it on every bar — the previous implementation collected a new
+/// reversed `Vec` per bar, costing O(N²).
+pub fn replay_bars(
+    engine: &mut Engine,
+    bars_chronological: &[Bar],
+    cfg: ReplayConfig,
+) -> Vec<EngineEvent> {
     let mut all_events = Vec::new();
-    // Walk forward: at index i the closed bar is bars_chronological[i] and
-    // history is bars_chronological[..=i] reversed.
-    let mut window: Vec<Bar> = Vec::with_capacity(bars_chronological.len());
+    // Newest-first buffer: `view[0]` is always the bar just closed.
+    let mut view: Vec<Bar> = Vec::with_capacity(bars_chronological.len());
     for b in bars_chronological {
-        window.push(b.clone());
-        let len = window.len();
-        let view: Vec<Bar> = window.iter().rev().cloned().collect();
+        view.insert(0, *b);
         let input = BarCloseInput {
             bars: &view,
             h4_closes: &[],
@@ -115,7 +122,6 @@ pub fn replay_bars(engine: &mut Engine, bars_chronological: &[Bar], cfg: ReplayC
         };
         let mut events = engine.on_bar_close(input);
         all_events.append(&mut events);
-        let _ = len;
     }
     all_events
 }

@@ -19,7 +19,7 @@ use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 
 use crate::common::{
-    AccountState, ActiveModel, GateResult, HtfBias, MarketState, OpMode, OrderIntent, Priority,
+    AccountState, ActiveModel, GateResult, MarketState, OpMode, OrderIntent, Priority,
     Session, SetupCandidate, SetupId, Tick, TradeDir, VpLoc,
 };
 use crate::dashboard::DashboardSnapshot;
@@ -550,7 +550,3 @@ impl From<GateOutcome> for EngineEvent {
         EngineEvent::Gate(g)
     }
 }
-
-// Suppress an unused-import warning on platforms where HtfBias is only used
-// transitively via `combined_bias`.
-const _: HtfBias = HtfBias::Neutral;

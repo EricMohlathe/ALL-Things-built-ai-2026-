@@ -4,6 +4,13 @@
 //! across all three builds so any one journal can be analysed by the same
 //! ML pipeline.
 
+// The `Default` impls below are kept as explicit `impl Default` blocks rather
+// than `#[derive(Default)]` on the enums in `common.rs`, because those enums
+// are the public conformance surface mirrored across the MT5 / cTrader builds —
+// we don't want a `#[default]` attribute encoded into their derived metadata.
+// Suppress clippy's derivable_impls lint locally.
+#![allow(clippy::derivable_impls)]
+
 use std::fs::{File, OpenOptions};
 use std::io::{BufWriter, Write};
 use std::path::{Path, PathBuf};

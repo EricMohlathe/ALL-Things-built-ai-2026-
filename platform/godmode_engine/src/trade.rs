@@ -40,6 +40,7 @@ pub struct TradeManager {
 }
 
 impl TradeManager {
+    #[allow(clippy::too_many_arguments)]
     pub fn new(
         label: impl Into<String>,
         partial_close: bool,

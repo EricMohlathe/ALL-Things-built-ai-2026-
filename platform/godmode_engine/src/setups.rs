@@ -30,6 +30,7 @@ pub struct DetectorContext<'a> {
 
 /// Build a candidate with SL 2 ticks beyond the aggression candle and TP at
 /// either an explicit target or the POC. Mirrors `Build()` in cTrader.
+#[allow(clippy::too_many_arguments)]
 fn build(
     sym_bid: f64,
     sym_ask: f64,
