@@ -22,7 +22,7 @@
 #property indicator_style4  STYLE_DASHDOT
 #property indicator_style5  STYLE_DASHDOT
 
-#include "../Include/OF_VWAP.mqh"
+#include "../../Include/OF_VWAP.mqh"
 
 input double K_Inner = 1.0;
 input double K_Outer = 2.0;
@@ -46,10 +46,16 @@ int OnCalculate(const int rates_total, const int prev_calculated,
                 const double &low[], const double &close[],
                 const long &tick_volume[], const long &volume[], const int &spread[])
 {
+   // Prior version stepped through `start = prev_calculated - 1`, so the
+   // forming bar's typical price was added to cumPV on every tick — VWAP
+   // would drift toward the latest price and σ-bands would inflate every
+   // few seconds. We now advance the session VWAP accumulator only on
+   // confirmed bars (≤ rates_total-2) and paint the forming bar from the
+   // already-committed state.
    int start = prev_calculated > 0 ? prev_calculated - 1 : 0;
-   if (start == 0) g_vwap.Reset(time[0]);
+   if (start == 0 && rates_total > 0) g_vwap.Reset(time[0]);
 
-   for (int i = start; i < rates_total; i++)
+   for (int i = start; i < rates_total - 1; i++)
    {
       double typ = (high[i] + low[i] + close[i]) / 3.0;
       g_vwap.Update(typ, (double)tick_volume[i], time[i]);
@@ -58,6 +64,15 @@ int OnCalculate(const int rates_total, const int prev_calculated,
       bL1[i] = g_vwap.Lower(K_Inner);
       bU2[i] = g_vwap.Upper(K_Outer);
       bL2[i] = g_vwap.Lower(K_Outer);
+   }
+   if (rates_total > 0)
+   {
+      const int iF = rates_total - 1;
+      bV[iF]  = g_vwap.VWAP();
+      bU1[iF] = g_vwap.Upper(K_Inner);
+      bL1[iF] = g_vwap.Lower(K_Inner);
+      bU2[iF] = g_vwap.Upper(K_Outer);
+      bL2[iF] = g_vwap.Lower(K_Outer);
    }
    return rates_total;
 }

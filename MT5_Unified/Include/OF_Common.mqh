@@ -193,13 +193,40 @@ double NormaliseLots(const string sym, const double raw)
    return NormalizeDouble(lots, 2);
   }
 
-//--- ATR helper using built-in indicator handle cache
+//--- ATR helper using built-in indicator handle cache.
+//    NOTE: prior implementation called iATR() on every invocation without
+//    releasing the handle — a hard resource leak that ran the terminal out
+//    of indicator slots within hours of live trading. We now cache up to
+//    16 (symbol|tf|period) tuples and reuse the handle across calls.
+struct OF_AtrCacheEntry { string key; int handle; };
+OF_AtrCacheEntry g_of_atr_cache[16];
+int              g_of_atr_cache_n = 0;
+
 double ATR(const string sym, const ENUM_TIMEFRAMES tf, const int period)
   {
-   int h = iATR(sym, tf, period);
-   if(h == INVALID_HANDLE) return 0.0;
+   const string key = sym + "|" + IntegerToString((int)tf) + "|" + IntegerToString(period);
+   int h = INVALID_HANDLE;
+   for(int i = 0; i < g_of_atr_cache_n; i++)
+      if(g_of_atr_cache[i].key == key) { h = g_of_atr_cache[i].handle; break; }
+   if(h == INVALID_HANDLE)
+     {
+      h = iATR(sym, tf, period);
+      if(h == INVALID_HANDLE) return 0.0;
+      if(g_of_atr_cache_n < 16)
+        {
+         g_of_atr_cache[g_of_atr_cache_n].key    = key;
+         g_of_atr_cache[g_of_atr_cache_n].handle = h;
+         g_of_atr_cache_n++;
+        }
+      // Newly-created handles need a moment to populate; treat 0-reads as
+      // "not ready" rather than zero ATR (would have NaN-divided downstream).
+     }
+   // BarsCalculated guard: prevents reading a half-initialised buffer that
+   // would otherwise return uninitialised memory on first attach.
+   if(BarsCalculated(h) <= 0) return 0.0;
    double buf[]; ArraySetAsSeries(buf, true);
    if(CopyBuffer(h, 0, 0, 1, buf) <= 0) return 0.0;
+   if(!MathIsValidNumber(buf[0]) || buf[0] < 0) return 0.0;
    return buf[0];
   }
 

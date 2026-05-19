@@ -31,12 +31,19 @@ public:
       if(m_hD1 != INVALID_HANDLE) IndicatorRelease(m_hD1);
      }
 
+   // HTF bias must read CLOSED bars (index 1) — the current forming bar
+   // (index 0) repaints intra-period and would flip BIAS between ticks,
+   // poisoning the F3 gate. Brief §11.7 explicitly: "evaluated at close".
+   // Also require BarsCalculated() to avoid reading uninitialised EMA buffer.
    ENUM_HTF_BIAS H4Bias()
      {
+      if(m_hH4 == INVALID_HANDLE || BarsCalculated(m_hH4) <= 1) return BIAS_NEUTRAL;
       double buf[]; ArraySetAsSeries(buf, true);
-      if(CopyBuffer(m_hH4, 0, 0, 1, buf) <= 0) return BIAS_NEUTRAL;
+      if(CopyBuffer(m_hH4, 0, 1, 1, buf) <= 0) return BIAS_NEUTRAL;
+      if(!MathIsValidNumber(buf[0])) return BIAS_NEUTRAL;
       const double ema = buf[0];
-      const double cls = iClose(m_sym, PERIOD_H4, 0);
+      const double cls = iClose(m_sym, PERIOD_H4, 1);
+      if(cls <= 0 || ema <= 0) return BIAS_NEUTRAL;
       if(cls > ema * 1.0001) return BIAS_BULL;
       if(cls < ema * 0.9999) return BIAS_BEAR;
       return BIAS_NEUTRAL;
@@ -44,10 +51,13 @@ public:
 
    ENUM_HTF_BIAS D1Bias()
      {
+      if(m_hD1 == INVALID_HANDLE || BarsCalculated(m_hD1) <= 1) return BIAS_NEUTRAL;
       double buf[]; ArraySetAsSeries(buf, true);
-      if(CopyBuffer(m_hD1, 0, 0, 1, buf) <= 0) return BIAS_NEUTRAL;
+      if(CopyBuffer(m_hD1, 0, 1, 1, buf) <= 0) return BIAS_NEUTRAL;
+      if(!MathIsValidNumber(buf[0])) return BIAS_NEUTRAL;
       const double ema = buf[0];
-      const double cls = iClose(m_sym, PERIOD_D1, 0);
+      const double cls = iClose(m_sym, PERIOD_D1, 1);
+      if(cls <= 0 || ema <= 0) return BIAS_NEUTRAL;
       if(cls > ema * 1.0001) return BIAS_BULL;
       if(cls < ema * 0.9999) return BIAS_BEAR;
       return BIAS_NEUTRAL;

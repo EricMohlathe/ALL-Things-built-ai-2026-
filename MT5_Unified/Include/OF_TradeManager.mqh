@@ -111,9 +111,13 @@ public:
                                                    : cur + atr * m_trailAtrMult;
             const double curSl = PositionGetDouble(POSITION_SL);
             // Symmetric tighter-or-unset check for both directions (precedence-safe).
+            // Use epsilon comparison instead of ==0 — broker can return a tiny
+            // non-zero SL after Buy(... ,0, ...) due to FP normalisation, which
+            // would falsely satisfy "unset" and let us widen the stop.
+            const bool slUnset = curSl < _Point;
             const bool tighter = (m_dir == DIR_LONG)
-                                 ? (curSl == 0 || newSl > curSl)
-                                 : (curSl == 0 || newSl < curSl);
+                                 ? (slUnset || newSl > curSl)
+                                 : (slUnset || newSl < curSl);
             if(tighter) m_trade.PositionModify(m_pos, newSl, PositionGetDouble(POSITION_TP));
            }
         }

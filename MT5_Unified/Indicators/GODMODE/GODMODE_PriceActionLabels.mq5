@@ -7,7 +7,7 @@
 #property indicator_plots   0
 #property strict
 
-#include "../Include/OF_PriceAction.mqh"
+#include "../../Include/OF_PriceAction.mqh"
 
 input int     SwingLookback = 20;
 input double  TolEqualATR   = 0.10;

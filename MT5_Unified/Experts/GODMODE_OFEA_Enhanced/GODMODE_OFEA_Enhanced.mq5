@@ -39,7 +39,10 @@
 #include "../../Include/OF_KellySizer.mqh"
 #include "../../Include/OF_ProbabilityScore.mqh"
 
-input ENUM_OP_MODE  OpMode               = MODE_MANUAL;
+// Reuse the base build's mode enum (OF_Common.mqh) so the Enhanced EA's
+// OpMode shares semantics with the base EA's OperatingMode and the same
+// OPMODE_MANUAL/OPMODE_AUTO values appear in the Strategy Tester inputs.
+input ENUM_OPMODE   OpMode               = OPMODE_MANUAL;
 input double        RiskPctMax           = 0.5;
 input double        KellyKappa           = 0.25;
 input bool          UseEnhancedGates     = true;
@@ -122,8 +125,8 @@ void OnBarClose()
    double pct = ComputeCompositeProbability();
    PrintFormat("[ENHANCED] regime=%s probScore=%.0f%% grade=%s", g_reg.Name(), pct, g_prob.Grade());
 
-   // 6) Optional auto-fire (only if MODE_AUTO).
-   if (OpMode == MODE_AUTO && pct >= 85.0) FireTradeIfReady(r);
+   // 6) Optional auto-fire (only if OPMODE_AUTO).
+   if (OpMode == OPMODE_AUTO && pct >= 85.0) FireTradeIfReady(r);
 }
 
 double ComputeCompositeProbability()

@@ -11,14 +11,14 @@
 #property indicator_buffers 0
 #property strict
 
-#include "../Include/OF_Common.mqh"
-#include "../Include/OF_VWAP.mqh"
-#include "../Include/OF_BidAsk.mqh"
-#include "../Include/OF_DeltaEnhanced.mqh"
-#include "../Include/OF_RegimeHMM.mqh"
-#include "../Include/OF_PriceAction.mqh"
-#include "../Include/OF_SweepDetector.mqh"
-#include "../Include/OF_ProbabilityScore.mqh"
+#include "../../Include/OF_Common.mqh"
+#include "../../Include/OF_VWAP.mqh"
+#include "../../Include/OF_BidAsk.mqh"
+#include "../../Include/OF_DeltaEnhanced.mqh"
+#include "../../Include/OF_RegimeHMM.mqh"
+#include "../../Include/OF_PriceAction.mqh"
+#include "../../Include/OF_SweepDetector.mqh"
+#include "../../Include/OF_ProbabilityScore.mqh"
 
 // ── Inputs ────────────────────────────────────────────────────────
 input bool   ShowDashboard      = true;
@@ -98,18 +98,26 @@ int OnCalculate(const int rates_total, const int prev_calculated,
    g_ba.Update(_Symbol);
 
    // Per-bar processing.
-   if (time[0] == g_lastBar) { Render(rates_total, time, high, low, close); return rates_total; }
-   g_lastBar = time[0];
+   // OnCalculate arrays are NOT series-indexed by default (time[0] = oldest,
+   // time[rates_total-1] = newest forming bar). Previous version compared
+   // time[0] which is stable across the session, so per-bar updates fired
+   // exactly once at attach and never again. We now key off the most recent
+   // CLOSED bar (rates_total-2) so the dashboard advances at each bar close
+   // and reads only confirmed data (no intra-bar repaint into the gate stack).
+   const int iLast = rates_total - 2;
+   if (iLast < 1) return rates_total;
+   if (time[iLast] == g_lastBar) { Render(rates_total, time, high, low, close); return rates_total; }
+   g_lastBar = time[iLast];
 
    // Update VWAP with typical price × volume.
-   double typ = (high[0] + low[0] + close[0]) / 3.0;
-   g_vwap.Update(typ, (double)tick_volume[0], time[0]);
+   double typ = (high[iLast] + low[iLast] + close[iLast]) / 3.0;
+   g_vwap.Update(typ, (double)tick_volume[iLast], time[iLast]);
 
    // Update enhanced delta (close-position proxy when MT5 can't expose true buy/sell vol).
-   double rng = high[0] - low[0];
-   double bw  = rng > 0 ? (close[0] - low[0]) / rng : 0.5;
-   double barDelta = tick_volume[0] * (bw - (1.0 - bw));
-   g_d.OnBar(barDelta, close[0]);
+   double rng = high[iLast] - low[iLast];
+   double bw  = rng > 0 ? (close[iLast] - low[iLast]) / rng : 0.5;
+   double barDelta = tick_volume[iLast] * (bw - (1.0 - bw));
+   g_d.OnBar(barDelta, close[iLast]);
 
    // Update regime HMM-lite.
    g_reg.Update(g_d.st.cvdSlope, /*footImb=*/0, /*profileSkew=*/0, g_d.st.zScore);
@@ -129,7 +137,7 @@ int OnCalculate(const int rates_total, const int prev_calculated,
    // (the full EA does), so pass the conservative subset; this still gives a
    // meaningful preconditionsPassed count for the probability bar.
    int    dir       = g_d.st.cvdSlope > 0 ? +1 : -1;
-   double extreme   = dir > 0 ? high[0] : low[0];
+   double extreme   = dir > 0 ? high[iLast] : low[iLast];
    bool   eqLevel   = g_pa.st.equalHighsCluster || g_pa.st.equalLowsCluster;
    bool   inKZ      = false;   // bound to OF_SessionGate in EA; conservative false here
    bool   htfNear   = false;   // bound to OF_HTFAlignment in EA
