@@ -242,8 +242,11 @@ allPass = g1 and g2 and g3 and g4 and g5 and g6 and g7 and rr >= MinRR
 var array<label> coachLabels = array.new<label>()
 
 cleanup() =>
+    // Reverse iteration requires `by -1` in Pine v6 — without it the loop
+    // body would never execute when start > stop and elements would never
+    // be cleaned up (causing label count to creep toward max_labels_count).
     if CleanOldLabels and array.size(coachLabels) > 0
-        for i = array.size(coachLabels) - 1 to 0
+        for i = array.size(coachLabels) - 1 to 0 by -1
             lbl = array.get(coachLabels, i)
             if bar_index - label.get_x(lbl) > CleanAfterBars
                 label.delete(lbl)

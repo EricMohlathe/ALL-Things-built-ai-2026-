@@ -14,7 +14,8 @@ bd   = volume * (bw - (1.0 - bw))
 
 isNewDay = ta.change(time("D")) != 0
 var float cvd = 0.0
-cvd := isNewDay ? bd : cvd + bd
+// Use nz(cvd[1], 0.0) for explicit prior-bar reference + na safety.
+cvd := isNewDay ? bd : nz(cvd[1], 0.0) + bd
 
 mu  = ta.sma(bd, lookback)
 sd  = ta.stdev(bd, lookback)

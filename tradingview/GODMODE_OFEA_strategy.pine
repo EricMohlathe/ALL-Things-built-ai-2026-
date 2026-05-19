@@ -176,7 +176,9 @@ bullAbs = barDelta < 0 and volZ >= VolZThr and close >= open
 bearAbs = barDelta > 0 and volZ >= VolZThr and close <= open
 
 // Setups (subset, same priority order as indicator).
-sDir = (loc == "VAL" or loc == "VAL") and bullAbs and stars(true)  >= MinStars ? "LONG" : (loc == "VAH") and bearAbs and stars(false) >= MinStars ? "SHORT" : bullDiv ? "LONG" : bearDiv ? "SHORT" : loc == "VAL" and close > open and barDelta > 0 ? "LONG" : loc == "VAH" and close < open and barDelta < 0 ? "SHORT" : "NONE"
+// Note: this file only computes the loc string for POC/VAH/VAL ("LVN"/"HVN"
+// not classified here), so AbsBot fires only at VAL.
+sDir = (loc == "VAL") and bullAbs and stars(true)  >= MinStars ? "LONG" : (loc == "VAH") and bearAbs and stars(false) >= MinStars ? "SHORT" : bullDiv ? "LONG" : bearDiv ? "SHORT" : loc == "VAL" and close > open and barDelta > 0 ? "LONG" : loc == "VAH" and close < open and barDelta < 0 ? "SHORT" : "NONE"
 
 isLong  = sDir == "LONG"
 isShort = sDir == "SHORT"

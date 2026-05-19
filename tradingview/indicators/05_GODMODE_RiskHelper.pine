@@ -73,19 +73,21 @@ var label entryLbl = na
 var label slLbl = na
 var label tpLbl = na
 
-if box.tostring(slBox) != "" or true
-    if not na(slBox)
-        box.delete(slBox)
-    if not na(tpBox)
-        box.delete(tpBox)
-    if not na(entryLn)
-        line.delete(entryLn)
-    if not na(entryLbl)
-        label.delete(entryLbl)
-    if not na(slLbl)
-        label.delete(slLbl)
-    if not na(tpLbl)
-        label.delete(tpLbl)
+// Clean up previously-drawn objects each tick. `box.tostring()` is not a
+// Pine v6 builtin and the `or true` made the prior guard a tautology — both
+// removed in favour of a plain unconditional cleanup before redraw.
+if not na(slBox)
+    box.delete(slBox)
+if not na(tpBox)
+    box.delete(tpBox)
+if not na(entryLn)
+    line.delete(entryLn)
+if not na(entryLbl)
+    label.delete(entryLbl)
+if not na(slLbl)
+    label.delete(slLbl)
+if not na(tpLbl)
+    label.delete(tpLbl)
 
 if ready and ShowBoxes and barstate.islast
     t1 = bar_index - 10

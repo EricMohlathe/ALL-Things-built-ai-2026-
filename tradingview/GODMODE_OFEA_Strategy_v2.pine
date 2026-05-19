@@ -305,15 +305,22 @@ if canTrade and isShort and EnableShorts
     strategy.exit("XS", "S_" + setupLabel, stop=slPrice, limit=tpPrice)
 
 // Partial-close at 1R (§5).
-if UsePartial and strategy.position_size != 0
+// `partialDone` flag prevents repeated strategy.close() once 1R is hit.
+var bool partialDone = false
+if strategy.position_size == 0
+    partialDone := false
+if UsePartial and strategy.position_size != 0 and not partialDone
     isPosLong = strategy.position_size > 0
     entry_ = strategy.position_avg_price
-    posRisk = math.abs(entry_ - strategy.position_size > 0 ? slPrice : slPrice)
+    // Fix operator-precedence bug in prior version: paren the abs() argument.
+    // (Both branches were `slPrice` so this still uses the SL at flat-equity.)
+    posRisk = math.abs(entry_ - slPrice)
     if posRisk > 0
         rMult = isPosLong ? (close - entry_) / posRisk : (entry_ - close) / posRisk
-        if rMult >= PartialAtR and ta.change(strategy.position_size) == 0
+        if rMult >= PartialAtR
             strategy.close(isPosLong ? "L_" + setupLabel : "S_" + setupLabel,
                           qty_percent=PartialPct, comment="partial 1R")
+            partialDone := true
 
 // NY-close flatten (§12 rule 1).
 if NYCloseFlatten and session_ != "NY_MAIN" and session_[1] == "NY_MAIN" and strategy.position_size != 0
