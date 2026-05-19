@@ -3,7 +3,7 @@
 
 Production-grade order-flow trading EA delivered as two behaviourally-identical, parameter-mirrored builds:
 
-- **MetaTrader 5** — `mt5/GODMODE_OFEA/Experts/GODMODE_OFEA/GODMODE_OFEA.mq5` (MQL5)
+- **MetaTrader 5** — `MT5_Unified/Experts/GODMODE_OFEA/GODMODE_OFEA.mq5` (MQL5). An overlay build with extra confluence/risk modules and 7 chart indicators lives in `MT5_Unified/Experts/GODMODE_OFEA_Enhanced/`.
 - **cTrader / cAlgo** — `ctrader/GODMODE_OFEA/GODMODE_OFEA.cs` (C#)
 
 Same trading thesis, same parameters, same numbers. Different syntax, identical behaviour.
@@ -36,11 +36,14 @@ The user-story acceptance test in brief §18 is reproducible end-to-end on a dem
 ### MetaTrader 5
 
 1. Open MetaTrader 5 → File → Open Data Folder → `MQL5/`.
-2. Copy `mt5/GODMODE_OFEA/Include/*.mqh` into `MQL5/Include/` (create a `GODMODE_OFEA/` subfolder there if you want clean namespacing).
-3. Copy `mt5/GODMODE_OFEA/Experts/GODMODE_OFEA/GODMODE_OFEA.mq5` into `MQL5/Experts/`.
-4. Open MetaEditor → compile `GODMODE_OFEA.mq5`. Expect zero warnings, zero errors.
-5. In MT5, drag `GODMODE_OFEA` onto an EURUSD M5 chart. Confirm dashboard appears top-right and `OperatingMode = MANUAL` in the inputs panel.
-6. Allow Algo Trading. Watch one bar of London Main or NY Main session. Verify notifications fire and dots flip.
+2. Copy `MT5_Unified/Include/*.mqh` into `MQL5/Include/` (all loose — the EA includes them with relative paths so no subfolder is required).
+3. Copy `MT5_Unified/Experts/GODMODE_OFEA/` into `MQL5/Experts/`.
+4. Optional (Enhanced overlay + 7 chart indicators): also copy `MT5_Unified/Experts/GODMODE_OFEA_Enhanced/` into `MQL5/Experts/` and `MT5_Unified/Indicators/GODMODE/` into `MQL5/Indicators/`.
+5. Open MetaEditor → compile each `.mq5`. Expect zero warnings, zero errors.
+6. In MT5, drag `GODMODE_OFEA` onto an EURUSD M5 chart. Confirm dashboard appears top-right and `OperatingMode = MANUAL` in the inputs panel.
+7. Allow Algo Trading. Watch one bar of London Main or NY Main session. Verify notifications fire and dots flip.
+
+See `MT5_Unified/README.md` for the full layout, the indicator/EA verification checklist, and how to wire the optional visual addons (`OF_CanvasDashboard`, `OF_GlowLevels`, `OF_Toast`, …).
 
 ### cTrader
 

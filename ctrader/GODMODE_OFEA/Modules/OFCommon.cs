@@ -1,7 +1,7 @@
 // OFCommon.cs
 // GODMODE_OFEA — shared enums, records, helpers (cAlgo)
 // Source authority: brief §6, §7, §10, §15
-// Mirrors mt5/GODMODE_OFEA/Include/OF_Common.mqh
+// Mirrors MT5_Unified/Include/OF_Common.mqh
 
 using System;
 using cAlgo.API;

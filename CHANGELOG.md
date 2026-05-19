@@ -27,7 +27,7 @@ targets per operator decision.
 - `AutoRiskReward.cs` — auto-draws SL/TP/entry/R:R rectangle on every fill.
   Implements brief §9.5 "Trade Lines". Adapted from `auto_risk_reward.cpp`.
 
-### New MT5 modules (`mt5/GODMODE_OFEA/Include/`) — 1:1 mirror
+### New MT5 modules (`MT5_Unified/Include/`) — 1:1 mirror
 
 - `OF_IcebergTracker.mqh`
 - `OF_PaceOfTape.mqh`

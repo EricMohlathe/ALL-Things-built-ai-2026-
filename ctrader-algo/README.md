@@ -85,7 +85,7 @@ Two fallback options:
    pay $5–20, get back the `.algo`.
 
 2. **Use MT5 on Mac instead.** MetaTrader 5 has a native macOS app and the
-   build is the same logic. The repo's `mt5/GODMODE_OFEA/` is what you'd
+   build is the same logic. The repo's `MT5_Unified/` is what you'd
    use. MetaEditor is included in the Mac MT5 download — no Windows
    needed.
 
