@@ -26,6 +26,13 @@ int OnInit()
    a_h1  = iADX(_Symbol, PERIOD_H1,  14);
    a_h4  = iADX(_Symbol, PERIOD_H4,  14);
    a_d1  = iADX(_Symbol, PERIOD_D1,  14);
+   // Fail-fast if any handle is invalid — otherwise CopyBuffer will silently
+   // return uninitialised memory and the strength meter will paint garbage.
+   if(h_m15 == INVALID_HANDLE || h_h1 == INVALID_HANDLE ||
+      h_h4  == INVALID_HANDLE || h_d1 == INVALID_HANDLE ||
+      a_m15 == INVALID_HANDLE || a_h1 == INVALID_HANDLE ||
+      a_h4  == INVALID_HANDLE || a_d1 == INVALID_HANDLE)
+      return INIT_FAILED;
    EventSetTimer(5);
    return INIT_SUCCEEDED;
 }

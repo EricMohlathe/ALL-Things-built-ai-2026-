@@ -51,6 +51,7 @@ namespace GodmodeOfea
         public void SampleSpread()
         {
             double s = _symbol.Spread;
+            if (s <= 0 || double.IsNaN(s) || double.IsInfinity(s)) return;
             _spreadHist[_spreadIdx] = s;
             _spreadIdx = (_spreadIdx + 1) % 100;
             if (_spreadIdx == 0) _spreadFilled = true;
@@ -58,7 +59,10 @@ namespace GodmodeOfea
             var sorted = new double[n];
             Array.Copy(_spreadHist, sorted, n);
             Array.Sort(sorted);
-            _spreadMedian = sorted[n / 2];
+            // Proper median for even-n: average of the two middle samples.
+            _spreadMedian = (n % 2 == 1)
+                ? sorted[n / 2]
+                : 0.5 * (sorted[n / 2 - 1] + sorted[n / 2]);
         }
 
         public GateResult CheckDailyDrawdown()
