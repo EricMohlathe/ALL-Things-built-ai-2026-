@@ -57,8 +57,13 @@ void Render()
    for (int i = 0; i < 4; i++)
    {
       double emaB[1], adxB[1];
-      CopyBuffer(emH[i], 0, 0, 1, emaB);
-      CopyBuffer(adH[i], 0, 0, 1, adxB);
+      // BarsCalculated guard — newly-created HTF handles need a few seconds
+      // before CopyBuffer can return valid data. Skip the row rather than
+      // paint NaN/0 distance percentages.
+      if(BarsCalculated(emH[i]) <= 0 || BarsCalculated(adH[i]) <= 0) continue;
+      if(CopyBuffer(emH[i], 0, 0, 1, emaB) < 1) continue;
+      if(CopyBuffer(adH[i], 0, 0, 1, adxB) < 1) continue;
+      if(!MathIsValidNumber(emaB[0]) || emaB[0] <= 0) continue;
       bool bull = price > emaB[0];
       string arr = bull ? "▲" : "▼";
       double dist = MathAbs(price - emaB[0]) / MathMax(price, 1e-9) * 100.0;

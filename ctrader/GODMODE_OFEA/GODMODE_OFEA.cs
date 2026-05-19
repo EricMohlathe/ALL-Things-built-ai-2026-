@@ -25,7 +25,10 @@ using cAlgo.API.Internals;
 
 namespace GodmodeOfea
 {
-    [Robot(TimeZone = TimeZones.UTC)]
+    // FullAccess required for HttpClient (GoogleSheetsLevels), file I/O
+    // (Sierra/Bookmap bridges + TradeLogger), and Notifications.SendEmail.
+    // Trader is prompted once on first install to grant the elevated rights.
+    [Robot(TimeZone = TimeZones.UTC, AccessRights = AccessRights.FullAccess)]
     public class GODMODE_OFEA : Robot
     {
         //=== MODE & PLATFORM ===

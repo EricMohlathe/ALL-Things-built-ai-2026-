@@ -101,13 +101,20 @@ namespace GodmodeOfea
         public double ComputeVolume(double slPriceDistance, bool halfSize)
         {
             double pct = halfSize ? _riskHalfPct : _riskPct;
-            double riskAmount = _robot.Account.Equity * pct / 100.0;
-            if (slPriceDistance <= 0) return 0;
-            double pipDistance = slPriceDistance / OFHelpers.PipSize(_symbol);
+            double equity = _robot.Account.Equity;
+            if (equity <= 0 || pct <= 0) return 0;
+            double riskAmount = equity * pct / 100.0;
+            if (slPriceDistance <= 0 || double.IsNaN(slPriceDistance)) return 0;
+            double pip = OFHelpers.PipSize(_symbol);
+            if (pip <= 0) return 0;
+            double pipDistance = slPriceDistance / pip;
             double pipValue = _symbol.PipValue;
             if (pipValue <= 0 || pipDistance <= 0) return 0;
             double volume = riskAmount / (pipDistance * pipValue);
-            return OFHelpers.NormaliseVolume(_symbol, volume);
+            double norm = OFHelpers.NormaliseVolume(_symbol, volume);
+            // Sub-minimum sizing is a hard skip — broker would reject the order.
+            if (norm < _symbol.VolumeInUnitsMin) return 0;
+            return norm;
         }
 
         public GateResult CheckNewsBlackout(DateTime now, DateTime preStart, DateTime postEnd, string desc)
