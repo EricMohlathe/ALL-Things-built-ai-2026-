@@ -54,7 +54,10 @@ namespace GodmodeOfea
                 $"CVD {cvd:F0} Δ {bd:F0} volZ {volZ:F2}\n" +
                 $"POC {poc:F5} VAH {vah:F5} VAL {val:F5}\n" +
                 $"DD {dailyDD:F2}% Trades {trades}";
-            Color overall = score >= 6 ? _ok : _wait;
+            // DD < 0 takes colour priority over score so the operator sees the
+            // capital state first — brief §3 prioritisation. _fail was previously
+            // declared but never consulted, leaving DD invisible at a glance.
+            Color overall = dailyDD < 0 ? _fail : (score >= 6 ? _ok : _wait);
             _chart.DrawStaticText("godmode_panel", panel, VerticalAlignment.Top, HorizontalAlignment.Right, overall);
         }
 

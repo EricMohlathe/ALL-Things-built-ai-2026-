@@ -196,6 +196,10 @@ void OnDeinit(const int reason)
    g_dash.Deinit();
    g_viz.Deinit();
    g_htf.Deinit();
+   // Release every iATR handle the shared ATR() helper opened during the
+   // run — otherwise each optimization pass leaks one handle per (sym,tf)
+   // tuple and the terminal eventually rejects new iATR() calls.
+   OF_AtrCacheRelease();
   }
 
 //+------------------------------------------------------------------+

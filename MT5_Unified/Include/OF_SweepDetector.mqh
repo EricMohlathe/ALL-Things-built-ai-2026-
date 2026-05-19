@@ -19,6 +19,17 @@ class COF_SweepDetector
 {
 public:
    SweepResult last;
+   // Zero-initialise on construction — callers (e.g. ComputeCompositeProbability)
+   // read `last.preconditionsPassed` before Evaluate() runs on the first bar
+   // and would otherwise see uninitialised memory.
+   COF_SweepDetector()
+   {
+      last.fired = false;
+      last.direction = 0;
+      last.preconditionsPassed = 0;
+      last.sweepExtreme = 0.0;
+      last.absorptionScore = 0.0;
+   }
 
    // All inputs are bools/numbers the caller has already computed via OF_*.mqh modules.
    // This keeps the sweep detector platform-agnostic and unit-testable.

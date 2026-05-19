@@ -25,6 +25,18 @@ class COF_PriceAction
 {
 public:
    PriceActionState st;
+   // Zero-init so first-bar reads of `st.equalHighsCluster`, `st.fvgUp` etc.
+   // by the probability composite don't see uninitialised memory.
+   COF_PriceAction()
+   {
+      st.lastSwingHigh = 0; st.lastSwingLow = 0;
+      st.swingHighT = 0;    st.swingLowT = 0;
+      st.structure = PA_NONE;
+      st.equalHighsCluster = false; st.equalLowsCluster = false;
+      st.fvgUp = false; st.fvgDown = false;
+      st.fvgUpTop = 0; st.fvgUpBot = 0;
+      st.fvgDownTop = 0; st.fvgDownBot = 0;
+   }
 
    // Call once per closed bar with current high/low/close arrays (index 0 = newest).
    void Update(const double &highs[], const double &lows[], const double &closes[],

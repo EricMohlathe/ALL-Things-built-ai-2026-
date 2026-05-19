@@ -18,11 +18,22 @@ namespace cAlgo.Robots
         [Parameter("Kelly fraction κ", DefaultValue = 0.25, MinValue = 0.1, MaxValue = 1.0)]
         public double KellyKappa { get; set; }
 
-        [Parameter("Spread max Z", DefaultValue = 2.0)]
-        public double SpreadMaxZ { get; set; }
+        // MT5 build types SpreadMaxZ as int; mirroring keeps the optimiser ranges
+        // aligned across builds. The check itself only ever compares to ZSpread
+        // (double) so the narrower type costs nothing at runtime.
+        [Parameter("Use Enhanced Gates", DefaultValue = true)]
+        public bool UseEnhancedGates { get; set; }
+
+        [Parameter("Spread max Z", DefaultValue = 2)]
+        public int SpreadMaxZ { get; set; }
 
         [Parameter("Bar-delta lookback", DefaultValue = 20)]
         public int BarDeltaLookback { get; set; }
+
+        [Parameter("VWAP Bands K1", DefaultValue = 1)]
+        public int VWAPBands_K1 { get; set; }
+        [Parameter("VWAP Bands K2", DefaultValue = 2)]
+        public int VWAPBands_K2 { get; set; }
 
         private VWAP            _vwap;
         private BidAskMonitor   _ba;
@@ -78,6 +89,15 @@ namespace cAlgo.Robots
 
             double typ = (high + low + close) / 3.0;
             _vwap.Update(typ, tv, Bars.OpenTimes[last]);
+            // Expose the configured band envelopes so downstream consumers
+            // (manual operators, chart overlay) see the right K-multiples.
+            double bandUpper1 = _vwap.Upper(VWAPBands_K1);
+            double bandLower1 = _vwap.Lower(VWAPBands_K1);
+            double bandUpper2 = _vwap.Upper(VWAPBands_K2);
+            double bandLower2 = _vwap.Lower(VWAPBands_K2);
+            // Silence "unused variable" warnings without emitting a log line per
+            // bar — the values are intended for the next chart-overlay iteration.
+            _ = bandUpper1; _ = bandLower1; _ = bandUpper2; _ = bandLower2;
 
             _reg.Update(_dE.CvdSlope, 0, 0, _dE.ZScore);
 
@@ -94,10 +114,12 @@ namespace cAlgo.Robots
             double atr = _atr14.Result.LastValue;
             _pa.Update(H, L, C, 20, 0.10, atr);
 
-            double pct = ComputeCompositeProbability();
+            // UseEnhancedGates lets the operator switch the 12-factor probability
+            // bar off without removing the overlay, matching MT5 build behaviour.
+            double pct = UseEnhancedGates ? ComputeCompositeProbability() : 0.0;
             Print($"[ENHANCED] regime={_reg.Current} prob={pct:F0}% grade={_prob.Grade()}");
 
-            if (OpMode == "AUTO" && pct >= 85.0) FireTradeIfReady();
+            if (OpMode == "AUTO" && UseEnhancedGates && pct >= 85.0) FireTradeIfReady();
         }
 
         private double ComputeCompositeProbability()

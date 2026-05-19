@@ -202,6 +202,21 @@ struct OF_AtrCacheEntry { string key; int handle; };
 OF_AtrCacheEntry g_of_atr_cache[16];
 int              g_of_atr_cache_n = 0;
 
+// Call from each EA/indicator's OnDeinit to release cached ATR handles
+// instead of relying on terminal cleanup (which leaks slots across EA
+// re-attaches during a parameter sweep / optimization run).
+void OF_AtrCacheRelease()
+  {
+   for(int i = 0; i < g_of_atr_cache_n; i++)
+     {
+      if(g_of_atr_cache[i].handle != INVALID_HANDLE)
+         IndicatorRelease(g_of_atr_cache[i].handle);
+      g_of_atr_cache[i].handle = INVALID_HANDLE;
+      g_of_atr_cache[i].key    = "";
+     }
+   g_of_atr_cache_n = 0;
+  }
+
 double ATR(const string sym, const ENUM_TIMEFRAMES tf, const int period)
   {
    const string key = sym + "|" + IntegerToString((int)tf) + "|" + IntegerToString(period);

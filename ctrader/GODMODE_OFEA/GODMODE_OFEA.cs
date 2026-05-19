@@ -174,17 +174,31 @@ namespace GodmodeOfea
         [Parameter("24 PoorHL",   Group = "Setups", DefaultValue = true)]  public bool EnableSetup_24_PoorHL   { get; set; }
         [Parameter("25 Iceberg",  Group = "Setups", DefaultValue = true)]  public bool EnableSetup_25_Iceberg  { get; set; }
 
-        // §22 marginal-gain stack (default off - earn via logged data)
+        // §22 marginal-gain stack (default off - earn via logged data).
+        // Names & defaults mirror MT5_Unified/Experts/GODMODE_OFEA/GODMODE_OFEA.mq5
+        // one-for-one (brief §7 "parameter-mirrored" guarantee).
         [Parameter("M1 Require Liquidity Sweep", Group = "M-Refinements", DefaultValue = false)]
         public bool M1_RequireLiquiditySweep { get; set; }
+        [Parameter("M1 Sweep Lookback Bars", Group = "M-Refinements", DefaultValue = 10)]
+        public int M1_SweepLookbackBars { get; set; }
         [Parameter("M2 Require Second Touch", Group = "M-Refinements", DefaultValue = false)]
         public bool M2_RequireSecondTouch { get; set; }
+        [Parameter("M2 Touch Lookback Bars", Group = "M-Refinements", DefaultValue = 30)]
+        public int M2_TouchLookbackBars { get; set; }
+        [Parameter("M2 Touch Tol Pips", Group = "M-Refinements", DefaultValue = 3.0)]
+        public double M2_TouchTolPips { get; set; }
         [Parameter("M3 Use ATR Regime Filter", Group = "M-Refinements", DefaultValue = false)]
         public bool M3_UseATRRegimeFilter { get; set; }
+        [Parameter("M3 Min ATR Ratio", Group = "M-Refinements", DefaultValue = 0.70)]
+        public double M3_MinATRRatio { get; set; }
+        [Parameter("M3 Max ATR Ratio", Group = "M-Refinements", DefaultValue = 1.50)]
+        public double M3_MaxATRRatio { get; set; }
         [Parameter("M5 Use Correlated CVD", Group = "M-Refinements", DefaultValue = false)]
         public bool M5_UseCorrelatedCVD { get; set; }
         [Parameter("M5 Correlated Symbol", Group = "M-Refinements", DefaultValue = "EURGBP")]
         public string M5_CorrelatedSymbol { get; set; }
+        [Parameter("M5 HalfSize On Neutral", Group = "M-Refinements", DefaultValue = true)]
+        public bool M5_HalfSizeOnNeutral { get; set; }
         [Parameter("M6 Use Sub-Window Tiering", Group = "M-Refinements", DefaultValue = false)]
         public bool M6_UseSubWindowTiering { get; set; }
         [Parameter("M6 Tier B Min Score", Group = "M-Refinements", DefaultValue = 5)]
