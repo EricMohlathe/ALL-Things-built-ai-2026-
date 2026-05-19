@@ -17,6 +17,12 @@ namespace GodmodeOfea
 
         private double _tickBuy;
         private double _tickSell;
+        // Cache last mid so we can classify the *next* tick as aggressor-buy/sell
+        // based on direction of mid movement. cAlgo's SymbolTickEventArgs gives
+        // only the current Bid/Ask snapshot — Ask is always > Bid, so the prior
+        // implementation (Ask > Bid) was always true and _tickSell never incremented.
+        private double _lastMid;
+        private bool _hasLastMid;
 
         // newest-first lists; index 0 = most recently closed bar
         private readonly List<double> _barDelta;
@@ -40,22 +46,19 @@ namespace GodmodeOfea
 
         public void Detach() { _symbol.Tick -= OnTick; }
 
-        // Brief §11.1 — partition by ask/bid trade aggression
+        // Brief §11.1 — partition by ask/bid trade aggression.
+        // cAlgo SymbolTickEventArgs exposes only the current Bid/Ask snapshot
+        // (no per-tick volume, no aggressor flag). We approximate by comparing
+        // the current mid to the previous mid: uptick = aggressor buy, downtick
+        // = aggressor sell. Brokers without raw volume still get directional skew.
         private void OnTick(SymbolTickEventArgs args)
         {
-            // cAlgo SymbolTickEventArgs gives Bid/Ask but no per-tick volume.
-            // Use last known volume tick from Bars; treat upticks as buy, downticks as sell.
-            // Fall back to PriceMove sign if volumes are not provided by broker.
-            double v = 1.0; // unit-tick fallback; brokers without raw volume still get directional skew
-            if (args.Ask > args.Bid)
-            {
-                // Tick mid moved up → aggressor buy
-                _tickBuy += v;
-            }
-            else if (args.Ask < args.Bid)
-            {
-                _tickSell += v;
-            }
+            double mid = (args.Bid + args.Ask) * 0.5;
+            if (!_hasLastMid) { _lastMid = mid; _hasLastMid = true; return; }
+            const double v = 1.0;
+            if (mid > _lastMid)      _tickBuy  += v;
+            else if (mid < _lastMid) _tickSell += v;
+            _lastMid = mid;
         }
 
         public void OnBarClose()

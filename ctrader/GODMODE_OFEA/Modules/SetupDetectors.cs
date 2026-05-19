@@ -187,6 +187,10 @@ namespace GodmodeOfea
         }
         public static SetupCandidate? SmtDiv(Symbol s, Bars b, DeltaEngine de, VolumeProfile vp, double corrCvdSlope, double locTolPips)
         {
+            // Requires a *real* correlated CVD slope to compare against — when
+            // the caller passes 0 (M5_UseCorrelatedCVD disabled) we must abstain,
+            // otherwise mySlope * 0 == 0 lets the gate fall through silently.
+            if (corrCvdSlope == 0.0) return null;
             double mySlope = de.CvdSlope5();
             if (mySlope * corrCvdSlope >= 0) return null;
             double c = b.ClosePrices.Last(1);
@@ -244,8 +248,12 @@ namespace GodmodeOfea
             if (volZ < 2.0 || Math.Abs(dz) > 0.5 || atr <= 0 || range > 0.6 * atr) return null;
             double curC = b.ClosePrices.Last(1);
             var loc = vp.LocationAt(curC, locTolPips);
-            if (loc == VpLoc.None) return null;
-            var dir = (loc == VpLoc.Val || loc == VpLoc.Lvn) ? TradeDir.Long : TradeDir.Short;
+            // Only fire iceberg at a defendable level; POC / unknown were
+            // previously bucketed into SHORT by the catch-all `else`.
+            TradeDir dir;
+            if (loc == VpLoc.Val || loc == VpLoc.Lvn) dir = TradeDir.Long;
+            else if (loc == VpLoc.Vah || loc == VpLoc.Hvn) dir = TradeDir.Short;
+            else return null;
             return Build(s, b, SetupId.Iceberg, dir, vp.Poc, vp.Poc, loc, 0, "Iceberg");
         }
     }

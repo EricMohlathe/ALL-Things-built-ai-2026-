@@ -125,20 +125,35 @@ namespace GodmodeOfea
         {
             var inv = CultureInfo.InvariantCulture;
             var result = new List<ManualLevel>();
+            if (string.IsNullOrEmpty(body)) return result;
+            // Strip UTF-8 BOM that gviz occasionally prepends — would otherwise
+            // make double.TryParse on the first column fail silently.
+            if (body.Length > 0 && body[0] == '﻿') body = body.Substring(1);
             using (var sr = new StringReader(body))
             {
                 string line;
+                int rowIdx = 0;
                 while ((line = sr.ReadLine()) != null)
                 {
+                    rowIdx++;
                     var trimmed = line.Trim();
                     if (string.IsNullOrEmpty(trimmed)) continue;
-                    // Google's gviz CSV wraps fields in quotes. Strip the leading/trailing quote and split
-                    // on the canonical "," sentinel.
+                    // Skip an optional header row (gviz emits column titles when
+                    // tqx=out:csv is used without an explicit query). A header row
+                    // never parses as a double in column 0.
                     if (trimmed.StartsWith("\"") && trimmed.EndsWith("\""))
                         trimmed = trimmed.Substring(1, trimmed.Length - 2);
+                    // Two fallback splits: (a) gviz quoted form fields split on "," ;
+                    // (b) plain CSV split on a bare comma. We try (a) first; if it
+                    // yields only one field, fall back to (b).
                     var fields = trimmed.Split(new[] { "\",\"" }, StringSplitOptions.None);
+                    if (fields.Length <= 1) fields = trimmed.Split(',');
                     if (fields.Length == 0) continue;
+                    // Strip any leftover quote characters that survived the split.
+                    for (int i = 0; i < fields.Length; i++)
+                        fields[i] = fields[i].Trim().Trim('"');
                     if (!double.TryParse(fields[0], NumberStyles.Float, inv, out var price)) continue;
+                    if (double.IsNaN(price) || double.IsInfinity(price)) continue;
                     var lv = new ManualLevel { Price = price };
                     if (fields.Length > 1 && double.TryParse(fields[1], NumberStyles.Float, inv, out var p2)) lv.Price2 = p2;
                     if (fields.Length > 2) lv.Note = fields[2];

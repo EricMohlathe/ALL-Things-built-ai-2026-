@@ -223,7 +223,18 @@ namespace GodmodeOfea
             _viz    = new ChartViz(Chart, ShowVPLevels, ShowFootprintMarkers, ShowSessionShading, ShowTradeArrows);
             _logger = new TradeLogger(Path.Combine(Environment.GetFolderPath(
                         Environment.SpecialFolder.MyDocuments), "GODMODE_OFEA_log.csv"));
+            // Wire consecutive-loss tracking. Without this hook the kill switch
+            // CheckConsecLosses never trips because _consecLosses stays at zero.
+            Positions.Closed += OnPositionClosedHook;
             Print("GODMODE_OFEA initialized — mode={0}", OperatingMode);
+        }
+
+        private void OnPositionClosedHook(PositionClosedEventArgs args)
+        {
+            if (args?.Position == null) return;
+            if (args.Position.Label != "GODMODE") return;
+            try { _risk?.NotifyTradeClosed(args.Position.NetProfit); }
+            catch (Exception e) { Print($"OnPositionClosed err: {e.Message}"); }
         }
 
         protected override void OnTick()
@@ -241,7 +252,12 @@ namespace GodmodeOfea
             RunBarClose();
         }
 
-        protected override void OnStop() { _delta?.Detach(); _dash?.Clear(); }
+        protected override void OnStop()
+        {
+            Positions.Closed -= OnPositionClosedHook;
+            _delta?.Detach();
+            _dash?.Clear();
+        }
 
         private void HandleDayRollover()
         {
@@ -321,6 +337,14 @@ namespace GodmodeOfea
             double risk = Math.Abs(best.Entry - best.Sl);
             double rr = risk > 0 ? Math.Abs(best.Tp - best.Entry) / risk : 0;
             if (rr < MinRR) return;
+            // Cap absurd R:R (parameter was previously declared but unused).
+            // MT5 build clamps the same way — keep parameter-mirrored behaviour.
+            if (MaxRR > 0 && rr > MaxRR)
+            {
+                double cappedDist = risk * MaxRR;
+                best.Tp = best.Direction == TradeDir.Long ? best.Entry + cappedDist : best.Entry - cappedDist;
+                rr = MaxRR;
+            }
             best.Score = bestScore;
             best.Priority = bestScore >= 5 ? Priority.P1 : (bestScore >= 4 ? Priority.P2 : Priority.P3);
             bool halfSize = HalfSize_OnHTFConflict && !_htf.IsAligned(best.Direction);
