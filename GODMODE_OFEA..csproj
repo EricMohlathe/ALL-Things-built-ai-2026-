@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="cTrader.Automate" Version="*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Only compile the single merged Robot file; exclude all templates and reference material -->
+    <Compile Remove="cTrader/**/*.cs" />
+    <Compile Remove="cTrader\**\*.cs" />
+    <Compile Remove="build foundation/**/*.cs" />
+    <Compile Remove="build foundation\**\*.cs" />
+  </ItemGroup>
+</Project>

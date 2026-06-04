@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>V01 — The ONLY Orderflow Concepts Guide You'll EVER NEED</title>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Nunito:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cream:#FAF6F0;--dark:#0D1B2A;--card:#fff;
+  --green:#2E7D32;--gl:#E8F5E9;
+  --blue:#1565C0;--bl:#E3F2FD;
+  --orange:#E65100;--ol:#FFF3E0;
+  --purple:#6A1B9A;--pl:#F3E5F5;
+  --red:#C62828;--rl:#FFEBEE;
+  --yellow:#F9A825;--yl:#FFFDE7;
+  --teal:#00695C;--tl:#E0F2F1;
+  --gold:#FFD700;
+  --text:#2C2C2C;--text2:#555;--border:#D4C5B0;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--cream);font-family:'Nunito',sans-serif;color:var(--text);line-height:1.75;font-size:15px}
+
+/* ── HERO ── */
+.hero{background:linear-gradient(135deg,#0D1B2A 0%,#1B2838 50%,#16213E 100%);color:#fff;padding:50px 40px 40px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 15% 50%,rgba(255,140,0,.12) 0%,transparent 55%),radial-gradient(ellipse at 85% 30%,rgba(0,200,255,.1) 0%,transparent 55%)}
+.hero-top{display:flex;align-items:flex-start;gap:24px;position:relative;flex-wrap:wrap}
+.hero-num{font-family:'JetBrains Mono',monospace;font-size:11px;background:var(--gold);color:#000;padding:4px 12px;border-radius:4px;font-weight:700;white-space:nowrap;margin-top:4px}
+.hero h1{font-family:'Caveat',cursive;font-size:clamp(28px,4vw,48px);font-weight:700;color:var(--gold);line-height:1.2;flex:1}
+.hero-channel{font-size:13px;color:#90CAF9;margin-top:8px;position:relative}
+.hero-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;position:relative}
+.htag{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#E0E0E0;font-size:11px;padding:4px 12px;border-radius:20px;font-family:'JetBrains Mono',monospace}
+.hero-link{display:inline-flex;align-items:center;gap:8px;background:var(--gold);color:#000;font-weight:800;font-size:13px;padding:10px 22px;border-radius:8px;text-decoration:none;margin-top:18px;position:relative}
+
+/* ── CONTENT ── */
+.wrap{max-width:1100px;margin:0 auto;padding:40px 30px}
+
+/* ── SECTION TITLES ── */
+.sec-title{font-family:'Caveat',cursive;font-size:32px;color:var(--green);margin:40px 0 16px;border-bottom:2px solid var(--border);padding-bottom:6px}
+.sec-sub{font-size:16px;color:var(--text2);margin-bottom:20px}
+
+/* ── BOXES ── */
+.box{border-radius:10px;padding:20px 24px;margin:18px 0;border-left:5px solid}
+.box h4{font-size:15px;font-weight:800;margin-bottom:10px}
+.bg{background:var(--gl);border-color:var(--green)} .bg h4{color:var(--green)}
+.bb{background:var(--bl);border-color:var(--blue)} .bb h4{color:var(--blue)}
+.bo{background:var(--ol);border-color:var(--orange)} .bo h4{color:var(--orange)}
+.bp{background:var(--pl);border-color:var(--purple)} .bp h4{color:var(--purple)}
+.br{background:var(--rl);border-color:var(--red)} .br h4{color:var(--red)}
+.by{background:var(--yl);border-color:var(--yellow)} .by h4{color:#795548}
+.bt{background:var(--tl);border-color:var(--teal)} .bt h4{color:var(--teal)}
+
+/* ── GRIDS ── */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+@media(max-width:768px){.g2,.g3{grid-template-columns:1fr}}
+
+/* ── TABLE ── */
+table{width:100%;border-collapse:collapse;font-size:14px;margin:18px 0}
+th{background:var(--dark);color:var(--gold);padding:11px 14px;text-align:left;font-size:12px;letter-spacing:.5px}
+td{padding:10px 14px;border-bottom:1px solid #EDE5D8;color:var(--text2);vertical-align:top}
+tr:nth-child(even) td{background:#F7F3EE}
+
+/* ── CODE ── */
+.code{background:#0D1B2A;color:#B0C4DE;font-family:'JetBrains Mono',monospace;font-size:13px;padding:18px 20px;border-radius:8px;margin:16px 0;overflow-x:auto;line-height:1.9;border-left:4px solid var(--gold)}
+.cg{color:#A5D6A7} .cy{color:var(--gold)} .cc{color:#667} .cm{color:#CE93D8}
+
+/* ── SVG DIAGRAM ── */
+.diagram{background:#fff;border-radius:12px;padding:24px;margin:24px 0;border:1px solid var(--border);box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.diagram-title{font-family:'Caveat',cursive;font-size:24px;color:var(--green);text-align:center;margin-bottom:16px}
+
+/* ── STEPS ── */
+.steps{list-style:none;counter-reset:s}
+.step{counter-increment:s;display:flex;gap:14px;margin:12px 0;align-items:flex-start;font-size:14px;color:var(--text2)}
+.step::before{content:counter(s);background:var(--green);color:#fff;min-width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0;margin-top:2px}
+
+/* ── TERM PILL ── */
+.term{color:var(--teal);font-weight:800}
+.hl{background:linear-gradient(120deg,rgba(255,215,0,.35),rgba(255,215,0,.15));padding:1px 5px;border-radius:3px;font-weight:700}
+
+/* ── FORMULA ── */
+.formula{background:#0D1B2A;color:var(--gold);font-family:'JetBrains Mono',monospace;font-size:13px;padding:16px 20px;border-radius:8px;margin:14px 0;line-height:2}
+
+/* ── CONCEPT CARD ── */
+.ccard{background:#fff;border:1px solid var(--border);border-radius:10px;padding:18px;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.ccard-icon{font-size:28px;margin-bottom:8px}
+.ccard h4{font-size:14px;font-weight:800;color:var(--dark);margin-bottom:6px}
+.ccard p{font-size:13px;color:var(--text2);line-height:1.6}
+
+/* ── QUIZ ── */
+.quiz{background:#fff;border-radius:12px;padding:22px;border:1px solid var(--border);margin:14px 0}
+.quiz-q{font-weight:700;margin-bottom:12px;font-size:15px}
+.quiz-opt{background:#F7F3EE;border:1px solid var(--border);border-radius:6px;padding:10px 14px;font-size:13px;cursor:pointer;margin:6px 0;transition:.15s;color:var(--text2)}
+.quiz-opt:hover{border-color:var(--green);background:var(--gl);color:var(--green)}
+.ans{display:none;background:var(--gl);border:1px solid var(--green);border-radius:8px;padding:12px;font-size:13px;color:var(--green);margin-top:10px}
+.show-ans{background:var(--dark);color:var(--gold);border:none;padding:8px 18px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;font-family:'JetBrains Mono',monospace;margin-top:8px}
+
+/* ── KEY TAKEAWAYS ── */
+.takeaway{background:var(--dark);color:#E0E0E0;border-radius:12px;padding:28px;margin:30px 0}
+.takeaway h3{font-family:'Caveat',cursive;font-size:28px;color:var(--gold);margin-bottom:16px}
+.takeaway ul{list-style:none;padding:0}
+.takeaway li{display:flex;gap:12px;margin:10px 0;font-size:14px}
+.takeaway li::before{content:'⚡';flex-shrink:0}
+
+/* ── DIVIDERS ── */
+.div-grad{height:3px;background:linear-gradient(90deg,transparent,var(--gold),var(--orange),var(--gold),transparent);margin:36px 0;border-radius:2px}
+.div-dots{text-align:center;color:var(--border);font-size:20px;letter-spacing:8px;margin:28px 0}
+
+/* ── BACK BUTTON ── */
+.back{position:fixed;bottom:28px;right:28px;background:var(--gold);color:#000;width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;text-decoration:none;box-shadow:0 4px 16px rgba(0,0,0,.25);z-index:99;font-size:18px}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-top">
+    <span class="hero-num">V01</span>
+    <div style="flex:1">
+      <h1>The ONLY Orderflow Concepts Guide You'll EVER NEED</h1>
+      <div class="hero-channel">📺 Darius FX &nbsp;·&nbsp; ⏱ ~60 min &nbsp;·&nbsp; 🏆 Grade: A+</div>
+      <div class="hero-tags"><span class="htag">Order Flow</span> <span class="htag">Delta</span> <span class="htag">Footprint</span> <span class="htag">DOM</span> <span class="htag">CVD</span> <span class="htag">Absorption</span> <span class="htag">Bid/Ask</span></div>
+      <a class="hero-link" href="https://www.youtube.com/watch?v=vYbK-cDmCSc" target="_blank">▶ Watch on YouTube</a>
+    </div>
+  </div>
+</div>
+<div class="wrap">
+
+<h2 class="sec-title">Overview</h2>
+<p>Darius FX delivers what may be the single most comprehensive standalone introduction to order flow trading available. This video starts from absolute zero — what the bid and ask mean — and builds to reading live footprint charts in real time. It is the foundational pillar of this entire curriculum.</p>
+
+<div class="box bg"><h4>🎯 Core Thesis</h4>
+<p>Price action alone is a <span class="term">lagging representation</span> of a deeper reality: the constant battle between aggressive buyers (hitting the ask) and aggressive sellers (hitting the bid). Order flow exposes this battle in real time. Traders who read order flow are reading the <span class="hl">actual cause</span> of price movement, not just its effect.</p></div>
+
+<div class="div-dots">• • •</div>
+<h2 class="sec-title">1. Market Microstructure Fundamentals</h2>
+
+<div class="g2">
+<div class="box bb"><h4>📖 The Bid-Ask Engine</h4>
+<p><span class="term">Bid</span>: highest price a buyer will pay now.<br>
+<span class="term">Ask</span>: lowest price a seller will accept now.<br>
+<span class="term">Spread</span>: the gap between them — the market's transaction cost.<br><br>
+Every single market movement is caused by one side running out of orders at a price level. When all asks at 1.2000 are consumed, the next buy order must fill at 1.2001. This is price discovery.</p></div>
+
+<div class="box bo"><h4>⚡ Aggressive vs Passive Orders</h4>
+<p><span class="term">Aggressive (Market) Orders</span>: cross the spread immediately. Buyers pay the ask; sellers hit the bid. These <em>consume</em> liquidity and move price.<br><br>
+<span class="term">Passive (Limit) Orders</span>: rest in the book, waiting. They <em>provide</em> liquidity. When passive orders are extremely large, they absorb aggressive flow and prevent price from moving — this is <span class="hl">absorption</span>.</p></div>
+</div>
+
+<div class="diagram">
+<div class="diagram-title">The Order Book — How Price Actually Moves</div>
+<svg viewBox="0 0 800 280" xmlns="http://www.w3.org/2000/svg" style="width:100%">
+  <rect width="800" height="280" fill="#0D1B2A" rx="8"/>
+  <!-- Ask side -->
+  <rect x="50" y="20" width="260" height="20" fill="rgba(198,40,40,.25)" rx="2"/>
+  <text x="55" y="35" fill="#EF9A9A" font-size="12" font-family="monospace">1.2005  ASK  [350 contracts]</text>
+  <rect x="50" y="44" width="200" height="20" fill="rgba(198,40,40,.25)" rx="2"/>
+  <text x="55" y="59" fill="#EF9A9A" font-size="12" font-family="monospace">1.2004  ASK  [220 contracts]</text>
+  <rect x="50" y="68" width="310" height="20" fill="rgba(198,40,40,.3)" rx="2"/>
+  <text x="55" y="83" fill="#EF9A9A" font-size="12" font-family="monospace">1.2003  ASK  [400 contracts]</text>
+  <!-- Spread band -->
+  <rect x="0" y="92" width="400" height="18" fill="rgba(255,215,0,.08)"/>
+  <text x="55" y="105" fill="#FFD700" font-size="11" font-family="monospace">── SPREAD ──</text>
+  <!-- Bid side -->
+  <rect x="50" y="114" width="250" height="20" fill="rgba(46,125,50,.25)" rx="2"/>
+  <text x="55" y="129" fill="#A5D6A7" font-size="12" font-family="monospace">1.2002  BID  [300 contracts]</text>
+  <rect x="50" y="138" width="180" height="20" fill="rgba(46,125,50,.25)" rx="2"/>
+  <text x="55" y="153" fill="#A5D6A7" font-size="12" font-family="monospace">1.2001  BID  [190 contracts]</text>
+  <rect x="50" y="162" width="480" height="22" fill="rgba(46,125,50,.45)" rx="2"/>
+  <text x="55" y="178" fill="#81C784" font-size="12" font-family="monospace" font-weight="bold">1.2000  BID  [800 contracts] ← WALL</text>
+  <!-- Annotations -->
+  <rect x="450" y="20" width="320" height="220" fill="rgba(255,255,255,.03)" rx="6" stroke="rgba(255,215,0,.3)"/>
+  <text x="465" y="45" fill="#FFD700" font-size="13" font-weight="bold">WHAT THIS MEANS:</text>
+  <text x="465" y="70" fill="#B0C4DE" font-size="12">• 800-contract BID wall at 1.2000</text>
+  <text x="465" y="90" fill="#B0C4DE" font-size="12">• Price WON'T fall easily through it</text>
+  <text x="465" y="115" fill="#FFD700" font-size="13" font-weight="bold">IF A BIG BUY ORDER HITS:</text>
+  <text x="465" y="140" fill="#A5D6A7" font-size="12">1. Consumes 400 asks at 1.2003</text>
+  <text x="465" y="160" fill="#A5D6A7" font-size="12">2. Consumes 220 asks at 1.2004</text>
+  <text x="465" y="180" fill="#A5D6A7" font-size="12">3. Next fills at 1.2005 → price rises</text>
+  <text x="465" y="210" fill="#EF9A9A" font-size="12">This is ORDER FLOW in action</text>
+</svg>
+</div>
+
+<div class="div-dots">• • •</div>
+<h2 class="sec-title">2. Delta — The Directional Pressure Gauge</h2>
+
+<div class="box bp"><h4>📊 Delta Definition</h4>
+<p><span class="term">Delta = Aggressive Buys − Aggressive Sells</span> within a candle or time period.<br><br>
+Positive delta → more buyers hit the ask than sellers hit the bid → net buying pressure.<br>
+Negative delta → more sellers hit the bid → net selling pressure.<br><br>
+<span class="hl">Key insight:</span> A green candle can have NEGATIVE delta (sellers were more aggressive even though price closed higher). This means passive buyers held price up against aggressive selling — very bullish absorption signal.</p></div>
+
+<div class="g3">
+<div class="ccard"><div class="ccard-icon">🟢</div><h4>Positive Delta + Green Close</h4><p>Strong bullish confirmation. Buyers aggressive and winning. Continue long or add to position.</p></div>
+<div class="ccard"><div class="ccard-icon">🔴</div><h4>Negative Delta + Red Close</h4><p>Strong bearish confirmation. Sellers aggressive and winning. Continue short or add.</p></div>
+<div class="ccard"><div class="ccard-icon">⚠️</div><h4>Negative Delta + Green Close</h4><p><span class="term">Absorption!</span> Passive buyers absorbing heavy selling. Bullish reversal signal. Watch for follow-through.</p></div>
+</div>
+
+<h2 class="sec-title">3. Cumulative Volume Delta (CVD)</h2>
+<div class="box bg"><h4>📈 CVD — The Trend Indicator of Order Flow</h4>
+<p>CVD is the <span class="hl">running total of delta</span> across a session or chart period. Unlike individual candle delta, CVD reveals the macro buying/selling pressure trend. Rising CVD = net buying accumulation. Falling CVD = net selling accumulation.</p></div>
+
+<table>
+<tr><th>CVD Pattern</th><th>Price Pattern</th><th>Signal</th><th>Trade Idea</th></tr>
+<tr><td>Rising</td><td>Rising</td><td>✅ Strong Bullish</td><td>Hold/add to longs — confirmed move</td></tr>
+<tr><td>Falling</td><td>Falling</td><td>✅ Strong Bearish</td><td>Hold/add to shorts — confirmed move</td></tr>
+<tr><td>Falling</td><td>Rising</td><td>⚠️ Bearish Divergence</td><td>Reduce longs, watch for reversal</td></tr>
+<tr><td>Rising</td><td>Falling</td><td>⚠️ Bullish Divergence</td><td>Reduce shorts, watch for reversal</td></tr>
+<tr><td>Flat</td><td>Rising</td><td>🔴 Weak/Unsustained</td><td>High risk long — no OF support</td></tr>
+</table>
+
+<h2 class="sec-title">4. The Footprint Chart</h2>
+<p>The footprint chart is the most powerful order flow visualization tool available to retail traders. Unlike standard candlesticks, each bar in a footprint chart shows the <span class="term">bid/ask volume at every single price tick</span> within that bar.</p>
+
+<div class="g2">
+<div class="box bo"><h4>🔍 Reading a Footprint Bar</h4>
+<p>Each row shows: <code>[Sell Volume] × [Price] × [Buy Volume]</code><br><br>
+Example: <code>150 × 1.2003 × 340</code><br>
+→ 150 lots sold aggressively at 1.2003<br>
+→ 340 lots bought aggressively at 1.2003<br>
+→ Net delta at this price: +190 (strong buying)<br><br>
+The <span class="term">largest delta imbalances</span> reveal where institutions transacted.</p></div>
+
+<div class="box bt"><h4>🎯 Footprint Patterns to Watch</h4>
+<p><span class="term">Stacked Imbalances</span>: 3+ consecutive price levels with same-side dominance. Extremely bullish or bearish — high momentum signal.<br><br>
+<span class="term">Unfinished Auction</span>: Top of bar has 0 ask volume (buyers ran out) or bottom has 0 bid volume (sellers ran out). Price will return to complete the auction.<br><br>
+<span class="term">Absorption</span>: Heavy volume on one side but price doesn't move. The other side is a wall.</p></div>
+</div>
+
+<div class="div-grad"></div>
+<h2 class="sec-title">5. Darius FX's Core Order Flow Rules</h2>
+<ol class="steps">
+<li>Always know the HTF directional bias before reading LTF order flow — context filters noise</li>
+<li>Never trade a CVD-confirmed move in the opposite direction — the order flow is king</li>
+<li>Footprint absorption at a key level (OB, VP level) = highest probability entry signal</li>
+<li>CVD divergence at a swing extreme = anticipate reversal, not confirmation to add</li>
+<li>Volume confirms structure breaks — a BOS without volume spike is suspect</li>
+<li>Session CVD should be reset at each session open for clearest reading</li>
+</ol>
+
+<div class="takeaway">
+<h3>⚡ Key Takeaways from This Video</h3>
+<ul>
+<li>Order flow is the <em>cause</em> of price movement — everything else is the effect</li>
+<li>Delta = aggressive buys minus aggressive sells. Negative delta on green bar = absorption = strong bullish signal</li>
+<li>CVD divergence from price is the single most reliable reversal signal in order flow trading</li>
+<li>Footprint charts reveal the internal structure of every candle — the DOM's history made visible</li>
+<li>Absorption + CVD divergence + key structural level = A+ entry setup</li>
+<li>Never fight a move where CVD is trending strongly in the same direction as price</li>
+</ul>
+</div>
+
+<div class="div-dots">• • •</div>
+<h2 class="sec-title">Review Questions</h2>
+<div class="quiz"><div class="quiz-q">Q1: A 15-minute candle closes bullish (green) but shows negative delta of -450. What is the most likely interpretation?</div>
+<div class="quiz-opt">A) Error in the data — delta and candle direction should always agree</div>
+<div class="quiz-opt">B) Bearish signal — sellers were more aggressive, reversal likely</div>
+<div class="quiz-opt">C) Bullish absorption — passive buyers held price up against heavy selling; very bullish</div>
+<div class="quiz-opt">D) The candle is meaningless and should be ignored</div>
+<button class="show-ans">Show Answer</button>
+<div class="ans">✅ C — This is classic absorption. Massive sell pressure (negative delta) couldn't push price down because large passive buyers were absorbing every sell order. Price closed green despite the selling. This is one of the most bullish signals in order flow — institutions buying everything the market throws at them.</div></div>
+
+<div class="quiz"><div class="quiz-q">Q2: CVD has been falling steadily for 3 hours while price has been rising. What trade do you consider?</div>
+<div class="quiz-opt">A) Long — price is clearly bullish</div>
+<div class="quiz-opt">B) Short — bearish CVD divergence signals sellers are absorbing the rally</div>
+<div class="quiz-opt">C) No trade — conflicting signals cancel each other out</div>
+<div class="quiz-opt">D) Wait for price to make a new high before deciding</div>
+<button class="show-ans">Show Answer</button>
+<div class="ans">✅ B — Bearish CVD divergence. Despite price rising, the NET aggression is with sellers (CVD falling). This means institutions are selling into the rally — distributing their long positions to retail buyers. The move is likely unsustainable. Look for a short at the next key resistance level with order flow confirmation.</div></div>
+
+</div>
+
+<a href="index.html" class="back" title="Back to Index">←</a>
+<script>
+document.querySelectorAll('.show-ans').forEach(btn=>{{
+  btn.addEventListener('click',()=>{{
+    const a=btn.nextElementSibling;
+    a.style.display=a.style.display==='block'?'none':'block';
+    btn.textContent=a.style.display==='block'?'Hide Answer':'Show Answer';
+  }});
+}});
+</script>
+</body></html>

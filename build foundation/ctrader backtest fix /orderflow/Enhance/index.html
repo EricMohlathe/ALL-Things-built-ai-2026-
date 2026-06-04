@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>GODMODE Order Flow — All 33 Video Deep-Dives</title>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Nunito:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cream:#FAF6F0;--dark:#0D1B2A;--card:#fff;
+  --green:#2E7D32;--gl:#E8F5E9;
+  --blue:#1565C0;--bl:#E3F2FD;
+  --orange:#E65100;--ol:#FFF3E0;
+  --purple:#6A1B9A;--pl:#F3E5F5;
+  --red:#C62828;--rl:#FFEBEE;
+  --yellow:#F9A825;--yl:#FFFDE7;
+  --teal:#00695C;--tl:#E0F2F1;
+  --gold:#FFD700;
+  --text:#2C2C2C;--text2:#555;--border:#D4C5B0;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--cream);font-family:'Nunito',sans-serif;color:var(--text);line-height:1.75;font-size:15px}
+
+/* ── HERO ── */
+.hero{background:linear-gradient(135deg,#0D1B2A 0%,#1B2838 50%,#16213E 100%);color:#fff;padding:50px 40px 40px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 15% 50%,rgba(255,140,0,.12) 0%,transparent 55%),radial-gradient(ellipse at 85% 30%,rgba(0,200,255,.1) 0%,transparent 55%)}
+.hero-top{display:flex;align-items:flex-start;gap:24px;position:relative;flex-wrap:wrap}
+.hero-num{font-family:'JetBrains Mono',monospace;font-size:11px;background:var(--gold);color:#000;padding:4px 12px;border-radius:4px;font-weight:700;white-space:nowrap;margin-top:4px}
+.hero h1{font-family:'Caveat',cursive;font-size:clamp(28px,4vw,48px);font-weight:700;color:var(--gold);line-height:1.2;flex:1}
+.hero-channel{font-size:13px;color:#90CAF9;margin-top:8px;position:relative}
+.hero-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;position:relative}
+.htag{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#E0E0E0;font-size:11px;padding:4px 12px;border-radius:20px;font-family:'JetBrains Mono',monospace}
+.hero-link{display:inline-flex;align-items:center;gap:8px;background:var(--gold);color:#000;font-weight:800;font-size:13px;padding:10px 22px;border-radius:8px;text-decoration:none;margin-top:18px;position:relative}
+
+/* ── CONTENT ── */
+.wrap{max-width:1100px;margin:0 auto;padding:40px 30px}
+
+/* ── SECTION TITLES ── */
+.sec-title{font-family:'Caveat',cursive;font-size:32px;color:var(--green);margin:40px 0 16px;border-bottom:2px solid var(--border);padding-bottom:6px}
+.sec-sub{font-size:16px;color:var(--text2);margin-bottom:20px}
+
+/* ── BOXES ── */
+.box{border-radius:10px;padding:20px 24px;margin:18px 0;border-left:5px solid}
+.box h4{font-size:15px;font-weight:800;margin-bottom:10px}
+.bg{background:var(--gl);border-color:var(--green)} .bg h4{color:var(--green)}
+.bb{background:var(--bl);border-color:var(--blue)} .bb h4{color:var(--blue)}
+.bo{background:var(--ol);border-color:var(--orange)} .bo h4{color:var(--orange)}
+.bp{background:var(--pl);border-color:var(--purple)} .bp h4{color:var(--purple)}
+.br{background:var(--rl);border-color:var(--red)} .br h4{color:var(--red)}
+.by{background:var(--yl);border-color:var(--yellow)} .by h4{color:#795548}
+.bt{background:var(--tl);border-color:var(--teal)} .bt h4{color:var(--teal)}
+
+/* ── GRIDS ── */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+@media(max-width:768px){.g2,.g3{grid-template-columns:1fr}}
+
+/* ── TABLE ── */
+table{width:100%;border-collapse:collapse;font-size:14px;margin:18px 0}
+th{background:var(--dark);color:var(--gold);padding:11px 14px;text-align:left;font-size:12px;letter-spacing:.5px}
+td{padding:10px 14px;border-bottom:1px solid #EDE5D8;color:var(--text2);vertical-align:top}
+tr:nth-child(even) td{background:#F7F3EE}
+
+/* ── CODE ── */
+.code{background:#0D1B2A;color:#B0C4DE;font-family:'JetBrains Mono',monospace;font-size:13px;padding:18px 20px;border-radius:8px;margin:16px 0;overflow-x:auto;line-height:1.9;border-left:4px solid var(--gold)}
+.cg{color:#A5D6A7} .cy{color:var(--gold)} .cc{color:#667} .cm{color:#CE93D8}
+
+/* ── SVG DIAGRAM ── */
+.diagram{background:#fff;border-radius:12px;padding:24px;margin:24px 0;border:1px solid var(--border);box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.diagram-title{font-family:'Caveat',cursive;font-size:24px;color:var(--green);text-align:center;margin-bottom:16px}
+
+/* ── STEPS ── */
+.steps{list-style:none;counter-reset:s}
+.step{counter-increment:s;display:flex;gap:14px;margin:12px 0;align-items:flex-start;font-size:14px;color:var(--text2)}
+.step::before{content:counter(s);background:var(--green);color:#fff;min-width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0;margin-top:2px}
+
+/* ── TERM PILL ── */
+.term{color:var(--teal);font-weight:800}
+.hl{background:linear-gradient(120deg,rgba(255,215,0,.35),rgba(255,215,0,.15));padding:1px 5px;border-radius:3px;font-weight:700}
+
+/* ── FORMULA ── */
+.formula{background:#0D1B2A;color:var(--gold);font-family:'JetBrains Mono',monospace;font-size:13px;padding:16px 20px;border-radius:8px;margin:14px 0;line-height:2}
+
+/* ── CONCEPT CARD ── */
+.ccard{background:#fff;border:1px solid var(--border);border-radius:10px;padding:18px;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.ccard-icon{font-size:28px;margin-bottom:8px}
+.ccard h4{font-size:14px;font-weight:800;color:var(--dark);margin-bottom:6px}
+.ccard p{font-size:13px;color:var(--text2);line-height:1.6}
+
+/* ── QUIZ ── */
+.quiz{background:#fff;border-radius:12px;padding:22px;border:1px solid var(--border);margin:14px 0}
+.quiz-q{font-weight:700;margin-bottom:12px;font-size:15px}
+.quiz-opt{background:#F7F3EE;border:1px solid var(--border);border-radius:6px;padding:10px 14px;font-size:13px;cursor:pointer;margin:6px 0;transition:.15s;color:var(--text2)}
+.quiz-opt:hover{border-color:var(--green);background:var(--gl);color:var(--green)}
+.ans{display:none;background:var(--gl);border:1px solid var(--green);border-radius:8px;padding:12px;font-size:13px;color:var(--green);margin-top:10px}
+.show-ans{background:var(--dark);color:var(--gold);border:none;padding:8px 18px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;font-family:'JetBrains Mono',monospace;margin-top:8px}
+
+/* ── KEY TAKEAWAYS ── */
+.takeaway{background:var(--dark);color:#E0E0E0;border-radius:12px;padding:28px;margin:30px 0}
+.takeaway h3{font-family:'Caveat',cursive;font-size:28px;color:var(--gold);margin-bottom:16px}
+.takeaway ul{list-style:none;padding:0}
+.takeaway li{display:flex;gap:12px;margin:10px 0;font-size:14px}
+.takeaway li::before{content:'⚡';flex-shrink:0}
+
+/* ── DIVIDERS ── */
+.div-grad{height:3px;background:linear-gradient(90deg,transparent,var(--gold),var(--orange),var(--gold),transparent);margin:36px 0;border-radius:2px}
+.div-dots{text-align:center;color:var(--border);font-size:20px;letter-spacing:8px;margin:28px 0}
+
+/* ── BACK BUTTON ── */
+.back{position:fixed;bottom:28px;right:28px;background:var(--gold);color:#000;width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;text-decoration:none;box-shadow:0 4px 16px rgba(0,0,0,.25);z-index:99;font-size:18px}
+</style>
+</head>
+<body>
+
+<div class="hero" style="min-height:auto;padding:60px 40px 50px;">
+  <div style="position:relative;">
+  <span style="background:rgba(255,215,0,.15);border:1px solid rgba(255,215,0,.4);color:#FFD700;font-family:'JetBrains Mono',monospace;font-size:11px;padding:5px 16px;border-radius:20px;letter-spacing:3px;display:inline-block;margin-bottom:24px;">⚡ GODMODE INDIVIDUAL VIDEO SERIES</span>
+  <h1 style="font-family:'Caveat',cursive;font-size:52px;color:#FFD700;line-height:1.1;margin-bottom:16px;">33 Deep-Dive Video Pages</h1>
+  <p style="color:#90CAF9;font-size:18px;max-width:700px;margin:0 auto;">Each video gets its own comprehensive HTML page — concept breakdowns, diagrams, tables, key takeaways, and review questions</p>
+  </div>
+</div>
+<div style="max-width:1200px;margin:0 auto;padding:40px 30px;">
+<h2 style="font-family:'Caveat',cursive;font-size:32px;color:#2E7D32;margin-bottom:24px;border-bottom:2px solid #D4C5B0;padding-bottom:8px;">All Videos</h2>
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:18px;">
+
+<div style="background:#fff;border-radius:12px;border:1px solid #D4C5B0;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.05);">
+  <div style="background:linear-gradient(135deg,#0D1B2A,#1B2838);height:90px;display:flex;align-items:center;justify-content:space-between;padding:16px;">
+    <span style="background:#FFD700;color:#000;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:4px 12px;border-radius:4px;">V01</span>
+    <span style="color:#90CAF9;font-size:12px;">~60 min</span>
+  </div>
+  <div style="padding:16px;">
+    <h4 style="font-size:14px;font-weight:800;color:#1A1A2E;line-height:1.4;margin-bottom:6px;">The ONLY Orderflow Concepts Guide You'll EVER NEED</h4>
+    <div style="font-size:12px;color:#1565C0;font-weight:600;margin-bottom:10px;">📺 Darius FX</div>
+    <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px;"><span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Order Flow</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Delta</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Footprint</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">DOM</span></div>
+    <a href="vYbK-cDmCSc.html" style="background:#0D1B2A;color:#FFD700;font-size:12px;font-weight:700;padding:7px 16px;border-radius:6px;text-decoration:none;display:inline-block;">Open Deep-Dive →</a>
+  </div>
+</div>
+<div style="background:#fff;border-radius:12px;border:1px solid #D4C5B0;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.05);">
+  <div style="background:linear-gradient(135deg,#0D1B2A,#1B2838);height:90px;display:flex;align-items:center;justify-content:space-between;padding:16px;">
+    <span style="background:#FFD700;color:#000;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:4px 12px;border-radius:4px;">V02</span>
+    <span style="color:#90CAF9;font-size:12px;">~90 min</span>
+  </div>
+  <div style="padding:16px;">
+    <h4 style="font-size:14px;font-weight:800;color:#1A1A2E;line-height:1.4;margin-bottom:6px;">How to Master Order Flow Trading (ULTIMATE In-Depth Guide)</h4>
+    <div style="font-size:12px;color:#1565C0;font-weight:600;margin-bottom:10px;">📺 The Trading Geek</div>
+    <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px;"><span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Order Flow</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Footprint</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Absorption</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">CVD</span></div>
+    <a href="Ovz-b5nGzJw.html" style="background:#0D1B2A;color:#FFD700;font-size:12px;font-weight:700;padding:7px 16px;border-radius:6px;text-decoration:none;display:inline-block;">Open Deep-Dive →</a>
+  </div>
+</div>
+<div style="background:#fff;border-radius:12px;border:1px solid #D4C5B0;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.05);">
+  <div style="background:linear-gradient(135deg,#0D1B2A,#1B2838);height:90px;display:flex;align-items:center;justify-content:space-between;padding:16px;">
+    <span style="background:#FFD700;color:#000;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:4px 12px;border-radius:4px;">V03</span>
+    <span style="color:#90CAF9;font-size:12px;">25 min</span>
+  </div>
+  <div style="padding:16px;">
+    <h4 style="font-size:14px;font-weight:800;color:#1A1A2E;line-height:1.4;margin-bottom:6px;">How To Trade ORDER FLOW In Under 25 Minutes</h4>
+    <div style="font-size:12px;color:#1565C0;font-weight:600;margin-bottom:10px;">📺 Jon Watkins</div>
+    <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px;"><span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Order Flow</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Quick Start</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Practical</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Price Action</span></div>
+    <a href="rVCuT4-FJ3s.html" style="background:#0D1B2A;color:#FFD700;font-size:12px;font-weight:700;padding:7px 16px;border-radius:6px;text-decoration:none;display:inline-block;">Open Deep-Dive →</a>
+  </div>
+</div>
+<div style="background:#fff;border-radius:12px;border:1px solid #D4C5B0;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.05);">
+  <div style="background:linear-gradient(135deg,#0D1B2A,#1B2838);height:90px;display:flex;align-items:center;justify-content:space-between;padding:16px;">
+    <span style="background:#FFD700;color:#000;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:4px 12px;border-radius:4px;">V04</span>
+    <span style="color:#90CAF9;font-size:12px;">~60 min</span>
+  </div>
+  <div style="padding:16px;">
+    <h4 style="font-size:14px;font-weight:800;color:#1A1A2E;line-height:1.4;margin-bottom:6px;">Master ORDER FLOW TRADING in Less than ONE HOUR!</h4>
+    <div style="font-size:12px;color:#1565C0;font-weight:600;margin-bottom:10px;">📺 Fractal Flow — Pro Trading Strategies</div>
+    <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px;"><span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Order Flow</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">1-Hour Course</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Imbalances</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Institutional</span></div>
+    <a href="6Ac38LzXj3A.html" style="background:#0D1B2A;color:#FFD700;font-size:12px;font-weight:700;padding:7px 16px;border-radius:6px;text-decoration:none;display:inline-block;">Open Deep-Dive →</a>
+  </div>
+</div>
+<div style="background:#fff;border-radius:12px;border:1px solid #D4C5B0;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.05);">
+  <div style="background:linear-gradient(135deg,#0D1B2A,#1B2838);height:90px;display:flex;align-items:center;justify-content:space-between;padding:16px;">
+    <span style="background:#FFD700;color:#000;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:4px 12px;border-radius:4px;">V05</span>
+    <span style="color:#90CAF9;font-size:12px;">~30 min</span>
+  </div>
+  <div style="padding:16px;">
+    <h4 style="font-size:14px;font-weight:800;color:#1A1A2E;line-height:1.4;margin-bottom:6px;">Order Flow Explained</h4>
+    <div style="font-size:12px;color:#1565C0;font-weight:600;margin-bottom:10px;">📺 TJR</div>
+    <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px;"><span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Order Flow</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Basics</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Iceberg Orders</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Price Discovery</span></div>
+    <a href="z0czA_OSq5M.html" style="background:#0D1B2A;color:#FFD700;font-size:12px;font-weight:700;padding:7px 16px;border-radius:6px;text-decoration:none;display:inline-block;">Open Deep-Dive →</a>
+  </div>
+</div>
+<div style="background:#fff;border-radius:12px;border:1px solid #D4C5B0;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.05);">
+  <div style="background:linear-gradient(135deg,#0D1B2A,#1B2838);height:90px;display:flex;align-items:center;justify-content:space-between;padding:16px;">
+    <span style="background:#FFD700;color:#000;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:4px 12px;border-radius:4px;">V06</span>
+    <span style="color:#90CAF9;font-size:12px;">~45 min</span>
+  </div>
+  <div style="padding:16px;">
+    <h4 style="font-size:14px;font-weight:800;color:#1A1A2E;line-height:1.4;margin-bottom:6px;">How To ACTUALLY Trade Order Flow</h4>
+    <div style="font-size:12px;color:#1565C0;font-weight:600;margin-bottom:10px;">📺 Casper SMC</div>
+    <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px;"><span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">SMC</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Order Flow</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Order Blocks</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">FVG</span></div>
+    <a href="TuWHVtF_nIw.html" style="background:#0D1B2A;color:#FFD700;font-size:12px;font-weight:700;padding:7px 16px;border-radius:6px;text-decoration:none;display:inline-block;">Open Deep-Dive →</a>
+  </div>
+</div>
+<div style="background:#fff;border-radius:12px;border:1px solid #D4C5B0;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.05);">
+  <div style="background:linear-gradient(135deg,#0D1B2A,#1B2838);height:90px;display:flex;align-items:center;justify-content:space-between;padding:16px;">
+    <span style="background:#FFD700;color:#000;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:4px 12px;border-radius:4px;">V07</span>
+    <span style="color:#90CAF9;font-size:12px;">~120 min</span>
+  </div>
+  <div style="padding:16px;">
+    <h4 style="font-size:14px;font-weight:800;color:#1A1A2E;line-height:1.4;margin-bottom:6px;">Corso completo di Auction Market Theory</h4>
+    <div style="font-size:12px;color:#1565C0;font-weight:600;margin-bottom:10px;">📺 Fabervaale</div>
+    <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px;"><span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">AMT</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Auction Theory</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Initial Balance</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Opening Types</span></div>
+    <a href="Ur8-c-bDGqU.html" style="background:#0D1B2A;color:#FFD700;font-size:12px;font-weight:700;padding:7px 16px;border-radius:6px;text-decoration:none;display:inline-block;">Open Deep-Dive →</a>
+  </div>
+</div>
+<div style="background:#fff;border-radius:12px;border:1px solid #D4C5B0;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.05);">
+  <div style="background:linear-gradient(135deg,#0D1B2A,#1B2838);height:90px;display:flex;align-items:center;justify-content:space-between;padding:16px;">
+    <span style="background:#FFD700;color:#000;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:4px 12px;border-radius:4px;">V08</span>
+    <span style="color:#90CAF9;font-size:12px;">~60 min</span>
+  </div>
+  <div style="padding:16px;">
+    <h4 style="font-size:14px;font-weight:800;color:#1A1A2E;line-height:1.4;margin-bottom:6px;">Trading LIVE with the BEST Scalper in the World (PERFECT Accuracy)</h4>
+    <div style="font-size:12px;color:#1565C0;font-weight:600;margin-bottom:10px;">📺 Words of Rizdom</div>
+    <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px;"><span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Live Trading</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Scalping</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Execution</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">DOM</span></div>
+    <a href="DyS79Eb92Ug.html" style="background:#0D1B2A;color:#FFD700;font-size:12px;font-weight:700;padding:7px 16px;border-radius:6px;text-decoration:none;display:inline-block;">Open Deep-Dive →</a>
+  </div>
+</div>
+<div style="background:#fff;border-radius:12px;border:1px solid #D4C5B0;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.05);">
+  <div style="background:linear-gradient(135deg,#0D1B2A,#1B2838);height:90px;display:flex;align-items:center;justify-content:space-between;padding:16px;">
+    <span style="background:#FFD700;color:#000;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:4px 12px;border-radius:4px;">V09</span>
+    <span style="color:#90CAF9;font-size:12px;">~60 min</span>
+  </div>
+  <div style="padding:16px;">
+    <h4 style="font-size:14px;font-weight:800;color:#1A1A2E;line-height:1.4;margin-bottom:6px;">How To Use Bookmap To Day Trade — Understanding Liquidity and Order Fl...</h4>
+    <div style="font-size:12px;color:#1565C0;font-weight:600;margin-bottom:10px;">📺 MasiTrades</div>
+    <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px;"><span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Bookmap</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Heatmap</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Iceberg Orders</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Liquidity</span></div>
+    <a href="r9xbDeSxhCA.html" style="background:#0D1B2A;color:#FFD700;font-size:12px;font-weight:700;padding:7px 16px;border-radius:6px;text-decoration:none;display:inline-block;">Open Deep-Dive →</a>
+  </div>
+</div>
+<div style="background:#fff;border-radius:12px;border:1px solid #D4C5B0;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.05);">
+  <div style="background:linear-gradient(135deg,#0D1B2A,#1B2838);height:90px;display:flex;align-items:center;justify-content:space-between;padding:16px;">
+    <span style="background:#FFD700;color:#000;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:4px 12px;border-radius:4px;">V10</span>
+    <span style="color:#90CAF9;font-size:12px;">83 min</span>
+  </div>
+  <div style="padding:16px;">
+    <h4 style="font-size:14px;font-weight:800;color:#1A1A2E;line-height:1.4;margin-bottom:6px;">MASTER Order Flow Trading in 83 Minutes (Complete OFT Course)</h4>
+    <div style="font-size:12px;color:#1565C0;font-weight:600;margin-bottom:10px;">📺 Mind Math Money</div>
+    <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px;"><span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Order Flow</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Full Course</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">83 Minutes</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Footprint</span></div>
+    <a href="Rqu-AoD9BUo.html" style="background:#0D1B2A;color:#FFD700;font-size:12px;font-weight:700;padding:7px 16px;border-radius:6px;text-decoration:none;display:inline-block;">Open Deep-Dive →</a>
+  </div>
+</div>
+<div style="background:#fff;border-radius:12px;border:1px solid #D4C5B0;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.05);">
+  <div style="background:linear-gradient(135deg,#0D1B2A,#1B2838);height:90px;display:flex;align-items:center;justify-content:space-between;padding:16px;">
+    <span style="background:#FFD700;color:#000;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:4px 12px;border-radius:4px;">V11</span>
+    <span style="color:#90CAF9;font-size:12px;">~75 min</span>
+  </div>
+  <div style="padding:16px;">
+    <h4 style="font-size:14px;font-weight:800;color:#1A1A2E;line-height:1.4;margin-bottom:6px;">The ONLY Volume Profile Guide That Actually Works</h4>
+    <div style="font-size:12px;color:#1565C0;font-weight:600;margin-bottom:10px;">📺 Fractal Flow — Pro Trading Strategies</div>
+    <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px;"><span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Volume Profile</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">POC</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Value Area</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">HVN</span></div>
+    <a href="9eqDWJSvCx4.html" style="background:#0D1B2A;color:#FFD700;font-size:12px;font-weight:700;padding:7px 16px;border-radius:6px;text-decoration:none;display:inline-block;">Open Deep-Dive →</a>
+  </div>
+</div>
+<div style="background:#fff;border-radius:12px;border:1px solid #D4C5B0;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.05);">
+  <div style="background:linear-gradient(135deg,#0D1B2A,#1B2838);height:90px;display:flex;align-items:center;justify-content:space-between;padding:16px;">
+    <span style="background:#FFD700;color:#000;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:4px 12px;border-radius:4px;">V12</span>
+    <span style="color:#90CAF9;font-size:12px;">~60 min</span>
+  </div>
+  <div style="padding:16px;">
+    <h4 style="font-size:14px;font-weight:800;color:#1A1A2E;line-height:1.4;margin-bottom:6px;">My "SECRET" Orderflow Model</h4>
+    <div style="font-size:12px;color:#1565C0;font-weight:600;margin-bottom:10px;">📺 Fabervaale ENG</div>
+    <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px;"><span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">AMT</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Order Flow</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Fabervaale</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Proprietary Model</span></div>
+    <a href="Khgj5q1-ln8.html" style="background:#0D1B2A;color:#FFD700;font-size:12px;font-weight:700;padding:7px 16px;border-radius:6px;text-decoration:none;display:inline-block;">Open Deep-Dive →</a>
+  </div>
+</div>
+<div style="background:#fff;border-radius:12px;border:1px solid #D4C5B0;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.05);">
+  <div style="background:linear-gradient(135deg,#0D1B2A,#1B2838);height:90px;display:flex;align-items:center;justify-content:space-between;padding:16px;">
+    <span style="background:#FFD700;color:#000;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:4px 12px;border-radius:4px;">V13</span>
+    <span style="color:#90CAF9;font-size:12px;">~45 min</span>
+  </div>
+  <div style="padding:16px;">
+    <h4 style="font-size:14px;font-weight:800;color:#1A1A2E;line-height:1.4;margin-bottom:6px;">SMC & Order Flow Trading Strategy</h4>
+    <div style="font-size:12px;color:#1565C0;font-weight:600;margin-bottom:10px;">📺 ATAS — Platform for volume analysis for traders</div>
+    <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px;"><span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">ATAS</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">SMC</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Order Flow</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Cluster Chart</span></div>
+    <a href="jVomJTjmxL4.html" style="background:#0D1B2A;color:#FFD700;font-size:12px;font-weight:700;padding:7px 16px;border-radius:6px;text-decoration:none;display:inline-block;">Open Deep-Dive →</a>
+  </div>
+</div>
+<div style="background:#fff;border-radius:12px;border:1px solid #D4C5B0;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.05);">
+  <div style="background:linear-gradient(135deg,#0D1B2A,#1B2838);height:90px;display:flex;align-items:center;justify-content:space-between;padding:16px;">
+    <span style="background:#FFD700;color:#000;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:4px 12px;border-radius:4px;">V14</span>
+    <span style="color:#90CAF9;font-size:12px;">30 min</span>
+  </div>
+  <div style="padding:16px;">
+    <h4 style="font-size:14px;font-weight:800;color:#1A1A2E;line-height:1.4;margin-bottom:6px;">Master LIQUIDITY CONCEPTS in 30 Minutes!</h4>
+    <div style="font-size:12px;color:#1565C0;font-weight:600;margin-bottom:10px;">📺 Fractal Flow — Pro Trading Strategies</div>
+    <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px;"><span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Liquidity</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">BSL</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">SSL</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Stop Hunt</span></div>
+    <a href="9LzmoP2DJ4I.html" style="background:#0D1B2A;color:#FFD700;font-size:12px;font-weight:700;padding:7px 16px;border-radius:6px;text-decoration:none;display:inline-block;">Open Deep-Dive →</a>
+  </div>
+</div>
+<div style="background:#fff;border-radius:12px;border:1px solid #D4C5B0;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.05);">
+  <div style="background:linear-gradient(135deg,#0D1B2A,#1B2838);height:90px;display:flex;align-items:center;justify-content:space-between;padding:16px;">
+    <span style="background:#FFD700;color:#000;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:4px 12px;border-radius:4px;">V15</span>
+    <span style="color:#90CAF9;font-size:12px;">~50 min</span>
+  </div>
+  <div style="padding:16px;">
+    <h4 style="font-size:14px;font-weight:800;color:#1A1A2E;line-height:1.4;margin-bottom:6px;">ICT + Volume Profile = Insane Profit</h4>
+    <div style="font-size:12px;color:#1565C0;font-weight:600;margin-bottom:10px;">📺 Faiz SMC</div>
+    <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px;"><span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">ICT</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Volume Profile</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Fusion</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">POC</span></div>
+    <a href="wmcoNjbUxyI.html" style="background:#0D1B2A;color:#FFD700;font-size:12px;font-weight:700;padding:7px 16px;border-radius:6px;text-decoration:none;display:inline-block;">Open Deep-Dive →</a>
+  </div>
+</div>
+<div style="background:#fff;border-radius:12px;border:1px solid #D4C5B0;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.05);">
+  <div style="background:linear-gradient(135deg,#0D1B2A,#1B2838);height:90px;display:flex;align-items:center;justify-content:space-between;padding:16px;">
+    <span style="background:#FFD700;color:#000;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:4px 12px;border-radius:4px;">V16</span>
+    <span style="color:#90CAF9;font-size:12px;">~55 min</span>
+  </div>
+  <div style="padding:16px;">
+    <h4 style="font-size:14px;font-weight:800;color:#1A1A2E;line-height:1.4;margin-bottom:6px;">Professional Trading Strategies Trading The Order Flow</h4>
+    <div style="font-size:12px;color:#1565C0;font-weight:600;margin-bottom:10px;">📺 Orderflows</div>
+    <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px;"><span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Professional</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Order Flow</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Footprint</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Setups</span></div>
+    <a href="NbP8isuPajs.html" style="background:#0D1B2A;color:#FFD700;font-size:12px;font-weight:700;padding:7px 16px;border-radius:6px;text-decoration:none;display:inline-block;">Open Deep-Dive →</a>
+  </div>
+</div>
+<div style="background:#fff;border-radius:12px;border:1px solid #D4C5B0;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.05);">
+  <div style="background:linear-gradient(135deg,#0D1B2A,#1B2838);height:90px;display:flex;align-items:center;justify-content:space-between;padding:16px;">
+    <span style="background:#FFD700;color:#000;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:4px 12px;border-radius:4px;">V17</span>
+    <span style="color:#90CAF9;font-size:12px;">~50 min</span>
+  </div>
+  <div style="padding:16px;">
+    <h4 style="font-size:14px;font-weight:800;color:#1A1A2E;line-height:1.4;margin-bottom:6px;">Master Order Flow : Smart Money Trading Secrets</h4>
+    <div style="font-size:12px;color:#1565C0;font-weight:600;margin-bottom:10px;">📺 FOREXSOM</div>
+    <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px;"><span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Smart Money</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Stop Hunts</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Manipulation</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">DOM</span></div>
+    <a href="5z_T86I1azA.html" style="background:#0D1B2A;color:#FFD700;font-size:12px;font-weight:700;padding:7px 16px;border-radius:6px;text-decoration:none;display:inline-block;">Open Deep-Dive →</a>
+  </div>
+</div>
+<div style="background:#fff;border-radius:12px;border:1px solid #D4C5B0;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.05);">
+  <div style="background:linear-gradient(135deg,#0D1B2A,#1B2838);height:90px;display:flex;align-items:center;justify-content:space-between;padding:16px;">
+    <span style="background:#FFD700;color:#000;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:4px 12px;border-radius:4px;">V18</span>
+    <span style="color:#90CAF9;font-size:12px;">~90 min</span>
+  </div>
+  <div style="padding:16px;">
+    <h4 style="font-size:14px;font-weight:800;color:#1A1A2E;line-height:1.4;margin-bottom:6px;">LIVE TRADING — How I made $12,500 trading using OrderFlow — Umar Ashra...</h4>
+    <div style="font-size:12px;color:#1565C0;font-weight:600;margin-bottom:10px;">📺 BlackLine Trading</div>
+    <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px;"><span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Umar Ashraf</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Live Trading</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">$12500</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Order Flow</span></div>
+    <a href="CwHlqEBsjZY.html" style="background:#0D1B2A;color:#FFD700;font-size:12px;font-weight:700;padding:7px 16px;border-radius:6px;text-decoration:none;display:inline-block;">Open Deep-Dive →</a>
+  </div>
+</div>
+<div style="background:#fff;border-radius:12px;border:1px solid #D4C5B0;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.05);">
+  <div style="background:linear-gradient(135deg,#0D1B2A,#1B2838);height:90px;display:flex;align-items:center;justify-content:space-between;padding:16px;">
+    <span style="background:#FFD700;color:#000;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:4px 12px;border-radius:4px;">V19</span>
+    <span style="color:#90CAF9;font-size:12px;">2+ hours</span>
+  </div>
+  <div style="padding:16px;">
+    <h4 style="font-size:14px;font-weight:800;color:#1A1A2E;line-height:1.4;margin-bottom:6px;">Complete Order Flow Explained | SMC + ICT Concepts (2+ Hour Full Guide...</h4>
+    <div style="font-size:12px;color:#1565C0;font-weight:600;margin-bottom:10px;">📺 Trading Discussion</div>
+    <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px;"><span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">SMC</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">ICT</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Order Flow</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Complete Guide</span></div>
+    <a href="r76xEfBVxZc.html" style="background:#0D1B2A;color:#FFD700;font-size:12px;font-weight:700;padding:7px 16px;border-radius:6px;text-decoration:none;display:inline-block;">Open Deep-Dive →</a>
+  </div>
+</div>
+<div style="background:#fff;border-radius:12px;border:1px solid #D4C5B0;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.05);">
+  <div style="background:linear-gradient(135deg,#0D1B2A,#1B2838);height:90px;display:flex;align-items:center;justify-content:space-between;padding:16px;">
+    <span style="background:#FFD700;color:#000;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:4px 12px;border-radius:4px;">V20</span>
+    <span style="color:#90CAF9;font-size:12px;">~90 min</span>
+  </div>
+  <div style="padding:16px;">
+    <h4 style="font-size:14px;font-weight:800;color:#1A1A2E;line-height:1.4;margin-bottom:6px;">The ULTIMATE Wyckoff Trading Course</h4>
+    <div style="font-size:12px;color:#1565C0;font-weight:600;margin-bottom:10px;">📺 Fractal Flow — Pro Trading Strategies</div>
+    <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px;"><span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Wyckoff</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Accumulation</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Distribution</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Spring</span></div>
+    <a href="8sbfrusR5Eo.html" style="background:#0D1B2A;color:#FFD700;font-size:12px;font-weight:700;padding:7px 16px;border-radius:6px;text-decoration:none;display:inline-block;">Open Deep-Dive →</a>
+  </div>
+</div>
+<div style="background:#fff;border-radius:12px;border:1px solid #D4C5B0;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.05);">
+  <div style="background:linear-gradient(135deg,#0D1B2A,#1B2838);height:90px;display:flex;align-items:center;justify-content:space-between;padding:16px;">
+    <span style="background:#FFD700;color:#000;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:4px 12px;border-radius:4px;">V21</span>
+    <span style="color:#90CAF9;font-size:12px;">~3 hours</span>
+  </div>
+  <div style="padding:16px;">
+    <h4 style="font-size:14px;font-weight:800;color:#1A1A2E;line-height:1.4;margin-bottom:6px;">FULL SMC TRADING COURSE in One Video | Complete SMC & ICT Crash Course</h4>
+    <div style="font-size:12px;color:#1565C0;font-weight:600;margin-bottom:10px;">📺 SMC Folder</div>
+    <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px;"><span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">SMC</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">ICT</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Full Course</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Order Blocks</span></div>
+    <a href="h-NN3DiXu80.html" style="background:#0D1B2A;color:#FFD700;font-size:12px;font-weight:700;padding:7px 16px;border-radius:6px;text-decoration:none;display:inline-block;">Open Deep-Dive →</a>
+  </div>
+</div>
+<div style="background:#fff;border-radius:12px;border:1px solid #D4C5B0;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.05);">
+  <div style="background:linear-gradient(135deg,#0D1B2A,#1B2838);height:90px;display:flex;align-items:center;justify-content:space-between;padding:16px;">
+    <span style="background:#FFD700;color:#000;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:4px 12px;border-radius:4px;">V22</span>
+    <span style="color:#90CAF9;font-size:12px;">68 min</span>
+  </div>
+  <div style="padding:16px;">
+    <h4 style="font-size:14px;font-weight:800;color:#1A1A2E;line-height:1.4;margin-bottom:6px;">Master Market Structure in 68 Minutes (Step-by-Step Course)</h4>
+    <div style="font-size:12px;color:#1565C0;font-weight:600;margin-bottom:10px;">📺 JeaFx</div>
+    <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px;"><span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Market Structure</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">BOS</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">CHOCH</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">MSS</span></div>
+    <a href="ygleB1CLhUE.html" style="background:#0D1B2A;color:#FFD700;font-size:12px;font-weight:700;padding:7px 16px;border-radius:6px;text-decoration:none;display:inline-block;">Open Deep-Dive →</a>
+  </div>
+</div>
+<div style="background:#fff;border-radius:12px;border:1px solid #D4C5B0;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.05);">
+  <div style="background:linear-gradient(135deg,#0D1B2A,#1B2838);height:90px;display:flex;align-items:center;justify-content:space-between;padding:16px;">
+    <span style="background:#FFD700;color:#000;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:4px 12px;border-radius:4px;">V23</span>
+    <span style="color:#90CAF9;font-size:12px;">40 min</span>
+  </div>
+  <div style="padding:16px;">
+    <h4 style="font-size:14px;font-weight:800;color:#1A1A2E;line-height:1.4;margin-bottom:6px;">Master MARKET STRUCTURE in Less than 40 Minutes!</h4>
+    <div style="font-size:12px;color:#1565C0;font-weight:600;margin-bottom:10px;">📺 Fractal Flow — Pro Trading Strategies</div>
+    <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px;"><span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Market Structure</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Swing Points</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Trend</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">BOS</span></div>
+    <a href="CAT0lXOc6LM.html" style="background:#0D1B2A;color:#FFD700;font-size:12px;font-weight:700;padding:7px 16px;border-radius:6px;text-decoration:none;display:inline-block;">Open Deep-Dive →</a>
+  </div>
+</div>
+<div style="background:#fff;border-radius:12px;border:1px solid #D4C5B0;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.05);">
+  <div style="background:linear-gradient(135deg,#0D1B2A,#1B2838);height:90px;display:flex;align-items:center;justify-content:space-between;padding:16px;">
+    <span style="background:#FFD700;color:#000;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:4px 12px;border-radius:4px;">V24</span>
+    <span style="color:#90CAF9;font-size:12px;">~55 min</span>
+  </div>
+  <div style="padding:16px;">
+    <h4 style="font-size:14px;font-weight:800;color:#1A1A2E;line-height:1.4;margin-bottom:6px;">The ONE Trading Indicator That Will EXPOSE The Truth About The Markets...</h4>
+    <div style="font-size:12px;color:#1565C0;font-weight:600;margin-bottom:10px;">📺 Chart Fanatics</div>
+    <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px;"><span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Indicator</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Prop Firms</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">FTMO</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Institutional</span></div>
+    <a href="q_MdVlZ1SH4.html" style="background:#0D1B2A;color:#FFD700;font-size:12px;font-weight:700;padding:7px 16px;border-radius:6px;text-decoration:none;display:inline-block;">Open Deep-Dive →</a>
+  </div>
+</div>
+<div style="background:#fff;border-radius:12px;border:1px solid #D4C5B0;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.05);">
+  <div style="background:linear-gradient(135deg,#0D1B2A,#1B2838);height:90px;display:flex;align-items:center;justify-content:space-between;padding:16px;">
+    <span style="background:#FFD700;color:#000;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:4px 12px;border-radius:4px;">V25</span>
+    <span style="color:#90CAF9;font-size:12px;">~75 min</span>
+  </div>
+  <div style="padding:16px;">
+    <h4 style="font-size:14px;font-weight:800;color:#1A1A2E;line-height:1.4;margin-bottom:6px;">Trading LIVE with One of the World's BEST Scalpers (PERFECT Sniper Ent...</h4>
+    <div style="font-size:12px;color:#1565C0;font-weight:600;margin-bottom:10px;">📺 Chart Fanatics</div>
+    <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px;"><span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Live Trading</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Scalping</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Chart Fanatics</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Sniper Entries</span></div>
+    <a href="TvoQr6ObjnU.html" style="background:#0D1B2A;color:#FFD700;font-size:12px;font-weight:700;padding:7px 16px;border-radius:6px;text-decoration:none;display:inline-block;">Open Deep-Dive →</a>
+  </div>
+</div>
+<div style="background:#fff;border-radius:12px;border:1px solid #D4C5B0;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.05);">
+  <div style="background:linear-gradient(135deg,#0D1B2A,#1B2838);height:90px;display:flex;align-items:center;justify-content:space-between;padding:16px;">
+    <span style="background:#FFD700;color:#000;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:4px 12px;border-radius:4px;">V26</span>
+    <span style="color:#90CAF9;font-size:12px;">90 min</span>
+  </div>
+  <div style="padding:16px;">
+    <h4 style="font-size:14px;font-weight:800;color:#1A1A2E;line-height:1.4;margin-bottom:6px;">Master ALGO Trading In Less Than 90 Minutes (NO Coding) | $1M+ Profits</h4>
+    <div style="font-size:12px;color:#1565C0;font-weight:600;margin-bottom:10px;">📺 Chart Fanatics</div>
+    <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px;"><span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Algo Trading</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">No Coding</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Systematic</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Backtesting</span></div>
+    <a href="TyHTEtArsS4.html" style="background:#0D1B2A;color:#FFD700;font-size:12px;font-weight:700;padding:7px 16px;border-radius:6px;text-decoration:none;display:inline-block;">Open Deep-Dive →</a>
+  </div>
+</div>
+<div style="background:#fff;border-radius:12px;border:1px solid #D4C5B0;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.05);">
+  <div style="background:linear-gradient(135deg,#0D1B2A,#1B2838);height:90px;display:flex;align-items:center;justify-content:space-between;padding:16px;">
+    <span style="background:#FFD700;color:#000;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:4px 12px;border-radius:4px;">V27</span>
+    <span style="color:#90CAF9;font-size:12px;">~50 min</span>
+  </div>
+  <div style="padding:16px;">
+    <h4 style="font-size:14px;font-weight:800;color:#1A1A2E;line-height:1.4;margin-bottom:6px;">STEAL This 7 Figure Liquidity HACK for Your Trading (Any Asset & Timef...</h4>
+    <div style="font-size:12px;color:#1565C0;font-weight:600;margin-bottom:10px;">📺 Chart Fanatics</div>
+    <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px;"><span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Liquidity</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">7 Figure</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Chart Fanatics</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Equal Highs</span></div>
+    <a href="nMhywubR2xc.html" style="background:#0D1B2A;color:#FFD700;font-size:12px;font-weight:700;padding:7px 16px;border-radius:6px;text-decoration:none;display:inline-block;">Open Deep-Dive →</a>
+  </div>
+</div>
+<div style="background:#fff;border-radius:12px;border:1px solid #D4C5B0;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.05);">
+  <div style="background:linear-gradient(135deg,#0D1B2A,#1B2838);height:90px;display:flex;align-items:center;justify-content:space-between;padding:16px;">
+    <span style="background:#FFD700;color:#000;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:4px 12px;border-radius:4px;">V28</span>
+    <span style="color:#90CAF9;font-size:12px;">~80 min</span>
+  </div>
+  <div style="padding:16px;">
+    <h4 style="font-size:14px;font-weight:800;color:#1A1A2E;line-height:1.4;margin-bottom:6px;">LIVE Trading with a $1M+ Order Flow Trader (INSANE RESULTS)</h4>
+    <div style="font-size:12px;color:#1565C0;font-weight:600;margin-bottom:10px;">📺 Chart Fanatics</div>
+    <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px;"><span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Live Trading</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">$1M Trader</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Order Flow</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">VP</span></div>
+    <a href="SQEtBHOJW6I.html" style="background:#0D1B2A;color:#FFD700;font-size:12px;font-weight:700;padding:7px 16px;border-radius:6px;text-decoration:none;display:inline-block;">Open Deep-Dive →</a>
+  </div>
+</div>
+<div style="background:#fff;border-radius:12px;border:1px solid #D4C5B0;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.05);">
+  <div style="background:linear-gradient(135deg,#0D1B2A,#1B2838);height:90px;display:flex;align-items:center;justify-content:space-between;padding:16px;">
+    <span style="background:#FFD700;color:#000;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:4px 12px;border-radius:4px;">V29</span>
+    <span style="color:#90CAF9;font-size:12px;">~100 min</span>
+  </div>
+  <div style="padding:16px;">
+    <h4 style="font-size:14px;font-weight:800;color:#1A1A2E;line-height:1.4;margin-bottom:6px;">LIVE TRADING — How He Made $40,000+ Trading using OrderFlow (Full Mast...</h4>
+    <div style="font-size:12px;color:#1565C0;font-weight:600;margin-bottom:10px;">📺 Chart Fanatics</div>
+    <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px;"><span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Live Trading</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">$40K</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Order Flow</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Masterclass</span></div>
+    <a href="UhkRRqO1gQM.html" style="background:#0D1B2A;color:#FFD700;font-size:12px;font-weight:700;padding:7px 16px;border-radius:6px;text-decoration:none;display:inline-block;">Open Deep-Dive →</a>
+  </div>
+</div>
+<div style="background:#fff;border-radius:12px;border:1px solid #D4C5B0;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.05);">
+  <div style="background:linear-gradient(135deg,#0D1B2A,#1B2838);height:90px;display:flex;align-items:center;justify-content:space-between;padding:16px;">
+    <span style="background:#FFD700;color:#000;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:4px 12px;border-radius:4px;">V30</span>
+    <span style="color:#90CAF9;font-size:12px;">~60 min</span>
+  </div>
+  <div style="padding:16px;">
+    <h4 style="font-size:14px;font-weight:800;color:#1A1A2E;line-height:1.4;margin-bottom:6px;">The SIMPLE $10 Million ICT Blueprint They Don't Want You To See</h4>
+    <div style="font-size:12px;color:#1565C0;font-weight:600;margin-bottom:10px;">📺 Chart Fanatics</div>
+    <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px;"><span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">ICT Blueprint</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">$10 Million</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Chart Fanatics</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Kill Zones</span></div>
+    <a href="coBMd1vk2Lo.html" style="background:#0D1B2A;color:#FFD700;font-size:12px;font-weight:700;padding:7px 16px;border-radius:6px;text-decoration:none;display:inline-block;">Open Deep-Dive →</a>
+  </div>
+</div>
+<div style="background:#fff;border-radius:12px;border:1px solid #D4C5B0;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.05);">
+  <div style="background:linear-gradient(135deg,#0D1B2A,#1B2838);height:90px;display:flex;align-items:center;justify-content:space-between;padding:16px;">
+    <span style="background:#FFD700;color:#000;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:4px 12px;border-radius:4px;">V31</span>
+    <span style="color:#90CAF9;font-size:12px;">~60 min</span>
+  </div>
+  <div style="padding:16px;">
+    <h4 style="font-size:14px;font-weight:800;color:#1A1A2E;line-height:1.4;margin-bottom:6px;">COPY This EXACT Entry System to Become a Millionaire Trader</h4>
+    <div style="font-size:12px;color:#1565C0;font-weight:600;margin-bottom:10px;">📺 Chart Fanatics</div>
+    <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px;"><span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Entry System</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Chart Fanatics</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Millionaire</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Exact System</span></div>
+    <a href="YzYDUEUOZ4k.html" style="background:#0D1B2A;color:#FFD700;font-size:12px;font-weight:700;padding:7px 16px;border-radius:6px;text-decoration:none;display:inline-block;">Open Deep-Dive →</a>
+  </div>
+</div>
+<div style="background:#fff;border-radius:12px;border:1px solid #D4C5B0;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.05);">
+  <div style="background:linear-gradient(135deg,#0D1B2A,#1B2838);height:90px;display:flex;align-items:center;justify-content:space-between;padding:16px;">
+    <span style="background:#FFD700;color:#000;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:4px 12px;border-radius:4px;">V32</span>
+    <span style="color:#90CAF9;font-size:12px;">~35 min</span>
+  </div>
+  <div style="padding:16px;">
+    <h4 style="font-size:14px;font-weight:800;color:#1A1A2E;line-height:1.4;margin-bottom:6px;">This Liquidity Indicator Is like MAGIC! (LiquidityMagic indicator + Tu...</h4>
+    <div style="font-size:12px;color:#1565C0;font-weight:600;margin-bottom:10px;">📺 Rylan Trades</div>
+    <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px;"><span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Indicator</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">LiquidityMagic</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Auto-Map</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">BSL</span></div>
+    <a href="0o0ZDj_axDc.html" style="background:#0D1B2A;color:#FFD700;font-size:12px;font-weight:700;padding:7px 16px;border-radius:6px;text-decoration:none;display:inline-block;">Open Deep-Dive →</a>
+  </div>
+</div>
+<div style="background:#fff;border-radius:12px;border:1px solid #D4C5B0;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.05);">
+  <div style="background:linear-gradient(135deg,#0D1B2A,#1B2838);height:90px;display:flex;align-items:center;justify-content:space-between;padding:16px;">
+    <span style="background:#FFD700;color:#000;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:4px 12px;border-radius:4px;">V33</span>
+    <span style="color:#90CAF9;font-size:12px;">~50 min</span>
+  </div>
+  <div style="padding:16px;">
+    <h4 style="font-size:14px;font-weight:800;color:#1A1A2E;line-height:1.4;margin-bottom:6px;">La herramienta que las instituciones no quieren que sepas (Volume Prof...</h4>
+    <div style="font-size:12px;color:#1565C0;font-weight:600;margin-bottom:10px;">📺 Stefano Francescato</div>
+    <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px;"><span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Volume Profile</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Spanish</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Institutional</span> <span style="background:#F0EBE3;color:#555;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;">Banks</span></div>
+    <a href="9rJtQ7Ga20s.html" style="background:#0D1B2A;color:#FFD700;font-size:12px;font-weight:700;padding:7px 16px;border-radius:6px;text-decoration:none;display:inline-block;">Open Deep-Dive →</a>
+  </div>
+</div></div></div>
+<a href="#" class="back" title="Back to Index">←</a>
+<script>
+document.querySelectorAll('.show-ans').forEach(btn=>{{
+  btn.addEventListener('click',()=>{{
+    const a=btn.nextElementSibling;
+    a.style.display=a.style.display==='block'?'none':'block';
+    btn.textContent=a.style.display==='block'?'Hide Answer':'Show Answer';
+  }});
+}});
+</script>
+</body></html>

@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>GODMODE ⚡ Control Center</title>
+<style>
+:root{
+  --bg:#070B14; --bg2:#0B1220; --card:#101a2e; --card2:#13203a;
+  --line:#1d2b46; --text:#E6EDF3; --dim:#8B97A7;
+  --bull:#00E5A0; --bear:#FF4D6D; --neut:#5B8DEF; --gold:#FFD24C; --violet:#B57EDC;
+  --glow:0 0 18px rgba(0,229,160,.18);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:radial-gradient(1200px 600px at 80% -10%,rgba(91,141,239,.12),transparent),
+      radial-gradient(900px 500px at 0% 100%,rgba(0,229,160,.08),transparent),var(--bg);
+  color:var(--text);font:14px/1.5 "Segoe UI",Inter,system-ui,sans-serif;min-height:100vh}
+a{color:var(--neut);text-decoration:none}
+.wrap{max-width:1280px;margin:0 auto;padding:18px 22px 60px}
+/* header */
+header{display:flex;align-items:center;justify-content:space-between;gap:20px;
+  padding:14px 18px;margin-bottom:18px;border:1px solid var(--line);border-radius:14px;
+  background:linear-gradient(135deg,rgba(16,26,46,.9),rgba(11,18,32,.7));backdrop-filter:blur(6px)}
+.logo{display:flex;align-items:center;gap:12px}
+.bolt{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;font-size:20px;
+  background:conic-gradient(from 200deg,var(--bull),var(--neut),var(--violet),var(--gold),var(--bull));
+  box-shadow:var(--glow);animation:spin 14s linear infinite}
+@keyframes spin{to{filter:hue-rotate(360deg)}}
+.logo h1{font-size:18px;letter-spacing:.5px}
+.logo small{color:var(--dim);font-size:11px;letter-spacing:2px;text-transform:uppercase}
+.flip{flex:1;max-width:460px}
+.flip .row{display:flex;justify-content:space-between;font-size:12px;color:var(--dim);margin-bottom:6px}
+.flip .row b{color:var(--gold)}
+.bar{height:12px;border-radius:8px;background:#0c1424;border:1px solid var(--line);overflow:hidden}
+.bar>span{display:block;height:100%;width:0;border-radius:8px;
+  background:linear-gradient(90deg,var(--bull),var(--neut));transition:width 1.2s cubic-bezier(.2,.8,.2,1);box-shadow:var(--glow)}
+.bal input{width:90px;background:#0c1424;border:1px solid var(--line);color:var(--gold);border-radius:8px;padding:4px 8px;font-weight:700}
+/* tabs */
+nav.tabs{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap}
+.tab{padding:8px 16px;border:1px solid var(--line);border-radius:10px;background:var(--bg2);color:var(--dim);cursor:pointer;transition:.2s}
+.tab:hover{color:var(--text);border-color:var(--neut)}
+.tab.active{color:#071019;background:linear-gradient(90deg,var(--bull),var(--neut));border-color:transparent;font-weight:700}
+/* stat strip */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:18px}
+.stat{padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:var(--card)}
+.stat .v{font-size:24px;font-weight:800}
+.stat .k{font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:1px}
+/* controls */
+.toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+.toolbar input[type=text],.toolbar select{background:var(--bg2);border:1px solid var(--line);color:var(--text);border-radius:10px;padding:8px 12px}
+.btn{padding:8px 14px;border:1px solid var(--line);border-radius:10px;background:var(--card2);color:var(--text);cursor:pointer;transition:.2s}
+.btn:hover{border-color:var(--neut);box-shadow:var(--glow)}
+.btn.upload{background:linear-gradient(90deg,var(--violet),var(--neut));color:#0a0f1c;font-weight:700;border:none}
+/* grid */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+.card{position:relative;border:1px solid var(--line);border-radius:14px;padding:14px;background:linear-gradient(160deg,var(--card),var(--bg2));
+  transition:transform .18s,box-shadow .18s,border-color .18s;overflow:hidden}
+.card:hover{transform:translateY(-4px);border-color:var(--neut);box-shadow:0 12px 30px rgba(0,0,0,.4),var(--glow)}
+.card .top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.card .id{font-size:12px;color:var(--gold);font-weight:700;letter-spacing:1px}
+.card h3{font-size:15px;margin:2px 0 6px}
+.fam{display:inline-block;font-size:10px;padding:2px 8px;border-radius:20px;background:rgba(91,141,239,.16);color:var(--neut);border:1px solid rgba(91,141,239,.3)}
+.idea{font-size:12px;color:var(--dim);min-height:34px;margin:8px 0}
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:10px 0}
+.metrics div{background:#0c1424;border:1px solid var(--line);border-radius:8px;padding:6px;text-align:center}
+.metrics b{display:block;font-size:14px}
+.metrics small{font-size:9px;color:var(--dim);text-transform:uppercase}
+.card .foot{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
+.toggle{width:42px;height:22px;border-radius:20px;background:#0c1424;border:1px solid var(--line);position:relative;cursor:pointer;transition:.2s}
+.toggle::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:var(--dim);transition:.2s}
+.toggle.on{background:rgba(0,229,160,.25);border-color:var(--bull)}
+.toggle.on::after{left:22px;background:var(--bull);box-shadow:var(--glow)}
+.pill{font-size:10px;padding:2px 8px;border-radius:6px;border:1px solid var(--line);color:var(--dim)}
+.pill.tick{color:var(--gold);border-color:var(--gold)}
+.spark{height:3px;border-radius:3px;margin-top:10px;background:linear-gradient(90deg,var(--bull),var(--neut),var(--violet))}
+/* panels */
+.panel{border:1px solid var(--line);border-radius:14px;padding:18px;background:var(--card);margin-bottom:16px}
+.panel h2{font-size:15px;margin-bottom:10px}
+.panel ul{margin-left:18px;color:var(--dim)}.panel li{margin:5px 0}
+canvas{max-width:100%}
+.hide{display:none}
+.note{font-size:12px;color:var(--dim);border-left:3px solid var(--gold);padding:6px 12px;background:rgba(255,210,76,.06);border-radius:0 8px 8px 0;margin:10px 0}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th,td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:left}
+th{color:var(--dim);text-transform:uppercase;font-size:10px;letter-spacing:1px}
+.dirL{color:var(--bull)}.dirS{color:var(--bear)}
+footer{margin-top:24px;text-align:center;color:var(--dim);font-size:11px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo">
+      <div class="bolt">⚡</div>
+      <div><h1>GODMODE</h1><small>Control Center · 26 archetypes</small></div>
+    </div>
+    <div class="flip">
+      <div class="row"><span>Flip progress <b class="bal">$<input id="bal" type="number" value="10" min="0"/></b> → <b>$5,000</b></span><span id="flipPct">0.0%</span></div>
+      <div class="bar"><span id="flipBar"></span></div>
+    </div>
+  </header>
+
+  <nav class="tabs">
+    <div class="tab active" data-t="strategies">Strategies</div>
+    <div class="tab" data-t="journal">Journal</div>
+    <div class="tab" data-t="portfolio">Portfolio</div>
+    <div class="tab" data-t="playbook">Playbook</div>
+  </nav>
+
+  <div class="stats">
+    <div class="stat"><div class="v" id="sActive">0</div><div class="k">Active</div></div>
+    <div class="stat"><div class="v" id="sTotal">26</div><div class="k">Archetypes</div></div>
+    <div class="stat"><div class="v" id="sEntries">—</div><div class="k">Logged Entries</div></div>
+    <div class="stat"><div class="v" id="sSkips">—</div><div class="k">Logged Skips</div></div>
+    <div class="stat"><div class="v" id="sSkipRate">—</div><div class="k">Skip Rate</div></div>
+  </div>
+
+  <!-- STRATEGIES -->
+  <section id="strategies">
+    <div class="toolbar">
+      <input type="text" id="search" placeholder="🔎 Search archetype / family…"/>
+      <select id="famFilter"><option value="">All families</option></select>
+      <button class="btn" id="allOn">Enable all</button>
+      <button class="btn" id="allOff">Pause all</button>
+    </div>
+    <div class="grid" id="cards"></div>
+  </section>
+
+  <!-- JOURNAL -->
+  <section id="journal" class="hide">
+    <div class="panel">
+      <h2>Import journals</h2>
+      <p class="idea">Upload the EA CSV logs (<code>GODMODE_GMxx_*_log.csv</code>) from MT5 Common/Files or cTrader Documents. They record <b>entries and skips</b> — the denominator that tells you which edges actually fire.</p>
+      <div class="toolbar">
+        <label class="btn upload">⬆ Upload CSV logs<input id="file" type="file" accept=".csv" multiple hidden/></label>
+        <button class="btn" id="clearJ">Clear</button>
+        <span id="jStatus" style="color:var(--dim)"></span>
+      </div>
+      <div class="note">Win% / Profit-Factor need trade <i>outcomes</i> (P/L). The journals log signals, not results — import your broker/backtest history into the scorecard for those. This app shows what each EA actually <i>did</i>: fire rate, direction balance, average confluence score.</div>
+      <table><thead><tr><th>EA</th><th>Entries</th><th>Skips</th><th>Kills</th><th>Long</th><th>Short</th><th>Avg score</th></tr></thead><tbody id="jBody"><tr><td colspan="7" style="color:var(--dim)">No data imported yet.</td></tr></tbody></table>
+    </div>
+  </section>
+
+  <!-- PORTFOLIO -->
+  <section id="portfolio" class="hide">
+    <div class="panel">
+      <h2>Activity by archetype</h2>
+      <canvas id="chart" height="120"></canvas>
+      <div class="note">Run only the 2–3 archetypes that <b>prove out on your data</b>, and check they don't lose at the same time (drawdown correlation). Uncorrelated survivors compounding &gt; one "magic" setup.</div>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="v" id="pFire">—</div><div class="k">Most active EA</div></div>
+      <div class="stat"><div class="v" id="pLS">—</div><div class="k">Long : Short</div></div>
+      <div class="stat"><div class="v" id="pAvg">—</div><div class="k">Avg score (signals)</div></div>
+    </div>
+  </section>
+
+  <!-- PLAYBOOK -->
+  <section id="playbook" class="hide">
+    <div class="panel"><h2>The honest frame</h2><ul>
+      <li>Sustained 80–100% win rates aren't real at retail volume (Medallion ≈71%). Small accounts grow on <b>asymmetric R:R + survival + uncorrelated edges compounding</b>.</li>
+      <li>Rank by <b>profit factor / expectancy, not win rate</b>. A 60% / +1.5R system beats an 80% / +0.6R one.</li>
+      <li>Require <b>≥200 trades</b> before trusting any win-rate number.</li>
+      <li>The legit higher band (≈75–85%) comes from <b>confluence stacking</b> (GM26, ≥4 layers), not single setups.</li>
+    </ul></div>
+    <div class="panel"><h2>Risk modes</h2><table>
+      <thead><tr><th>Mode</th><th>Risk %</th><th>Use</th></tr></thead><tbody>
+      <tr><td style="color:var(--bull)">Conservative</td><td>1%</td><td>Default. Capital protection first.</td></tr>
+      <tr><td style="color:var(--gold)">Aggressive</td><td>3%</td><td>Faster compounding, real drawdowns.</td></tr>
+      <tr><td style="color:var(--bear)">Flip</td><td>8%</td><td>$10→big lottery ticket. Relaxes min-lot guard. Expect blow-ups.</td></tr>
+      </tbody></table></div>
+    <div class="panel"><h2>Backtest protocol</h2><ul>
+      <li>One EA, one symbol, <b>tick data</b>, ≥6 months, Conservative.</li>
+      <li>Record trades, win%, avg R, <b>PF (target ≥1.5)</b>, max DD, recovery.</li>
+      <li>Retire anything that can't clear PF 1.3 on your data. GM09 (order flow) needs real tick data.</li>
+    </ul></div>
+  </section>
+
+  <footer>GODMODE Master Library · MT5 + cTrader + TradingView · visualise → backtest → keep only what proves out.</footer>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<script>
+const ARCH=[
+ ["GM01","Opening Range Breakout","Breakout","First-range break with retest filter."],
+ ["GM02","Session Sweep Reversal","Liquidity/SMC","Judas sweep then reclaim (CRT/PO3)."],
+ ["GM03","Fair Value Gap","ICT/SMC","Trend-aligned FVG mitigation entry."],
+ ["GM04","Order Block Return","SMC","Return to the last opposing OB before displacement."],
+ ["GM05","ICT Unicorn","SMC","Breaker + FVG overlap confluence."],
+ ["GM06","Wyckoff Spring","Wyckoff","Spring/upthrust reclaim of range edge."],
+ ["GM07","VWAP Mean Reversion","AMT","Fade statistical VWAP std-dev bands."],
+ ["GM08","Momentum / Displacement","Momentum","No-wick displacement continuation."],
+ ["GM09","Order-Flow Absorption","Order flow","CVD divergence + absorption.",true],
+ ["GM10","Power of 3 / CRT","ICT","Accumulation-manipulation-distribution + CISD."],
+ ["GM11","Silver Bullet","ICT","Macro killzone window + sweep + FVG."],
+ ["GM12","Optimal Trade Entry","ICT","Fib 0.62–0.79 discount/premium."],
+ ["GM13","Price Action","PA","Pin / engulfing / inside-bar triggers."],
+ ["GM14","Turtle Soup / SFP","Liquidity","Sweep a prior swing, then reclaim it."],
+ ["GM15","Supply & Demand","S/D","Small-range base + displacement, trade the return."],
+ ["GM16","Market Structure","SMC","BOS continuation / CHoCH reversal."],
+ ["GM17","Initial Balance","Market profile","Break of the first-N-minutes range."],
+ ["GM18","Harmonic XABCD","Harmonic","Gartley / Bat / Butterfly / Crab PRZ."],
+ ["GM19","RSI(2) Mean Reversion","Mean reversion","Connors pullback inside long-EMA trend."],
+ ["GM20","Gap Fade / Go","Gap","Fade opening gap to close, or continuation."],
+ ["GM21","Prev-Day Levels","Liquidity","PDH/PDL/PWH/PWL sweep + reclaim."],
+ ["GM22","EMA Pullback","Trend","EMA-stack trend, pullback-and-reclaim."],
+ ["GM23","Opening Gap CE","ICT","NDOG/NWOG gap-midpoint reaction."],
+ ["GM24","SMT Divergence","ICT","Correlated pair fails to confirm new high/low."],
+ ["GM25","Breakout-Retest","Breakout","Range break, enter on the retest that holds."],
+ ["GM26","Confluence Stack","Meta-edge","Fires only when ≥N layers agree (4–5 floor)."]
+];
+const RISK=["Conservative","Aggressive","Flip"];
+const state=JSON.parse(localStorage.getItem("gm_state")||"{}");
+let journal={}; // ea -> stats
+
+const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
+function save(){localStorage.setItem("gm_state",JSON.stringify(state));}
+
+// ---- flip bar ----
+function flip(){
+  const b=Math.max(0,+$("#bal").value||0);
+  const pct=Math.max(0,Math.min(100,(b-10)/(5000-10)*100));
+  $("#flipBar").style.width=pct+"%"; $("#flipPct").textContent=pct.toFixed(1)+"%";
+  state.bal=b; save();
+}
+$("#bal").addEventListener("input",flip);
+
+// ---- cards ----
+function metricFor(id){const j=journal[id];if(!j)return["—","—","—"];return[j.entries,j.skips,(j.scoreN?(j.scoreSum/j.scoreN).toFixed(1):"—")];}
+function card(a){
+  const [id,name,fam,idea,tick]=a;
+  const st=state[id]||(state[id]={on:false,risk:0});
+  const [e,s,sc]=metricFor(id);
+  const el=document.createElement("div");el.className="card";el.dataset.fam=fam;el.dataset.q=(id+" "+name+" "+fam).toLowerCase();
+  el.innerHTML=`
+    <div class="top"><div><div class="id">${id}</div><h3>${name}</h3><span class="fam">${fam}</span></div>
+      ${tick?'<span class="pill tick">TICK ONLY</span>':'<span class="pill">MT5·cT·TV</span>'}</div>
+    <div class="idea">${idea}</div>
+    <div class="metrics"><div><b>${e}</b><small>Entries</small></div><div><b>${s}</b><small>Skips</small></div><div><b>${sc}</b><small>Avg score</small></div></div>
+    <div class="foot">
+      <select class="risk" data-id="${id}">${RISK.map((r,i)=>`<option value="${i}" ${st.risk==i?"selected":""}>${r}</option>`).join("")}</select>
+      <div class="toggle ${st.on?"on":""}" data-id="${id}"></div>
+    </div><div class="spark"></div>`;
+  return el;
+}
+function renderCards(){
+  const q=$("#search").value.toLowerCase(), f=$("#famFilter").value;
+  const box=$("#cards");box.innerHTML="";
+  ARCH.forEach(a=>{const fam=a[2];if(f&&fam!==f)return;const c=card(a);
+    if(q&&!c.dataset.q.includes(q))return;box.appendChild(c);});
+  $$(".toggle").forEach(t=>t.onclick=()=>{const id=t.dataset.id;state[id].on=!state[id].on;t.classList.toggle("on");save();updateStats();});
+  $$(".risk").forEach(r=>r.onchange=()=>{state[r.dataset.id].risk=+r.value;save();});
+  updateStats();
+}
+function updateStats(){
+  $("#sActive").textContent=ARCH.filter(a=>state[a[0]]&&state[a[0]].on).length;
+}
+
+// ---- tabs ----
+$$(".tab").forEach(t=>t.onclick=()=>{
+  $$(".tab").forEach(x=>x.classList.remove("active"));t.classList.add("active");
+  ["strategies","journal","portfolio","playbook"].forEach(s=>$("#"+s).classList.add("hide"));
+  $("#"+t.dataset.t).classList.remove("hide");
+  if(t.dataset.t==="portfolio")drawChart();
+});
+
+// ---- filters ----
+[...new Set(ARCH.map(a=>a[2]))].sort().forEach(f=>{const o=document.createElement("option");o.value=o.textContent=f;$("#famFilter").appendChild(o);});
+$("#search").oninput=renderCards;$("#famFilter").onchange=renderCards;
+$("#allOn").onclick=()=>{ARCH.forEach(a=>state[a[0]]={...(state[a[0]]||{risk:0}),on:true});save();renderCards();};
+$("#allOff").onclick=()=>{ARCH.forEach(a=>state[a[0]]={...(state[a[0]]||{risk:0}),on:false});save();renderCards();};
+
+// ---- CSV journal ----
+$("#file").addEventListener("change",ev=>{
+  const files=[...ev.target.files];let done=0;
+  files.forEach(f=>{const r=new FileReader();r.onload=()=>{parseCSV(r.result);if(++done===files.length){afterJournal(files.length);}};r.readAsText(f);});
+});
+function parseCSV(txt){
+  const lines=txt.split(/\r?\n/);
+  for(let i=1;i<lines.length;i++){const ln=lines[i].trim();if(!ln)continue;const c=ln.split(",");
+    if(c.length<11)continue;const ea=c[1],evt=c[3],dir=c[4],score=parseFloat(c[10]);
+    if(!/^GM\d\d$/.test(ea))continue;
+    const j=journal[ea]||(journal[ea]={entries:0,skips:0,kills:0,longs:0,shorts:0,scoreSum:0,scoreN:0});
+    if(evt==="ENTRY"){j.entries++;if(dir==="LONG")j.longs++;else if(dir==="SHORT")j.shorts++;if(!isNaN(score)){j.scoreSum+=score;j.scoreN++;}}
+    else if(evt&&evt.indexOf("SKIP")===0)j.skips++;
+    else if(evt&&evt.indexOf("KILL")===0)j.kills++;
+  }
+}
+function afterJournal(n){
+  $("#jStatus").textContent=`imported ${n} file(s), ${Object.keys(journal).length} EAs`;
+  const tb=$("#jBody");tb.innerHTML="";let te=0,ts=0,tl=0,tsh=0,ss=0,sn=0,top="—",topN=-1;
+  Object.keys(journal).sort().forEach(ea=>{const j=journal[ea];te+=j.entries;ts+=j.skips;tl+=j.longs;tsh+=j.shorts;ss+=j.scoreSum;sn+=j.scoreN;
+    if(j.entries>topN){topN=j.entries;top=ea;}
+    const avg=j.scoreN?(j.scoreSum/j.scoreN).toFixed(1):"—";
+    tb.innerHTML+=`<tr><td><b>${ea}</b></td><td>${j.entries}</td><td>${j.skips}</td><td>${j.kills}</td><td class="dirL">${j.longs}</td><td class="dirS">${j.shorts}</td><td>${avg}</td></tr>`;});
+  if(!tb.innerHTML)tb.innerHTML='<tr><td colspan="7" style="color:var(--dim)">No GMxx rows found in those files.</td></tr>';
+  $("#sEntries").textContent=te;$("#sSkips").textContent=ts;$("#sSkipRate").textContent=(te+ts)?Math.round(ts/(te+ts)*100)+"%":"—";
+  $("#pFire").textContent=top;$("#pLS").textContent=tl+" : "+tsh;$("#pAvg").textContent=sn?(ss/sn).toFixed(1):"—";
+  renderCards();
+}
+$("#clearJ").onclick=()=>{journal={};afterJournal(0);$("#jStatus").textContent="cleared";$("#jBody").innerHTML='<tr><td colspan="7" style="color:var(--dim)">No data imported yet.</td></tr>';["sEntries","sSkips","sSkipRate","pFire","pLS","pAvg"].forEach(i=>$("#"+i).textContent="—");};
+
+// ---- chart ----
+let chart;
+function drawChart(){
+  if(!window.Chart){$("#chart").replaceWith(Object.assign(document.createElement("div"),{className:"note",textContent:"Chart library offline — connect to the internet to render the activity chart."}));return;}
+  const labels=ARCH.map(a=>a[0]);
+  const ent=labels.map(id=>journal[id]?journal[id].entries:0);
+  const skp=labels.map(id=>journal[id]?journal[id].skips:0);
+  if(chart)chart.destroy();
+  chart=new Chart($("#chart"),{type:"bar",data:{labels,datasets:[
+    {label:"Entries",data:ent,backgroundColor:"#00E5A0"},
+    {label:"Skips",data:skp,backgroundColor:"#5B8DEF66"}]},
+    options:{responsive:true,scales:{x:{ticks:{color:"#8B97A7",font:{size:9}},grid:{color:"#1d2b46"}},y:{ticks:{color:"#8B97A7"},grid:{color:"#1d2b46"}}},plugins:{legend:{labels:{color:"#E6EDF3"}}}}});
+}
+
+// ---- init ----
+if(state.bal)$("#bal").value=state.bal;
+flip();renderCards();
+</script>
+</body>
+</html>

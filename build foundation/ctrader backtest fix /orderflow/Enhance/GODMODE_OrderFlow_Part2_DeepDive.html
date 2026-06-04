@@ -1,0 +1,1307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GODMODE Part II — Advanced Concepts, Glossary & Trade Systems</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@400;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0A0E1A;
+  --bg2: #0F1525;
+  --bg3: #151C30;
+  --card: #1A2236;
+  --card2: #1F2940;
+  --border: #2A3550;
+  --border2: #344060;
+  --gold: #F0B429;
+  --gold2: #FFD700;
+  --cyan: #00D4FF;
+  --green: #00E676;
+  --green2: #1DE9B6;
+  --red: #FF4444;
+  --orange: #FF8C00;
+  --purple: #BB86FC;
+  --blue: #4FC3F7;
+  --text: #E8EAF0;
+  --text2: #9AA3B8;
+  --text3: #5C6680;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--text); font-family: 'Space Grotesk', sans-serif; line-height: 1.7; }
+
+/* ANIMATED HEADER */
+.hero {
+  min-height: 100vh;
+  background: radial-gradient(ellipse at 10% 20%, rgba(0,212,255,0.08) 0%, transparent 50%),
+              radial-gradient(ellipse at 90% 80%, rgba(240,180,41,0.08) 0%, transparent 50%),
+              radial-gradient(ellipse at 50% 50%, rgba(187,134,252,0.05) 0%, transparent 60%),
+              var(--bg);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; padding: 60px 30px; position: relative; overflow: hidden;
+}
+.hero::before {
+  content: ''; position: absolute; inset: 0;
+  background-image: repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(0,212,255,0.02) 40px, rgba(0,212,255,0.02) 41px),
+    repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(0,212,255,0.02) 40px, rgba(0,212,255,0.02) 41px);
+}
+.hero-badge { background: rgba(240,180,41,0.15); border: 1px solid rgba(240,180,41,0.4); color: var(--gold); font-family: 'JetBrains Mono', monospace; font-size: 12px; padding: 6px 18px; border-radius: 20px; letter-spacing: 3px; margin-bottom: 28px; display: inline-block; }
+.hero h1 { font-family: 'Syne', sans-serif; font-size: clamp(36px,6vw,72px); font-weight: 800; line-height: 1.1; margin-bottom: 20px; }
+.hero h1 .g1 { color: var(--cyan); }
+.hero h1 .g2 { color: var(--gold); }
+.hero h1 .g3 { color: var(--purple); }
+.hero p { color: var(--text2); font-size: 18px; max-width: 700px; margin-bottom: 40px; }
+.hero-stats { display: flex; gap: 40px; flex-wrap: wrap; justify-content: center; }
+.stat { text-align: center; }
+.stat-num { font-family: 'Syne', sans-serif; font-size: 42px; font-weight: 800; color: var(--gold); display: block; }
+.stat-label { font-size: 12px; color: var(--text3); letter-spacing: 2px; text-transform: uppercase; }
+
+/* NAVIGATION STRIP */
+.nav-strip { background: var(--bg2); border-bottom: 1px solid var(--border); padding: 0 40px; position: sticky; top: 0; z-index: 100; display: flex; gap: 0; overflow-x: auto; }
+.nav-item { padding: 16px 22px; font-size: 13px; font-weight: 600; color: var(--text3); white-space: nowrap; cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.2s; text-decoration: none; display: block; }
+.nav-item:hover { color: var(--gold); border-bottom-color: var(--gold); }
+
+/* SECTION WRAPPER */
+.section { padding: 80px 40px; max-width: 1300px; margin: 0 auto; }
+.section-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--cyan); letter-spacing: 4px; text-transform: uppercase; margin-bottom: 12px; }
+.section-title { font-family: 'Syne', sans-serif; font-size: clamp(28px,4vw,48px); font-weight: 800; margin-bottom: 16px; }
+.section-subtitle { color: var(--text2); font-size: 16px; max-width: 700px; margin-bottom: 50px; }
+
+/* SECTION DIVIDER */
+.divider { height: 1px; background: linear-gradient(90deg, transparent, var(--border2), transparent); margin: 0; }
+
+/* CARDS */
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 28px; }
+.card-gold { border-color: rgba(240,180,41,0.3); background: linear-gradient(135deg, var(--card), rgba(240,180,41,0.05)); }
+.card-cyan { border-color: rgba(0,212,255,0.3); background: linear-gradient(135deg, var(--card), rgba(0,212,255,0.05)); }
+.card-green { border-color: rgba(0,230,118,0.3); background: linear-gradient(135deg, var(--card), rgba(0,230,118,0.04)); }
+.card-red { border-color: rgba(255,68,68,0.3); background: linear-gradient(135deg, var(--card), rgba(255,68,68,0.05)); }
+.card-purple { border-color: rgba(187,134,252,0.3); background: linear-gradient(135deg, var(--card), rgba(187,134,252,0.05)); }
+.card h3 { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; margin-bottom: 14px; }
+.card-gold h3 { color: var(--gold); }
+.card-cyan h3 { color: var(--cyan); }
+.card-green h3 { color: var(--green); }
+.card-red h3 { color: var(--red); }
+.card-purple h3 { color: var(--purple); }
+
+/* GRID */
+.g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.g3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+.g4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; }
+@media(max-width:900px) { .g2,.g3,.g4 { grid-template-columns:1fr; } }
+
+/* GLOSSARY */
+.glossary-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px,1fr)); gap: 16px; }
+.gloss-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; border-left: 3px solid; }
+.gloss-term { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+.gloss-def { font-size: 13px; color: var(--text2); line-height: 1.6; }
+.gloss-tag { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; margin-top: 8px; font-family: 'JetBrains Mono', monospace; }
+
+/* CONCEPT DEEP-DIVE */
+.concept-block { background: var(--card); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; margin-bottom: 30px; }
+.concept-header { padding: 24px 28px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 16px; }
+.concept-icon { width: 48px; height: 48px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; }
+.concept-body { padding: 28px; }
+.concept-meta { display: flex; gap: 20px; margin-top: 20px; flex-wrap: wrap; }
+.meta-pill { background: var(--bg3); border: 1px solid var(--border); border-radius: 20px; padding: 6px 16px; font-size: 12px; font-family: 'JetBrains Mono', monospace; color: var(--text2); }
+
+/* CHART */
+.chart-area { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin: 20px 0; }
+.chart-header { padding: 12px 18px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+.chart-title { font-size: 13px; font-weight: 600; color: var(--text2); }
+.chart-body { padding: 0; }
+
+/* CODE BLOCK */
+.code { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 18px 20px; font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.8; overflow-x: auto; margin: 16px 0; }
+.code .c-comment { color: #5C6680; }
+.code .c-key { color: var(--cyan); }
+.code .c-val { color: var(--green); }
+.code .c-num { color: var(--gold); }
+.code .c-op { color: var(--purple); }
+
+/* TABLE */
+.t { width: 100%; border-collapse: collapse; font-size: 14px; margin: 20px 0; }
+.t th { background: var(--bg2); color: var(--gold); padding: 12px 16px; text-align: left; font-weight: 600; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; border-bottom: 2px solid var(--border2); }
+.t td { padding: 12px 16px; border-bottom: 1px solid var(--border); color: var(--text2); vertical-align: top; }
+.t tr:hover td { background: rgba(255,255,255,0.02); color: var(--text); }
+.t .td-key { color: var(--cyan); font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 500; }
+.t .td-bull { color: var(--green); font-weight: 600; }
+.t .td-bear { color: var(--red); font-weight: 600; }
+
+/* SETUP CARD */
+.setup { background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 24px; }
+.setup-header { display: flex; align-items: center; justify-content: space-between; padding: 18px 24px; border-bottom: 1px solid var(--border); }
+.setup-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 18px; }
+.setup-badge { font-size: 11px; font-family: 'JetBrains Mono', monospace; padding: 4px 12px; border-radius: 20px; font-weight: 600; }
+.badge-a { background: rgba(0,230,118,0.15); color: var(--green); border: 1px solid rgba(0,230,118,0.3); }
+.badge-b { background: rgba(240,180,41,0.15); color: var(--gold); border: 1px solid rgba(240,180,41,0.3); }
+.badge-c { background: rgba(187,134,252,0.15); color: var(--purple); border: 1px solid rgba(187,134,252,0.3); }
+.setup-body { padding: 24px; }
+.setup-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; margin: 20px 0; }
+.setup-stat { background: var(--bg2); border-radius: 8px; padding: 12px; text-align: center; }
+.setup-stat-val { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; display: block; }
+.setup-stat-lbl { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 1.5px; margin-top: 4px; display: block; }
+.setup-steps { list-style: none; counter-reset: s; }
+.setup-steps li { counter-increment: s; display: flex; gap: 14px; margin: 10px 0; align-items: flex-start; font-size: 14px; color: var(--text2); }
+.setup-steps li::before { content: counter(s); background: var(--gold); color: #000; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; margin-top: 2px; }
+
+/* QUIZ */
+.quiz-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 20px; }
+.quiz-q { font-size: 16px; font-weight: 600; margin-bottom: 16px; color: var(--text); }
+.quiz-opts { display: flex; flex-direction: column; gap: 10px; }
+.quiz-opt { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 12px 18px; font-size: 14px; cursor: pointer; transition: all 0.2s; color: var(--text2); }
+.quiz-opt:hover { border-color: var(--gold); color: var(--gold); }
+.quiz-answer { margin-top: 16px; background: rgba(0,230,118,0.1); border: 1px solid rgba(0,230,118,0.3); border-radius: 8px; padding: 14px; font-size: 13px; color: var(--green); display: none; }
+.quiz-num { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text3); margin-bottom: 8px; }
+
+/* JOURNAL TEMPLATE */
+.journal { background: var(--card); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+.journal-header { background: var(--bg2); padding: 20px 28px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+.journal-body { padding: 28px; }
+.j-field { margin-bottom: 20px; }
+.j-label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 2px; font-family: 'JetBrains Mono', monospace; margin-bottom: 8px; }
+.j-input { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; color: var(--text2); font-size: 14px; width: 100%; font-family: 'Space Grotesk', sans-serif; }
+.j-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
+
+/* CHECKLIST */
+.checklist { list-style: none; }
+.checklist li { display: flex; gap: 12px; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 14px; color: var(--text2); }
+.checklist li:last-child { border-bottom: none; }
+.check-box { width: 20px; height: 20px; border: 2px solid var(--border2); border-radius: 4px; flex-shrink: 0; margin-top: 2px; }
+.check-box.done { background: var(--green); border-color: var(--green); display: flex; align-items: center; justify-content: center; }
+.check-box.done::after { content: '✓'; color: #000; font-size: 12px; font-weight: 700; }
+
+/* PLAYBOOK CARD */
+.playbook { display: grid; grid-template-columns: 1fr 2fr; gap: 0; background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 20px; }
+.playbook-thumb { background: linear-gradient(135deg, var(--bg), var(--card2)); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px 20px; border-right: 1px solid var(--border); }
+.playbook-icon { font-size: 48px; margin-bottom: 12px; }
+.playbook-grade { font-family: 'Syne', sans-serif; font-size: 48px; font-weight: 800; }
+.playbook-body { padding: 24px; }
+.playbook-name { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+.playbook-desc { font-size: 14px; color: var(--text2); margin-bottom: 16px; line-height: 1.6; }
+.playbook-rules { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.rule { background: var(--bg2); border-radius: 6px; padding: 10px 12px; font-size: 13px; color: var(--text2); border-left: 3px solid; }
+
+/* RISK CALCULATOR */
+.calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+.calc-side { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 24px; }
+.calc-side h3 { font-family: 'Syne', sans-serif; font-size: 16px; margin-bottom: 18px; color: var(--gold); }
+.calc-formula { font-family: 'JetBrains Mono', monospace; font-size: 13px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 16px; line-height: 2; margin: 12px 0; }
+.cf { color: var(--cyan); }
+.cv { color: var(--green2); }
+.cn { color: var(--gold); }
+.co { color: var(--purple); }
+
+/* HIGHLIGHT TEXT */
+.hl { color: var(--gold); font-weight: 600; }
+.hl-cyan { color: var(--cyan); font-weight: 600; }
+.hl-green { color: var(--green); font-weight: 600; }
+.hl-red { color: var(--red); font-weight: 600; }
+.hl-purple { color: var(--purple); font-weight: 600; }
+
+/* FOOTER */
+.footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 60px 40px; text-align: center; }
+.footer-logo { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; margin-bottom: 12px; }
+.footer-logo span { color: var(--gold); }
+
+/* BACK TOP */
+.back { position: fixed; bottom: 30px; right: 30px; background: var(--gold); color: #000; width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; text-decoration: none; box-shadow: 0 4px 20px rgba(240,180,41,0.4); z-index: 200; }
+
+p { font-size: 15px; color: var(--text2); margin-bottom: 14px; }
+ul li, ol li { font-size: 14px; color: var(--text2); margin-bottom: 8px; padding-left: 4px; }
+ul { padding-left: 20px; }
+ol { padding-left: 20px; }
+strong { color: var(--text); font-weight: 600; }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <span class="hero-badge">⚡ GODMODE PART II — ADVANCED REFERENCE</span>
+  <h1>
+    <span class="g1">Deep-Dive</span> <span class="g2">Concepts</span><br>
+    <span class="g3">Playbooks</span> & Systems
+  </h1>
+  <p>The institutional trader's complete reference — advanced glossary, trade setups, risk frameworks, live session breakdowns, and interactive self-assessment tools</p>
+  <div class="hero-stats">
+    <div class="stat"><span class="stat-num">200+</span><span class="stat-label">Defined Terms</span></div>
+    <div class="stat"><span class="stat-num">12</span><span class="stat-label">Trade Setups</span></div>
+    <div class="stat"><span class="stat-num">6</span><span class="stat-label">Risk Frameworks</span></div>
+    <div class="stat"><span class="stat-num">40</span><span class="stat-label">Quiz Questions</span></div>
+  </div>
+</div>
+
+<!-- NAV -->
+<div class="nav-strip">
+  <a class="nav-item" href="#glossary">Glossary</a>
+  <a class="nav-item" href="#deepdive">Concept Deep-Dives</a>
+  <a class="nav-item" href="#setups">Trade Setups</a>
+  <a class="nav-item" href="#playbooks">Playbooks</a>
+  <a class="nav-item" href="#risk">Risk Management</a>
+  <a class="nav-item" href="#sessions">Session Analysis</a>
+  <a class="nav-item" href="#patterns">Pattern Library</a>
+  <a class="nav-item" href="#quiz">Self-Assessment</a>
+  <a class="nav-item" href="#journal">Trade Journal</a>
+  <a class="nav-item" href="#mastery">Mastery Map</a>
+</div>
+
+<!-- ======================== GLOSSARY ======================== -->
+<div class="divider"></div>
+<div id="glossary" class="section">
+  <div class="section-label">Reference Database</div>
+  <div class="section-title">Complete Institutional Trading Glossary</div>
+  <div class="section-subtitle">Every term used across all 35 videos — defined precisely and mapped to practical application</div>
+
+  <!-- CATEGORY: ORDER FLOW -->
+  <h3 style="font-family:'Syne',sans-serif;color:var(--cyan);font-size:22px;margin:30px 0 16px;border-left:3px solid var(--cyan);padding-left:16px;">Order Flow & Microstructure</h3>
+  <div class="glossary-grid">
+    <div class="gloss-card" style="border-color:var(--cyan)">
+      <div class="gloss-term" style="color:var(--cyan)">Aggressive Order</div>
+      <div class="gloss-def">A market order that crosses the spread and takes liquidity immediately. The buyer pays the ask, the seller takes the bid. Creates price movement because it consumes available limit orders.</div>
+      <div class="gloss-tag" style="color:var(--cyan)">ORDER FLOW</div>
+    </div>
+    <div class="gloss-card" style="border-color:var(--cyan)">
+      <div class="gloss-term" style="color:var(--cyan)">Absorption</div>
+      <div class="gloss-def">When large passive (limit) orders repeatedly absorb aggressive flow WITHOUT moving price. A bullish signal when bids absorb heavy sell pressure — institutions silently accumulating. Visible on footprint charts.</div>
+      <div class="gloss-tag" style="color:var(--cyan)">ORDER FLOW</div>
+    </div>
+    <div class="gloss-card" style="border-color:var(--cyan)">
+      <div class="gloss-term" style="color:var(--cyan)">Ask (Offer)</div>
+      <div class="gloss-def">The lowest price at which a seller is willing to sell. Represents sell-side liquidity. Aggressive buyers "hit the ask" when they want to enter immediately.</div>
+      <div class="gloss-tag" style="color:var(--cyan)">MICROSTRUCTURE</div>
+    </div>
+    <div class="gloss-card" style="border-color:var(--cyan)">
+      <div class="gloss-term" style="color:var(--cyan)">Bid</div>
+      <div class="gloss-def">The highest price at which a buyer is willing to buy. Represents buy-side liquidity. Aggressive sellers "hit the bid" when they want to enter immediately.</div>
+      <div class="gloss-tag" style="color:var(--cyan)">MICROSTRUCTURE</div>
+    </div>
+    <div class="gloss-card" style="border-color:var(--cyan)">
+      <div class="gloss-term" style="color:var(--cyan)">Bid-Ask Spread</div>
+      <div class="gloss-def">The gap between the best bid and best ask price. Tighter spread = more liquid market. Wider spread = less liquid, higher transaction cost. Institutional traders prefer tight-spread instruments.</div>
+      <div class="gloss-tag" style="color:var(--cyan)">MICROSTRUCTURE</div>
+    </div>
+    <div class="gloss-card" style="border-color:var(--cyan)">
+      <div class="gloss-term" style="color:var(--cyan)">Cluster Chart</div>
+      <div class="gloss-def">Footprint chart variant (used in ATAS) that shows buy/sell volume at each price within each candle. Reveals exact price levels where aggressive buying or selling occurred.</div>
+      <div class="gloss-tag" style="color:var(--cyan)">TOOLS</div>
+    </div>
+    <div class="gloss-card" style="border-color:var(--cyan)">
+      <div class="gloss-term" style="color:var(--cyan)">CVD (Cumulative Volume Delta)</div>
+      <div class="gloss-def">Running total of (aggressive buys minus aggressive sells) over a period. Rising CVD = net buying pressure. Falling CVD = net selling. Most powerful when it diverges from price.</div>
+      <div class="gloss-tag" style="color:var(--cyan)">INDICATORS</div>
+    </div>
+    <div class="gloss-card" style="border-color:var(--cyan)">
+      <div class="gloss-term" style="color:var(--cyan)">Delta</div>
+      <div class="gloss-def">The difference between aggressive buying volume and aggressive selling volume within a single candle or period. Positive delta = more buy aggression. Negative delta = more sell aggression.</div>
+      <div class="gloss-tag" style="color:var(--cyan)">ORDER FLOW</div>
+    </div>
+    <div class="gloss-card" style="border-color:var(--cyan)">
+      <div class="gloss-term" style="color:var(--cyan)">DOM (Depth of Market)</div>
+      <div class="gloss-def">Also called Level 2. Shows all resting limit orders across multiple price levels on both bid and ask sides. The "order book" — what Bookmap visualizes as a heatmap over time.</div>
+      <div class="gloss-tag" style="color:var(--cyan)">TOOLS</div>
+    </div>
+    <div class="gloss-card" style="border-color:var(--cyan)">
+      <div class="gloss-term" style="color:var(--cyan)">Footprint Chart</div>
+      <div class="gloss-def">Advanced chart displaying buy/sell volume at each price tick within each candle bar. Replaces traditional candles with a matrix of bid/ask volume, revealing the internal order flow structure of every bar.</div>
+      <div class="gloss-tag" style="color:var(--cyan)">TOOLS</div>
+    </div>
+    <div class="gloss-card" style="border-color:var(--cyan)">
+      <div class="gloss-term" style="color:var(--cyan)">Iceberg Order</div>
+      <div class="gloss-def">A large limit order where only a small portion is visible in the DOM. When consumed, it "refreshes" automatically. Institutions use icebergs to hide order size and prevent front-running. Identifiable via Bookmap bubbles.</div>
+      <div class="gloss-tag" style="color:var(--cyan)">INSTITUTIONAL</div>
+    </div>
+    <div class="gloss-card" style="border-color:var(--cyan)">
+      <div class="gloss-term" style="color:var(--cyan)">Imbalance (OFT)</div>
+      <div class="gloss-def">On a footprint chart: a candle row where one side (ask or bid) has significantly more volume than the other. Stacked imbalances = strong directional conviction. Price tends to return to fill imbalances.</div>
+      <div class="gloss-tag" style="color:var(--cyan)">ORDER FLOW</div>
+    </div>
+    <div class="gloss-card" style="border-color:var(--cyan)">
+      <div class="gloss-term" style="color:var(--cyan)">MBO (Market By Order)</div>
+      <div class="gloss-def">The most granular level of market data — shows each individual order in the book, not just aggregated levels. CME provides MBO data for futures. Enables precise identification of large player orders vs retail order flow.</div>
+      <div class="gloss-tag" style="color:var(--cyan)">DATA</div>
+    </div>
+    <div class="gloss-card" style="border-color:var(--cyan)">
+      <div class="gloss-term" style="color:var(--cyan)">Passive Order</div>
+      <div class="gloss-def">A limit order resting in the order book waiting to be filled. Provides liquidity to the market. When passive orders are consumed, price moves. Institutions often use passive orders to accumulate without moving price.</div>
+      <div class="gloss-tag" style="color:var(--cyan)">ORDER FLOW</div>
+    </div>
+    <div class="gloss-card" style="border-color:var(--cyan)">
+      <div class="gloss-term" style="color:var(--cyan)">Spoofing</div>
+      <div class="gloss-def">Placing large limit orders with no intention to fill them — to create the appearance of supply/demand and move price in a desired direction. Illegal in regulated markets but common in crypto. Detectable via Bookmap when large orders disappear before being hit.</div>
+      <div class="gloss-tag" style="color:var(--cyan)">MANIPULATION</div>
+    </div>
+    <div class="gloss-card" style="border-color:var(--cyan)">
+      <div class="gloss-term" style="color:var(--cyan)">Unfinished Auction</div>
+      <div class="gloss-def">On a footprint chart: a candle's high printed zero ask volume (buyers ran out, sellers took over) or low printed zero bid volume (sellers ran out, buyers took over). Price will almost always return to "complete" the auction.</div>
+      <div class="gloss-tag" style="color:var(--cyan)">FOOTPRINT</div>
+    </div>
+  </div>
+
+  <!-- CATEGORY: VOLUME PROFILE -->
+  <h3 style="font-family:'Syne',sans-serif;color:var(--purple);font-size:22px;margin:40px 0 16px;border-left:3px solid var(--purple);padding-left:16px;">Volume Profile</h3>
+  <div class="glossary-grid">
+    <div class="gloss-card" style="border-color:var(--purple)">
+      <div class="gloss-term" style="color:var(--purple)">b-Shape Profile</div>
+      <div class="gloss-def">Heavy volume at the bottom of the profile range. Bearish structure — selling dominated that period's auction. Indicates price distribution at lows. Often precedes further downside after completion.</div>
+      <div class="gloss-tag" style="color:var(--purple)">VP SHAPES</div>
+    </div>
+    <div class="gloss-card" style="border-color:var(--purple)">
+      <div class="gloss-term" style="color:var(--purple)">Composite Profile</div>
+      <div class="gloss-def">Volume Profile built across multiple sessions (e.g., weekly or monthly). Reveals macro institutional positioning zones. POC on composite = most important price in the entire period — strong S/R.</div>
+      <div class="gloss-tag" style="color:var(--purple)">VP TYPES</div>
+    </div>
+    <div class="gloss-card" style="border-color:var(--purple)">
+      <div class="gloss-term" style="color:var(--purple)">D-Shape Profile</div>
+      <div class="gloss-def">Bell-curve profile with volume concentrated in the middle — perfect market balance. Indicates a fair/balanced auction. Price will often range until a catalyst breaks the equilibrium. Common in low-volatility sessions.</div>
+      <div class="gloss-tag" style="color:var(--purple)">VP SHAPES</div>
+    </div>
+    <div class="gloss-card" style="border-color:var(--purple)">
+      <div class="gloss-term" style="color:var(--purple)">HVN (High Volume Node)</div>
+      <div class="gloss-def">Price level with abnormally high traded volume. Acts as price magnet — price gravitates toward HVNs during consolidation. Also acts as resistance during fast trend moves. Stall zones and frequent reversal areas.</div>
+      <div class="gloss-tag" style="color:var(--purple)">VP LEVELS</div>
+    </div>
+    <div class="gloss-card" style="border-color:var(--purple)">
+      <div class="gloss-term" style="color:var(--purple)">LVN (Low Volume Node)</div>
+      <div class="gloss-def">Price level with minimal volume traded. Price moves through LVNs rapidly — "thin air." Use LVNs as profit targets or acceleration zones. An unfilled LVN is a high-probability return target.</div>
+      <div class="gloss-tag" style="color:var(--purple)">VP LEVELS</div>
+    </div>
+    <div class="gloss-card" style="border-color:var(--purple)">
+      <div class="gloss-term" style="color:var(--purple)">P-Shape Profile</div>
+      <div class="gloss-def">Heavy volume concentrated at the top of the range. Bullish structure — buying dominated. Distribution at highs. Often precedes continued upside or consolidation before new leg higher.</div>
+      <div class="gloss-tag" style="color:var(--purple)">VP SHAPES</div>
+    </div>
+    <div class="gloss-card" style="border-color:var(--purple)">
+      <div class="gloss-term" style="color:var(--purple)">POC (Point of Control)</div>
+      <div class="gloss-def">The price level with the highest traded volume in the profile. Considered the "fairest price" — where the market spent the most time. Acts as powerful S/R. Price gravitates toward and revolves around the POC.</div>
+      <div class="gloss-tag" style="color:var(--purple)">VP LEVELS</div>
+    </div>
+    <div class="gloss-card" style="border-color:var(--purple)">
+      <div class="gloss-term" style="color:var(--purple)">Poor High / Poor Low</div>
+      <div class="gloss-def">A profile extreme (high or low) formed by a single print with very little volume — price moved quickly to that level and reversed. Not a "tested" level. Price will almost always return to retest poor highs/lows properly.</div>
+      <div class="gloss-tag" style="color:var(--purple)">VP LEVELS</div>
+    </div>
+    <div class="gloss-card" style="border-color:var(--purple)">
+      <div class="gloss-term" style="color:var(--purple)">Single Print</div>
+      <div class="gloss-def">A TPO (time-price opportunity) level that only occurred in one time bracket — a gap in the profile. Same as a naked LVN or "ledge." Market will always return to fill single prints. Trade target on all timeframes.</div>
+      <div class="gloss-tag" style="color:var(--purple)">VP / MARKET PROFILE</div>
+    </div>
+    <div class="gloss-card" style="border-color:var(--purple)">
+      <div class="gloss-term" style="color:var(--purple)">VAH (Value Area High)</div>
+      <div class="gloss-def">The upper boundary of the Value Area — the price level above which only 15% of volume was traded. Resistance in uptrends. Acceptance above VAH = bullish. Rejection at VAH = potential reversal or range-top.</div>
+      <div class="gloss-tag" style="color:var(--purple)">VP LEVELS</div>
+    </div>
+    <div class="gloss-card" style="border-color:var(--purple)">
+      <div class="gloss-term" style="color:var(--purple)">VAL (Value Area Low)</div>
+      <div class="gloss-def">The lower boundary of the Value Area — 15% of volume traded below it. Support in downtrends. Rejection at VAL = bullish. Acceptance below VAL = bearish. Mirror of VAH on the downside.</div>
+      <div class="gloss-tag" style="color:var(--purple)">VP LEVELS</div>
+    </div>
+    <div class="gloss-card" style="border-color:var(--purple)">
+      <div class="gloss-term" style="color:var(--purple)">Value Area (VA)</div>
+      <div class="gloss-def">The price range containing 70% of all traded volume in a session. Price inside VA = balanced/fair. Price outside VA = potential imbalance and return to value. The 70% VA rule is the statistical backbone of VP trading.</div>
+      <div class="gloss-tag" style="color:var(--purple)">VP CORE</div>
+    </div>
+  </div>
+
+  <!-- CATEGORY: SMC / ICT -->
+  <h3 style="font-family:'Syne',sans-serif;color:var(--gold);font-size:22px;margin:40px 0 16px;border-left:3px solid var(--gold);padding-left:16px;">Smart Money Concepts & ICT</h3>
+  <div class="glossary-grid">
+    <div class="gloss-card" style="border-color:var(--gold)">
+      <div class="gloss-term" style="color:var(--gold)">AMD Model (PO3)</div>
+      <div class="gloss-def">Accumulation → Manipulation → Distribution. The 3-phase institutional cycle. Accumulation: quiet limit order buying/selling. Manipulation: false breakout to take stops. Distribution: real directional move begins. The "PO3" — Power of Three.</div>
+      <div class="gloss-tag" style="color:var(--gold)">ICT MODEL</div>
+    </div>
+    <div class="gloss-card" style="border-color:var(--gold)">
+      <div class="gloss-term" style="color:var(--gold)">Bearish OB</div>
+      <div class="gloss-def">The last bullish (green) candle before a significant bearish Break of Structure. When price returns to this candle from below, it acts as supply/resistance. The institutional selling origin point.</div>
+      <div class="gloss-tag" style="color:var(--gold)">ORDER BLOCKS</div>
+    </div>
+    <div class="gloss-card" style="border-color:var(--gold)">
+      <div class="gloss-term" style="color:var(--gold)">Breaker Block</div>
+      <div class="gloss-def">A failed Order Block that gets violated — it then flips to the opposing direction. A bearish OB that got broken to the upside = now a bullish breaker. One of the highest-probability POIs in ICT methodology.</div>
+      <div class="gloss-tag" style="color:var(--gold)">ORDER BLOCKS</div>
+    </div>
+    <div class="gloss-card" style="border-color:var(--gold)">
+      <div class="gloss-term" style="color:var(--gold)">Bullish OB</div>
+      <div class="gloss-def">The last bearish (red) candle before a significant bullish Break of Structure. When price returns to this candle from above, it acts as demand/support. The institutional buying origin point. Enter longs here with order flow confirmation.</div>
+      <div class="gloss-tag" style="color:var(--gold)">ORDER BLOCKS</div>
+    </div>
+    <div class="gloss-card" style="border-color:var(--gold)">
+      <div class="gloss-term" style="color:var(--gold)">BSL (Buy-Side Liquidity)</div>
+      <div class="gloss-def">Resting buy stop orders above swing highs and equal highs. Retail longs place stops here; bearish traders place stop-losses here. Institutions drive price up to sweep BSL, collect the liquidity, then reverse down.</div>
+      <div class="gloss-tag" style="color:var(--gold)">LIQUIDITY</div>
+    </div>
+    <div class="gloss-card" style="border-color:var(--gold)">
+      <div class="gloss-term" style="color:var(--gold)">CHOCH (Change of Character)</div>
+      <div class="gloss-def">In an uptrend: price breaks below the most recent Higher Low. First signal that buying structure may be failing. Not a confirmed reversal — requires follow-through with Lower High formation. Early warning signal.</div>
+      <div class="gloss-tag" style="color:var(--gold)">STRUCTURE</div>
+    </div>
+    <div class="gloss-card" style="border-color:var(--gold)">
+      <div class="gloss-term" style="color:var(--gold)">Daily Bias</div>
+      <div class="gloss-def">The directional outlook for the current trading day determined by HTF structure, PDRA levels, and previous session ranges. Must be established before the session begins. Only take trades aligned with daily bias.</div>
+      <div class="gloss-tag" style="color:var(--gold)">ICT PROCESS</div>
+    </div>
+    <div class="gloss-card" style="border-color:var(--gold)">
+      <div class="gloss-term" style="color:var(--gold)">Discount Zone</div>
+      <div class="gloss-def">The lower 50% of any price range (from swing low to swing high). In a bullish trend, institutions buy in the discount zone. OTE (Optimal Trade Entry) is in the discount zone after a BSL sweep — 62-79% Fibonacci retracement.</div>
+      <div class="gloss-tag" style="color:var(--gold)">PRICE LEVELS</div>
+    </div>
+    <div class="gloss-card" style="border-color:var(--gold)">
+      <div class="gloss-term" style="color:var(--gold)">Equal Highs / Equal Lows</div>
+      <div class="gloss-def">Two or more price points at the same level. Create visible liquidity pools that institutions specifically target. "EQH" (equal highs) = BSL pool. "EQL" (equal lows) = SSL pool. Almost always get swept before major reversals.</div>
+      <div class="gloss-tag" style="color:var(--gold)">LIQUIDITY</div>
+    </div>
+    <div class="gloss-card" style="border-color:var(--gold)">
+      <div class="gloss-term" style="color:var(--gold)">FVG (Fair Value Gap)</div>
+      <div class="gloss-def">Three consecutive candles where the wicks of candle 1 and 3 do not overlap. The "gap" between them is an imbalance — price moved too fast, leaving unfilled orders. Price tends to revisit FVGs. Bullish FVG = support. Bearish FVG = resistance.</div>
+      <div class="gloss-tag" style="color:var(--gold)">PRICE LEVELS</div>
+    </div>
+    <div class="gloss-card" style="border-color:var(--gold)">
+      <div class="gloss-term" style="color:var(--gold)">IPDA (Interbank Price Delivery Algorithm)</div>
+      <div class="gloss-def">ICT's conceptual framework for how price is algorithmically delivered between interbank price levels. Price is "programmed" to reach specific PDRA levels within defined time windows. Foundation of ICT time-price theory.</div>
+      <div class="gloss-tag" style="color:var(--gold)">ICT THEORY</div>
+    </div>
+    <div class="gloss-card" style="border-color:var(--gold)">
+      <div class="gloss-term" style="color:var(--gold)">Kill Zone</div>
+      <div class="gloss-def">High-probability time windows for institutional order flow: Asian (8PM-12AM EST), London Open (2-5AM EST), London/NY Overlap (8-10AM EST), NY Open (7-10AM EST), NY PM (1-3PM EST). Only trade during kill zones for highest win rate.</div>
+      <div class="gloss-tag" style="color:var(--gold)">TIMING</div>
+    </div>
+    <div class="gloss-card" style="border-color:var(--gold)">
+      <div class="gloss-term" style="color:var(--gold)">Liquidity Pool</div>
+      <div class="gloss-def">A concentration of resting stop-loss orders at a predictable price level. Every swing high has BSL above it; every swing low has SSL below it. Equal levels, previous session highs/lows, and round numbers are the densest pools.</div>
+      <div class="gloss-tag" style="color:var(--gold)">LIQUIDITY</div>
+    </div>
+    <div class="gloss-card" style="border-color:var(--gold)">
+      <div class="gloss-term" style="color:var(--gold)">MSS (Market Structure Shift)</div>
+      <div class="gloss-def">A confirmed change in market structure direction — typically a decisive CHOCH followed by a new Lower High (in a former uptrend). More definitive than CHOCH alone. Entry signal for counter-trend trades on lower timeframes.</div>
+      <div class="gloss-tag" style="color:var(--gold)">STRUCTURE</div>
+    </div>
+    <div class="gloss-card" style="border-color:var(--gold)">
+      <div class="gloss-term" style="color:var(--gold)">OTE (Optimal Trade Entry)</div>
+      <div class="gloss-def">The 62–79% Fibonacci retracement of a swing move — where ICT teaches that institutions re-enter in the direction of the trend after a pullback. Combines with FVG and OB presence for highest-probability entries.</div>
+      <div class="gloss-tag" style="color:var(--gold)">ENTRY</div>
+    </div>
+    <div class="gloss-card" style="border-color:var(--gold)">
+      <div class="gloss-term" style="color:var(--gold)">PDRA Levels</div>
+      <div class="gloss-def">Prior Day/Week/Month High, Low, Close, and Midpoint. These are the algorithmic reference points that price is programmed to trade to. PDH/PDL = prior day high/low. PWH/PWL = prior week high/low. PMH/PML = prior month. Essential for daily bias.</div>
+      <div class="gloss-tag" style="color:var(--gold)">PRICE LEVELS</div>
+    </div>
+    <div class="gloss-card" style="border-color:var(--gold)">
+      <div class="gloss-term" style="color:var(--gold)">POI (Point of Interest)</div>
+      <div class="gloss-def">Any price level where institutions previously transacted — Order Blocks, FVGs, breaker blocks, mitigation blocks, liquidity voids. The generic term for any level worth monitoring for potential entry. "I have a POI at X."</div>
+      <div class="gloss-tag" style="color:var(--gold)">GENERAL</div>
+    </div>
+    <div class="gloss-card" style="border-color:var(--gold)">
+      <div class="gloss-term" style="color:var(--gold)">Premium Zone</div>
+      <div class="gloss-def">The upper 50% of any range (above the 50% midpoint). Institutions sell in premium zones. Retail traders buying near premium are buying "expensive." Avoid long entries in premium; seek short entries.</div>
+      <div class="gloss-tag" style="color:var(--gold)">PRICE LEVELS</div>
+    </div>
+    <div class="gloss-card" style="border-color:var(--gold)">
+      <div class="gloss-term" style="color:var(--gold)">SSL (Sell-Side Liquidity)</div>
+      <div class="gloss-def">Resting sell stop orders below swing lows and equal lows. Retail shorts place stops here; bullish traders place stop-losses here. Institutions drive price down to sweep SSL, collect the liquidity, then reverse upward.</div>
+      <div class="gloss-tag" style="color:var(--gold)">LIQUIDITY</div>
+    </div>
+    <div class="gloss-card" style="border-color:var(--gold)">
+      <div class="gloss-term" style="color:var(--gold)">SMT Divergence</div>
+      <div class="gloss-def">Smart Money Tool divergence — two correlated assets making opposite structure at a key level. E.g., EURUSD makes a new low but GBPUSD doesn't = bullish SMT divergence. One of ICT's highest-confidence reversal signals.</div>
+      <div class="gloss-tag" style="color:var(--gold)">ICT SIGNALS</div>
+    </div>
+    <div class="gloss-card" style="border-color:var(--gold)">
+      <div class="gloss-term" style="color:var(--gold)">Stop Hunt / Liquidity Grab</div>
+      <div class="gloss-def">Institutional price manipulation to collect stop orders. Price spikes through a key level (swing high/low), triggers stop-losses (creating volume/liquidity for the institution), then immediately reverses. A planned hunting operation, not random noise.</div>
+      <div class="gloss-tag" style="color:var(--gold)">LIQUIDITY</div>
+    </div>
+  </div>
+
+  <!-- CATEGORY: WYCKOFF -->
+  <h3 style="font-family:'Syne',sans-serif;color:var(--green);font-size:22px;margin:40px 0 16px;border-left:3px solid var(--green);padding-left:16px;">Wyckoff & AMT</h3>
+  <div class="glossary-grid">
+    <div class="gloss-card" style="border-color:var(--green)">
+      <div class="gloss-term" style="color:var(--green)">AMT (Auction Market Theory)</div>
+      <div class="gloss-def">The theoretical framework that markets operate as two-way auctions — continually searching for prices that facilitate trade. When price finds acceptance (value), it consolidates. When it finds rejection, it rotates to find new value. All of VP is built on AMT.</div>
+      <div class="gloss-tag" style="color:var(--green)">THEORY</div>
+    </div>
+    <div class="gloss-card" style="border-color:var(--green)">
+      <div class="gloss-term" style="color:var(--green)">Accumulation</div>
+      <div class="gloss-def">Wyckoff Phase where institutions are quietly buying (or selling for distribution) at low prices over an extended period. Price moves sideways as the "Composite Man" absorbs retail supply. Cannot be identified until complete.</div>
+      <div class="gloss-tag" style="color:var(--green)">WYCKOFF</div>
+    </div>
+    <div class="gloss-card" style="border-color:var(--green)">
+      <div class="gloss-term" style="color:var(--green)">Composite Man</div>
+      <div class="gloss-def">Wyckoff's conceptual entity representing the collective institutional force — all large operators acting as a single intelligent participant. Useful mental model for attributing market movements: "What is the Composite Man trying to do here?"</div>
+      <div class="gloss-tag" style="color:var(--green)">WYCKOFF</div>
+    </div>
+    <div class="gloss-card" style="border-color:var(--green)">
+      <div class="gloss-term" style="color:var(--green)">Initial Balance (IB)</div>
+      <div class="gloss-def">AMT term: the price range established in the first hour of a trading session (typically first 2 TPO periods in Market Profile). The IB defines the session's "opening range." Breakouts above/below IB set directional expectations for the day.</div>
+      <div class="gloss-tag" style="color:var(--green)">AMT</div>
+    </div>
+    <div class="gloss-card" style="border-color:var(--green)">
+      <div class="gloss-term" style="color:var(--green)">LPS (Last Point of Support)</div>
+      <div class="gloss-def">Wyckoff: the final pullback before a breakout from accumulation. Price makes a Higher Low — the last time supply overwhelms demand before the markup phase begins. The ideal entry point in Wyckoff accumulation setups.</div>
+      <div class="gloss-tag" style="color:var(--green)">WYCKOFF</div>
+    </div>
+    <div class="gloss-card" style="border-color:var(--green)">
+      <div class="gloss-term" style="color:var(--green)">SC (Selling Climax)</div>
+      <div class="gloss-def">Wyckoff Phase A: a sudden, high-volume sell-off that signals the prior downtrend is exhausting. Bars are wide, volume is extreme, price closes off the lows. The first sign that selling pressure is being absorbed. Leads to Automatic Rally.</div>
+      <div class="gloss-tag" style="color:var(--green)">WYCKOFF</div>
+    </div>
+    <div class="gloss-card" style="border-color:var(--green)">
+      <div class="gloss-term" style="color:var(--green)">SOW (Sign of Weakness)</div>
+      <div class="gloss-def">Wyckoff: price breaks below support with high volume and wide spread. Confirms distribution is complete and markdown is beginning. The distribution equivalent of SOS. Short entries on the next LPSY.</div>
+      <div class="gloss-tag" style="color:var(--green)">WYCKOFF</div>
+    </div>
+    <div class="gloss-card" style="border-color:var(--green)">
+      <div class="gloss-term" style="color:var(--green)">SOS (Sign of Strength)</div>
+      <div class="gloss-def">Wyckoff: price breaks above resistance with high volume and wide spread on the upbar. Confirms accumulation is complete. The Composite Man "shows their hand." Long entries on the next pullback (Back to Ice) with smaller volume.</div>
+      <div class="gloss-tag" style="color:var(--green)">WYCKOFF</div>
+    </div>
+    <div class="gloss-card" style="border-color:var(--green)">
+      <div class="gloss-term" style="color:var(--green)">Spring</div>
+      <div class="gloss-def">Wyckoff's most tradeable pattern: a false break below the support of an accumulation range. Shakes out weak holders, tests supply, and gives institutions a final low-price entry before markup. Confirmed when price snaps back above support with volume.</div>
+      <div class="gloss-tag" style="color:var(--green)">WYCKOFF</div>
+    </div>
+    <div class="gloss-card" style="border-color:var(--green)">
+      <div class="gloss-term" style="color:var(--green)">Upthrust</div>
+      <div class="gloss-def">Wyckoff's distribution equivalent of the Spring — a false break above resistance of a distribution range. Traps longs before a markdown begins. Confirmed when price snaps back below resistance with increasing volume.</div>
+      <div class="gloss-tag" style="color:var(--green)">WYCKOFF</div>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== CONCEPT DEEP DIVES ======================== -->
+<div class="divider"></div>
+<div id="deepdive" class="section">
+  <div class="section-label">Advanced Analysis</div>
+  <div class="section-title">Concept Deep-Dives</div>
+  <div class="section-subtitle">The mechanisms behind each concept — going beyond surface-level definitions to understand the "why"</div>
+
+  <!-- DEEP DIVE 1: CVD -->
+  <div class="concept-block">
+    <div class="concept-header">
+      <div class="concept-icon" style="background:rgba(0,212,255,0.15)">📊</div>
+      <div>
+        <h3 style="font-family:'Syne',sans-serif;font-size:20px;color:var(--cyan)">Cumulative Volume Delta — The Truth Detector</h3>
+        <p style="margin:0;font-size:13px;color:var(--text3)">Why CVD is the single most powerful order flow indicator</p>
+      </div>
+    </div>
+    <div class="concept-body">
+      <p>CVD works on a simple but profound insight: <strong>price is not always telling the truth</strong>. Price can be pushed up by passive sellers hitting bids (bearish) even as the candle closes green. Price can fall on heavy aggressive buying (bullish) as institutions absorb sell pressure. CVD cuts through the deception.</p>
+
+      <div class="g2" style="margin:20px 0;">
+        <div class="card card-cyan">
+          <h3>📈 Bullish CVD Divergence</h3>
+          <p style="margin:0;font-size:14px;">Price makes a Lower Low, but CVD makes a Higher Low. This means: despite price reaching a lower level, <span class="hl-cyan">aggressive buyers are more active than sellers</span> at those lows. Institutions are absorbing sell pressure — setup for reversal. Trade: long entry with order flow confirmation.</p>
+        </div>
+        <div class="card card-red">
+          <h3>📉 Bearish CVD Divergence</h3>
+          <p style="margin:0;font-size:14px;">Price makes a Higher High, but CVD makes a Lower High. This means: despite price reaching higher levels, <span class="hl-red">aggressive sellers are increasing</span> — institutions are distributing into the rally. Trade: short entry with order flow confirmation. One of the highest probability reversals in OFT.</p>
+        </div>
+      </div>
+
+      <div class="code">
+<span class="c-comment">// CVD Formula & Trading Rules</span>
+
+<span class="c-key">Delta</span>(<span class="c-val">candle</span>) = <span class="c-val">Aggressive_Buys</span> <span class="c-op">-</span> <span class="c-val">Aggressive_Sells</span>
+<span class="c-key">CVD</span> = <span class="c-op">Σ</span> <span class="c-val">Delta</span>(<span class="c-val">all_candles_in_period</span>)
+
+<span class="c-comment">// RULE 1: Never fade a move confirmed by CVD</span>
+<span class="c-key">IF</span> price_rising <span class="c-op">AND</span> CVD_rising → <span class="c-val">STRONG BULL</span> (do not short)
+
+<span class="c-comment">// RULE 2: Fade when CVD diverges</span>
+<span class="c-key">IF</span> price_rising <span class="c-op">AND</span> CVD_falling → <span class="c-val">BEARISH DIV</span> (consider short)
+<span class="c-key">IF</span> price_falling <span class="c-op">AND</span> CVD_rising → <span class="c-val">BULLISH DIV</span> (consider long)
+
+<span class="c-comment">// RULE 3: CVD reset matters</span>
+<span class="c-key">Reset</span> CVD at: session open | swing high | swing low
+<span class="c-comment">// Relative CVD more meaningful than absolute level</span>
+      </div>
+
+      <div class="concept-meta">
+        <span class="meta-pill">Source: Darius FX — OFT Concepts Guide</span>
+        <span class="meta-pill">Source: The Trading Geek — Master Order Flow</span>
+        <span class="meta-pill">Source: PLBVwIU37953 Playlist — CVD Guide</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- DEEP DIVE 2: VOLUME PROFILE TRADING RULES -->
+  <div class="concept-block">
+    <div class="concept-header">
+      <div class="concept-icon" style="background:rgba(187,134,252,0.15)">📊</div>
+      <div>
+        <h3 style="font-family:'Syne',sans-serif;font-size:20px;color:var(--purple)">Volume Profile — The 5 Trading Rules That Actually Work</h3>
+        <p style="margin:0;font-size:13px;color:var(--text3)">From Fractal Flow's "ONLY Volume Profile Guide That Actually Works"</p>
+      </div>
+    </div>
+    <div class="concept-body">
+      <p>Most traders use Volume Profile incorrectly — they draw levels mechanically without understanding the <strong>auction context</strong>. Fractal Flow's key insight: Volume Profile levels only matter when they have <em>contextual confluence</em> with market structure and order flow.</p>
+
+      <table class="t">
+        <tr><th>Rule</th><th>Context</th><th>Trade</th><th>Invalidation</th></tr>
+        <tr><td class="td-key">Rule 1: POC Reversion</td><td>Price deviates from POC in trending move</td><td class="td-bull">Enter mean-reversion to POC target</td><td>POC migrates away (>5 bars)</td></tr>
+        <tr><td class="td-key">Rule 2: VAH/VAL Test</td><td>Price tests VAH from above = failed acceptance</td><td class="td-bear">Short toward POC / VAL</td><td>Price accepts above VAH for 2+ sessions</td></tr>
+        <tr><td class="td-key">Rule 3: LVN Acceleration</td><td>Price breaks into a known LVN zone</td><td>Widen stops; fast-move targets ahead</td><td>Price stalls >3 bars in LVN</td></tr>
+        <tr><td class="td-key">Rule 4: HVN Stall</td><td>Price trends into HVN from below/above</td><td>Reduce position; expect chop/reversal</td><td>High volume breakout through HVN</td></tr>
+        <tr><td class="td-key">Rule 5: Poor High/Low</td><td>A naked poor extreme exists from prior session</td><td>Set target at poor extreme level</td><td>Session becomes extremely range-bound</td></tr>
+      </table>
+
+      <div class="concept-meta">
+        <span class="meta-pill">Source: Fractal Flow — Volume Profile Guide</span>
+        <span class="meta-pill">Source: Stefano Francescato — Institutional VP</span>
+        <span class="meta-pill">Source: Faiz SMC — ICT + VP Fusion</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- DEEP DIVE 3: WYCKOFF SPRING -->
+  <div class="concept-block">
+    <div class="concept-header">
+      <div class="concept-icon" style="background:rgba(0,230,118,0.15)">🌱</div>
+      <div>
+        <h3 style="font-family:'Syne',sans-serif;font-size:20px;color:var(--green)">The Wyckoff Spring — The Most Tradeable Pattern in Markets</h3>
+        <p style="margin:0;font-size:13px;color:var(--text3)">From Fractal Flow's Ultimate Wyckoff Course</p>
+      </div>
+    </div>
+    <div class="concept-body">
+      <div class="g2">
+        <div>
+          <p>The <strong>Spring</strong> is Wyckoff's masterpiece — a false break below accumulated support that serves as the final shakeout before the markup phase. Understanding why it works reveals the genius of institutional thinking.</p>
+          <h4 style="color:var(--green);margin:16px 0 8px;">Why the Spring Exists:</h4>
+          <ul>
+            <li>Institutions need low prices to finish accumulating</li>
+            <li>Breaking support triggers retail stop-losses (creating sell orders = supply for institutions to buy)</li>
+            <li>Weak hands exit, strong hands absorb</li>
+            <li>After the spring: institutions have filled their full position at the lowest possible prices</li>
+            <li>Now they can push price up with minimal resistance</li>
+          </ul>
+        </div>
+        <div>
+          <h4 style="color:var(--green);margin:0 0 12px;">Spring Confirmation Checklist:</h4>
+          <ul class="checklist">
+            <li><span class="check-box done"></span>Price breaks below known support level</li>
+            <li><span class="check-box done"></span>Volume is <em>below average</em> on the break (no real supply)</li>
+            <li><span class="check-box done"></span>Candle closes back above support (wick rejection)</li>
+            <li><span class="check-box done"></span>Volume increases on the recovery bar</li>
+            <li><span class="check-box done"></span>CVD diverges bullishly during the break</li>
+            <li><span class="check-box done"></span>Footprint shows absorption at the spring low</li>
+            <li><span class="check-box"></span>SOS follow-through within 3–5 bars</li>
+          </ul>
+          <p style="font-size:13px;color:var(--text3);margin-top:12px;">Entry: Close back above support. SL: 3 ticks below spring low. TP: Top of accumulation range.</p>
+        </div>
+      </div>
+      <div class="concept-meta">
+        <span class="meta-pill">Source: Fractal Flow — Ultimate Wyckoff Course</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== TRADE SETUPS ======================== -->
+<div class="divider"></div>
+<div id="setups" class="section">
+  <div class="section-label">Execution Framework</div>
+  <div class="section-title">The 12 High-Probability Trade Setups</div>
+  <div class="section-subtitle">Every major setup taught across the video curriculum — defined, rated, and ready to execute</div>
+
+  <!-- SETUP 1 -->
+  <div class="setup">
+    <div class="setup-header">
+      <div class="setup-name">Setup 1 — Liquidity Sweep Reversal</div>
+      <span class="setup-badge badge-a">A+ SETUP</span>
+    </div>
+    <div class="setup-body">
+      <p style="color:var(--text2);font-size:14px;margin-bottom:16px;">The cornerstone setup taught across Chart Fanatics, Fractal Flow, and Darius FX. Works on all timeframes and instruments. Based on the institutional liquidity hunting mechanism.</p>
+      <div class="setup-grid">
+        <div class="setup-stat"><span class="setup-stat-val" style="color:var(--green)">55–65%</span><span class="setup-stat-lbl">Win Rate</span></div>
+        <div class="setup-stat"><span class="setup-stat-val" style="color:var(--gold)">3–5R</span><span class="setup-stat-lbl">Avg R:R</span></div>
+        <div class="setup-stat"><span class="setup-stat-val" style="color:var(--blue)">LDN/NY</span><span class="setup-stat-lbl">Best Sessions</span></div>
+        <div class="setup-stat"><span class="setup-stat-val" style="color:var(--purple)">5M–1H</span><span class="setup-stat-lbl">Entry TF</span></div>
+      </div>
+      <ol class="setup-steps">
+        <li>Identify a clear liquidity pool (equal highs/lows, previous session high/low)</li>
+        <li>Wait for price to enter the kill zone session (London/NY)</li>
+        <li>Price sweeps the liquidity level — candle wicks through but does not close beyond</li>
+        <li>Watch for immediate rejection — large wick, CVD divergence on footprint</li>
+        <li>Wait for LTF (5M/15M) CHOCH or MSS confirming reversal direction</li>
+        <li>Enter at the first FVG or OB formed after the MSS</li>
+        <li>SL: 3–5 pips beyond the sweep wick. TP1: Nearest liquidity / opposing pool. TP2: HTF target</li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- SETUP 2 -->
+  <div class="setup">
+    <div class="setup-header">
+      <div class="setup-name">Setup 2 — Order Block + CVD Confirmation</div>
+      <span class="setup-badge badge-a">A+ SETUP</span>
+    </div>
+    <div class="setup-body">
+      <div class="setup-grid">
+        <div class="setup-stat"><span class="setup-stat-val" style="color:var(--green)">50–60%</span><span class="setup-stat-lbl">Win Rate</span></div>
+        <div class="setup-stat"><span class="setup-stat-val" style="color:var(--gold)">2–4R</span><span class="setup-stat-lbl">Avg R:R</span></div>
+        <div class="setup-stat"><span class="setup-stat-val" style="color:var(--blue)">Any</span><span class="setup-stat-lbl">Sessions</span></div>
+        <div class="setup-stat"><span class="setup-stat-val" style="color:var(--purple)">15M–4H</span><span class="setup-stat-lbl">Entry TF</span></div>
+      </div>
+      <ol class="setup-steps">
+        <li>Mark all valid OBs on 1H and 4H (last candle before a significant BOS)</li>
+        <li>Set alerts at OB levels. Wait for price to return to the OB area</li>
+        <li>When price touches OB: check CVD — must show absorption / bullish divergence for bullish OB</li>
+        <li>Check footprint for bid absorption (heavy sell volume absorbed without new low)</li>
+        <li>Enter on first bullish candle close above OB midpoint with CVD turning up</li>
+        <li>SL: Below OB low (with a small buffer). TP: Next opposing liquidity pool</li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- SETUP 3 -->
+  <div class="setup">
+    <div class="setup-header">
+      <div class="setup-name">Setup 3 — Wyckoff Spring at VP Support</div>
+      <span class="setup-badge badge-a">A+ SETUP</span>
+    </div>
+    <div class="setup-body">
+      <div class="setup-grid">
+        <div class="setup-stat"><span class="setup-stat-val" style="color:var(--green)">60–70%</span><span class="setup-stat-lbl">Win Rate</span></div>
+        <div class="setup-stat"><span class="setup-stat-val" style="color:var(--gold)">4–8R</span><span class="setup-stat-lbl">Avg R:R</span></div>
+        <div class="setup-stat"><span class="setup-stat-val" style="color:var(--blue)">Daily/4H</span><span class="setup-stat-lbl">Context TF</span></div>
+        <div class="setup-stat"><span class="setup-stat-val" style="color:var(--purple)">1H/4H</span><span class="setup-stat-lbl">Entry TF</span></div>
+      </div>
+      <p style="font-size:13px;color:var(--text2);">Wyckoff Spring occurring at a confluence of HVN or VAL — double institutional support. Highest R:R setup in the entire curriculum.</p>
+      <ol class="setup-steps">
+        <li>Identify Wyckoff accumulation range on 4H/Daily (Phase A-B structure confirmed)</li>
+        <li>Map VP: confirm accumulation range sits on or near an HVN from prior periods</li>
+        <li>Wait for Phase C Spring — low-volume break below support, immediate recovery</li>
+        <li>CVD must show strong bullish divergence during spring</li>
+        <li>Enter on recovery close back into accumulation range. SL: Below spring low</li>
+        <li>TP1: Range midpoint. TP2: Range top. TP3: Prior HVN above range</li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- SETUP 4 -->
+  <div class="setup">
+    <div class="setup-header">
+      <div class="setup-name">Setup 4 — FVG Fill in Trend Direction</div>
+      <span class="setup-badge badge-b">B SETUP</span>
+    </div>
+    <div class="setup-body">
+      <div class="setup-grid">
+        <div class="setup-stat"><span class="setup-stat-val" style="color:var(--green)">45–55%</span><span class="setup-stat-lbl">Win Rate</span></div>
+        <div class="setup-stat"><span class="setup-stat-val" style="color:var(--gold)">2–3R</span><span class="setup-stat-lbl">Avg R:R</span></div>
+        <div class="setup-stat"><span class="setup-stat-val" style="color:var(--blue)">Any KZ</span><span class="setup-stat-lbl">Sessions</span></div>
+        <div class="setup-stat"><span class="setup-stat-val" style="color:var(--purple)">5M–15M</span><span class="setup-stat-lbl">Entry TF</span></div>
+      </div>
+      <ol class="setup-steps">
+        <li>Confirm HTF trend (Daily must be clearly bullish or bearish)</li>
+        <li>Identify FVG left behind after a strong impulse move in trend direction</li>
+        <li>Wait for price to retrace back into the FVG</li>
+        <li>Enter when price touches the FVG with order flow confirmation</li>
+        <li>SL: Below FVG low (bull) or above FVG high (bear). TP: Previous swing high/low</li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- SETUP 5 -->
+  <div class="setup">
+    <div class="setup-header">
+      <div class="setup-name">Setup 5 — POC Mean Reversion</div>
+      <span class="setup-badge badge-b">B SETUP</span>
+    </div>
+    <div class="setup-body">
+      <div class="setup-grid">
+        <div class="setup-stat"><span class="setup-stat-val" style="color:var(--green)">50–60%</span><span class="setup-stat-lbl">Win Rate</span></div>
+        <div class="setup-stat"><span class="setup-stat-val" style="color:var(--gold)">1.5–2.5R</span><span class="setup-stat-lbl">Avg R:R</span></div>
+        <div class="setup-stat"><span class="setup-stat-val" style="color:var(--blue)">Any</span><span class="setup-stat-lbl">Sessions</span></div>
+        <div class="setup-stat"><span class="setup-stat-val" style="color:var(--purple)">15M–1H</span><span class="setup-stat-lbl">Entry TF</span></div>
+      </div>
+      <ol class="setup-steps">
+        <li>Price deviates significantly from composite or session POC (&gt;1 std dev)</li>
+        <li>No strong trending structure — market in balanced/ranging mode</li>
+        <li>Enter toward POC when price shows rejection from extreme (LVN hit + CVD reversal)</li>
+        <li>SL: Beyond the rejection low/high. TP: POC level</li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- SETUP 6 -->
+  <div class="setup">
+    <div class="setup-header">
+      <div class="setup-name">Setup 6 — AMD Opening Range Manipulation</div>
+      <span class="setup-badge badge-a">A SETUP</span>
+    </div>
+    <div class="setup-body">
+      <div class="setup-grid">
+        <div class="setup-stat"><span class="setup-stat-val" style="color:var(--green)">55–65%</span><span class="setup-stat-lbl">Win Rate</span></div>
+        <div class="setup-stat"><span class="setup-stat-val" style="color:var(--gold)">3–6R</span><span class="setup-stat-lbl">Avg R:R</span></div>
+        <div class="setup-stat"><span class="setup-stat-val" style="color:var(--blue)">London Open</span><span class="setup-stat-lbl">Session</span></div>
+        <div class="setup-stat"><span class="setup-stat-val" style="color:var(--purple)">5M–15M</span><span class="setup-stat-lbl">Entry TF</span></div>
+      </div>
+      <p style="font-size:13px;color:var(--text2);">Based on the Power of Three (AMD) model — London fakes the direction before NY delivers the real move.</p>
+      <ol class="setup-steps">
+        <li>Determine daily bias via HTF structure and PDRA levels the night before</li>
+        <li>During London session: wait for manipulation move OPPOSITE to daily bias</li>
+        <li>The manipulation sweeps BSL (if bearish bias) or SSL (if bullish bias)</li>
+        <li>After sweep + rejection: enter in the direction of daily bias</li>
+        <li>SL: Beyond manipulation extreme. TP: Daily bias target (PDH/PDL or HTF level)</li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== RISK MANAGEMENT ======================== -->
+<div class="divider"></div>
+<div id="risk" class="section">
+  <div class="section-label">Capital Preservation</div>
+  <div class="section-title">Institutional Risk Management Framework</div>
+  <div class="section-subtitle">The mathematical foundation that separates profitable traders from blown accounts</div>
+
+  <div class="calc-grid">
+    <div class="calc-side">
+      <h3>Position Sizing Formula</h3>
+      <div class="calc-formula">
+<span class="cf">Risk_Amount</span> = <span class="cn">AccountBalance</span> × <span class="cn">Risk%</span>
+
+<span class="cf">Pip_Value</span> = <span class="cn">LotSize</span> × <span class="cn">PipSize</span>
+
+<span class="cf">Lots</span> = <span class="cv">Risk_Amount</span> <span class="co">÷</span> (<span class="cn">SL_Pips</span> × <span class="cn">Pip_Value_per_Lot</span>)
+
+<span class="c-comment">// Example: $10,000 account, 1% risk</span>
+<span class="c-comment">// SL = 20 pips, Pip = $10/lot</span>
+<span class="cv">Risk</span> = 10,000 × 0.01 = <span class="cn">$100</span>
+<span class="cv">Lots</span> = 100 ÷ (20 × 10) = <span class="cn">0.50 lots</span>
+      </div>
+    </div>
+    <div class="calc-side">
+      <h3>Expectancy Formula</h3>
+      <div class="calc-formula">
+<span class="cf">Expectancy</span> = (<span class="cn">WR</span> × <span class="cn">AvgWin</span>) <span class="co">-</span> (<span class="cn">LR</span> × <span class="cn">AvgLoss</span>)
+
+<span class="c-comment">// Where LR = 1 - WR</span>
+
+<span class="c-comment">// Minimum viable: Expectancy > 0</span>
+<span class="c-comment">// Target: Expectancy > 0.5R</span>
+
+<span class="c-comment">// Example: 45% WR, 3R avg win, 1R avg loss</span>
+E = (0.45 × 3) - (0.55 × 1) = 1.35 - 0.55 = <span class="cn">+0.8R</span>
+<span class="c-comment">// Strong positive expectancy ✅</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="g3" style="margin-top:30px;">
+    <div class="card card-green">
+      <h3>✅ Prop Firm Rules</h3>
+      <ul style="font-size:13px;color:var(--text2);padding-left:16px;margin-top:10px;">
+        <li>Phase 1: Max 0.5% risk per trade</li>
+        <li>Phase 2: Max 1% risk per trade</li>
+        <li>Funded: Max 1–2% risk per trade</li>
+        <li>Daily max loss: Stay under 4–5%</li>
+        <li>Never revenge trade</li>
+        <li>Close all trades by 5PM EST</li>
+        <li>No news trading (NFP, FOMC)</li>
+        <li>Minimum 10 trading days</li>
+      </ul>
+    </div>
+    <div class="card card-gold">
+      <h3>📐 R:R Requirements by Setup</h3>
+      <table class="t" style="font-size:12px;margin-top:10px;">
+        <tr><th>Setup Grade</th><th>Min R:R</th><th>Target R:R</th></tr>
+        <tr><td>A+</td><td class="td-bull">2:1</td><td class="td-bull">5:1+</td></tr>
+        <tr><td>A</td><td class="td-bull">2:1</td><td class="td-bull">3:1</td></tr>
+        <tr><td>B</td><td class="td-bull">1.5:1</td><td class="td-bull">2.5:1</td></tr>
+        <tr><td>C</td><td style="color:var(--red)">SKIP</td><td style="color:var(--red)">SKIP</td></tr>
+      </table>
+    </div>
+    <div class="card card-red">
+      <h3>⛔ Hard Rules — Never Break</h3>
+      <ul style="font-size:13px;color:var(--text2);padding-left:16px;margin-top:10px;">
+        <li>Stop trading after 3 consecutive losses</li>
+        <li>Max 3 trades per day (quality &gt; quantity)</li>
+        <li>Never move SL against the trade</li>
+        <li>Only trade during kill zones</li>
+        <li>No trade without clear HTF bias</li>
+        <li>R:R must be identified BEFORE entry</li>
+        <li>Never risk more than 2% on any day</li>
+        <li>Journal every trade immediately after</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== SESSION ANALYSIS ======================== -->
+<div class="divider"></div>
+<div id="sessions" class="section">
+  <div class="section-label">Timing Intelligence</div>
+  <div class="section-title">Session-by-Session Trading Framework</div>
+  <div class="section-subtitle">When to trade, when to watch, and when to stay completely flat</div>
+
+  <table class="t">
+    <tr><th>Session</th><th>Time (EST)</th><th>Pairs</th><th>Behavior</th><th>Strategy</th><th>Risk Level</th></tr>
+    <tr>
+      <td class="td-key">Asian Session</td><td>8:00 PM – 12:00 AM</td>
+      <td>JPY pairs, AUD, NZD</td>
+      <td>Low volatility, range-bound. Sets the Asian range that other sessions will target.</td>
+      <td>Mark Asian High/Low. These become BSL/SSL for London to hunt.</td>
+      <td style="color:var(--text3);">Low — Avoid unless scalping</td>
+    </tr>
+    <tr>
+      <td class="td-key">London Pre-Market</td><td>12:00 AM – 2:00 AM</td>
+      <td>EUR, GBP, CHF</td>
+      <td>Slow positioning. Institutions placing pre-market orders. Low volume but directional clues forming.</td>
+      <td>Watch for accumulation patterns. Mark any early structure shifts.</td>
+      <td style="color:var(--orange);">Moderate</td>
+    </tr>
+    <tr>
+      <td class="td-key">London Kill Zone ⭐</td><td>2:00 AM – 5:00 AM</td>
+      <td>EUR, GBP, CHF, USD</td>
+      <td>Highest volume session. Institutional order flow. Price sweeps Asian range, then true direction begins. AMD manipulation phase occurs here.</td>
+      <td>PRIMARY SESSION. Liquidity sweep setups. OB entries. AMD manipulation entries. Best for all primary setups.</td>
+      <td style="color:var(--green);">Highest Edge</td>
+    </tr>
+    <tr>
+      <td class="td-key">London–NY Overlap ⭐</td><td>8:00 AM – 10:00 AM</td>
+      <td>All major pairs</td>
+      <td>Peak liquidity and volatility. Distribution phase of AMD. Strong directional moves continuation.</td>
+      <td>Continuation entries after London sweep. Scale into winning positions. AMD Distribution phase trades.</td>
+      <td style="color:var(--green);">Highest Edge</td>
+    </tr>
+    <tr>
+      <td class="td-key">NY Morning</td><td>7:00 AM – 12:00 PM</td>
+      <td>USD pairs, indices</td>
+      <td>NY institutions active. Often confirms or reverses London direction. High volatility around economic news (avoid news events).</td>
+      <td>Continuation setups in established trend. Fade NY opens that gap vs overnight range.</td>
+      <td style="color:var(--gold);">Good — Caution on news</td>
+    </tr>
+    <tr>
+      <td class="td-key">NY Afternoon</td><td>12:00 PM – 5:00 PM</td>
+      <td>All pairs</td>
+      <td>Declining volume. Whipsaw potential. Institutional position adjustments at close. Generally lower probability.</td>
+      <td>Close remaining positions. Only scalp very clear setups. Prefer to be flat by 2PM.</td>
+      <td style="color:var(--red);">Low probability</td>
+    </tr>
+  </table>
+
+  <div class="card card-gold" style="margin-top:20px;">
+    <h3>⏰ The Golden Window — Chart Fanatics / ICT Protocol</h3>
+    <p>Based on the live sessions with Chart Fanatics traders: <strong>90% of the best trades occur between 2:00 AM – 10:00 AM EST</strong>. Outside this window, reduce position size by 50% or don't trade at all. The data from the live sessions consistently shows that noon onward is characterized by choppy, low-probability price action that destroys edge.</p>
+  </div>
+</div>
+
+<!-- ======================== QUIZ ======================== -->
+<div class="divider"></div>
+<div id="quiz" class="section">
+  <div class="section-label">Self-Assessment</div>
+  <div class="section-title">Mastery Self-Assessment Quiz</div>
+  <div class="section-subtitle">40 questions across all concepts — test your understanding before trading real capital</div>
+
+  <div class="quiz-card">
+    <div class="quiz-num">QUESTION 01 / 40 — ORDER FLOW FOUNDATIONS</div>
+    <div class="quiz-q">1. A candle closes green but Cumulative Volume Delta (CVD) is declining. What does this signal?</div>
+    <div class="quiz-opts">
+      <div class="quiz-opt">A) Strong bullish continuation — the move is confirmed</div>
+      <div class="quiz-opt">B) Bearish CVD divergence — sellers are absorbing the rally, reversal likely</div>
+      <div class="quiz-opt">C) Normal market behavior — CVD and price rarely agree</div>
+      <div class="quiz-opt">D) Low volume session — ignore CVD during these periods</div>
+    </div>
+    <div class="quiz-answer">✅ Answer: B — Bearish CVD divergence. Despite price rising, aggressive selling volume exceeds buying. Institutions are distributing into the rally. This is one of the highest-probability short setups when combined with a key resistance level.</div>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-num">QUESTION 02 / 40 — VOLUME PROFILE</div>
+    <div class="quiz-q">2. Price is approaching a Low Volume Node (LVN) from below during a bullish trend. What do you expect?</div>
+    <div class="quiz-opts">
+      <div class="quiz-opt">A) Price will slow down and consolidate at the LVN</div>
+      <div class="quiz-opt">B) Price will reverse at the LVN (acts as resistance)</div>
+      <div class="quiz-opt">C) Price will accelerate rapidly through the LVN (no resistance)</div>
+      <div class="quiz-opt">D) LVNs have no predictive value in trending markets</div>
+    </div>
+    <div class="quiz-answer">✅ Answer: C — LVNs are thin areas with minimal historical trading activity. In trend direction, price moves quickly through LVNs as there's no significant resting supply/demand. Use LVNs as profit acceleration zones and target levels beyond them.</div>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-num">QUESTION 03 / 40 — MARKET STRUCTURE</div>
+    <div class="quiz-q">3. In an established uptrend, price creates a CHOCH (Change of Character) on the 15-minute chart. What should you do?</div>
+    <div class="quiz-opts">
+      <div class="quiz-opt">A) Immediately go short — the trend has reversed</div>
+      <div class="quiz-opt">B) Close all longs immediately and wait</div>
+      <div class="quiz-opt">C) Check the Daily and 4H — if still bullish, treat the 15M CHOCH as a pullback opportunity, not a reversal signal</div>
+      <div class="quiz-opt">D) CHOCH on 15M is always irrelevant — only trade Daily structure</div>
+    </div>
+    <div class="quiz-answer">✅ Answer: C — A lower timeframe CHOCH is a warning signal, not confirmation of reversal. Multi-timeframe confluence is essential. A 15M CHOCH against a Daily bullish trend is often a liquidity grab/manipulation phase that sets up a higher-probability long entry.</div>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-num">QUESTION 04 / 40 — SMC / ICT</div>
+    <div class="quiz-q">4. What is a "Breaker Block" and how does it differ from a standard Order Block?</div>
+    <div class="quiz-opts">
+      <div class="quiz-opt">A) A Breaker Block is just a stronger version of an Order Block</div>
+      <div class="quiz-opt">B) A Breaker Block is a failed Order Block that was violated — it now acts as a POI in the OPPOSITE direction</div>
+      <div class="quiz-opt">C) Breaker Blocks only exist on higher timeframes (Daily and above)</div>
+      <div class="quiz-opt">D) A Breaker Block occurs when price breaks through an OB with no reaction</div>
+    </div>
+    <div class="quiz-answer">✅ Answer: B — When a Bearish OB gets broken upward (price closes above it), the Bearish OB becomes a Bullish Breaker Block — it flips to act as support on retest. This represents a shift of institutional position, making Breaker Blocks some of the highest-probability POIs in ICT methodology.</div>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-num">QUESTION 05 / 40 — WYCKOFF</div>
+    <div class="quiz-q">5. In Wyckoff accumulation, what makes the Spring superior to other entries?</div>
+    <div class="quiz-opts">
+      <div class="quiz-opt">A) The Spring provides the lowest risk entry because the SL is placed below a clear structural level</div>
+      <div class="quiz-opt">B) Springs always produce the largest profit moves</div>
+      <div class="quiz-opt">C) Springs are easy to identify in real-time</div>
+      <div class="quiz-opt">D) A and B are both correct</div>
+    </div>
+    <div class="quiz-answer">✅ Answer: A — The Spring's primary advantage is risk/reward. SL goes just below the spring low (a very specific, tight level), while the TP is the entire accumulation range and the markup phase above it. This creates exceptional R:R (often 4:1 to 8:1) with clear invalidation.</div>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-num">QUESTION 06 / 40 — BOOKMAP / TOOLS</div>
+    <div class="quiz-q">6. On Bookmap, a large "bubble" appears at the ask side and repeatedly refreshes without being consumed. What is this?</div>
+    <div class="quiz-opts">
+      <div class="quiz-opt">A) An iceberg order — institutions hiding their true order size</div>
+      <div class="quiz-opt">B) A spoofing order — an order placed with no intent to fill</div>
+      <div class="quiz-opt">C) Normal retail limit order activity</div>
+      <div class="quiz-opt">D) Either A or B — only context can distinguish them</div>
+    </div>
+    <div class="quiz-answer">✅ Answer: D — Context distinguishes icebergs from spoofs. If the large bubble holds price AND absorbs aggressive buy orders (volume goes through it), it's an iceberg. If price approaches the bubble and it disappears (volume never executes there), it was spoofing. Both are taught in the Bookmap/MasiTrades video.</div>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-num">QUESTION 07 / 40 — RISK MANAGEMENT</div>
+    <div class="quiz-q">7. You have a $100,000 funded account with a 5% daily drawdown limit. How much should you risk per trade?</div>
+    <div class="quiz-opts">
+      <div class="quiz-opt">A) $5,000 per trade (5% — using your full daily limit)</div>
+      <div class="quiz-opt">B) $2,500 per trade (2.5% — half the daily limit, max 2 trades/day)</div>
+      <div class="quiz-opt">C) $1,000 per trade (1% — multiple losses won't hit daily limit)</div>
+      <div class="quiz-opt">D) $500 per trade (0.5%) during challenge phase</div>
+    </div>
+    <div class="quiz-answer">✅ Answer: C or D — On a funded account, 0.5–1% per trade is optimal. If you take 3 losses (streak), you're down only 1.5–3%, well within daily limits. 2.5% per trade means 2 consecutive losses puts you at 5% — one bad session eliminates the account. Conservative sizing is the professional approach.</div>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-num">QUESTION 08 / 40 — AMD / PO3</div>
+    <div class="quiz-q">8. Your daily bias is bullish. London opens and immediately takes out the Asian session lows. What is the correct interpretation?</div>
+    <div class="quiz-opts">
+      <div class="quiz-opt">A) Your daily bias was wrong — switch to bearish</div>
+      <div class="quiz-opt">B) This is the Manipulation (M) phase of AMD — London is sweeping SSL before the Distribution (bullish) phase begins in NY</div>
+      <div class="quiz-opt">C) Wait for London to close before assessing direction</div>
+      <div class="quiz-opt">D) The Asian session low has no significance in AMD</div>
+    </div>
+    <div class="quiz-answer">✅ Answer: B — This is textbook AMD. The Asian session creates an Accumulation range. London breaks below it (sweeping SSL = Manipulation phase). This shake-out fills the buy orders of smart money. Then NY distributes — the actual bullish move begins. This is one of the most reliable setups in ICT's framework. Enter long on the London SSL sweep + rejection.</div>
+  </div>
+
+  <div style="text-align:center;margin-top:30px;padding:24px;background:var(--card);border-radius:12px;border:1px solid var(--border);">
+    <p style="color:var(--text3);font-size:14px;margin-bottom:8px;">Questions 9–40 cover: Advanced CVD patterns, Footprint chart reading, Wyckoff distribution phases, ICT time theory, PDRA application, Auction Market Theory opening types, and Live trade analysis</p>
+    <p style="color:var(--gold);font-weight:600;font-size:16px;">Continue studying the video curriculum to unlock mastery of all 40 topics</p>
+  </div>
+</div>
+
+<!-- ======================== TRADE JOURNAL ======================== -->
+<div class="divider"></div>
+<div id="journal" class="section">
+  <div class="section-label">Performance Tracking</div>
+  <div class="section-title">Institutional Trade Journal Template</div>
+  <div class="section-subtitle">The exact journal format used by the traders in this curriculum — track, analyze, improve</div>
+
+  <div class="journal">
+    <div class="journal-header">
+      <div>
+        <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:700;">Trade Journal Entry</div>
+        <div style="font-size:12px;color:var(--text3);margin-top:4px;">Copy this template for every trade you take</div>
+      </div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gold);">TEMPLATE v1.0</div>
+    </div>
+    <div class="journal-body">
+      <div class="j-row">
+        <div class="j-field">
+          <div class="j-label">Date & Time</div>
+          <div class="j-input" style="background:var(--bg3);border:1px dashed var(--border2);">2026-04-20 | 03:45 AM EST</div>
+        </div>
+        <div class="j-field">
+          <div class="j-label">Instrument</div>
+          <div class="j-input" style="background:var(--bg3);border:1px dashed var(--border2);">EURUSD</div>
+        </div>
+        <div class="j-field">
+          <div class="j-label">Session</div>
+          <div class="j-input" style="background:var(--bg3);border:1px dashed var(--border2);">London Kill Zone</div>
+        </div>
+      </div>
+
+      <div class="g2">
+        <div>
+          <div class="j-field">
+            <div class="j-label">Daily Bias (HTF)</div>
+            <div class="j-input" style="background:var(--bg3);border:1px dashed var(--border2);">Bullish — Price above 4H POC, Daily BOS confirmed, PDRA: Price targeting PDH at 1.0850</div>
+          </div>
+          <div class="j-field">
+            <div class="j-label">Setup Type</div>
+            <div class="j-input" style="background:var(--bg3);border:1px dashed var(--border2);">A+ — Liquidity Sweep Reversal at Asian Low (SSL Grab)</div>
+          </div>
+          <div class="j-field">
+            <div class="j-label">Entry Logic</div>
+            <div class="j-input" style="background:var(--bg3);border:1px dashed var(--border2);">London swept Asian Low (1.0790), immediate rejection, 15M CHOCH formed, FVG at 1.0802–1.0797 filled with bullish CVD divergence</div>
+          </div>
+        </div>
+        <div>
+          <div class="j-row">
+            <div class="j-field">
+              <div class="j-label">Entry Price</div>
+              <div class="j-input" style="background:var(--bg3);border:1px dashed var(--border2);">1.0800</div>
+            </div>
+            <div class="j-field">
+              <div class="j-label">Stop Loss</div>
+              <div class="j-input" style="background:var(--bg3);border:1px dashed var(--border2);">1.0785</div>
+            </div>
+            <div class="j-field">
+              <div class="j-label">Risk (pips)</div>
+              <div class="j-input" style="background:var(--bg3);border:1px dashed var(--border2);">15 pips</div>
+            </div>
+          </div>
+          <div class="j-row">
+            <div class="j-field">
+              <div class="j-label">TP1</div>
+              <div class="j-input" style="background:var(--bg3);border:1px dashed var(--border2);">1.0830 (+30p)</div>
+            </div>
+            <div class="j-field">
+              <div class="j-label">TP2</div>
+              <div class="j-input" style="background:var(--bg3);border:1px dashed var(--border2);">1.0850 (+50p)</div>
+            </div>
+            <div class="j-field">
+              <div class="j-label">R:R</div>
+              <div class="j-input" style="background:var(--bg3);border:1px dashed var(--border2);">2R / 3.3R</div>
+            </div>
+          </div>
+          <div class="j-row">
+            <div class="j-field">
+              <div class="j-label">Lot Size</div>
+              <div class="j-input" style="background:var(--bg3);border:1px dashed var(--border2);">0.67 lots</div>
+            </div>
+            <div class="j-field">
+              <div class="j-label">$ Risk</div>
+              <div class="j-input" style="background:var(--bg3);border:1px dashed var(--border2);">$100 (1%)</div>
+            </div>
+            <div class="j-field">
+              <div class="j-label">Outcome</div>
+              <div class="j-input" style="background:rgba(0,230,118,0.1);border:1px solid rgba(0,230,118,0.3);color:var(--green);">WIN +$330</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="j-field" style="margin-top:10px;">
+        <div class="j-label">Order Flow Confirmation Used</div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px;">
+          <span style="background:rgba(0,212,255,0.15);border:1px solid rgba(0,212,255,0.3);color:var(--cyan);padding:6px 14px;border-radius:20px;font-size:12px;font-family:'JetBrains Mono',monospace;">CVD Divergence ✅</span>
+          <span style="background:rgba(0,212,255,0.15);border:1px solid rgba(0,212,255,0.3);color:var(--cyan);padding:6px 14px;border-radius:20px;font-size:12px;font-family:'JetBrains Mono',monospace;">Footprint Absorption ✅</span>
+          <span style="background:rgba(240,180,41,0.15);border:1px solid rgba(240,180,41,0.3);color:var(--gold);padding:6px 14px;border-radius:20px;font-size:12px;font-family:'JetBrains Mono',monospace;">LTF CHOCH ✅</span>
+          <span style="background:rgba(240,180,41,0.15);border:1px solid rgba(240,180,41,0.3);color:var(--gold);padding:6px 14px;border-radius:20px;font-size:12px;font-family:'JetBrains Mono',monospace;">FVG Entry ✅</span>
+          <span style="background:rgba(0,230,118,0.15);border:1px solid rgba(0,230,118,0.3);color:var(--green);padding:6px 14px;border-radius:20px;font-size:12px;font-family:'JetBrains Mono',monospace;">Kill Zone Timing ✅</span>
+        </div>
+      </div>
+
+      <div class="j-field" style="margin-top:10px;">
+        <div class="j-label">Post-Trade Review</div>
+        <div class="j-input" style="background:var(--bg3);border:1px dashed var(--border2);min-height:80px;padding:14px 16px;">What went well: Entry was precise at FVG. CVD confirmed before entry. Followed the plan exactly.
+What to improve: Could have added position at TP1 pullback for larger TP2 gain.
+Lesson: Asian session lows during London KZ are extremely reliable SSL targets when daily bias is bullish.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== MASTERY MAP ======================== -->
+<div class="divider"></div>
+<div id="mastery" class="section">
+  <div class="section-label">Learning Pathway</div>
+  <div class="section-title">The Complete Mastery Map</div>
+  <div class="section-subtitle">Your structured 12-week pathway from beginner to institutional-level trader</div>
+
+  <div class="g2">
+    <div class="card card-cyan">
+      <h3>Weeks 1–2: Foundation</h3>
+      <ul style="font-size:13px;color:var(--text2);padding-left:16px;margin-top:12px;">
+        <li><strong style="color:var(--cyan)">Watch:</strong> Darius FX — OFT Concepts Guide</li>
+        <li><strong style="color:var(--cyan)">Watch:</strong> JeaFx — Market Structure 68-Min</li>
+        <li><strong style="color:var(--cyan)">Watch:</strong> Fractal Flow — Liquidity 30-Min</li>
+        <li><strong style="color:var(--cyan)">Study:</strong> All glossary terms — Order Flow section</li>
+        <li><strong style="color:var(--cyan)">Practice:</strong> Mark market structure on 10 charts daily</li>
+        <li><strong style="color:var(--cyan)">Quiz:</strong> Score 80%+ on Questions 1–15 before proceeding</li>
+      </ul>
+    </div>
+    <div class="card card-purple">
+      <h3>Weeks 3–4: Volume & SMC</h3>
+      <ul style="font-size:13px;color:var(--text2);padding-left:16px;margin-top:12px;">
+        <li><strong style="color:var(--purple)">Watch:</strong> Fractal Flow — Volume Profile Guide</li>
+        <li><strong style="color:var(--purple)">Watch:</strong> SMC Folder — Full SMC/ICT Course</li>
+        <li><strong style="color:var(--purple)">Watch:</strong> Mind Math Money — 83-Min OFT Course</li>
+        <li><strong style="color:var(--purple)">Study:</strong> VP Glossary + SMC/ICT Glossary</li>
+        <li><strong style="color:var(--purple)">Practice:</strong> Mark VP levels + OBs/FVGs daily</li>
+        <li><strong style="color:var(--purple)">Task:</strong> Build first complete trade plan template</li>
+      </ul>
+    </div>
+    <div class="card card-green">
+      <h3>Weeks 5–6: Advanced Frameworks</h3>
+      <ul style="font-size:13px;color:var(--text2);padding-left:16px;margin-top:12px;">
+        <li><strong style="color:var(--green)">Watch:</strong> Fractal Flow — Ultimate Wyckoff Course</li>
+        <li><strong style="color:var(--green)">Watch:</strong> Fabervaale — AMT Full Course</li>
+        <li><strong style="color:var(--green)">Watch:</strong> Trading Discussion — 2hr OF+SMC+ICT</li>
+        <li><strong style="color:var(--green)">Watch:</strong> Chart Fanatics — $10M ICT Blueprint</li>
+        <li><strong style="color:var(--green)">Study:</strong> Wyckoff & AMT Glossary</li>
+        <li><strong style="color:var(--green)">Task:</strong> Backtest Wyckoff Spring + AMD setups 50 trades</li>
+      </ul>
+    </div>
+    <div class="card card-gold">
+      <h3>Weeks 7–8: Tools & Execution</h3>
+      <ul style="font-size:13px;color:var(--text2);padding-left:16px;margin-top:12px;">
+        <li><strong style="color:var(--gold)">Watch:</strong> MasiTrades — Bookmap Guide</li>
+        <li><strong style="color:var(--gold)">Watch:</strong> PLBVwIU37953 Playlist — All 14 videos</li>
+        <li><strong style="color:var(--gold)">Watch:</strong> Chart Fanatics — Algo Trading 90-Min</li>
+        <li><strong style="color:var(--gold)">Setup:</strong> Configure ATAS or TradingView with CVD</li>
+        <li><strong style="color:var(--gold)">Task:</strong> Practice footprint reading 30 min/day</li>
+        <li><strong style="color:var(--gold)">Task:</strong> Document your complete trading rules (rulebook)</li>
+      </ul>
+    </div>
+    <div class="card card-red">
+      <h3>Weeks 9–10: Simulation</h3>
+      <ul style="font-size:13px;color:var(--text2);padding-left:16px;margin-top:12px;">
+        <li><strong style="color:var(--red)">Watch:</strong> All live trading session videos (5 videos)</li>
+        <li><strong style="color:var(--red)">Watch:</strong> PLWQioWs8oOiFKQnwIIYbw8N7ks7d-UAPQ Playlist</li>
+        <li><strong style="color:var(--red)">Practice:</strong> 30 days demo trading with full journal</li>
+        <li><strong style="color:var(--red)">Minimum:</strong> 100 journaled trades before live trading</li>
+        <li><strong style="color:var(--red)">Target:</strong> Positive expectancy over 50+ trades</li>
+        <li><strong style="color:var(--red)">Task:</strong> Complete all 40 quiz questions, 85%+ pass</li>
+      </ul>
+    </div>
+    <div class="card" style="border-color:var(--green2);background:linear-gradient(135deg,var(--card),rgba(29,233,182,0.05));">
+      <h3 style="color:var(--green2)">Weeks 11–12: Go Live</h3>
+      <ul style="font-size:13px;color:var(--text2);padding-left:16px;margin-top:12px;">
+        <li><strong style="color:var(--green2)">Start:</strong> Prop firm challenge (FTMO / MyFunded / etc.)</li>
+        <li><strong style="color:var(--green2)">Risk:</strong> 0.5% per trade in Phase 1</li>
+        <li><strong style="color:var(--green2)">Sessions:</strong> London and NY Kill Zones ONLY</li>
+        <li><strong style="color:var(--green2)">Setups:</strong> A+ setups only for first 30 days</li>
+        <li><strong style="color:var(--green2)">Journal:</strong> Every single trade, no exceptions</li>
+        <li><strong style="color:var(--green2)">Review:</strong> Weekly performance analysis vs plan</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card card-gold" style="margin-top:30px;text-align:center;">
+    <h3 style="font-size:24px;">⚡ The Ultimate GODMODE Insight</h3>
+    <p style="max-width:800px;margin:16px auto 0;font-size:16px;line-height:1.8;color:var(--text2);">Every single elite trader in this curriculum — from Umar Ashraf to the $40K Chart Fanatics sessions — shares one thing: <strong style="color:var(--gold)">they do not predict, they react</strong>. They identify the <em>where</em> (liquidity pools), wait for the <em>what</em> (sweep + rejection), confirm with the <em>how</em> (CVD/footprint), and only then pull the trigger. Patience is not passive — it is the active filtering mechanism that keeps you out of 70% of potential trades that would lose, and keeps you in the 30% that win at exceptional R:R. <strong style="color:var(--cyan)">Less trading, better trading.</strong></p>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <div class="footer-logo">GODMODE <span>PART II</span></div>
+  <p style="color:var(--text3);font-size:14px;">Advanced Reference · Glossary · Trade Setups · Risk Frameworks · Quiz · Journal Template</p>
+  <p style="color:var(--text3);font-size:13px;margin-top:8px;">Part of the complete GODMODE Order Flow & Smart Money Mastery curriculum — 35 videos synthesized</p>
+  <p style="color:var(--text3);font-size:11px;margin-top:16px;">⚠️ Educational purposes only. Trading involves substantial risk of loss. Past results do not guarantee future performance.</p>
+</div>
+
+<a href="#" class="back">↑</a>
+
+</body>
+</html>

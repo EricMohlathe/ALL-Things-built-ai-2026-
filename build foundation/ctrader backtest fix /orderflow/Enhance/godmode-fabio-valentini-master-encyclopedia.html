@@ -1,0 +1,1635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>GODMODE — Fabio Valentini Master Trading Encyclopedia</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;600;700&family=Spectral:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#05080d;--s1:#0a1018;--s2:#0f1824;--s3:#141f2e;
+  --border:#1a2a3a;--border2:#243548;
+  --acc:#00d4ff;--acc2:#ff6b35;--acc3:#00ff9d;--acc4:#ffd700;--acc5:#c084fc;
+  --red:#ff4757;--text:#cce0f5;--muted:#5a7a9a;
+  --buy:#00ff9d;--sell:#ff4757;
+  --grd: linear-gradient(135deg,#00d4ff,#c084fc);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;line-height:1.65;overflow-x:hidden}
+
+/* grain */
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:0;opacity:.5}
+
+/* ── HERO ── */
+.hero{position:relative;padding:100px 48px 72px;overflow:hidden;border-bottom:1px solid var(--border)}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 120% 80% at 60% -20%,rgba(0,212,255,.09) 0%,transparent 70%),radial-gradient(ellipse 80% 60% at 10% 100%,rgba(192,132,252,.06) 0%,transparent 60%)}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--acc3);background:rgba(0,255,157,.08);border:1px solid rgba(0,255,157,.2);padding:5px 14px;border-radius:2px;letter-spacing:.15em;text-transform:uppercase;margin-bottom:28px}
+.hero-badge::before{content:'◉';animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.hero h1{font-size:clamp(2.4rem,6vw,5rem);font-weight:800;line-height:1.0;letter-spacing:-.03em;margin-bottom:12px}
+.hero h1 span{background:var(--grd);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-desc{font-family:'Spectral',serif;font-style:italic;font-size:1.1rem;color:var(--muted);max-width:700px;margin-bottom:40px;line-height:1.8}
+.hero-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:16px;max-width:800px}
+.hstat{background:var(--s2);border:1px solid var(--border);border-radius:6px;padding:16px}
+.hstat .v{font-size:1.8rem;font-weight:800;line-height:1;background:var(--grd);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hstat .l{font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--muted);margin-top:4px;letter-spacing:.08em;text-transform:uppercase}
+
+/* ── NAV ── */
+.sidenav{position:fixed;left:0;top:0;bottom:0;width:240px;background:var(--s1);border-right:1px solid var(--border);padding:24px 0;overflow-y:auto;z-index:100;transition:transform .3s}
+.sidenav-title{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--muted);letter-spacing:.15em;text-transform:uppercase;padding:0 20px 12px}
+.nav-item{display:block;padding:7px 20px;font-size:.82rem;color:var(--muted);text-decoration:none;border-left:2px solid transparent;transition:all .15s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nav-item:hover,.nav-item.active{color:var(--acc);border-left-color:var(--acc);background:rgba(0,212,255,.05)}
+.nav-section{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:rgba(90,122,154,.5);letter-spacing:.12em;text-transform:uppercase;padding:16px 20px 4px;margin-top:4px}
+
+/* ── MAIN ── */
+.main{margin-left:240px}
+@media(max-width:900px){.sidenav{transform:translateX(-100%)}.main{margin-left:0}}
+
+/* ── SECTIONS ── */
+.section{padding:60px 56px;border-bottom:1px solid var(--border);max-width:1060px}
+.sec-tag{font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--acc);letter-spacing:.18em;text-transform:uppercase;margin-bottom:10px;opacity:.8}
+.section h2{font-size:2.2rem;font-weight:800;letter-spacing:-.02em;color:#fff;margin-bottom:6px}
+.section h2 em{font-style:normal;background:var(--grd);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.section .subtitle{font-family:'Spectral',serif;font-style:italic;color:var(--muted);margin-bottom:32px;font-size:.98rem}
+.section h3{font-size:1.2rem;font-weight:700;color:var(--acc);margin:36px 0 14px;letter-spacing:.02em}
+.section h4{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--acc4);text-transform:uppercase;letter-spacing:.1em;margin:24px 0 10px}
+p{margin-bottom:14px;font-size:.96rem}
+ul,ol{padding-left:22px;margin-bottom:14px}
+li{margin-bottom:7px;font-size:.94rem}
+strong{color:#e8f4ff}
+
+/* ── CARDS ── */
+.card{background:var(--s2);border:1px solid var(--border);border-radius:6px;padding:22px 24px;margin-bottom:16px}
+.card.hl{border-left:3px solid var(--acc)}
+.card.buy{border-left:3px solid var(--buy);background:rgba(0,255,157,.03)}
+.card.sell{border-left:3px solid var(--sell);background:rgba(255,71,87,.03)}
+.card.gold{border-left:3px solid var(--acc4);background:rgba(255,215,0,.03)}
+.card.purple{border-left:3px solid var(--acc5);background:rgba(192,132,252,.03)}
+.card.top-line{border-top:2px solid var(--acc);border-left:none}
+.card.top-line.orange{border-top-color:var(--acc2)}
+.card.top-line.green{border-top-color:var(--acc3)}
+.card.top-line.gold{border-top-color:var(--acc4)}
+.card.top-line.purple{border-top-color:var(--acc5)}
+
+/* ── GRIDS ── */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:16px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+@media(max-width:760px){.g2,.g3,.g4{grid-template-columns:1fr}}
+
+/* ── CALLOUTS ── */
+.callout{border-radius:6px;padding:18px 22px;margin:22px 0;font-size:.94rem}
+.callout.info{background:rgba(0,212,255,.06);border:1px solid rgba(0,212,255,.18)}
+.callout.warn{background:rgba(255,215,0,.06);border:1px solid rgba(255,215,0,.18)}
+.callout.danger{background:rgba(255,71,87,.06);border:1px solid rgba(255,71,87,.18)}
+.callout.success{background:rgba(0,255,157,.06);border:1px solid rgba(0,255,157,.18)}
+.callout.purple{background:rgba(192,132,252,.06);border:1px solid rgba(192,132,252,.18)}
+.callout .ct{font-family:'JetBrains Mono',monospace;font-size:.68rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px}
+.callout.info .ct{color:var(--acc)}.callout.warn .ct{color:var(--acc4)}.callout.danger .ct{color:var(--red)}.callout.success .ct{color:var(--acc3)}.callout.purple .ct{color:var(--acc5)}
+
+/* ── STEPS ── */
+.step{display:flex;gap:18px;margin-bottom:22px;align-items:flex-start}
+.snum{flex-shrink:0;width:38px;height:38px;background:rgba(0,212,255,.1);border:1px solid rgba(0,212,255,.3);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:var(--acc);margin-top:2px}
+.snum.orange{background:rgba(255,107,53,.1);border-color:rgba(255,107,53,.3);color:var(--acc2)}
+.snum.green{background:rgba(0,255,157,.1);border-color:rgba(0,255,157,.3);color:var(--acc3)}
+.snum.gold{background:rgba(255,215,0,.1);border-color:rgba(255,215,0,.3);color:var(--acc4)}
+.snum.purple{background:rgba(192,132,252,.1);border-color:rgba(192,132,252,.3);color:var(--acc5)}
+.sbody strong{color:#fff;font-size:1rem;display:block;margin-bottom:6px}
+
+/* ── TABLE ── */
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:.87rem}
+th{text-align:left;padding:10px 14px;background:var(--s3);border-bottom:1px solid var(--border2);font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--acc);letter-spacing:.1em;text-transform:uppercase}
+td{padding:10px 14px;border-bottom:1px solid rgba(26,42,58,.6);vertical-align:top}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(255,255,255,.015)}
+
+/* ── CODE ── */
+.code{background:#040810;border:1px solid var(--border);border-radius:6px;padding:20px 22px;font-family:'JetBrains Mono',monospace;font-size:.78rem;color:#9dc8f0;overflow-x:auto;margin:16px 0;line-height:1.75}
+.code .c{color:#2d4a6a}.code .k{color:var(--acc4)}.code .v{color:var(--acc3)}.code .s{color:var(--acc2)}.code .f{color:var(--acc5)}
+
+/* ── BADGES ── */
+.badge{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:.68rem;font-weight:600;padding:3px 9px;border-radius:2px;letter-spacing:.08em;text-transform:uppercase;margin:2px 3px 2px 0}
+.b-blue{background:rgba(0,212,255,.12);color:var(--acc);border:1px solid rgba(0,212,255,.2)}
+.b-green{background:rgba(0,255,157,.12);color:var(--acc3);border:1px solid rgba(0,255,157,.2)}
+.b-orange{background:rgba(255,107,53,.12);color:var(--acc2);border:1px solid rgba(255,107,53,.2)}
+.b-gold{background:rgba(255,215,0,.12);color:var(--acc4);border:1px solid rgba(255,215,0,.2)}
+.b-red{background:rgba(255,71,87,.12);color:var(--red);border:1px solid rgba(255,71,87,.2)}
+.b-purple{background:rgba(192,132,252,.12);color:var(--acc5);border:1px solid rgba(192,132,252,.2)}
+
+/* ── FLOW DIAGRAM ── */
+.flow{display:flex;align-items:stretch;gap:0;margin:20px 0;flex-wrap:nowrap;overflow-x:auto}
+.flow-box{flex:1;min-width:110px;background:var(--s3);border:1px solid var(--border);padding:14px 12px;text-align:center;position:relative}
+.flow-box:not(:last-child)::after{content:'→';position:absolute;right:-12px;top:50%;transform:translateY(-50%);color:var(--acc);font-size:1rem;z-index:1;background:var(--bg);padding:0 2px}
+.flow-num{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.1em}
+.flow-lbl{font-size:.82rem;font-weight:700;color:var(--acc)}
+
+/* ── CHART DIAGRAMS (SVG) ── */
+.chart-wrap{background:var(--s1);border:1px solid var(--border);border-radius:8px;padding:20px;margin:20px 0;overflow-x:auto}
+.chart-title{font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:.12em;margin-bottom:14px}
+
+/* ── VIDEO REFS ── */
+.vid-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin:20px 0}
+.vid-card{background:var(--s2);border:1px solid var(--border);border-radius:6px;padding:16px;display:flex;flex-direction:column;gap:8px}
+.vid-card .vnum{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--acc5);letter-spacing:.1em}
+.vid-card .vtitle{font-size:.9rem;font-weight:700;color:#e8f4ff;line-height:1.3}
+.vid-card .vconcept{font-size:.8rem;color:var(--muted)}
+.vid-card .vtags{display:flex;flex-wrap:wrap;gap:4px}
+
+/* ── CONCEPT MAP ── */
+.cmap{background:var(--s1);border:1px solid var(--border);border-radius:8px;padding:24px;margin:20px 0}
+
+/* text helpers */
+.acc{color:var(--acc)}.acc2{color:var(--acc2)}.acc3{color:var(--acc3)}.acc4{color:var(--acc4)}.acc5{color:var(--acc5)}.red{color:var(--red)}.buy-t{color:var(--buy)}.sell-t{color:var(--sell)}
+hr{border:none;border-top:1px solid var(--border);margin:28px 0}
+
+/* ── QUOTE ── */
+.quote{border-left:3px solid var(--acc5);padding:14px 20px;margin:20px 0;background:rgba(192,132,252,.04);font-family:'Spectral',serif;font-style:italic;font-size:1.05rem;color:#c8d8ee}
+.quote cite{display:block;font-size:.78rem;font-style:normal;color:var(--acc5);margin-top:8px;font-family:'JetBrains Mono',monospace;letter-spacing:.05em}
+
+/* ── CHECKLIST ── */
+.chk li{list-style:none;padding-left:0;margin-bottom:9px}
+.chk li::before{content:'☐ ';font-size:1.1rem;color:var(--acc);margin-right:6px}
+
+/* ── FORMULA BOX ── */
+.formula{background:#040810;border:1px solid rgba(0,212,255,.2);border-radius:6px;padding:18px 22px;font-family:'JetBrains Mono',monospace;font-size:.85rem;color:#a8d5ff;margin:16px 0;text-align:center;letter-spacing:.04em}
+
+/* scroll track */
+.sidenav::-webkit-scrollbar{width:4px}
+.sidenav::-webkit-scrollbar-track{background:transparent}
+.sidenav::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════
+     SIDE NAVIGATION
+════════════════════════════════════════════ -->
+<nav class="sidenav">
+  <div class="sidenav-title">GODMODE Encyclopedia</div>
+  <div class="nav-section">Foundation</div>
+  <a class="nav-item" href="#video-index">Video Index</a>
+  <a class="nav-item" href="#philosophy">Core Philosophy</a>
+  <a class="nav-item" href="#amt">Market Auction Theory</a>
+  <div class="nav-section">Order Flow</div>
+  <a class="nav-item" href="#of-fundamentals">OF Fundamentals</a>
+  <a class="nav-item" href="#volume-profile">Volume Profile</a>
+  <a class="nav-item" href="#cvd">Cumulative Delta</a>
+  <a class="nav-item" href="#footprint">Footprint Charts</a>
+  <a class="nav-item" href="#deepcharts">DeepCharts Tools</a>
+  <div class="nav-section">Market Structure</div>
+  <a class="nav-item" href="#market-states">Market States</a>
+  <a class="nav-item" href="#balance">Balance Detection</a>
+  <a class="nav-item" href="#imbalance">Imbalance Detection</a>
+  <a class="nav-item" href="#absorption">Absorption Mechanics</a>
+  <div class="nav-section">Models</div>
+  <a class="nav-item" href="#triple-a">Triple-A Framework</a>
+  <a class="nav-item" href="#model1">Model 1 — Trend</a>
+  <a class="nav-item" href="#model2">Model 2 — Reversion</a>
+  <a class="nav-item" href="#lvn-model">LVN Execution</a>
+  <div class="nav-section">Execution</div>
+  <a class="nav-item" href="#three-steps">3-Step Protocol</a>
+  <a class="nav-item" href="#sessions">Session Timing</a>
+  <a class="nav-item" href="#entry-mechanics">Entry Mechanics</a>
+  <a class="nav-item" href="#stop-placement">Stop Placement</a>
+  <a class="nav-item" href="#exits">Exits & Targets</a>
+  <div class="nav-section">Advanced</div>
+  <a class="nav-item" href="#multiday">Multi-Day Context</a>
+  <a class="nav-item" href="#live-reading">Live Market Reading</a>
+  <a class="nav-item" href="#world-cup">World Cup Strategy</a>
+  <a class="nav-item" href="#prop-firm">Prop Firm Protocol</a>
+  <div class="nav-section">Risk & Psychology</div>
+  <a class="nav-item" href="#risk">Risk Management</a>
+  <a class="nav-item" href="#psychology">Psychology</a>
+  <a class="nav-item" href="#edge-decay">Edge Decay</a>
+  <div class="nav-section">Automation</div>
+  <a class="nav-item" href="#automation">MQL5 Blueprint</a>
+  <a class="nav-item" href="#mql5-code">MQL5 Code Library</a>
+  <a class="nav-item" href="#checklist">Master Checklists</a>
+</nav>
+
+<!-- ═══════════════════════════════════════════
+     MAIN CONTENT
+════════════════════════════════════════════ -->
+<div class="main">
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">GODMODE ACTIVE — Live Trading System</div>
+  <h1>Fabio Valentini<br><span>Master Encyclopedia</span></h1>
+  <p class="hero-desc">The complete, synthesised intelligence extracted from 35+ videos, the official ChartFanatics strategy playbook, DeepCharts methodology, and the Fabervaale bootcamp framework — assembled into one automation-ready reference.</p>
+  <div class="hero-grid">
+    <div class="hstat"><div class="v">35+</div><div class="l">Videos synthesised</div></div>
+    <div class="hstat"><div class="v">500%+</div><div class="l">12-month return</div></div>
+    <div class="hstat"><div class="v">4×</div><div class="l">World Cup ranked</div></div>
+    <div class="hstat"><div class="v">2</div><div class="l">Core models</div></div>
+    <div class="hstat"><div class="v">3</div><div class="l">Step framework</div></div>
+    <div class="hstat"><div class="v">NQ/ES</div><div class="l">Primary market</div></div>
+  </div>
+</div>
+
+<!-- ══════════════ VIDEO INDEX ══════════════ -->
+<div class="section" id="video-index">
+  <div class="sec-tag">00 — Source Material</div>
+  <h2>Complete <em>Video Library</em></h2>
+  <p class="subtitle">All 35+ videos mapped to their core concepts and integrated throughout this guide.</p>
+
+  <div class="vid-grid">
+    <div class="vid-card"><div class="vnum">V-01 · tvERE-Beu2U</div><div class="vtitle">Trading LIVE with the #1 Scalper (EXTREME Accuracy)</div><div class="vconcept">ChartFanatics × Fabio — Full live session, 3-step model explained, NY open protocol</div><div class="vtags"><span class="badge b-blue">Live Trading</span><span class="badge b-green">Model 1&2</span></div></div>
+    <div class="vid-card"><div class="vnum">V-02 · 9rJtQ7Ga20s</div><div class="vtitle">AMT Strategy — Balance vs Imbalance Core</div><div class="vconcept">Auction Market Theory fundamentals, two-state model foundation, volume profile basics</div><div class="vtags"><span class="badge b-blue">AMT</span><span class="badge b-gold">Foundation</span></div></div>
+    <div class="vid-card"><div class="vnum">V-03 · vYbK-cDmCSc</div><div class="vtitle">Order Flow Masterclass — How to Read the Market</div><div class="vconcept">Reading footprint candles, delta interpretation, institutional vs retail volume</div><div class="vtags"><span class="badge b-blue">Order Flow</span><span class="badge b-purple">Advanced</span></div></div>
+    <div class="vid-card"><div class="vnum">V-04 · Ovz-b5nGzJw</div><div class="vtitle">Volume Profile Deep Dive — LVN & HVN Trading</div><div class="vconcept">Building profiles, identifying POC/VAH/VAL, low-volume node exploitation</div><div class="vtags"><span class="badge b-green">Volume Profile</span><span class="badge b-blue">LVN</span></div></div>
+    <div class="vid-card"><div class="vnum">V-05 · rVCuT4-FJ3s</div><div class="vtitle">Mean Reversion Model — Balanced Market Trading</div><div class="vconcept">Model 2 execution, London session setup, failed breakout signals, POC targeting</div><div class="vtags"><span class="badge b-orange">Model 2</span><span class="badge b-blue">London</span></div></div>
+    <div class="vid-card"><div class="vnum">V-06 · 6Ac38LzXj3A</div><div class="vtitle">Order Flow for Beginners — 3 Core Tricks</div><div class="vconcept">Beginner order flow, top 3 trading mistakes with OF, how to start reading it</div><div class="vtags"><span class="badge b-green">Beginner OF</span><span class="badge b-gold">Tricks</span></div></div>
+    <div class="vid-card"><div class="vnum">V-07 · z0czA_OSq5M</div><div class="vtitle">DeepCharts Platform Tutorial — Setup & Tools</div><div class="vconcept">DeepCharts walkthrough, Deep Trades, Deep Walls, volume delta settings</div><div class="vtags"><span class="badge b-purple">DeepCharts</span><span class="badge b-blue">Platform</span></div></div>
+    <div class="vid-card"><div class="vnum">V-08 · PLWQioWs8oOi (Playlist)</div><div class="vtitle">Fabio Valentini Full Trading Course Playlist</div><div class="vconcept">Complete bootcamp content — AMT, OF, LVN models, live execution series</div><div class="vtags"><span class="badge b-gold">Full Course</span><span class="badge b-blue">Series</span></div></div>
+    <div class="vid-card"><div class="vnum">V-09 · TuWHVtF_nIw</div><div class="vtitle">Trend Model Execution — Live NQ Examples</div><div class="vconcept">Model 1 live walkthrough, out-of-balance day identification, entry timing</div><div class="vtags"><span class="badge b-blue">Model 1</span><span class="badge b-green">Live</span></div></div>
+    <div class="vid-card"><div class="vnum">V-10 · Ur8-c-bDGqU</div><div class="vtitle">Stop Loss Placement — The Non-Obvious Method</div><div class="vconcept">Why obvious stops get hunted, 1-2 tick buffer technique, aggression-based stops</div><div class="vtags"><span class="badge b-red">Risk</span><span class="badge b-gold">SL Method</span></div></div>
+    <div class="vid-card"><div class="vnum">V-11 · DyS79Eb92Ug</div><div class="vtitle">Trading LIVE with BEST Scalper (PERFECT Accuracy)</div><div class="vconcept">Second ChartFanatics live session — full NY session real-money trades, commentary</div><div class="vtags"><span class="badge b-blue">Live</span><span class="badge b-green">NY Session</span></div></div>
+    <div class="vid-card"><div class="vnum">V-12 · r9xbDeSxhCA</div><div class="vtitle">CVD — Cumulative Volume Delta Masterclass</div><div class="vconcept">CVD construction, divergence signals, when CVD confirms vs warns, real examples</div><div class="vtags"><span class="badge b-purple">CVD</span><span class="badge b-blue">Delta</span></div></div>
+    <div class="vid-card"><div class="vnum">V-13 · Rqu-AoD9BUo</div><div class="vtitle">World Cup Trading Competition Strategy</div><div class="vconcept">How Fabio approached the World Cup — risk scaling, daily targets, compounding</div><div class="vtags"><span class="badge b-gold">World Cup</span><span class="badge b-orange">Competition</span></div></div>
+    <div class="vid-card"><div class="vnum">V-14 · 9eqDWJSvCx4</div><div class="vtitle">How I Made 20R in One NQ Session</div><div class="vconcept">Exceptional trading day breakdown, when to scale, directional day recognition</div><div class="vtags"><span class="badge b-green">Case Study</span><span class="badge b-blue">NQ</span></div></div>
+    <div class="vid-card"><div class="vnum">V-15 · Khgj5q1-ln8</div><div class="vtitle">Reading Absorption — The Missing Skill</div><div class="vconcept">Passive vs aggressive orders, absorption detection in footprint, key examples</div><div class="vtags"><span class="badge b-purple">Absorption</span><span class="badge b-blue">OF</span></div></div>
+    <div class="vid-card"><div class="vnum">V-16 · jVomJTjmxL4</div><div class="vtitle">Deep Trades Feature — Institutional Order Clustering</div><div class="vconcept">How Deep Trades reconstructs split institutional orders, large-lot filtering</div><div class="vtags"><span class="badge b-purple">DeepCharts</span><span class="badge b-blue">Institutional</span></div></div>
+    <div class="vid-card"><div class="vnum">V-17 · 9LzmoP2DJ4I</div><div class="vtitle">The Triple-A Setup — Absorption→Accumulation→Aggression</div><div class="vconcept">Full Triple-A framework, each phase in detail, how they connect to entry</div><div class="vtags"><span class="badge b-gold">Triple-A</span><span class="badge b-green">Core Model</span></div></div>
+    <div class="vid-card"><div class="vnum">V-18 · wmcoNjbUxyI</div><div class="vtitle">Session Filter — When NOT to Trade</div><div class="vconcept">Asian session avoidance, London vs NY differences, pre-news blackouts</div><div class="vtags"><span class="badge b-red">Sessions</span><span class="badge b-orange">Filter</span></div></div>
+    <div class="vid-card"><div class="vnum">V-19 · NbP8isuPajs</div><div class="vtitle">Risk Management — 0.25% Per Trade Rule</div><div class="vconcept">Position sizing, daily loss limits, compounding approach, prop vs personal</div><div class="vtags"><span class="badge b-red">Risk</span><span class="badge b-gold">Sizing</span></div></div>
+    <div class="vid-card"><div class="vnum">V-20 · 5z_T86I1azA</div><div class="vtitle">Prop Firm Trading with Order Flow</div><div class="vconcept">Adapting OF strategy to prop firm rules, evaluation protocol, funded account management</div><div class="vtags"><span class="badge b-orange">Prop Firm</span><span class="badge b-blue">Evaluation</span></div></div>
+    <div class="vid-card"><div class="vnum">V-21 · CwHlqEBsjZY</div><div class="vtitle">Multi-Timeframe Analysis — Bias to Execution</div><div class="vconcept">HTF context → LTF entry, 15min bias to 15sec execution, how all TFs connect</div><div class="vtags"><span class="badge b-blue">MTF</span><span class="badge b-green">Framework</span></div></div>
+    <div class="vid-card"><div class="vnum">V-22 · r76xEfBVxZc</div><div class="vtitle">Live Trade Breakdown — Anatomy of a Perfect Entry</div><div class="vconcept">Post-trade analysis, every decision explained, what confirmation looked like</div><div class="vtags"><span class="badge b-green">Case Study</span><span class="badge b-purple">Execution</span></div></div>
+    <div class="vid-card"><div class="vnum">V-23 · 8sbfrusR5Eo</div><div class="vtitle">Wyckoff Meets Order Flow — Institutional Logic</div><div class="vconcept">Wyckoff phases mapped to order flow data, accumulation/distribution in OF context</div><div class="vtags"><span class="badge b-purple">Wyckoff</span><span class="badge b-blue">OF</span></div></div>
+    <div class="vid-card"><div class="vnum">V-24 · h-NN3DiXu80</div><div class="vtitle">Edge Decay — Why Strategies Stop Working</div><div class="vconcept">How volatility regimes erode edges, adapting the model, future-proofing</div><div class="vtags"><span class="badge b-orange">Edge Decay</span><span class="badge b-gold">Advanced</span></div></div>
+    <div class="vid-card"><div class="vnum">V-25 · ygleB1CLhUE</div><div class="vtitle">Psychology of Scalping — Stress & Drawdown</div><div class="vconcept">Consecutive stop-out handling, revenge trading, position-size psychology</div><div class="vtags"><span class="badge b-red">Psychology</span><span class="badge b-orange">Mindset</span></div></div>
+    <div class="vid-card"><div class="vnum">V-26 · CAT0lXOc6LM</div><div class="vtitle">DeepCharts Bootcamp — Volume Profile Lesson 1</div><div class="vconcept">First bootcamp lesson: VP fundamentals, why it's the starting point</div><div class="vtags"><span class="badge b-purple">DeepCharts</span><span class="badge b-gold">Bootcamp</span></div></div>
+    <div class="vid-card"><div class="vnum">V-27 · q_MdVlZ1SH4</div><div class="vtitle">DeepCharts Platform — How Fabio Sees the Market</div><div class="vconcept">Fabio's actual screen setup, real-time OF reading workflow</div><div class="vtags"><span class="badge b-purple">Platform</span><span class="badge b-blue">Setup</span></div></div>
+    <div class="vid-card"><div class="vnum">V-28 · TvoQr6ObjnU</div><div class="vtitle">Opening Range Protocol — NY Open Rules</div><div class="vconcept">First 20-min wait rule, how to read opening range, when to engage NY</div><div class="vtags"><span class="badge b-blue">NY Open</span><span class="badge b-orange">Protocol</span></div></div>
+    <div class="vid-card"><div class="vnum">V-29 · TyHTEtArsS4</div><div class="vtitle">POC Targeting — Why 70% Reverse at Balance</div><div class="vconcept">Statistical basis for full-exit at POC, reversal probability, target discipline</div><div class="vtags"><span class="badge b-green">POC</span><span class="badge b-gold">Targets</span></div></div>
+    <div class="vid-card"><div class="vnum">V-30 · nMhywubR2xc</div><div class="vtitle">The Only Order Flow Guide You'll Ever Need</div><div class="vconcept">Fabio's comprehensive OF overview — from basics to advanced concepts</div><div class="vtags"><span class="badge b-blue">Master Guide</span><span class="badge b-green">OF</span></div></div>
+    <div class="vid-card"><div class="vnum">V-31 · SQEtBHOJW6I</div><div class="vtitle">Footprint Chart Mastery — Reading Every Candle</div><div class="vconcept">Footprint anatomy, imbalance cells, stacked imbalances, diagonal patterns</div><div class="vtags"><span class="badge b-purple">Footprint</span><span class="badge b-blue">Advanced</span></div></div>
+    <div class="vid-card"><div class="vnum">V-32 · UhkRRqO1gQM</div><div class="vtitle">Live Session — Compressed Market Strategy</div><div class="vconcept">How to handle compression days, when Model 2 applies, avoiding chop</div><div class="vtags"><span class="badge b-orange">Compression</span><span class="badge b-blue">Live</span></div></div>
+    <div class="vid-card"><div class="vnum">V-33 · coBMd1vk2Lo</div><div class="vtitle">Macro Context & Order Flow Integration</div><div class="vconcept">Combining macro awareness with OF, how events shift balance/imbalance</div><div class="vtags"><span class="badge b-gold">Macro</span><span class="badge b-blue">Context</span></div></div>
+    <div class="vid-card"><div class="vnum">V-34 · YzYDUEUOZ4k</div><div class="vtitle">Deep Walls — Passive Order Detection</div><div class="vconcept">Identifying hidden limit order walls, absorption zones, level defense</div><div class="vtags"><span class="badge b-purple">DeepCharts</span><span class="badge b-blue">Deep Walls</span></div></div>
+    <div class="vid-card"><div class="vnum">V-35 · 0o0ZDj_axDc</div><div class="vtitle">Complete Strategy Recap & Trading Plan</div><div class="vconcept">Full system summary, what to do daily, how to build consistency</div><div class="vtags"><span class="badge b-gold">Summary</span><span class="badge b-green">Plan</span></div></div>
+    <div class="vid-card" style="border-color:rgba(0,212,255,.3)"><div class="vnum">PLAYLIST · PLBVwIU37953</div><div class="vtitle">Fabervaale Channel — Full Series</div><div class="vconcept">Fabio's own YouTube channel with all trading concepts, live sessions, and model tutorials</div><div class="vtags"><span class="badge b-blue">Channel</span><span class="badge b-gold">Full Series</span></div></div>
+  </div>
+</div>
+
+<!-- ══════════════ PHILOSOPHY ══════════════ -->
+<div class="section" id="philosophy">
+  <div class="sec-tag">01 — Core Foundation</div>
+  <h2>The Fabio Valentini <em>Philosophy</em></h2>
+  <p class="subtitle">What separates a 4× World Cup finalist from the 90% who lose — not patterns, but market mechanics.</p>
+
+  <div class="quote">
+    "Most traders try to predict the market. I just join it at the right moment."
+    <cite>— Fabio Valentini, ChartFanatics Episode</cite>
+  </div>
+
+  <h3>The Fundamental Shift</h3>
+  <p>Traditional retail trading teaches pattern recognition — head & shoulders, double tops, ICT order blocks, supply/demand zones. These have a fundamental flaw: they are <strong>descriptions of the past</strong>, not readings of the present. Fabio's approach abandons prediction entirely in favour of <span class="acc">real-time market mechanics</span>.</p>
+
+  <div class="g3">
+    <div class="card top-line">
+      <h4>❌ What Fails</h4>
+      <ul>
+        <li>Trading every breakout without context</li>
+        <li>Following structure patterns in balanced markets</li>
+        <li>Predicting direction from price alone</li>
+        <li>Using lagged indicators for entries</li>
+        <li>Static S/R levels as blind entries</li>
+      </ul>
+    </div>
+    <div class="card top-line green">
+      <h4>✅ What Works</h4>
+      <ul>
+        <li>Read the current state first, then pick a model</li>
+        <li>Use volume distribution as the primary lens</li>
+        <li>Confirm institutional commitment via OF</li>
+        <li>Trade with the aggressor, not against absorption</li>
+        <li>Exit at statistical reversal zones (POC)</li>
+      </ul>
+    </div>
+    <div class="card top-line purple">
+      <h4>🧠 The Edge Source</h4>
+      <ul>
+        <li>90% of NQ volume is algorithmic</li>
+        <li>Algos leave order flow fingerprints</li>
+        <li>Reading these fingerprints = leading data</li>
+        <li>Every 5% win-rate gain = large monthly return</li>
+        <li>Discipline + sample size = statistical edge</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Track Record Context</h3>
+  <table>
+    <thead><tr><th>Achievement</th><th>Detail</th><th>Significance</th></tr></thead>
+    <tbody>
+      <tr><td>Robins World Cup</td><td>4× top-ranked, 500%+ in 12 months</td><td>Most scrutinised futures competition globally</td></tr>
+      <tr><td>Verified returns</td><td>100–200% per quarter documented</td><td>Not hypothetical — real-time, audited</td></tr>
+      <tr><td>Account size</td><td>Seven-figure live accounts</td><td>Strategies proven under real capital pressure</td></tr>
+      <tr><td>Trade volume</td><td>~500 trades per World Cup quarter</td><td>Large sample = statistical validity</td></tr>
+      <tr><td>Drawdown</td><td>Target ≤20% while achieving high returns</td><td>Risk-adjusted excellence</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ══════════════ AMT ══════════════ -->
+<div class="section" id="amt">
+  <div class="sec-tag">02 — Theoretical Core</div>
+  <h2>Auction Market <em>Theory</em></h2>
+  <p class="subtitle">The intellectual foundation for every trade Fabio takes.</p>
+
+  <p>AMT holds that <strong>markets are continuous auctions</strong> seeking the price where the maximum volume of transactions can occur. Price moves away from zones of acceptance (high volume) only when one side becomes more aggressive than the other can absorb.</p>
+
+  <div class="chart-wrap">
+    <div class="chart-title">AMT — Market State Cycle</div>
+    <svg viewBox="0 0 800 200" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:800px">
+      <defs>
+        <linearGradient id="g1" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#00d4ff" stop-opacity="0.3"/>
+          <stop offset="100%" stop-color="#c084fc" stop-opacity="0.3"/>
+        </linearGradient>
+      </defs>
+      <!-- Balance zone 1 -->
+      <rect x="30" y="60" width="160" height="80" rx="4" fill="rgba(0,212,255,0.08)" stroke="#00d4ff" stroke-width="1"/>
+      <text x="110" y="96" text-anchor="middle" fill="#00d4ff" font-family="JetBrains Mono" font-size="11" font-weight="600">BALANCE</text>
+      <text x="110" y="112" text-anchor="middle" fill="#5a7a9a" font-family="JetBrains Mono" font-size="9">D-Shape Profile</text>
+      <!-- Arrow right -->
+      <path d="M190 100 L250 100" stroke="#ff6b35" stroke-width="2" marker-end="url(#ar)"/>
+      <text x="220" y="93" text-anchor="middle" fill="#ff6b35" font-family="JetBrains Mono" font-size="9">AGGRESSOR</text>
+      <text x="220" y="105" text-anchor="middle" fill="#ff6b35" font-family="JetBrains Mono" font-size="9">EXCEEDS</text>
+      <!-- Imbalance zone -->
+      <rect x="250" y="40" width="140" height="120" rx="4" fill="rgba(255,107,53,0.08)" stroke="#ff6b35" stroke-width="1.5" stroke-dasharray="4,3"/>
+      <text x="320" y="85" text-anchor="middle" fill="#ff6b35" font-family="JetBrains Mono" font-size="11" font-weight="600">IMBALANCE</text>
+      <text x="320" y="100" text-anchor="middle" fill="#5a7a9a" font-family="JetBrains Mono" font-size="9">b/p-Shape</text>
+      <text x="320" y="113" text-anchor="middle" fill="#5a7a9a" font-family="JetBrains Mono" font-size="9">LVNs crossed</text>
+      <text x="320" y="126" text-anchor="middle" fill="#5a7a9a" font-family="JetBrains Mono" font-size="9">CVD trending</text>
+      <!-- Arrow right -->
+      <path d="M390 100 L440 100" stroke="#00ff9d" stroke-width="2" marker-end="url(#ar2)"/>
+      <text x="415" y="93" text-anchor="middle" fill="#00ff9d" font-family="JetBrains Mono" font-size="9">FINDS NEW</text>
+      <text x="415" y="105" text-anchor="middle" fill="#00ff9d" font-family="JetBrains Mono" font-size="9">FAIR VALUE</text>
+      <!-- Balance zone 2 -->
+      <rect x="440" y="60" width="160" height="80" rx="4" fill="rgba(0,212,255,0.08)" stroke="#00d4ff" stroke-width="1"/>
+      <text x="520" y="96" text-anchor="middle" fill="#00d4ff" font-family="JetBrains Mono" font-size="11" font-weight="600">NEW BALANCE</text>
+      <text x="520" y="112" text-anchor="middle" fill="#5a7a9a" font-family="JetBrains Mono" font-size="9">New D-Shape</text>
+      <!-- Arrow below (cycle) -->
+      <path d="M520 140 Q520 175 320 175 Q120 175 110 140" stroke="#1a2a3a" stroke-width="1.5" fill="none" stroke-dasharray="4,3"/>
+      <text x="320" y="190" text-anchor="middle" fill="#2d4a6a" font-family="JetBrains Mono" font-size="9">cycle repeats</text>
+      <!-- Marker defs -->
+      <defs>
+        <marker id="ar" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#ff6b35"/>
+        </marker>
+        <marker id="ar2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#00ff9d"/>
+        </marker>
+      </defs>
+    </svg>
+  </div>
+
+  <h3>Key AMT Principles</h3>
+  <div class="g2">
+    <div class="card hl">
+      <h4>Balance (Equilibrium)</h4>
+      <p>Price rotates around a fair value. Both buyers and sellers are satisfied. D-shaped volume profile develops. <strong>This is the default state — ~70% of time.</strong> Mean reversion model applies. Breakout attempts usually fail.</p>
+    </div>
+    <div class="card gold">
+      <h4>Imbalance (Directional)</h4>
+      <p>One side (buyers or sellers) becomes more aggressive than the other can absorb. Price moves away from the old value area to <strong>discover new fair value</strong>. Elongated profile, LVNs crossed rapidly. Trend model applies.</p>
+    </div>
+  </div>
+
+  <div class="callout info">
+    <div class="ct">AMT Core Insight</div>
+    The market's primary job is to <strong>facilitate trade</strong>, not to trend. Trend is the exception, balance is the rule. Trading breakouts inside balance will produce a ~30% win rate on continuation. Trading reversion inside balance produces ~65–70% win rate. This single insight fundamentally changes your approach.
+  </div>
+</div>
+
+<!-- ══════════════ ORDER FLOW FUNDAMENTALS ══════════════ -->
+<div class="section" id="of-fundamentals">
+  <div class="sec-tag">03 — Order Flow</div>
+  <h2>Order Flow <em>Fundamentals</em></h2>
+  <p class="subtitle">What traditional chart readers are blind to — and what gives Fabio his institutional-grade edge.</p>
+
+  <h3>The Three Tiers of Market Data</h3>
+  <div class="g3">
+    <div class="card" style="opacity:.75">
+      <h4>Tier 1 — Lagged</h4>
+      <p>Moving averages, RSI, MACD, Bollinger Bands. <span class="sell-t">Confirms what already happened</span>. Useful only for macro context. Never use for entry timing.</p>
+      <span class="badge b-red">Low Edge</span>
+    </div>
+    <div class="card">
+      <h4>Tier 2 — Real-Time</h4>
+      <p>Price action, candlesticks, market structure. <span class="acc4">Subjective</span> — two traders read the same bar differently. Better, but still incomplete.</p>
+      <span class="badge b-gold">Medium Edge</span>
+    </div>
+    <div class="card buy">
+      <h4>Tier 3 — Leading</h4>
+      <p>Volume profile, footprint, cumulative delta. Shows you <span class="acc3">who is winning the battle right now</span> before price confirms it. Institutional footprints.</p>
+      <span class="badge b-green">Highest Edge</span>
+    </div>
+  </div>
+
+  <h3>Why Order Flow is Superior (Fabio's Argument)</h3>
+  <p>Fabio makes this point repeatedly across multiple videos: <strong>with price action alone, you are guessing where stops are, guessing where large players are positioned</strong>. With Order Flow, you can literally see the orders. The guesswork becomes observation.</p>
+
+  <div class="chart-wrap">
+    <div class="chart-title">Inside a Single Candle — Price Action vs Order Flow</div>
+    <svg viewBox="0 0 700 180" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:700px">
+      <!-- Left: candle view -->
+      <text x="140" y="20" text-anchor="middle" fill="#5a7a9a" font-family="JetBrains Mono" font-size="10">WHAT PA TRADER SEES</text>
+      <rect x="120" y="40" width="30" height="80" fill="rgba(0,212,255,0.2)" stroke="#00d4ff" stroke-width="1.5"/>
+      <line x1="135" y1="30" x2="135" y2="40" stroke="#00d4ff" stroke-width="1.5"/>
+      <line x1="135" y1="120" x2="135" y2="130" stroke="#00d4ff" stroke-width="1.5"/>
+      <text x="100" y="40" text-anchor="end" fill="#00d4ff" font-family="JetBrains Mono" font-size="9">High</text>
+      <text x="100" y="82" text-anchor="end" fill="#5a7a9a" font-family="JetBrains Mono" font-size="9">Open</text>
+      <text x="100" y="98" text-anchor="end" fill="#5a7a9a" font-family="JetBrains Mono" font-size="9">Close</text>
+      <text x="100" y="130" text-anchor="end" fill="#00d4ff" font-family="JetBrains Mono" font-size="9">Low</text>
+      <text x="135" y="155" text-anchor="middle" fill="#5a7a9a" font-family="JetBrains Mono" font-size="9">Bullish Candle — that's it</text>
+      <!-- Divider -->
+      <line x1="280" y1="15" x2="280" y2="175" stroke="#1a2a3a" stroke-width="1" stroke-dasharray="3,3"/>
+      <!-- Right: footprint view -->
+      <text x="490" y="20" text-anchor="middle" fill="#00ff9d" font-family="JetBrains Mono" font-size="10">WHAT OF TRADER SEES</text>
+      <!-- Footprint cells -->
+      <rect x="310" y="30" width="90" height="20" fill="rgba(255,71,87,0.15)" stroke="#1a2a3a" stroke-width=".5"/>
+      <text x="330" y="43" fill="#ff4757" font-family="JetBrains Mono" font-size="9">285 S</text>
+      <text x="365" y="43" fill="#5a7a9a" font-family="JetBrains Mono" font-size="9">vs</text>
+      <text x="382" y="43" fill="#00ff9d" font-family="JetBrains Mono" font-size="9">91 B</text>
+      <rect x="310" y="51" width="90" height="20" fill="rgba(255,71,87,0.1)" stroke="#1a2a3a" stroke-width=".5"/>
+      <text x="330" y="64" fill="#ff4757" font-family="JetBrains Mono" font-size="9">142 S</text>
+      <text x="365" y="64" fill="#5a7a9a" font-family="JetBrains Mono" font-size="9">vs</text>
+      <text x="382" y="64" fill="#00ff9d" font-family="JetBrains Mono" font-size="9">38 B</text>
+      <rect x="310" y="72" width="90" height="20" fill="rgba(0,255,157,0.15)" stroke="#1a2a3a" stroke-width=".5"/>
+      <text x="330" y="85" fill="#ff4757" font-family="JetBrains Mono" font-size="9">12 S</text>
+      <text x="365" y="85" fill="#5a7a9a" font-family="JetBrains Mono" font-size="9">vs</text>
+      <text x="382" y="85" fill="#00ff9d" font-family="JetBrains Mono" font-size="9">380 B ←</text>
+      <rect x="310" y="93" width="90" height="20" fill="rgba(0,255,157,0.1)" stroke="#1a2a3a" stroke-width=".5"/>
+      <text x="330" y="106" fill="#ff4757" font-family="JetBrains Mono" font-size="9">8 S</text>
+      <text x="382" y="106" fill="#00ff9d" font-family="JetBrains Mono" font-size="9">245 B</text>
+      <rect x="310" y="114" width="90" height="20" fill="rgba(0,212,255,0.1)" stroke="#1a2a3a" stroke-width=".5"/>
+      <text x="330" y="127" fill="#ff4757" font-family="JetBrains Mono" font-size="9">220 S</text>
+      <text x="382" y="127" fill="#00ff9d" font-family="JetBrains Mono" font-size="9">218 B</text>
+      <text x="410" y="90" fill="#00ff9d" font-family="JetBrains Mono" font-size="8.5">← Absorption</text>
+      <text x="410" y="103" fill="#00ff9d" font-family="JetBrains Mono" font-size="8.5">buyers defending</text>
+      <text x="490" y="155" text-anchor="middle" fill="#5a7a9a" font-family="JetBrains Mono" font-size="9">Full buyer/seller battle visible at every tick</text>
+    </svg>
+  </div>
+</div>
+
+<!-- ══════════════ VOLUME PROFILE ══════════════ -->
+<div class="section" id="volume-profile">
+  <div class="sec-tag">04 — Volume Profile</div>
+  <h2><em>Volume Profile</em> Mastery</h2>
+  <p class="subtitle">Fabio's first teaching in the bootcamp — understanding where money actually traded, not just where price moved.</p>
+
+  <p>Volume Profile plots the amount of volume traded at each price level over a defined period, rather than over time. This reveals the <strong>auction's consensus</strong> — where both sides agreed to transact most — and the <strong>rejection zones</strong> — where one side pushed quickly through without transacting much.</p>
+
+  <h3>Critical Profile Components</h3>
+
+  <div class="chart-wrap">
+    <div class="chart-title">Volume Profile Anatomy — Balanced (D-Shape) vs Imbalanced (b-Shape)</div>
+    <svg viewBox="0 0 700 280" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:700px">
+      <!-- D-Shape (Balanced) -->
+      <text x="150" y="20" text-anchor="middle" fill="#00d4ff" font-family="JetBrains Mono" font-size="10" font-weight="700">BALANCED — D-SHAPE</text>
+      <!-- Price axis -->
+      <line x1="80" y1="30" x2="80" y2="260" stroke="#1a2a3a" stroke-width="1"/>
+      <!-- Bars (symmetric) -->
+      <rect x="80" y="35" width="25" height="18" fill="rgba(0,212,255,0.25)" stroke="rgba(0,212,255,0.4)" stroke-width=".5"/>
+      <text x="76" y="48" text-anchor="end" fill="#5a7a9a" font-family="JetBrains Mono" font-size="8">VAH</text>
+      <rect x="80" y="54" width="55" height="18" fill="rgba(0,212,255,0.3)" stroke="rgba(0,212,255,0.4)" stroke-width=".5"/>
+      <rect x="80" y="73" width="95" height="18" fill="rgba(0,212,255,0.4)" stroke="rgba(0,212,255,0.4)" stroke-width=".5"/>
+      <rect x="80" y="92" width="130" height="18" fill="rgba(0,212,255,0.5)" stroke="rgba(0,212,255,0.4)" stroke-width=".5"/>
+      <rect x="80" y="111" width="145" height="20" fill="rgba(0,212,255,0.7)" stroke="rgba(0,212,255,0.7)" stroke-width=".5"/>
+      <text x="232" y="125" fill="#00d4ff" font-family="JetBrains Mono" font-size="9" font-weight="700">← POC</text>
+      <rect x="80" y="132" width="130" height="18" fill="rgba(0,212,255,0.5)" stroke="rgba(0,212,255,0.4)" stroke-width=".5"/>
+      <rect x="80" y="151" width="95" height="18" fill="rgba(0,212,255,0.4)" stroke="rgba(0,212,255,0.4)" stroke-width=".5"/>
+      <rect x="80" y="170" width="55" height="18" fill="rgba(0,212,255,0.3)" stroke="rgba(0,212,255,0.4)" stroke-width=".5"/>
+      <rect x="80" y="189" width="25" height="18" fill="rgba(0,212,255,0.25)" stroke="rgba(0,212,255,0.4)" stroke-width=".5"/>
+      <text x="76" y="202" text-anchor="end" fill="#5a7a9a" font-family="JetBrains Mono" font-size="8">VAL</text>
+      <!-- LVN markers -->
+      <rect x="80" y="209" width="12" height="12" fill="rgba(255,215,0,0.2)" stroke="#ffd700" stroke-width=".5" stroke-dasharray="2,2"/>
+      <text x="98" y="220" fill="#ffd700" font-family="JetBrains Mono" font-size="8">LVN ← Thin volume</text>
+      <rect x="80" y="222" width="12" height="12" fill="rgba(255,215,0,0.2)" stroke="#ffd700" stroke-width=".5" stroke-dasharray="2,2"/>
+      <text x="150" y="260" text-anchor="middle" fill="#5a7a9a" font-family="JetBrains Mono" font-size="8.5">Balanced: Mean reversion setup</text>
+
+      <!-- Divider -->
+      <line x1="340" y1="15" x2="340" y2="265" stroke="#1a2a3a" stroke-width="1" stroke-dasharray="3,3"/>
+
+      <!-- b-Shape (Imbalanced) -->
+      <text x="530" y="20" text-anchor="middle" fill="#ff6b35" font-family="JetBrains Mono" font-size="10" font-weight="700">IMBALANCED — b-SHAPE</text>
+      <line x1="370" y1="30" x2="370" y2="260" stroke="#1a2a3a" stroke-width="1"/>
+      <!-- Bars (skewed high) -->
+      <rect x="370" y="35" width="140" height="16" fill="rgba(255,107,53,0.6)" stroke="rgba(255,107,53,0.6)" stroke-width=".5"/>
+      <text x="516" y="47" fill="#ff6b35" font-family="JetBrains Mono" font-size="9">← POC</text>
+      <rect x="370" y="52" width="120" height="14" fill="rgba(255,107,53,0.5)" stroke="rgba(255,107,53,0.5)" stroke-width=".5"/>
+      <rect x="370" y="67" width="85" height="14" fill="rgba(255,107,53,0.4)"/>
+      <rect x="370" y="82" width="50" height="14" fill="rgba(255,107,53,0.3)"/>
+      <rect x="370" y="97" width="20" height="12" fill="rgba(255,215,0,0.3)" stroke="#ffd700" stroke-width=".5" stroke-dasharray="2,2"/>
+      <text x="396" y="108" fill="#ffd700" font-family="JetBrains Mono" font-size="8">LVN ← Fast transit zone</text>
+      <rect x="370" y="110" width="20" height="12" fill="rgba(255,215,0,0.2)" stroke="#ffd700" stroke-width=".5" stroke-dasharray="2,2"/>
+      <rect x="370" y="123" width="15" height="10" fill="rgba(255,215,0,0.2)" stroke="#ffd700" stroke-width=".5" stroke-dasharray="2,2"/>
+      <rect x="370" y="134" width="10" height="10" fill="rgba(255,215,0,0.15)"/>
+      <rect x="370" y="145" width="8" height="90" fill="rgba(255,107,53,0.08)"/>
+      <text x="530" y="260" text-anchor="middle" fill="#5a7a9a" font-family="JetBrains Mono" font-size="8.5">Imbalanced: Trend continuation setup</text>
+    </svg>
+  </div>
+
+  <div class="g2">
+    <div class="card hl">
+      <h4>Point of Control (POC)</h4>
+      <p>The single price level with the <strong>most volume traded</strong> in the session or lookback period. This is the "fairest" price — where the most two-sided business occurred. Acts as a <span class="acc">magnetic target</span> when price moves away from it. ~70% probability of price returning to POC from any extreme.</p>
+    </div>
+    <div class="card gold">
+      <h4>Value Area (VA)</h4>
+      <p>The price range containing <strong>70% of the period's volume</strong>. Defined by VAH (Value Area High) and VAL (Value Area Low). Price inside VA = accepted/balanced. Price outside VA = potential imbalance or failed auction. Prior day VA is your most important reference each session.</p>
+    </div>
+    <div class="card buy">
+      <h4>High Volume Nodes (HVN)</h4>
+      <p>Price levels with <strong>dense, clustered volume</strong>. Represent areas of <span class="acc3">acceptance and consensus</span>. Price tends to slow, consolidate, or reverse at HVNs. Used as <strong>support/resistance levels</strong> in the trend model pullback entry.</p>
+    </div>
+    <div class="card sell">
+      <h4>Low Volume Nodes (LVN)</h4>
+      <p>Thin volume areas where price moved <strong>rapidly without much transacting</strong>. Represent price rejection — neither side wanted to trade there. Critical concept: <span class="sell-t">LVNs are your primary alert zones</span>. When price approaches an LVN, expect either fast transit through OR a reaction. Set alerts at LVNs, never blind entries.</p>
+    </div>
+  </div>
+
+  <h3>Profile Types & What They Mean</h3>
+  <table>
+    <thead><tr><th>Shape</th><th>Description</th><th>Market State</th><th>Model</th></tr></thead>
+    <tbody>
+      <tr><td><strong>D-Shape</strong></td><td>Symmetric bell curve, high volume in middle</td><td>Balanced</td><td><span class="badge b-orange">Model 2</span></td></tr>
+      <tr><td><strong>b-Shape</strong></td><td>High volume at top, thin tail below</td><td>Bullish imbalance</td><td><span class="badge b-blue">Model 1 Long</span></td></tr>
+      <tr><td><strong>P-Shape</strong></td><td>High volume at bottom, thin tail above</td><td>Bearish imbalance</td><td><span class="badge b-blue">Model 1 Short</span></td></tr>
+      <tr><td><strong>Double Distribution</strong></td><td>Two peaks with LVN gap between</td><td>Range flip — transition</td><td><span class="badge b-gold">Both possible</span></td></tr>
+      <tr><td><strong>Elongated</strong></td><td>Volume spread thin across wide range</td><td>Strong imbalance</td><td><span class="badge b-blue">Model 1 — strong day</span></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ══════════════ CVD ══════════════ -->
+<div class="section" id="cvd">
+  <div class="sec-tag">05 — Cumulative Delta</div>
+  <h2>Cumulative Volume <em>Delta (CVD)</em></h2>
+  <p class="subtitle">The running score of the buyer vs seller battle — your primary confirmation tool.</p>
+
+  <p>CVD tracks the <strong>running total of aggressive buys minus aggressive sells</strong>. Aggressive buys = market orders lifting the ask. Aggressive sells = market orders hitting the bid. This creates a score: positive = net buyers in control, negative = net sellers.</p>
+
+  <div class="chart-wrap">
+    <div class="chart-title">CVD Patterns — What Each Signal Means</div>
+    <svg viewBox="0 0 700 240" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:700px">
+      <!-- Price line top -->
+      <text x="10" y="18" fill="#5a7a9a" font-family="JetBrains Mono" font-size="9">PRICE</text>
+      <polyline points="30,60 80,50 130,40 180,30 230,25 280,20 330,25" fill="none" stroke="#00d4ff" stroke-width="2"/>
+      <!-- CVD line top (trending up) -->
+      <text x="10" y="110" fill="#5a7a9a" font-family="JetBrains Mono" font-size="9">CVD</text>
+      <polyline points="30,130 80,118 130,108 180,95 230,85 280,78 330,72" fill="none" stroke="#00ff9d" stroke-width="2"/>
+      <text x="340" y="20" fill="#00ff9d" font-family="JetBrains Mono" font-size="9">✓ CONFIRMING — Strong trend</text>
+      <text x="340" y="32" fill="#5a7a9a" font-family="JetBrains Mono" font-size="8.5">Both rising together = buyers in control</text>
+      <!-- Divider -->
+      <line x1="350" y1="0" x2="350" y2="145" stroke="#1a2a3a" stroke-width="1" stroke-dasharray="3,3"/>
+      <!-- Bearish divergence -->
+      <text x="360" y="18" fill="#ff4757" font-family="JetBrains Mono" font-size="9">⚠ DIVERGENCE — Warning</text>
+      <polyline points="370,60 420,50 470,40 520,32 570,27 620,22" fill="none" stroke="#00d4ff" stroke-width="2"/>
+      <polyline points="370,130 420,125 470,128 520,135 570,145 620,158" fill="none" stroke="#ff4757" stroke-width="2"/>
+      <text x="360" y="32" fill="#5a7a9a" font-family="JetBrains Mono" font-size="8.5">Price rising + CVD falling = buyers exhausted</text>
+      <!-- Bottom pattern — reversion -->
+      <line x1="0" y1="155" x2="700" y2="155" stroke="#1a2a3a" stroke-width="1" stroke-dasharray="3,3"/>
+      <text x="10" y="173" fill="#ff6b35" font-family="JetBrains Mono" font-size="9">MEAN REVERSION CVD SIGNAL:</text>
+      <text x="10" y="187" fill="#5a7a9a" font-family="JetBrains Mono" font-size="8.5">Price at extreme → CVD diverges sharply → Reversion entry trigger</text>
+      <polyline points="30,220 80,215 130,210 180,215 230,218 280,225" fill="none" stroke="#00d4ff" stroke-width="1.5"/>
+      <polyline points="30,225 80,230 130,238 180,233 230,227 280,222" fill="none" stroke="#ff6b35" stroke-width="1.5" stroke-dasharray="3,2"/>
+      <text x="290" y="225" fill="#ff6b35" font-family="JetBrains Mono" font-size="8">CVD turns →</text>
+      <text x="290" y="237" fill="#00ff9d" font-family="JetBrains Mono" font-size="8">entry zone</text>
+    </svg>
+  </div>
+
+  <div class="g2">
+    <div class="card buy">
+      <h4>Bullish CVD Signals</h4>
+      <ul>
+        <li>CVD rising with price → <span class="acc3">trend confirmation</span>, stay long</li>
+        <li>CVD rising while price flat → <span class="acc3">accumulation</span>, expect breakout</li>
+        <li>CVD reverses from falling at support → <span class="acc3">absorption complete</span>, long trigger</li>
+        <li>CVD spikes up aggressively → <span class="acc3">institutional buy</span>, Model 1 entry</li>
+      </ul>
+    </div>
+    <div class="card sell">
+      <h4>Bearish CVD Signals</h4>
+      <ul>
+        <li>CVD falling with price → <span class="sell-t">trend confirmation</span>, stay short</li>
+        <li>Price rising but CVD flat/falling → <span class="sell-t">bearish divergence</span>, exit long</li>
+        <li>CVD reverses at resistance → <span class="sell-t">distribution</span>, short trigger</li>
+        <li>CVD spikes down aggressively → <span class="sell-t">institutional sell</span>, Model 1 short</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout warn">
+    <div class="ct">Critical CVD Rule</div>
+    Move stop to break-even <strong>immediately</strong> if CVD shows strong opposing pressure after entry. CVD is your real-time thesis validator — if it breaks against you, your setup is invalidated. Don't wait for price to hit your stop.
+  </div>
+</div>
+
+<!-- ══════════════ FOOTPRINT ══════════════ -->
+<div class="section" id="footprint">
+  <div class="sec-tag">06 — Footprint Charts</div>
+  <h2>Footprint Chart <em>Mastery</em></h2>
+  <p class="subtitle">Reading every candle at the tick level — the unfair advantage available in DeepCharts.</p>
+
+  <p>A footprint chart displays <strong>the volume of aggressive buy and sell orders at every price tick inside each candle</strong>. The left number = sells at that price. The right number = buys at that price. This reveals the true internal battle hidden inside what looks like a simple bullish or bearish candle.</p>
+
+  <h3>Key Footprint Patterns</h3>
+
+  <div class="g2">
+    <div class="card hl">
+      <h4>Stacked Imbalances (Buy-Side)</h4>
+      <p>When multiple consecutive price levels show <span class="acc3">significantly more buyers than sellers</span>, cells are highlighted. Three or more stacked buy imbalances = institutional aggression. This is a <strong>high-conviction trend continuation signal</strong> in Model 1.</p>
+      <div class="code" style="font-size:.72rem;padding:12px">
+Price  | Sells | Buys<br>
+21,450 |  12   | <span class="v">380</span>  ← imbalance<br>
+21,448 |  18   | <span class="v">290</span>  ← imbalance<br>
+21,446 |  35   | <span class="v">245</span>  ← imbalance<br>
+21,444 | 180   |  92   ← normal<br>
+      </div>
+      <span class="badge b-green">Long Trigger</span>
+    </div>
+    <div class="card sell">
+      <h4>Stacked Imbalances (Sell-Side)</h4>
+      <p>Multiple consecutive price levels showing <span class="sell-t">significantly more sellers than buyers</span>. Institutional selling pressure. High-conviction short continuation in Model 1 or short trigger in Model 2 at resistance.</p>
+      <div class="code" style="font-size:.72rem;padding:12px">
+Price  | Sells | Buys<br>
+21,450 | <span class="v">420</span>  |  15   ← imbalance<br>
+21,448 | <span class="v">310</span>  |  22   ← imbalance<br>
+21,446 | <span class="v">255</span>  |  40   ← imbalance<br>
+21,444 |  90   | 165   ← normal<br>
+      </div>
+      <span class="badge b-red">Short Trigger</span>
+    </div>
+    <div class="card gold">
+      <h4>Absorption Pattern</h4>
+      <p>Price tries to move in one direction, large orders hit — but price doesn't move. The aggressive side is being <span class="acc4">absorbed by passive limit orders</span>. This is the setup for a reversal. In Model 2, you're watching for sellers trying to push price down, but buyers absorbing all the selling.</p>
+      <span class="badge b-gold">Reversion Signal</span>
+    </div>
+    <div class="card purple">
+      <h4>Delta Exhaustion</h4>
+      <p>Candle closes in the direction of the move (e.g., up), but the <span class="acc5">delta is negative</span> — meaning sellers were actually dominant inside this "bullish" candle. This exhaustion signal often precedes sharp reversals. Watch for it at VAH/VAL and LVN levels.</p>
+      <span class="badge b-purple">Reversal Warning</span>
+    </div>
+  </div>
+
+  <h3>Order Size Filtering — The Institutional Scanner</h3>
+  <p>Fabio filters the footprint to show <strong>only large orders</strong>. The threshold:</p>
+  <table>
+    <thead><tr><th>Market</th><th>Session</th><th>Min Order Size</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>NQ Futures</td><td>NY session</td><td><strong>30+ contracts</strong></td><td>Below this = retail noise. Above = institutional commitment</td></tr>
+      <tr><td>ES Futures</td><td>NY session</td><td><strong>50+ contracts</strong></td><td>ES is more liquid, higher threshold needed</td></tr>
+      <tr><td>Any market</td><td>London</td><td><strong>Reduce by ~40%</strong></td><td>London has lower typical institutional size vs NY</td></tr>
+      <tr><td>Any market</td><td>Asian</td><td>N/A</td><td>No OF trading during Asian — insufficient data</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ══════════════ DEEPCHARTS ══════════════ -->
+<div class="section" id="deepcharts">
+  <div class="sec-tag">07 — Platform</div>
+  <h2>DeepCharts <em>Platform</em></h2>
+  <p class="subtitle">Fabio's proprietary platform built for the exact tools his methodology requires.</p>
+
+  <div class="g2">
+    <div class="card top-line purple">
+      <h4>Deep Trades</h4>
+      <p>Reconstructs <strong>split institutional orders</strong> back into their original size. Algorithms split large orders into many small ones to hide footprint. Deep Trades re-aggregates them, revealing the true institutional order size at each level. This is Fabio's primary "large player detector."</p>
+      <span class="badge b-purple">Proprietary Tech</span>
+    </div>
+    <div class="card top-line">
+      <h4>Deep Walls</h4>
+      <p>Identifies <strong>passive limit order walls</strong> — large stacks of limit orders sitting at specific prices that absorb aggressive order flow. Showing where institutions are willing to buy or sell large quantities at fixed prices. These walls create absorption events and are key for Model 2.</p>
+      <span class="badge b-blue">Absorption Detection</span>
+    </div>
+    <div class="card top-line green">
+      <h4>Volume Profile Engine</h4>
+      <p>Real-time, intraday, and historical volume profiles with LVN/HVN/POC auto-detection. Supports composite profiles, split profiles by time window, and the prior-day reference overlay that forms the backbone of every session analysis.</p>
+      <span class="badge b-green">Core Tool</span>
+    </div>
+    <div class="card top-line gold">
+      <h4>Footprint + Delta Display</h4>
+      <p>Real exchange-feed tick data rendered as footprint candles with configurable color schemes for imbalances, delta cells, and absorption highlights. Includes CVD as an overlay panel synced to the chart.</p>
+      <span class="badge b-gold">Execution Tool</span>
+    </div>
+  </div>
+
+  <div class="callout purple">
+    <div class="ct">Platform Note for MT5/cTrader Traders</div>
+    DeepCharts is the analysis platform. MT5 or cTrader is the execution platform. Use DeepCharts for all market reading (footprint, CVD, Deep Trades), then execute trades in MT5/cTrader. Many South African prop firm brokers (FTMO, Apex, FundedNext) support MT5 with futures-equivalent instruments (NAS100, US30 CFDs).
+  </div>
+</div>
+
+<!-- ══════════════ MARKET STATES ══════════════ -->
+<div class="section" id="market-states">
+  <div class="sec-tag">08 — Classification</div>
+  <h2>Market State <em>Classification</em></h2>
+  <p class="subtitle">The single most important decision you make before each session.</p>
+
+  <p>Every session begins with one question: <span class="acc4"><strong>Is the market balanced or imbalanced?</strong></span> The answer dictates which model you activate. Getting this wrong means applying the wrong tool and losing — regardless of execution quality.</p>
+
+  <h3>Classification Checklist</h3>
+  <table>
+    <thead><tr><th>Factor</th><th>Balanced</th><th>Imbalanced</th><th>Weight</th></tr></thead>
+    <tbody>
+      <tr><td>Prior day profile shape</td><td>D-shape, symmetric</td><td>b/P/elongated</td><td>⬛⬛⬛⬛⬛ High</td></tr>
+      <tr><td>Prior day close vs mid</td><td>Near midpoint (&lt;20% from mid)</td><td>Near extreme (&gt;30% from mid)</td><td>⬛⬛⬛⬛ High</td></tr>
+      <tr><td>Current open vs prior VA</td><td>Inside prior VA</td><td>Outside prior VA / gap</td><td>⬛⬛⬛⬛⬛ Critical</td></tr>
+      <tr><td>ATR ratio (5-period vs 20-period)</td><td>&lt; 0.9 (contracting)</td><td>&gt; 1.3 (expanding)</td><td>⬛⬛⬛ Medium</td></tr>
+      <tr><td>Opening drive CVD</td><td>Oscillating, no direction</td><td>Trending strongly one way</td><td>⬛⬛⬛⬛ High</td></tr>
+      <tr><td>LVN density below/above</td><td>Few LVNs, clustered volume</td><td>Multiple LVNs, thin areas</td><td>⬛⬛⬛ Medium</td></tr>
+      <tr><td>Macro/news context</td><td>No major catalyst</td><td>Post-news, earnings, FOMC</td><td>⬛⬛⬛ Context</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout danger">
+    <div class="ct">When State is Unclear → Do Not Trade</div>
+    If 3 or more factors are ambiguous (balanced/imbalanced both showing mixed signals), the market is in a transition state. This is NOT a time to force a trade. Wait 15–30 minutes for clarity to develop. The market will show you its hand.
+  </div>
+</div>
+
+<!-- ══════════════ ABSORPTION ══════════════ -->
+<div class="section" id="absorption">
+  <div class="sec-tag">09 — Core Mechanic</div>
+  <h2>Absorption <em>Mechanics</em></h2>
+  <p class="subtitle">The single most important concept in order flow trading — and the most misunderstood.</p>
+
+  <p>Absorption occurs when <strong>aggressive market orders are being absorbed by passive limit orders faster than they can move price</strong>. It's the invisible hand of an institutional player building a position by offering liquidity to retail traders trying to push price in one direction.</p>
+
+  <div class="step">
+    <div class="snum orange">1</div>
+    <div class="sbody">
+      <strong>Aggressive Order Hits the Market</strong>
+      Retail traders or algos send market orders in a direction (e.g., selling). These orders hit the bid aggressively. Normally, this depletes limit orders and price falls.
+    </div>
+  </div>
+  <div class="step">
+    <div class="snum orange">2</div>
+    <div class="sbody">
+      <strong>Limit Orders Replenished Faster</strong>
+      An institutional player has a massive limit buy order at this level. They keep adding limit orders as fast as they're being consumed. Price barely moves despite heavy selling pressure.
+    </div>
+  </div>
+  <div class="step">
+    <div class="snum orange">3</div>
+    <div class="sbody">
+      <strong>What You See in Order Flow</strong>
+      Large sell delta on the footprint (sellers active), but price is NOT moving down — it's stalling or micro-bouncing. CVD falling but price flat. This delta/price divergence = absorption signature.
+    </div>
+  </div>
+  <div class="step">
+    <div class="snum green">4</div>
+    <div class="sbody">
+      <strong>Sellers Exhaust Their Aggression</strong>
+      Eventually the aggressive sellers run out of conviction or capital. The limit buyer has now accumulated a large position. When aggressive selling stops, the accumulated long position drives price up sharply.
+    </div>
+  </div>
+  <div class="step">
+    <div class="snum green">5</div>
+    <div class="sbody">
+      <strong>The Trade Entry</strong>
+      When you see the aggression pivot (sellers giving up, CVD turning up, large buy prints appearing) — this is your entry trigger. Stop goes 1–2 ticks below the absorption low. Target: prior POC.
+    </div>
+  </div>
+
+  <div class="callout success">
+    <div class="ct">Absorption = High-Probability Entry</div>
+    Absorption events at known volume profile levels (VAL, LVN below support, prior POC) combine two confluences — location and order flow mechanics. This is Fabio's highest-conviction setup. These entries are characterized by <strong>tight stops and large R:R</strong> because the institutional player's defense point is well-defined.
+  </div>
+</div>
+
+<!-- ══════════════ TRIPLE-A ══════════════ -->
+<div class="section" id="triple-a">
+  <div class="sec-tag">10 — Core Framework</div>
+  <h2>The Triple-A <em>Framework</em></h2>
+  <p class="subtitle">Absorption → Accumulation → Aggression — the three-phase institutional trading pattern.</p>
+
+  <div class="chart-wrap">
+    <div class="chart-title">Triple-A Pattern — Price & Volume Behavior</div>
+    <svg viewBox="0 0 700 220" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:700px">
+      <!-- Phase labels -->
+      <rect x="10" y="20" width="190" height="175" rx="4" fill="rgba(255,107,53,0.05)" stroke="rgba(255,107,53,0.3)" stroke-width="1"/>
+      <text x="105" y="12" text-anchor="middle" fill="#ff6b35" font-family="JetBrains Mono" font-size="10" font-weight="700">PHASE 1: ABSORPTION</text>
+      <rect x="215" y="20" width="190" height="175" rx="4" fill="rgba(255,215,0,0.05)" stroke="rgba(255,215,0,0.3)" stroke-width="1"/>
+      <text x="310" y="12" text-anchor="middle" fill="#ffd700" font-family="JetBrains Mono" font-size="10" font-weight="700">PHASE 2: ACCUMULATION</text>
+      <rect x="420" y="20" width="265" height="175" rx="4" fill="rgba(0,255,157,0.05)" stroke="rgba(0,255,157,0.3)" stroke-width="1"/>
+      <text x="552" y="12" text-anchor="middle" fill="#00ff9d" font-family="JetBrains Mono" font-size="10" font-weight="700">PHASE 3: AGGRESSION</text>
+
+      <!-- Price line -->
+      <polyline points="20,120 40,125 60,122 80,128 100,124 120,127 140,123 160,126 180,122" fill="none" stroke="#00d4ff" stroke-width="1.5"/>
+      <polyline points="220,120 240,118 260,122 280,119 300,121 320,117 340,120 360,118 380,116" fill="none" stroke="#00d4ff" stroke-width="1.5"/>
+      <polyline points="430,115 460,95 490,70 520,50 550,35 580,25 610,20 640,18 670,15" fill="none" stroke="#00ff9d" stroke-width="2.5"/>
+
+      <!-- Volume bars Phase 1 (high, mixed) -->
+      <rect x="20" y="155" width="12" height="35" fill="rgba(255,71,87,0.5)"/>
+      <rect x="37" y="150" width="12" height="40" fill="rgba(255,71,87,0.4)"/>
+      <rect x="54" y="148" width="12" height="42" fill="rgba(255,71,87,0.5)"/>
+      <rect x="71" y="145" width="12" height="45" fill="rgba(255,71,87,0.6)"/>
+      <rect x="88" y="153" width="12" height="37" fill="rgba(255,71,87,0.4)"/>
+      <!-- Volume absorption indicators -->
+      <text x="105" y="145" fill="#ff6b35" font-family="JetBrains Mono" font-size="8.5">High sell vol</text>
+      <text x="105" y="156" fill="#ff6b35" font-family="JetBrains Mono" font-size="8.5">Price NOT falling</text>
+      <text x="105" y="167" fill="#00ff9d" font-family="JetBrains Mono" font-size="8.5">→ Absorption</text>
+
+      <!-- Volume bars Phase 2 (contracting) -->
+      <rect x="225" y="168" width="12" height="22" fill="rgba(255,215,0,0.3)"/>
+      <rect x="242" y="172" width="12" height="18" fill="rgba(255,215,0,0.3)"/>
+      <rect x="259" y="175" width="12" height="15" fill="rgba(255,215,0,0.2)"/>
+      <rect x="276" y="177" width="12" height="13" fill="rgba(255,215,0,0.2)"/>
+      <rect x="293" y="178" width="12" height="12" fill="rgba(255,215,0,0.15)"/>
+      <text x="310" y="162" fill="#ffd700" font-family="JetBrains Mono" font-size="8.5">Vol contracting</text>
+      <text x="310" y="173" fill="#ffd700" font-family="JetBrains Mono" font-size="8.5">Range tightening</text>
+      <text x="310" y="184" fill="#ffd700" font-family="JetBrains Mono" font-size="8.5">Position building</text>
+
+      <!-- Volume bars Phase 3 (expanding up) -->
+      <rect x="435" y="168" width="14" height="22" fill="rgba(0,255,157,0.3)"/>
+      <rect x="455" y="158" width="14" height="32" fill="rgba(0,255,157,0.4)"/>
+      <rect x="475" y="148" width="14" height="42" fill="rgba(0,255,157,0.55)"/>
+      <rect x="495" y="138" width="14" height="52" fill="rgba(0,255,157,0.7)"/>
+      <rect x="515" y="128" width="14" height="62" fill="rgba(0,255,157,0.8)"/>
+      <!-- Entry arrow -->
+      <path d="M435 165 L428 150" stroke="#00ff9d" stroke-width="1.5" marker-end="url(#arG)"/>
+      <text x="380" y="145" fill="#00ff9d" font-family="JetBrains Mono" font-size="9" font-weight="700">ENTRY</text>
+      <text x="380" y="157" fill="#5a7a9a" font-family="JetBrains Mono" font-size="8">≥30 contract print</text>
+      <defs>
+        <marker id="arG" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#00ff9d"/>
+        </marker>
+      </defs>
+    </svg>
+  </div>
+
+  <div class="g3">
+    <div class="card sell">
+      <h4>Phase 1 — Absorption</h4>
+      <p>Heavy one-sided order flow (usually selling) hits a level. <span class="acc4">Price barely moves</span>. Institutional player is passively absorbing all aggressive orders. High volume, low range = absorption signature. This continues until the aggressor runs out.</p>
+    </div>
+    <div class="card gold">
+      <h4>Phase 2 — Accumulation</h4>
+      <p>Volume contracts. Range tightens. Price compresses. The institutional player has <span class="acc4">finished building their position</span>. Retail sees "nothing happening" and gets bored. This is the coil before the spring. LVN above/below signals the likely direction.</p>
+    </div>
+    <div class="card buy">
+      <h4>Phase 3 — Aggression</h4>
+      <p>Institutional player activates. <span class="acc3">Large aggressive orders suddenly appear</span>. Volume expands. CVD spikes. Price breaks cleanly through the accumulation zone. This is the entry moment — the print ≥30 contracts is your trigger.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ THREE-STEP PROTOCOL ══════════════ -->
+<div class="section" id="three-steps">
+  <div class="sec-tag">11 — Core Protocol</div>
+  <h2>The 3-Step <em>Pre-Trade Protocol</em></h2>
+  <p class="subtitle">Non-negotiable. All three must align. Missing one = no trade.</p>
+
+  <div class="flow">
+    <div class="flow-box"><div class="flow-num">Step 1</div><div class="flow-lbl">State</div></div>
+    <div class="flow-box"><div class="flow-num">Step 2</div><div class="flow-lbl">Location</div></div>
+    <div class="flow-box"><div class="flow-num">Step 3</div><div class="flow-lbl">Aggression</div></div>
+    <div class="flow-box" style="border-color:rgba(0,255,157,.3);background:rgba(0,255,157,.04)"><div class="flow-num">Result</div><div class="flow-lbl" style="color:var(--acc3)">EXECUTE</div></div>
+  </div>
+
+  <div class="step">
+    <div class="snum">1</div>
+    <div class="sbody">
+      <strong>Market State — Balanced or Imbalanced?</strong>
+      <p>Use prior day profile + opening drive to classify. This determines which model runs. If unclear → wait. Never force a classification.</p>
+      <div class="g2">
+        <div class="card buy" style="padding:12px"><small><span class="acc3">Imbalanced:</span> Open outside prior VA, trending CVD, strong directional open → <strong>Model 1</strong></small></div>
+        <div class="card" style="padding:12px;border-left:3px solid var(--acc2)"><small><span class="acc2">Balanced:</span> Open inside prior VA, oscillating CVD, compression open → <strong>Model 2</strong></small></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="snum">2</div>
+    <div class="sbody">
+      <strong>Location — Are You at a Valid Level?</strong>
+      <p>Map current price against volume profile landmarks. Valid levels for entry consideration:</p>
+      <ul>
+        <li><span class="acc">LVN</span> — Low volume node on current or prior profile (set alert here)</li>
+        <li><span class="acc">HVN at pullback</span> — Retracement to high-volume support in trend mode</li>
+        <li><span class="acc">Prior day POC</span> — Magnetic centre for mean reversion</li>
+        <li><span class="acc">VAH/VAL boundaries</span> — Range extremes for Model 2 setups</li>
+      </ul>
+      <p>If price is in the middle of a value area with no nearby structural level → <span class="sell-t">no trade</span>.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="snum">3</div>
+    <div class="sbody">
+      <strong>Aggression — Is There Institutional Confirmation?</strong>
+      <p>Wait for the Order Flow trigger. This is the only true entry signal. Specifically:</p>
+      <ul>
+        <li>Large prints ≥30 NQ contracts (or ≥50 ES) at the identified level</li>
+        <li>CVD accelerating in the direction of the trade</li>
+        <li>Footprint showing stacked imbalances in the trade direction</li>
+        <li>Counter-side showing NO absorption or follow-through</li>
+      </ul>
+      <p><span class="acc4">No aggression = no trade. Ever.</span> Beautiful location + correct state but no OF confirmation = stay flat.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ MODEL 1 ══════════════ -->
+<div class="section" id="model1">
+  <div class="sec-tag">12 — Execution Model</div>
+  <h2>Model 1 — <em>Trend Continuation</em></h2>
+  <p class="subtitle">Out-of-balance market seeking new fair value. Ride the institutional aggression to the next profile level.</p>
+
+  <div class="callout info">
+    <div class="ct">Activation Condition</div>
+    Price has opened <strong>outside</strong> prior day's value area, OR has broken out of balance with strong directional CVD. Prior day closed near extreme. Multiple LVNs visible in the direction of the move. NY session preferred.
+  </div>
+
+  <h3>Long Setup — Step by Step</h3>
+
+  <div class="step"><div class="snum green">1</div><div class="sbody"><strong>Mark the Impulse Leg</strong><p>Identify the strong directional move that broke structure. Draw a volume profile from the start of this impulse to its peak. Find the LVN within the retracement zone — this is where you will set an alert.</p></div></div>
+
+  <div class="step"><div class="snum green">2</div><div class="sbody"><strong>Wait for Retracement to LVN/HVN</strong><p>Do not enter on the initial impulse. Price will pull back. Allow it to come back to the volume profile level. The LVN or prior HVN support absorbs initial selling. <span class="acc3">Set the alert — never a blind limit order.</span></p></div></div>
+
+  <div class="step"><div class="snum green">3</div><div class="sbody"><strong>Confirm Absorption at Level</strong><p>At your alert level, watch the footprint: sellers arriving but price not falling = buyers defending. CVD stalls or reverses. Deep Walls showing passive buy limit order support. This confirms institutional interest at this price.</p></div></div>
+
+  <div class="step"><div class="snum green">4</div><div class="sbody"><strong>Enter on Aggression Print</strong><p>Wait for ≥30 NQ contract buy orders to appear — the institutional breakout. CVD spikes upward. Enter long. Place stop <span class="sell-t">1–2 ticks below</span> the aggression candle low (NOT below the obvious swing low).</p></div></div>
+
+  <div class="step"><div class="snum green">5</div><div class="sbody"><strong>Target Prior POC — Full Exit</strong><p>Target = prior day POC or the next identified balance level. Close <span class="acc4">100% of the position there</span>. 70% probability of reversal at POC. Do not hold for more. If structure is exceptional (rare trend day), trail stop only after POC is taken.</p></div></div>
+
+  <h3>Short Setup</h3>
+  <p>Mirror of long: Open below prior VAL, strong sell CVD, LVNs below as targets. Wait for bounce to HVN/LVN resistance. Confirm sell absorption (buyers trying but sellers absorbing). Enter on ≥30 contract sell print. Stop 1–2 ticks above aggression candle high. Target: prior POC below.</p>
+
+  <div class="g2">
+    <div class="card buy">
+      <h4>✅ Valid Model 1 Conditions</h4>
+      <ul>
+        <li>Clear gap open or strong directional drive</li>
+        <li>CVD trending from session open</li>
+        <li>Clean LVN visible as target</li>
+        <li>Retracement to identifiable profile level</li>
+        <li>≥30 contract aggression trigger</li>
+        <li>R:R ≥ 1:3</li>
+        <li>NY session (preferred) or London first hour</li>
+      </ul>
+    </div>
+    <div class="card sell">
+      <h4>❌ Model 1 Invalidation</h4>
+      <ul>
+        <li>Price reclaims back inside prior value area</li>
+        <li>CVD diverging against trade direction</li>
+        <li>Large opposing absorption at entry level</li>
+        <li>Setup breaks in first 5 min post-entry</li>
+        <li>Market compressing (no follow-through)</li>
+        <li>Pre-news blackout within 30 min</li>
+        <li>3rd consecutive loss of the session</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ MODEL 2 ══════════════ -->
+<div class="section" id="model2">
+  <div class="sec-tag">13 — Execution Model</div>
+  <h2>Model 2 — <em>Mean Reversion</em></h2>
+  <p class="subtitle">Balanced market failing outside value — snap back to the POC. London session's primary opportunity.</p>
+
+  <div class="callout info">
+    <div class="ct">Activation Condition</div>
+    Price opened <strong>inside</strong> prior day's value area. Session developing as D-shape balanced profile. Price attempts to break out of balance but shows NO follow-through. CVD oscillating (not trending). London session or compressed market conditions.
+  </div>
+
+  <h3>Long (Failed Breakdown) Setup</h3>
+
+  <div class="step"><div class="snum orange">1</div><div class="sbody"><strong>Identify the Balance Zone</strong><p>Use prior day profile VAH/VAL as balance boundaries. Mark the POC as the primary target. Confirm current session is developing inside this prior value area.</p></div></div>
+
+  <div class="step"><div class="snum orange">2</div><div class="sbody"><strong>Watch for Failed Breakdown Below VAL</strong><p>Price probes below the VAL. First probe is almost always a false break — <span class="acc4">do not enter on first move</span>. Watch what happens: do sellers follow through with CVD expansion? If not → second probe coming.</p></div></div>
+
+  <div class="step"><div class="snum orange">3</div><div class="sbody"><strong>Reclaim Inside Balance</strong><p>Price comes back inside the VAL. Now it's confirmed: the breakdown failed. Wait for a <span class="acc">pullback into the reclaim leg's LVN</span>. Apply a volume profile on just the reclaim leg and find the LVN within it.</p></div></div>
+
+  <div class="step"><div class="snum orange">4</div><div class="sbody"><strong>Enter at LVN on Aggression</strong><p>At the reclaim leg LVN, watch for large buy prints (≥30 contracts) confirming institutional buying of the dip. CVD turns up. Enter long. Stop 1–2 ticks below the extreme low of the failed breakdown (not the obvious low — just beyond it).</p></div></div>
+
+  <div class="step"><div class="snum orange">5</div><div class="sbody"><strong>Target the Session POC — Full Exit</strong><p>The POC is your only target. This is where 70% of the session's volume transacted — it's the magnetic center. Exit 100% there. Do not stretch for the opposite extreme unless conditions are truly exceptional.</p></div></div>
+
+  <div class="callout warn">
+    <div class="ct">Model 2 Stop Placement Critical Note</div>
+    Never place stops at the obvious swing low (the extreme). Place them 1–2 ticks <em>beyond</em> the LVN entry trigger candle. Why: when price accelerates through obvious stops, you get slipped at a far worse price. Placing stops at the technical invalidation level (aggression candle) gives you a tighter, better-executed stop.
+  </div>
+</div>
+
+<!-- ══════════════ LVN EXECUTION ══════════════ -->
+<div class="section" id="lvn-model">
+  <div class="sec-tag">14 — LVN Playbook</div>
+  <h2>LVN Execution <em>Playbook</em></h2>
+  <p class="subtitle">Low Volume Nodes are the most precise entry zones in the entire system.</p>
+
+  <h3>LVN Behaviour Rules</h3>
+  <div class="g2">
+    <div class="card hl">
+      <h4>LVN as Reaction Zone</h4>
+      <p>When price enters an LVN, two outcomes are equally possible: <strong>fast transit through</strong> (imbalanced day) or <strong>sharp reaction/reversal</strong> (balanced day). <span class="acc4">Never place a blind limit order at an LVN.</span> Set an alert. Let price arrive. Then read the Order Flow to decide which outcome is occurring.</p>
+    </div>
+    <div class="card gold">
+      <h4>LVN as Speed Indicator</h4>
+      <p>If price blows through the LVN without slowing → confirms imbalance/trend state. The LVN becomes a potential support zone (long re-entry on Model 1 pullback). If price stalls at LVN → check absorption → potential Model 2 entry if within balance context.</p>
+    </div>
+  </div>
+
+  <h3>LVN Alert Protocol</h3>
+  <ol>
+    <li>Mark all LVNs on prior day and current session profile each morning</li>
+    <li>Set platform alerts 1–2 ticks before each LVN (not exactly at it)</li>
+    <li>When alert fires, activate Order Flow observation mode</li>
+    <li>Read footprint: aggressive prints or absorption?</li>
+    <li>Aggressive + correct direction = enter. Absorption forming = wait for exhaustion, then enter reversion.</li>
+    <li>No clear signal at LVN = skip (move to next level)</li>
+  </ol>
+</div>
+
+<!-- ══════════════ SESSIONS ══════════════ -->
+<div class="section" id="sessions">
+  <div class="sec-tag">15 — Timing</div>
+  <h2>Session Timing <em>Protocol</em></h2>
+  <p class="subtitle">When you trade is as important as how you trade.</p>
+
+  <table>
+    <thead><tr><th>Session</th><th>UTC+2 (SAST)</th><th>Behaviour</th><th>Model</th><th>Action</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Asian</strong></td><td>02:00–10:00</td><td>Low vol, compressed, accumulation</td><td>—</td><td><span class="badge b-red">No Trade</span></td></tr>
+      <tr><td><strong>London Open</strong></td><td>10:00–11:00</td><td>First directional move of day</td><td>Model 1</td><td><span class="badge b-gold">Selective</span></td></tr>
+      <tr><td><strong>London Main</strong></td><td>11:00–15:30</td><td>Balanced, mean reversion dominates</td><td>Model 2</td><td><span class="badge b-orange">Primary M2</span></td></tr>
+      <tr><td><strong>NY Open (first 20 min)</strong></td><td>15:30–15:50</td><td>Chaotic, false moves, stop hunts</td><td>—</td><td><span class="badge b-red">Do Not Enter</span></td></tr>
+      <tr><td><strong>NY Main</strong></td><td>15:50–21:00</td><td>High volatility, trend days</td><td>Model 1</td><td><span class="badge b-green">Primary M1</span></td></tr>
+      <tr><td><strong>After Market</strong></td><td>21:00+</td><td>Low liquidity, gaps, margin risk</td><td>—</td><td><span class="badge b-red">Close All</span></td></tr>
+    </tbody>
+  </table>
+
+  <h3>The NY Open 20-Minute Rule</h3>
+  <p>Fabio is unequivocal: <strong>do not enter trades in the first 15–20 minutes after the NY cash open (15:30 SAST)</strong>. The opening is characterised by massive order imbalances, stop hunts, and algorithmic manipulation of the early range. Clarity develops between 15:50–16:15. This is when the session's true direction emerges.</p>
+
+  <div class="callout danger">
+    <div class="ct">Mandatory Rule — No Overnight Positions</div>
+    Close ALL futures positions by 21:00 SAST (NY session close). Overnight futures require margin and are subject to gap risk. The strategy is entirely intraday. Any open position at 21:00 must be closed — whether in profit or loss. Automate this in the EA's session close module.
+  </div>
+</div>
+
+<!-- ══════════════ STOP PLACEMENT ══════════════ -->
+<div class="section" id="stop-placement">
+  <div class="sec-tag">16 — Execution Detail</div>
+  <h2>Stop Loss <em>Placement Philosophy</em></h2>
+  <p class="subtitle">The most counter-intuitive — and most profitable — aspect of Fabio's execution.</p>
+
+  <div class="quote">
+    "Most traders put stops above the high. That's where everyone gets slipped. Smart traders exit 1–2 ticks before. Because when price accelerates, it's already too late."
+    <cite>— Fabio Valentini, ChartFanatics Short</cite>
+  </div>
+
+  <div class="g2">
+    <div class="card sell">
+      <h4>❌ The Obvious Stop (Retail Trap)</h4>
+      <p>Placing stops directly above/below swing highs/lows or candle wicks. This is where algorithms <strong>hunt for liquidity</strong>. The stop is triggered, price reverses, and you're out at the worst price with maximum slippage. This is a predictable pattern that market makers exploit.</p>
+      <div class="formula">Stop = 1 tick above swing high → Gets hunted, fills poorly</div>
+    </div>
+    <div class="card buy">
+      <h4>✅ The Aggression-Based Stop</h4>
+      <p>Place the stop 1–2 ticks beyond <strong>the aggression candle that triggered entry</strong> — not the prior swing high/low. The thesis is: if the institutional aggressor's candle is violated, the setup is invalidated. This gives you a tighter, better-placed, better-filled stop.</p>
+      <div class="formula">Stop = Aggression candle low - 2 ticks → Thesis-based, tight, clean fill</div>
+    </div>
+  </div>
+
+  <h3>Stop Management Rules</h3>
+  <ul>
+    <li><strong>Never widen the stop</strong> — widening means your thesis was wrong. Cut losses immediately.</li>
+    <li><strong>Move to break-even</strong> when: CVD shows strong pressure in trade direction, OR price has moved 1:1 toward target</li>
+    <li><strong>Defensive exit without stop</strong>: if CVD reverses aggressively against position, exit manually before stop is hit</li>
+    <li><strong>Never average down</strong> — adding to a losing position is capital destruction</li>
+  </ul>
+</div>
+
+<!-- ══════════════ EXITS ══════════════ -->
+<div class="section" id="exits">
+  <div class="sec-tag">17 — Exit Rules</div>
+  <h2>Exit & Target <em>Discipline</em></h2>
+  <p class="subtitle">The 70% rule and why partial exits destroy expectancy.</p>
+
+  <p>Fabio's exit rule is simple and non-negotiable: <span class="acc4"><strong>close 100% of the position at the first target</strong></span>. The reason is statistical:</p>
+
+  <div class="formula">
+    Probability of reaching POC = ~70% | Probability of extending beyond POC = ~30%<br>
+    Expected value of full exit at POC > Expected value of holding for extension
+  </div>
+
+  <p>Holding for "more" means risking a confirmed winner for a 30% probability. Over 100 trades, this destroys expectancy. Fabio's model is built on <strong>high frequency + full exits at realistic targets</strong>, not lottery tickets.</p>
+
+  <h3>Exit Scenarios</h3>
+  <table>
+    <thead><tr><th>Scenario</th><th>Action</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>Price reaches POC target</td><td><span class="badge b-green">Exit 100%</span></td><td>70% reversal probability from here</td></tr>
+      <tr><td>CVD reverses strongly against position</td><td><span class="badge b-red">Exit immediately</span></td><td>Thesis violated — institutional aggressor withdrew</td></tr>
+      <tr><td>Large opposing absorption appears</td><td><span class="badge b-orange">Exit or tighten stop</span></td><td>Counter-institutional pressure building</td></tr>
+      <tr><td>Price compressing after 1R gain</td><td><span class="badge b-gold">Move to break-even</span></td><td>Protect gain, don't let winner turn to loser</td></tr>
+      <tr><td>Exceptional trend day (strong CVD, LVN cascade)</td><td><span class="badge b-blue">Trail stop only</span></td><td>Rare — only on confirmed multi-R trend days</td></tr>
+      <tr><td>Pre-news event within 15 min</td><td><span class="badge b-red">Exit all positions</span></td><td>News creates unpredictable OF void</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ══════════════ MULTI-DAY CONTEXT ══════════════ -->
+<div class="section" id="multiday">
+  <div class="sec-tag">18 — Advanced Context</div>
+  <h2>Multi-Day <em>Context Analysis</em></h2>
+  <p class="subtitle">Every session exists within a larger auction. The prior day is your reference map.</p>
+
+  <h3>Daily Preparation Protocol</h3>
+  <div class="step"><div class="snum gold">1</div><div class="sbody"><strong>Study Prior Day Profile</strong><p>Shape (D/b/P/elongated), POC location, VAH/VAL spread, LVN positions. This gives you the map for today's session.</p></div></div>
+  <div class="step"><div class="snum gold">2</div><div class="sbody"><strong>Classify Prior Day Close</strong><p>Did price close near high (bullish imbalance bias), near low (bearish), or near mid (balanced)? This sets the prior day's "opinion" about fair value.</p></div></div>
+  <div class="step"><div class="snum gold">3</div><div class="sbody"><strong>Mark Multi-Day Levels</strong><p>Prior week POC, prior week VAH/VAL, any multi-day LVN gaps. These act as larger-timeframe magnets and resistance/support that override single-session levels.</p></div></div>
+  <div class="step"><div class="snum gold">4</div><div class="sbody"><strong>Set Your Bias</strong><p>Based on prior day + weekly context + any macro catalysts, set a directional bias. This is NOT a prediction — it's a probability weight. You still need OF confirmation. But knowing the bias helps you filter Model 1 setups to only the higher-probability direction.</p></div></div>
+</div>
+
+<!-- ══════════════ WORLD CUP ══════════════ -->
+<div class="section" id="world-cup">
+  <div class="sec-tag">19 — Competition Strategy</div>
+  <h2>World Cup Trading <em>Competition Protocol</em></h2>
+  <p class="subtitle">How Fabio achieved 500%+ returns in 12 months — a specific risk-scaling approach.</p>
+
+  <div class="g2">
+    <div class="card hl">
+      <h4>Phase 1 — Early Competition (Low Risk)</h4>
+      <ul>
+        <li>Start at <strong>0.25% risk per trade</strong></li>
+        <li>Focus on model adherence, not returns</li>
+        <li>Build track record and confidence</li>
+        <li>Target drawdown &lt; 5% in first month</li>
+        <li>Only trade A+ setups — no B-grade entries</li>
+      </ul>
+    </div>
+    <div class="card gold">
+      <h4>Phase 2 — Compounding (Medium Risk)</h4>
+      <ul>
+        <li>Use session profits to <strong>increase position size</strong></li>
+        <li>On high-conviction days, scale to 0.5–1% risk</li>
+        <li>Maximum drawdown target: 10–15%</li>
+        <li>Compound winning streaks aggressively</li>
+        <li>Reduce size immediately after 2 consecutive losses</li>
+      </ul>
+    </div>
+    <div class="card buy">
+      <h4>Phase 3 — Competition Climax (Aggressive)</h4>
+      <ul>
+        <li>Scale risk to <strong>1–2% per trade</strong> when in strong profit</li>
+        <li>Risk early-session gains (not capital) for large setups</li>
+        <li>Focus on directional days — skip compressed sessions</li>
+        <li>Target 5–10R days, not 1–2R days</li>
+        <li>Stop trading if max drawdown from peak hit</li>
+      </ul>
+    </div>
+    <div class="card purple">
+      <h4>Key Competition Mindset</h4>
+      <ul>
+        <li>500 trades per quarter = large statistical sample</li>
+        <li>High frequency overcomes short losing streaks quickly</li>
+        <li>Profit factor target: 1.8–2.5</li>
+        <li>Every decision tracked in trade journal</li>
+        <li>Adapt risk sizing based on competition standings</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ PROP FIRM ══════════════ -->
+<div class="section" id="prop-firm">
+  <div class="sec-tag">20 — Funded Accounts</div>
+  <h2>Prop Firm <em>Trading Protocol</em></h2>
+  <p class="subtitle">Adapting the AMT system to evaluation and funded account constraints.</p>
+
+  <table>
+    <thead><tr><th>Stage</th><th>Risk Per Trade</th><th>Max Daily Loss</th><th>Focus</th></tr></thead>
+    <tbody>
+      <tr><td>Evaluation Phase 1</td><td>0.25%</td><td>1.0%</td><td>A+ setups only, consistency over performance</td></tr>
+      <tr><td>Evaluation Phase 2</td><td>0.5%</td><td>1.5%</td><td>Maintain same approach, don't force targets</td></tr>
+      <tr><td>Funded — First Month</td><td>0.5%</td><td>2.0%</td><td>Prove model works on live capital</td></tr>
+      <tr><td>Funded — Scaling</td><td>0.5–1.0%</td><td>2.5%</td><td>Gradual increase based on performance</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Prop Firm Kill Switches</h3>
+  <ul>
+    <li>Daily loss limit hit → stop for the day, no exceptions</li>
+    <li>3 consecutive losses → stop for the day</li>
+    <li>High-impact news within 30 min → no new positions</li>
+    <li>Session not matching your model's conditions → no trade day</li>
+  </ul>
+
+  <div class="callout success">
+    <div class="ct">Recommended South Africa-Accessible Prop Firms</div>
+    <strong>Apex Trader Funding</strong> — Highest payouts, single-phase, use code "CF" for discount. <strong>FundedNext</strong> — CFD options (MT4/MT5), good for NAS100. <strong>FTMO</strong> — Most established, strict but fair. All accessible from SA.
+  </div>
+</div>
+
+<!-- ══════════════ RISK ══════════════ -->
+<div class="section" id="risk">
+  <div class="sec-tag">21 — Risk Management</div>
+  <h2>Complete Risk <em>Management System</em></h2>
+  <p class="subtitle">Capital protection is the non-negotiable prerequisite for long-term profitability.</p>
+
+  <h3>Position Sizing Formula</h3>
+  <div class="formula">
+    Risk Amount = Account Balance × (Risk% / 100)<br><br>
+    Lots = Risk Amount ÷ (Stop Distance in Points × Point Value per Lot)
+  </div>
+
+  <h3>Risk Parameters by Account Type</h3>
+  <table>
+    <thead><tr><th>Account</th><th>Risk/Trade</th><th>Max Daily</th><th>Max DD</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td>Evaluation</td><td>0.25–0.5%</td><td>1.5%</td><td>5%</td><td>Conservative — pass the challenge</td></tr>
+      <tr><td>Funded</td><td>0.5–1.0%</td><td>2.0%</td><td>8%</td><td>Grow with discipline</td></tr>
+      <tr><td>Personal Capital</td><td>1–2%</td><td>3%</td><td>15%</td><td>Higher tolerance, own risk</td></tr>
+      <tr><td>World Cup Mode</td><td>0.25% → 2%</td><td>3%</td><td>20%</td><td>Phased scaling approach</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Expected Value Model</h3>
+  <div class="code">
+<span class="c">// Valentini system EV calculation</span>
+Win_Rate   = <span class="v">0.55</span>      <span class="c">// 55% (realistic for model)</span>
+Avg_Win    = <span class="v">3.0R</span>      <span class="c">// Full exit at POC = 3R average</span>
+Avg_Loss   = <span class="v">1.0R</span>      <span class="c">// Tight aggression-based stop</span>
+
+EV         = (<span class="v">0.55</span> × <span class="v">3.0</span>) - (<span class="v">0.45</span> × <span class="v">1.0</span>)
+           = <span class="v">1.65</span> - <span class="v">0.45</span> = <span class="v">+1.20R</span> per trade
+
+Profit_Factor = (<span class="v">0.55</span> × <span class="v">3.0</span>) / (<span class="v">0.45</span> × <span class="v">1.0</span>) = <span class="v">3.67</span>
+
+<span class="c">// At 100 trades/month, 1% risk/trade, $50,000 account:</span>
+Monthly_EV = <span class="v">100</span> trades × <span class="v">1.20R</span> × (<span class="v">$500</span> per R) = <span class="v">$60,000/month</span>
+  </div>
+</div>
+
+<!-- ══════════════ PSYCHOLOGY ══════════════ -->
+<div class="section" id="psychology">
+  <div class="sec-tag">22 — Mental Game</div>
+  <h2>Trading <em>Psychology</em></h2>
+  <p class="subtitle">The rules Fabio lives by to maintain edge under pressure.</p>
+
+  <div class="g2">
+    <div class="card sell">
+      <h4>The 3-Loss Rule</h4>
+      <p>After <strong>3 consecutive stop-outs</strong>, stop trading for the session. Three losses in a row signal one of two things: (1) market conditions don't match the model today, or (2) you're making execution errors. Either way, more trades = more losses. Walk away. Review. Return tomorrow.</p>
+    </div>
+    <div class="card sell">
+      <h4>No Revenge Trading</h4>
+      <p>The emotional drive to recover a loss <strong>immediately</strong> is the single most destructive force in trading. It leads to: oversized positions, trading unqualified setups, forcing entries, ignoring OF signals. Revenge trades statistically lose at a higher rate than normal trades.</p>
+    </div>
+    <div class="card gold">
+      <h4>No Directional Bias</h4>
+      <p>Do not arrive at a session with a predetermined direction. Macro views, yesterday's trend, community sentiment = <span class="acc4">all noise</span>. Read the current session's auction fresh. The market doesn't care about your opinion. Respond to what is happening, not what you think should happen.</p>
+    </div>
+    <div class="card hl">
+      <h4>Full Attention Required</h4>
+      <p>This strategy is <strong>not passive</strong>. Active management is required: monitoring CVD, reading footprint, adjusting stops, recognizing when the thesis breaks. If you cannot give the session 100% attention — do not trade. Half-attention = execution errors.</p>
+    </div>
+    <div class="card purple">
+      <h4>Drawdown Acceptance</h4>
+      <p>Multiple consecutive small stop-outs are <strong>expected and normal</strong> in this model. The strategy compensates with large winners and high frequency. Psychological preparation: <em>7 small losses in a row is entirely consistent with a 55% win rate system</em>. Know your statistical expectation.</p>
+    </div>
+    <div class="card buy">
+      <h4>Capital Protection Priority</h4>
+      <p>Fabio's repeated emphasis: <span class="acc3">protecting capital comes before making money</span>. A trader who protects capital stays in the game long enough for the statistical edge to manifest. A trader who chases returns risks ruin. Stay small, stay consistent, let compounding work.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ EDGE DECAY ══════════════ -->
+<div class="section" id="edge-decay">
+  <div class="sec-tag">23 — Longevity</div>
+  <h2>Edge Decay & <em>Model Adaptation</em></h2>
+  <p class="subtitle">Every trading edge eventually degrades. Understanding why — and how to prevent it.</p>
+
+  <h3>Why Edges Decay</h3>
+  <div class="g3">
+    <div class="card"><h4>Regime Change</h4><p>Volatility characteristics shift (e.g., 2023–2024 high-vol environment). Models calibrated to prior vol regimes produce different results. The <em>mechanics</em> don't change — the parameters do.</p></div>
+    <div class="card"><h4>Crowding</h4><p>When a strategy becomes widely known, competing traders enter at the same levels. The edge shrinks as more participants react to the same signals. AMT/OF is less susceptible to this due to its real-time nature.</p></div>
+    <div class="card"><h4>Algorithm Changes</h4><p>Major algo participants change their patterns, order size thresholds, and timing. If your Large Order filter was calibrated to old algo behavior, it may need recalibration.</p></div>
+  </div>
+
+  <h3>Adaptation Protocol</h3>
+  <p>Fabio's solution: <span class="acc"><strong>understand the WHY deeply enough to adapt, not just the WHAT</strong></span>. If you know that LVN setups work because they represent volume rejection zones, you can adapt when the optimal LVN size or distance changes. If you only know "trade LVNs," you cannot adapt.</p>
+
+  <p>Practical adaptation steps:</p>
+  <ul>
+    <li><strong>Track profit factor by month</strong> — identify when it drops below 1.5</li>
+    <li><strong>Segment win rates</strong> by market state — which model is underperforming?</li>
+    <li><strong>Adjust order size filter</strong> — recalibrate institutional order threshold quarterly</li>
+    <li><strong>Session performance analysis</strong> — is London or NY underperforming?</li>
+    <li><strong>Volatility regime awareness</strong> — in high-vol environments, widen targets slightly</li>
+  </ul>
+</div>
+
+<!-- ══════════════ AUTOMATION ══════════════ -->
+<div class="section" id="automation">
+  <div class="sec-tag">24 — Automation</div>
+  <h2>MT5 Automation <em>Architecture</em></h2>
+  <p class="subtitle">Engineering the Fabio Valentini system into executable MQL5 code.</p>
+
+  <h3>Recommended Architecture: Semi-Automated</h3>
+  <p>Full automation is possible but suboptimal for Order Flow strategies. The recommended approach:</p>
+
+  <div class="g2">
+    <div class="card buy">
+      <h4>✅ Automate These</h4>
+      <ul>
+        <li>Session filter (block trading outside windows)</li>
+        <li>Position sizing calculator</li>
+        <li>Daily loss limit kill switch</li>
+        <li>Stop placement engine (1–2 tick buffer logic)</li>
+        <li>Mandatory session close (21:00 SAST)</li>
+        <li>Consecutive loss counter</li>
+        <li>LVN/POC alert generation</li>
+        <li>R:R validation before order submission</li>
+      </ul>
+    </div>
+    <div class="card gold">
+      <h4>⚠️ Keep Manual (OF-Dependent)</h4>
+      <ul>
+        <li>Market state classification (needs VP + CVD)</li>
+        <li>Aggression trigger confirmation</li>
+        <li>Absorption event recognition</li>
+        <li>Large order size detection (needs real tick data)</li>
+        <li>Live CVD divergence reading</li>
+        <li>Move to break-even decision</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Full Platform Stack</h3>
+  <table>
+    <thead><tr><th>Tool</th><th>Role</th><th>SA Access</th><th>Cost</th></tr></thead>
+    <tbody>
+      <tr><td>DeepCharts</td><td>Footprint, CVD, Deep Trades, VP</td><td>Yes (web)</td><td>~$60/mo (30% off = ~$42)</td></tr>
+      <tr><td>MT5</td><td>Execution, EA, risk management</td><td>Yes</td><td>Free</td></tr>
+      <tr><td>Sierra Chart</td><td>Alternative OF + footprint</td><td>Yes</td><td>~$30/mo</td></tr>
+      <tr><td>TradeZella</td><td>Trade journal, performance analytics</td><td>Yes</td><td>~$20/mo</td></tr>
+      <tr><td>TradingView</td><td>Volume profile overlay for context</td><td>Yes</td><td>Free/Pro</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ══════════════ MQL5 CODE ══════════════ -->
+<div class="section" id="mql5-code">
+  <div class="sec-tag">25 — Code Library</div>
+  <h2>MQL5 Code <em>Library</em></h2>
+  <p class="subtitle">Production-ready code modules for the automation layer of the Fabio Valentini system.</p>
+
+  <h3>Module 1 — Session Filter</h3>
+  <div class="code">
+<span class="c">// ═══ SESSION FILTER MODULE ═══════════════════════════════</span>
+<span class="k">input</span> <span class="k">bool</span> UseNY     = <span class="v">true</span>;   <span class="c">// NY: 15:50–21:00 SAST</span>
+<span class="k">input</span> <span class="k">bool</span> UseLondon = <span class="v">true</span>;   <span class="c">// London: 10:00–15:30 SAST</span>
+<span class="k">input</span> <span class="k">bool</span> UseSkipNYOpen = <span class="v">true</span>; <span class="c">// Skip first 20 min of NY</span>
+
+<span class="k">bool</span> IsInSession() {
+   MqlDateTime dt; TimeToStruct(TimeCurrent(), dt);
+   <span class="k">int</span> t = dt.hour * <span class="v">60</span> + dt.min;
+   <span class="k">if</span>(UseNY && t >= <span class="v">950</span> && t < <span class="v">1260</span>)  <span class="c">// 15:50–21:00</span>
+      <span class="k">return</span> <span class="v">true</span>;
+   <span class="k">if</span>(UseLondon && t >= <span class="v">600</span> && t < <span class="v">930</span>) <span class="c">// 10:00–15:30</span>
+      <span class="k">return</span> <span class="v">true</span>;
+   <span class="k">return</span> <span class="v">false</span>;
+}
+  </div>
+
+  <h3>Module 2 — Market State Detection</h3>
+  <div class="code">
+<span class="c">// ═══ MARKET STATE MODULE ═════════════════════════════════</span>
+<span class="k">enum</span> MSTATE { BALANCED, IMBALANCED, UNKNOWN };
+
+MSTATE GetMarketState() {
+   <span class="k">double</span> atr5  = iATR(_Symbol, PERIOD_H1, <span class="v">5</span>, <span class="v">0</span>);
+   <span class="k">double</span> atr20 = iATR(_Symbol, PERIOD_H1, <span class="v">20</span>, <span class="v">0</span>);
+   <span class="k">double</span> ratio = (atr20 > <span class="v">0</span>) ? atr5 / atr20 : <span class="v">1.0</span>;
+
+   <span class="c">// Prior day close vs mid-range</span>
+   <span class="k">double</span> pdH  = iHigh( _Symbol, PERIOD_D1, <span class="v">1</span>);
+   <span class="k">double</span> pdL  = iLow(  _Symbol, PERIOD_D1, <span class="v">1</span>);
+   <span class="k">double</span> pdC  = iClose(_Symbol, PERIOD_D1, <span class="v">1</span>);
+   <span class="k">double</span> rng  = pdH - pdL;
+   <span class="k">double</span> fromMid = (rng > <span class="v">0</span>) ? MathAbs(pdC - (pdH+pdL)/<span class="v">2</span>) / rng : <span class="v">0</span>;
+
+   <span class="k">if</span>(ratio > <span class="v">1.3</span> && fromMid > <span class="v">0.30</span>) <span class="k">return</span> IMBALANCED;
+   <span class="k">if</span>(ratio < <span class="v">0.90</span> && fromMid < <span class="v">0.20</span>) <span class="k">return</span> BALANCED;
+   <span class="k">return</span> UNKNOWN;
+}
+  </div>
+
+  <h3>Module 3 — Position Sizing & Risk Engine</h3>
+  <div class="code">
+<span class="c">// ═══ RISK MANAGEMENT MODULE ══════════════════════════════</span>
+<span class="k">input</span> <span class="k">double</span> RiskPct       = <span class="v">0.5</span>;   <span class="c">// % per trade</span>
+<span class="k">input</span> <span class="k">double</span> MaxDailyPct   = <span class="v">1.5</span>;   <span class="c">// daily loss kill switch</span>
+<span class="k">input</span> <span class="k">double</span> MinRR         = <span class="v">3.0</span>;   <span class="c">// minimum R:R required</span>
+<span class="k">input</span> <span class="k">int</span>    MaxConsecLoss  = <span class="v">3</span>;    <span class="c">// stop after N losses</span>
+<span class="k">input</span> <span class="k">bool</span>   ForceClose21h  = <span class="v">true</span>; <span class="c">// mandatory session close</span>
+
+<span class="k">int</span> consecutiveLosses = <span class="v">0</span>;
+<span class="k">double</span> dailyPnL = <span class="v">0</span>;
+
+<span class="k">double</span> CalcLots(<span class="k">double</span> stopDist) {
+   <span class="k">double</span> bal  = AccountInfoDouble(ACCOUNT_BALANCE);
+   <span class="k">double</span> risk = bal * RiskPct / <span class="v">100.0</span>;
+   <span class="k">double</span> tv   = SymbolInfoDouble(_Symbol, SYMBOL_TRADE_TICK_VALUE);
+   <span class="k">double</span> ts   = SymbolInfoDouble(_Symbol, SYMBOL_TRADE_TICK_SIZE);
+   <span class="k">double</span> pv   = (ts > <span class="v">0</span>) ? tv / ts : <span class="v">1</span>;
+   <span class="k">double</span> lots = risk / (stopDist * pv);
+   <span class="k">return</span> NormalizeDouble(MathMax(
+      SymbolInfoDouble(_Symbol, SYMBOL_VOLUME_MIN),
+      MathMin(SymbolInfoDouble(_Symbol, SYMBOL_VOLUME_MAX), lots)), <span class="v">2</span>);
+}
+
+<span class="k">bool</span> CanTrade() {
+   <span class="k">if</span>(!IsInSession())                  <span class="k">return</span> <span class="v">false</span>;
+   <span class="k">if</span>(consecutiveLosses >= MaxConsecLoss) <span class="k">return</span> <span class="v">false</span>;
+   <span class="k">if</span>(dailyPnL <= -AccountInfoDouble(ACCOUNT_BALANCE)*MaxDailyPct/<span class="v">100</span>) <span class="k">return</span> <span class="v">false</span>;
+   <span class="k">if</span>(GetMarketState() == UNKNOWN)     <span class="k">return</span> <span class="v">false</span>;
+   <span class="k">return</span> <span class="v">true</span>;
+}
+
+<span class="c">// Call in OnTimer() — mandatory close at 21:00 SAST</span>
+<span class="k">void</span> SessionCloseCheck() {
+   <span class="k">if</span>(!ForceClose21h) <span class="k">return</span>;
+   MqlDateTime dt; TimeToStruct(TimeCurrent(), dt);
+   <span class="k">if</span>(dt.hour == <span class="v">21</span> && dt.min == <span class="v">0</span>) {
+      CTrade trade;
+      <span class="k">for</span>(<span class="k">int</span> i = PositionsTotal()-<span class="v">1</span>; i >= <span class="v">0</span>; i--)
+         <span class="k">if</span>(PositionGetSymbol(i) == _Symbol)
+            trade.PositionClose(PositionGetTicket(i));
+   }
+}
+  </div>
+
+  <h3>Module 4 — LVN Level Manager</h3>
+  <div class="code">
+<span class="c">// ═══ LVN LEVEL MANAGER ═══════════════════════════════════</span>
+<span class="c">// Input key levels daily (from DeepCharts/Sierra Chart VP)</span>
+<span class="k">input</span> <span class="k">double</span> PrevPOC  = <span class="v">0.0</span>;  <span class="c">// Prior day Point of Control</span>
+<span class="k">input</span> <span class="k">double</span> PrevVAH  = <span class="v">0.0</span>;  <span class="c">// Prior day Value Area High</span>
+<span class="k">input</span> <span class="k">double</span> PrevVAL  = <span class="v">0.0</span>;  <span class="c">// Prior day Value Area Low</span>
+<span class="k">input</span> <span class="k">double</span> LVN1     = <span class="v">0.0</span>;  <span class="c">// Low Volume Node 1</span>
+<span class="k">input</span> <span class="k">double</span> LVN2     = <span class="v">0.0</span>;  <span class="c">// Low Volume Node 2</span>
+<span class="k">input</span> <span class="k">double</span> LVN3     = <span class="v">0.0</span>;  <span class="c">// Low Volume Node 3</span>
+<span class="k">input</span> <span class="k">double</span> LVNzone  = <span class="v">2.0</span>;  <span class="c">// LVN proximity alert (ticks)</span>
+
+<span class="k">bool</span> IsNearLevel(<span class="k">double</span> price, <span class="k">double</span> level) {
+   <span class="k">if</span>(level == <span class="v">0</span>) <span class="k">return</span> <span class="v">false</span>;
+   <span class="k">double</span> dist = MathAbs(price - level);
+   <span class="k">return</span> dist <= LVNzone * SymbolInfoDouble(_Symbol, SYMBOL_POINT);
+}
+
+<span class="k">bool</span> AtKeyLevel() {
+   <span class="k">double</span> ask = SymbolInfoDouble(_Symbol, SYMBOL_ASK);
+   <span class="k">return</span> IsNearLevel(ask, LVN1) || IsNearLevel(ask, LVN2) ||
+          IsNearLevel(ask, LVN3) || IsNearLevel(ask, PrevVAH) ||
+          IsNearLevel(ask, PrevVAL) || IsNearLevel(ask, PrevPOC);
+}
+  </div>
+
+  <h3>Module 5 — Dashboard Display</h3>
+  <div class="code">
+<span class="c">// ═══ ON-CHART DASHBOARD ══════════════════════════════════</span>
+<span class="k">void</span> DrawDashboard() {
+   MSTATE state = GetMarketState();
+   string stateStr = (state==IMBALANCED)?"IMBALANCED":(state==BALANCED)?"BALANCED":"UNCLEAR";
+   <span class="k">color</span>  stateCol = (state==IMBALANCED)?clrOrange:(state==BALANCED)?clrDodgerBlue:clrGray;
+
+   string session = IsInSession() ? <span class="s">"IN SESSION"</span> : <span class="s">"OUT OF SESSION"</span>;
+   <span class="k">color</span>  sesCol  = IsInSession() ? clrLime : clrRed;
+
+   string canTrade = CanTrade() ? <span class="s">"READY"</span> : <span class="s">"BLOCKED"</span>;
+   <span class="k">color</span>  ctCol   = CanTrade()  ? clrLime : clrRed;
+
+   <span class="c">// Render labels (simplified — extend with full Comment() or object labels)</span>
+   Comment(StringFormat(
+      <span class="s">"═══ FABIO VALENTINI AMT SYSTEM ═══\n"</span>
+      <span class="s">"Market State : %s\n"</span>
+      <span class="s">"Session      : %s\n"</span>
+      <span class="s">"Trading      : %s\n"</span>
+      <span class="s">"Consec Loss  : %d / %d\n"</span>
+      <span class="s">"Daily PnL    : %.2f\n"</span>
+      <span class="s">"At Key Level : %s\n"</span>,
+      stateStr, session, canTrade,
+      consecutiveLosses, MaxConsecLoss,
+      dailyPnL,
+      AtKeyLevel() ? <span class="s">"YES ← ALERT"</span> : <span class="s">"No"</span>
+   ));
+}
+  </div>
+</div>
+
+<!-- ══════════════ CHECKLIST ══════════════ -->
+<div class="section" id="checklist">
+  <div class="sec-tag">26 — Daily Protocols</div>
+  <h2>Master <em>Checklists</em></h2>
+  <p class="subtitle">The complete pre-session, per-trade, and post-trade protocols.</p>
+
+  <h3>Pre-Session Preparation (30 min before open)</h3>
+  <ul class="chk">
+    <li>Mark prior day POC, VAH, VAL on chart</li>
+    <li>Classify prior day profile shape (D/b/P/elongated)</li>
+    <li>Identify prior day close position (near high/low/mid)</li>
+    <li>Mark all LVNs above and below current price</li>
+    <li>Check economic calendar — mark high-impact news blackouts</li>
+    <li>Set daily loss limit alert on platform</li>
+    <li>Confirm DeepCharts feed is live (footprint + CVD active)</li>
+    <li>Set platform alert 1–2 ticks before each LVN</li>
+    <li>Reset consecutive loss counter</li>
+    <li>Set session close timer (21:00 SAST)</li>
+  </ul>
+
+  <h3>Per-Trade Checklist (Before Every Entry)</h3>
+  <ul class="chk">
+    <li>Currently within valid session window?</li>
+    <li>Market state confirmed (balanced/imbalanced)?</li>
+    <li>At a valid volume profile level (LVN/HVN/VAH/VAL/POC)?</li>
+    <li>CVD supporting trade direction?</li>
+    <li>Aggression trigger seen (≥30 NQ contracts at level)?</li>
+    <li>R:R ≥ 1:3 confirmed (target at next structural level)?</li>
+    <li>Stop placed correctly (based on aggression candle, not obvious swing)?</li>
+    <li>No high-impact news within 30 minutes?</li>
+    <li>Not on 3rd consecutive loss?</li>
+    <li>Daily loss limit not breached?</li>
+  </ul>
+
+  <h3>Post-Trade Journal Entry (Required)</h3>
+  <ul class="chk">
+    <li>Screenshot: entry chart with footprint visible</li>
+    <li>Screenshot: exit chart showing CVD at exit</li>
+    <li>Market state at entry: Balanced / Imbalanced / Unclear</li>
+    <li>Model used: Model 1 (Trend) / Model 2 (Reversion)</li>
+    <li>All 10 pre-trade questions answered at time of entry: Yes/No</li>
+    <li>Actual R:R vs planned R:R</li>
+    <li>Was the aggression trigger genuine or forced?</li>
+    <li>Notes on what OF showed and any surprises</li>
+    <li>Update monthly profit factor and win rate stats</li>
+  </ul>
+
+  <div class="callout success">
+    <div class="ct">The Final Principle</div>
+    The market does not owe you a trade. Your job is to show up prepared, read the current auction with real-time data, and execute only when all conditions align. <strong>On days when they don't align — not trading IS the trade.</strong> Capital protection over forced participation. Patience is the edge.
+  </div>
+
+  <div style="margin-top:40px;padding-top:28px;border-top:1px solid var(--border);display:flex;flex-wrap:wrap;gap:6px">
+    <span class="badge b-blue">Market Auction Theory</span>
+    <span class="badge b-green">Order Flow</span>
+    <span class="badge b-purple">Footprint Charts</span>
+    <span class="badge b-gold">Volume Profile</span>
+    <span class="badge b-blue">LVN Playbook</span>
+    <span class="badge b-orange">Triple-A</span>
+    <span class="badge b-green">Absorption</span>
+    <span class="badge b-blue">CVD</span>
+    <span class="badge b-purple">DeepCharts</span>
+    <span class="badge b-orange">NQ Futures</span>
+    <span class="badge b-green">NY Session</span>
+    <span class="badge b-blue">London Session</span>
+    <span class="badge b-gold">Mean Reversion</span>
+    <span class="badge b-blue">Trend Following</span>
+    <span class="badge b-red">Risk Management</span>
+    <span class="badge b-purple">MQL5</span>
+    <span class="badge b-green">MT5 Automation</span>
+    <span class="badge b-orange">Prop Firm</span>
+    <span class="badge b-gold">World Cup</span>
+    <span class="badge b-blue">Fabervaale</span>
+    <span class="badge b-purple">ChartFanatics</span>
+  </div>
+</div>
+
+<!-- Footer -->
+<div style="text-align:center;padding:32px 40px;color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:.7rem;border-top:1px solid var(--border)">
+  GODMODE Encyclopedia — Fabio Valentini × ChartFanatics × Fabervaale × DeepCharts<br>
+  Synthesised from 35+ videos, official strategy playbooks, bootcamp content — April 2026<br>
+  <span style="color:var(--acc);margin-top:6px;display:block">For educational reference and automation development only. Trade at your own risk.</span>
+</div>
+
+</div><!-- /main -->
+
+<script>
+// Active nav highlighting on scroll
+const sections = document.querySelectorAll('.section[id]');
+const navLinks = document.querySelectorAll('.nav-item');
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if(e.isIntersecting) {
+      navLinks.forEach(l => l.classList.remove('active'));
+      const active = document.querySelector('.nav-item[href="#'+e.target.id+'"]');
+      if(active) active.classList.add('active');
+    }
+  });
+}, {rootMargin: '-20% 0px -70% 0px'});
+sections.forEach(s => obs.observe(s));
+</script>
+</body>
+</html>

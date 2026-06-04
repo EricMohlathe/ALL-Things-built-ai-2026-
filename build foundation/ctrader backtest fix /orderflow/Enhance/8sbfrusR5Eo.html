@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>V20 — The ULTIMATE Wyckoff Trading Course</title>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Nunito:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cream:#FAF6F0;--dark:#0D1B2A;--card:#fff;
+  --green:#2E7D32;--gl:#E8F5E9;
+  --blue:#1565C0;--bl:#E3F2FD;
+  --orange:#E65100;--ol:#FFF3E0;
+  --purple:#6A1B9A;--pl:#F3E5F5;
+  --red:#C62828;--rl:#FFEBEE;
+  --yellow:#F9A825;--yl:#FFFDE7;
+  --teal:#00695C;--tl:#E0F2F1;
+  --gold:#FFD700;
+  --text:#2C2C2C;--text2:#555;--border:#D4C5B0;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--cream);font-family:'Nunito',sans-serif;color:var(--text);line-height:1.75;font-size:15px}
+
+/* ── HERO ── */
+.hero{background:linear-gradient(135deg,#0D1B2A 0%,#1B2838 50%,#16213E 100%);color:#fff;padding:50px 40px 40px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 15% 50%,rgba(255,140,0,.12) 0%,transparent 55%),radial-gradient(ellipse at 85% 30%,rgba(0,200,255,.1) 0%,transparent 55%)}
+.hero-top{display:flex;align-items:flex-start;gap:24px;position:relative;flex-wrap:wrap}
+.hero-num{font-family:'JetBrains Mono',monospace;font-size:11px;background:var(--gold);color:#000;padding:4px 12px;border-radius:4px;font-weight:700;white-space:nowrap;margin-top:4px}
+.hero h1{font-family:'Caveat',cursive;font-size:clamp(28px,4vw,48px);font-weight:700;color:var(--gold);line-height:1.2;flex:1}
+.hero-channel{font-size:13px;color:#90CAF9;margin-top:8px;position:relative}
+.hero-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;position:relative}
+.htag{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#E0E0E0;font-size:11px;padding:4px 12px;border-radius:20px;font-family:'JetBrains Mono',monospace}
+.hero-link{display:inline-flex;align-items:center;gap:8px;background:var(--gold);color:#000;font-weight:800;font-size:13px;padding:10px 22px;border-radius:8px;text-decoration:none;margin-top:18px;position:relative}
+
+/* ── CONTENT ── */
+.wrap{max-width:1100px;margin:0 auto;padding:40px 30px}
+
+/* ── SECTION TITLES ── */
+.sec-title{font-family:'Caveat',cursive;font-size:32px;color:var(--green);margin:40px 0 16px;border-bottom:2px solid var(--border);padding-bottom:6px}
+.sec-sub{font-size:16px;color:var(--text2);margin-bottom:20px}
+
+/* ── BOXES ── */
+.box{border-radius:10px;padding:20px 24px;margin:18px 0;border-left:5px solid}
+.box h4{font-size:15px;font-weight:800;margin-bottom:10px}
+.bg{background:var(--gl);border-color:var(--green)} .bg h4{color:var(--green)}
+.bb{background:var(--bl);border-color:var(--blue)} .bb h4{color:var(--blue)}
+.bo{background:var(--ol);border-color:var(--orange)} .bo h4{color:var(--orange)}
+.bp{background:var(--pl);border-color:var(--purple)} .bp h4{color:var(--purple)}
+.br{background:var(--rl);border-color:var(--red)} .br h4{color:var(--red)}
+.by{background:var(--yl);border-color:var(--yellow)} .by h4{color:#795548}
+.bt{background:var(--tl);border-color:var(--teal)} .bt h4{color:var(--teal)}
+
+/* ── GRIDS ── */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+@media(max-width:768px){.g2,.g3{grid-template-columns:1fr}}
+
+/* ── TABLE ── */
+table{width:100%;border-collapse:collapse;font-size:14px;margin:18px 0}
+th{background:var(--dark);color:var(--gold);padding:11px 14px;text-align:left;font-size:12px;letter-spacing:.5px}
+td{padding:10px 14px;border-bottom:1px solid #EDE5D8;color:var(--text2);vertical-align:top}
+tr:nth-child(even) td{background:#F7F3EE}
+
+/* ── CODE ── */
+.code{background:#0D1B2A;color:#B0C4DE;font-family:'JetBrains Mono',monospace;font-size:13px;padding:18px 20px;border-radius:8px;margin:16px 0;overflow-x:auto;line-height:1.9;border-left:4px solid var(--gold)}
+.cg{color:#A5D6A7} .cy{color:var(--gold)} .cc{color:#667} .cm{color:#CE93D8}
+
+/* ── SVG DIAGRAM ── */
+.diagram{background:#fff;border-radius:12px;padding:24px;margin:24px 0;border:1px solid var(--border);box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.diagram-title{font-family:'Caveat',cursive;font-size:24px;color:var(--green);text-align:center;margin-bottom:16px}
+
+/* ── STEPS ── */
+.steps{list-style:none;counter-reset:s}
+.step{counter-increment:s;display:flex;gap:14px;margin:12px 0;align-items:flex-start;font-size:14px;color:var(--text2)}
+.step::before{content:counter(s);background:var(--green);color:#fff;min-width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0;margin-top:2px}
+
+/* ── TERM PILL ── */
+.term{color:var(--teal);font-weight:800}
+.hl{background:linear-gradient(120deg,rgba(255,215,0,.35),rgba(255,215,0,.15));padding:1px 5px;border-radius:3px;font-weight:700}
+
+/* ── FORMULA ── */
+.formula{background:#0D1B2A;color:var(--gold);font-family:'JetBrains Mono',monospace;font-size:13px;padding:16px 20px;border-radius:8px;margin:14px 0;line-height:2}
+
+/* ── CONCEPT CARD ── */
+.ccard{background:#fff;border:1px solid var(--border);border-radius:10px;padding:18px;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.ccard-icon{font-size:28px;margin-bottom:8px}
+.ccard h4{font-size:14px;font-weight:800;color:var(--dark);margin-bottom:6px}
+.ccard p{font-size:13px;color:var(--text2);line-height:1.6}
+
+/* ── QUIZ ── */
+.quiz{background:#fff;border-radius:12px;padding:22px;border:1px solid var(--border);margin:14px 0}
+.quiz-q{font-weight:700;margin-bottom:12px;font-size:15px}
+.quiz-opt{background:#F7F3EE;border:1px solid var(--border);border-radius:6px;padding:10px 14px;font-size:13px;cursor:pointer;margin:6px 0;transition:.15s;color:var(--text2)}
+.quiz-opt:hover{border-color:var(--green);background:var(--gl);color:var(--green)}
+.ans{display:none;background:var(--gl);border:1px solid var(--green);border-radius:8px;padding:12px;font-size:13px;color:var(--green);margin-top:10px}
+.show-ans{background:var(--dark);color:var(--gold);border:none;padding:8px 18px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;font-family:'JetBrains Mono',monospace;margin-top:8px}
+
+/* ── KEY TAKEAWAYS ── */
+.takeaway{background:var(--dark);color:#E0E0E0;border-radius:12px;padding:28px;margin:30px 0}
+.takeaway h3{font-family:'Caveat',cursive;font-size:28px;color:var(--gold);margin-bottom:16px}
+.takeaway ul{list-style:none;padding:0}
+.takeaway li{display:flex;gap:12px;margin:10px 0;font-size:14px}
+.takeaway li::before{content:'⚡';flex-shrink:0}
+
+/* ── DIVIDERS ── */
+.div-grad{height:3px;background:linear-gradient(90deg,transparent,var(--gold),var(--orange),var(--gold),transparent);margin:36px 0;border-radius:2px}
+.div-dots{text-align:center;color:var(--border);font-size:20px;letter-spacing:8px;margin:28px 0}
+
+/* ── BACK BUTTON ── */
+.back{position:fixed;bottom:28px;right:28px;background:var(--gold);color:#000;width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;text-decoration:none;box-shadow:0 4px 16px rgba(0,0,0,.25);z-index:99;font-size:18px}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-top">
+    <span class="hero-num">V20</span>
+    <div style="flex:1">
+      <h1>The ULTIMATE Wyckoff Trading Course</h1>
+      <div class="hero-channel">📺 Fractal Flow — Pro Trading Strategies &nbsp;·&nbsp; ⏱ ~90 min &nbsp;·&nbsp; 🏆 Grade: A+</div>
+      <div class="hero-tags"><span class="htag">Wyckoff</span> <span class="htag">Accumulation</span> <span class="htag">Distribution</span> <span class="htag">Spring</span> <span class="htag">Upthrust</span> <span class="htag">SOS</span> <span class="htag">SOW</span> <span class="htag">Phases</span></div>
+      <a class="hero-link" href="https://www.youtube.com/watch?v=8sbfrusR5Eo" target="_blank">▶ Watch on YouTube</a>
+    </div>
+  </div>
+</div>
+<div class="wrap">
+
+<h2 class="sec-title">Overview</h2>
+<p>Fractal Flow's Wyckoff course is the definitive modern interpretation of Richard Wyckoff's 100-year-old methodology. The video's power lies in showing how Wyckoff's phases translate directly to modern price action in forex and crypto — and how order flow provides the confirmation signals Wyckoff himself couldn't see.</p>
+
+<div class="box bg"><h4>🎯 Why Wyckoff Still Works</h4>
+<p>Wyckoff described institutional behavior in the 1930s. That behavior is <span class="hl">unchanged</span> because it is driven by the mathematical constraints of large-order execution — the same constraints that exist today. The Spring is the Spring in 2026 the same as it was in 1936. The patterns persist because the institutional need to accumulate at low prices and distribute at high prices is fundamental and permanent.</p></div>
+
+<h2 class="sec-title">1. Wyckoff Accumulation — All 5 Phases</h2>
+<div class="diagram">
+<div class="diagram-title">Wyckoff Accumulation Schematic</div>
+<svg viewBox="0 0 800 240" xmlns="http://www.w3.org/2000/svg" style="width:100%">
+  <rect width="800" height="240" fill="#0D1B2A" rx="8"/>
+  <!-- Phase A -->
+  <!-- Downtrend -->
+  <polyline points="30,50 100,150" fill="none" stroke="#EF9A9A" stroke-width="2.5"/>
+  <text x="35" y="40" fill="#EF9A9A" font-size="10">Downtrend</text>
+  <!-- SC -->
+  <polyline points="100,150 120,195 140,120" fill="none" stroke="#4CAF50" stroke-width="2.5"/>
+  <text x="105" y="215" fill="#A5D6A7" font-size="10">SC</text>
+  <!-- AR -->
+  <text x="135" y="110" fill="#FFD700" font-size="10">AR</text>
+  <!-- ST -->
+  <polyline points="140,120 170,170 190,130" fill="none" stroke="#4CAF50" stroke-width="2"/>
+  <text x="168" y="185" fill="#B0C4DE" font-size="10">ST</text>
+  <!-- Phase B range -->
+  <rect x="190" y="115" width="200" height="70" fill="rgba(255,255,255,.04)" rx="3" stroke="rgba(255,255,255,.2)" stroke-dasharray="4,3"/>
+  <polyline points="190,130 220,165 255,125 290,170 325,130 365,160 390,125" fill="none" stroke="#90CAF9" stroke-width="1.5"/>
+  <text x="270" y="100" fill="#90CAF9" font-size="10">Phase B — Building Cause</text>
+  <!-- Spring -->
+  <polyline points="390,125 420,190 440,110" fill="none" stroke="#FFD700" stroke-width="3"/>
+  <text x="410" y="215" fill="#FFD700" font-size="11" font-weight="bold">SPRING</text>
+  <!-- SOS -->
+  <polyline points="440,110 480,90 510,100" fill="none" stroke="#4CAF50" stroke-width="2.5"/>
+  <text x="465" y="82" fill="#A5D6A7" font-size="10">SOS</text>
+  <!-- LPS + Markup -->
+  <polyline points="510,100 540,120 570,70 610,50 650,30" fill="none" stroke="#4CAF50" stroke-width="2.5"/>
+  <text x="540" y="140" fill="#A5D6A7" font-size="10">LPS</text>
+  <text x="640" y="25" fill="#FFD700" font-size="11">MARKUP →</text>
+  <!-- Phase labels -->
+  <text x="30" y="230" fill="#B0C4DE" font-size="11">← Phase A →</text>
+  <text x="190" y="230" fill="#B0C4DE" font-size="11">←──── Phase B ────→</text>
+  <text x="405" y="230" fill="#FFD700" font-size="11">Phase C</text>
+  <text x="475" y="230" fill="#A5D6A7" font-size="11">Phase D</text>
+  <text x="580" y="230" fill="#A5D6A7" font-size="11">Phase E</text>
+</svg>
+</div>
+
+<h2 class="sec-title">2. Phase-by-Phase Breakdown</h2>
+<table>
+<tr><th>Phase</th><th>Events</th><th>What's Happening</th><th>Action</th></tr>
+<tr><td><strong>Phase A</strong></td><td>SC (Selling Climax), AR (Automatic Rally), ST (Secondary Test)</td><td>Downtrend stopping. Sellers exhausting. First institutional buying appears.</td><td>Observe. Do not buy yet.</td></tr>
+<tr><td><strong>Phase B</strong></td><td>Multiple tests of SC low and AR high. Range established.</td><td>Institutions quietly accumulating. Supply being absorbed. Retail confused by sideways chop.</td><td>Map the range. Mark SC and AR as the boundaries.</td></tr>
+<tr><td><strong>Phase C</strong></td><td>The Spring (false break below SC)</td><td>Final shakeout. Weak longs exit. Institutions buy the panic. This is the last good price.</td><td>Buy the Spring with confirmation (close back above SC + volume)</td></tr>
+<tr><td><strong>Phase D</strong></td><td>LPS (Last Point of Support), SOS (Sign of Strength)</td><td>Trend beginning. Higher lows forming. SOS: price breaks above AR with volume = breakout.</td><td>Add on LPS pullbacks. Breakout continuation long.</td></tr>
+<tr><td><strong>Phase E</strong></td><td>Markup — sustained uptrend</td><td>Cause created in Phases A-C now generates effect. Price advances strongly.</td><td>Hold longs. Trail stop. Exit on distribution signals.</td></tr>
+</table>
+
+<h2 class="sec-title">3. Confirming the Spring with Modern OF</h2>
+<div class="box bo"><h4>Wyckoff Spring + Order Flow Confirmation</h4>
+<p>Wyckoff didn't have footprint charts or CVD. Modern traders do. Adding OF confirmation to the Spring dramatically increases accuracy:<br><br>
+<span class="term">Footprint at the Spring:</span> Heavy sell volume absorbed → classic absorption signal. Buyers defending the level.<br>
+<span class="term">CVD during Spring:</span> CVD falls (sellers active) but price barely new lows → bullish divergence.<br>
+<span class="term">Volume:</span> Spring bar volume should be BELOW the SC volume (less supply than the climax). If Spring has more volume than SC → genuine breakdown, not Spring.<br><br>
+<span class="hl">Classic Spring checklist: below SC low → close back above → below-average volume → CVD divergence → BUY on close back above</span></p></div>
+
+<div class="takeaway">
+<h3>⚡ Key Takeaways</h3>
+<ul>
+<li>Wyckoff's 5 phases are still visible in every modern liquid market — the pattern is timeless</li>
+<li>The Spring is the single best trade entry in all of Wyckoff: tight SL, enormous potential profit</li>
+<li>Phase C Spring confirmation: close back above SC + below-average volume + CVD divergence</li>
+<li>LPS in Phase D is the second-best Wyckoff entry — trend confirmed, higher low = continuation</li>
+<li>Fractal Flow's key addition: use order flow to confirm the Spring and LPS instead of guessing</li>
+</ul>
+</div>
+
+</div>
+
+<a href="index.html" class="back" title="Back to Index">←</a>
+<script>
+document.querySelectorAll('.show-ans').forEach(btn=>{{
+  btn.addEventListener('click',()=>{{
+    const a=btn.nextElementSibling;
+    a.style.display=a.style.display==='block'?'none':'block';
+    btn.textContent=a.style.display==='block'?'Hide Answer':'Show Answer';
+  }});
+}});
+</script>
+</body></html>

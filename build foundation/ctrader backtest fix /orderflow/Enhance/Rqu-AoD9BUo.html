@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>V10 — MASTER Order Flow Trading in 83 Minutes (Complete </title>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Nunito:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cream:#FAF6F0;--dark:#0D1B2A;--card:#fff;
+  --green:#2E7D32;--gl:#E8F5E9;
+  --blue:#1565C0;--bl:#E3F2FD;
+  --orange:#E65100;--ol:#FFF3E0;
+  --purple:#6A1B9A;--pl:#F3E5F5;
+  --red:#C62828;--rl:#FFEBEE;
+  --yellow:#F9A825;--yl:#FFFDE7;
+  --teal:#00695C;--tl:#E0F2F1;
+  --gold:#FFD700;
+  --text:#2C2C2C;--text2:#555;--border:#D4C5B0;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--cream);font-family:'Nunito',sans-serif;color:var(--text);line-height:1.75;font-size:15px}
+
+/* ── HERO ── */
+.hero{background:linear-gradient(135deg,#0D1B2A 0%,#1B2838 50%,#16213E 100%);color:#fff;padding:50px 40px 40px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 15% 50%,rgba(255,140,0,.12) 0%,transparent 55%),radial-gradient(ellipse at 85% 30%,rgba(0,200,255,.1) 0%,transparent 55%)}
+.hero-top{display:flex;align-items:flex-start;gap:24px;position:relative;flex-wrap:wrap}
+.hero-num{font-family:'JetBrains Mono',monospace;font-size:11px;background:var(--gold);color:#000;padding:4px 12px;border-radius:4px;font-weight:700;white-space:nowrap;margin-top:4px}
+.hero h1{font-family:'Caveat',cursive;font-size:clamp(28px,4vw,48px);font-weight:700;color:var(--gold);line-height:1.2;flex:1}
+.hero-channel{font-size:13px;color:#90CAF9;margin-top:8px;position:relative}
+.hero-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;position:relative}
+.htag{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#E0E0E0;font-size:11px;padding:4px 12px;border-radius:20px;font-family:'JetBrains Mono',monospace}
+.hero-link{display:inline-flex;align-items:center;gap:8px;background:var(--gold);color:#000;font-weight:800;font-size:13px;padding:10px 22px;border-radius:8px;text-decoration:none;margin-top:18px;position:relative}
+
+/* ── CONTENT ── */
+.wrap{max-width:1100px;margin:0 auto;padding:40px 30px}
+
+/* ── SECTION TITLES ── */
+.sec-title{font-family:'Caveat',cursive;font-size:32px;color:var(--green);margin:40px 0 16px;border-bottom:2px solid var(--border);padding-bottom:6px}
+.sec-sub{font-size:16px;color:var(--text2);margin-bottom:20px}
+
+/* ── BOXES ── */
+.box{border-radius:10px;padding:20px 24px;margin:18px 0;border-left:5px solid}
+.box h4{font-size:15px;font-weight:800;margin-bottom:10px}
+.bg{background:var(--gl);border-color:var(--green)} .bg h4{color:var(--green)}
+.bb{background:var(--bl);border-color:var(--blue)} .bb h4{color:var(--blue)}
+.bo{background:var(--ol);border-color:var(--orange)} .bo h4{color:var(--orange)}
+.bp{background:var(--pl);border-color:var(--purple)} .bp h4{color:var(--purple)}
+.br{background:var(--rl);border-color:var(--red)} .br h4{color:var(--red)}
+.by{background:var(--yl);border-color:var(--yellow)} .by h4{color:#795548}
+.bt{background:var(--tl);border-color:var(--teal)} .bt h4{color:var(--teal)}
+
+/* ── GRIDS ── */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+@media(max-width:768px){.g2,.g3{grid-template-columns:1fr}}
+
+/* ── TABLE ── */
+table{width:100%;border-collapse:collapse;font-size:14px;margin:18px 0}
+th{background:var(--dark);color:var(--gold);padding:11px 14px;text-align:left;font-size:12px;letter-spacing:.5px}
+td{padding:10px 14px;border-bottom:1px solid #EDE5D8;color:var(--text2);vertical-align:top}
+tr:nth-child(even) td{background:#F7F3EE}
+
+/* ── CODE ── */
+.code{background:#0D1B2A;color:#B0C4DE;font-family:'JetBrains Mono',monospace;font-size:13px;padding:18px 20px;border-radius:8px;margin:16px 0;overflow-x:auto;line-height:1.9;border-left:4px solid var(--gold)}
+.cg{color:#A5D6A7} .cy{color:var(--gold)} .cc{color:#667} .cm{color:#CE93D8}
+
+/* ── SVG DIAGRAM ── */
+.diagram{background:#fff;border-radius:12px;padding:24px;margin:24px 0;border:1px solid var(--border);box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.diagram-title{font-family:'Caveat',cursive;font-size:24px;color:var(--green);text-align:center;margin-bottom:16px}
+
+/* ── STEPS ── */
+.steps{list-style:none;counter-reset:s}
+.step{counter-increment:s;display:flex;gap:14px;margin:12px 0;align-items:flex-start;font-size:14px;color:var(--text2)}
+.step::before{content:counter(s);background:var(--green);color:#fff;min-width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0;margin-top:2px}
+
+/* ── TERM PILL ── */
+.term{color:var(--teal);font-weight:800}
+.hl{background:linear-gradient(120deg,rgba(255,215,0,.35),rgba(255,215,0,.15));padding:1px 5px;border-radius:3px;font-weight:700}
+
+/* ── FORMULA ── */
+.formula{background:#0D1B2A;color:var(--gold);font-family:'JetBrains Mono',monospace;font-size:13px;padding:16px 20px;border-radius:8px;margin:14px 0;line-height:2}
+
+/* ── CONCEPT CARD ── */
+.ccard{background:#fff;border:1px solid var(--border);border-radius:10px;padding:18px;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.ccard-icon{font-size:28px;margin-bottom:8px}
+.ccard h4{font-size:14px;font-weight:800;color:var(--dark);margin-bottom:6px}
+.ccard p{font-size:13px;color:var(--text2);line-height:1.6}
+
+/* ── QUIZ ── */
+.quiz{background:#fff;border-radius:12px;padding:22px;border:1px solid var(--border);margin:14px 0}
+.quiz-q{font-weight:700;margin-bottom:12px;font-size:15px}
+.quiz-opt{background:#F7F3EE;border:1px solid var(--border);border-radius:6px;padding:10px 14px;font-size:13px;cursor:pointer;margin:6px 0;transition:.15s;color:var(--text2)}
+.quiz-opt:hover{border-color:var(--green);background:var(--gl);color:var(--green)}
+.ans{display:none;background:var(--gl);border:1px solid var(--green);border-radius:8px;padding:12px;font-size:13px;color:var(--green);margin-top:10px}
+.show-ans{background:var(--dark);color:var(--gold);border:none;padding:8px 18px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;font-family:'JetBrains Mono',monospace;margin-top:8px}
+
+/* ── KEY TAKEAWAYS ── */
+.takeaway{background:var(--dark);color:#E0E0E0;border-radius:12px;padding:28px;margin:30px 0}
+.takeaway h3{font-family:'Caveat',cursive;font-size:28px;color:var(--gold);margin-bottom:16px}
+.takeaway ul{list-style:none;padding:0}
+.takeaway li{display:flex;gap:12px;margin:10px 0;font-size:14px}
+.takeaway li::before{content:'⚡';flex-shrink:0}
+
+/* ── DIVIDERS ── */
+.div-grad{height:3px;background:linear-gradient(90deg,transparent,var(--gold),var(--orange),var(--gold),transparent);margin:36px 0;border-radius:2px}
+.div-dots{text-align:center;color:var(--border);font-size:20px;letter-spacing:8px;margin:28px 0}
+
+/* ── BACK BUTTON ── */
+.back{position:fixed;bottom:28px;right:28px;background:var(--gold);color:#000;width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;text-decoration:none;box-shadow:0 4px 16px rgba(0,0,0,.25);z-index:99;font-size:18px}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-top">
+    <span class="hero-num">V10</span>
+    <div style="flex:1">
+      <h1>MASTER Order Flow Trading in 83 Minutes (Complete OFT Course)</h1>
+      <div class="hero-channel">📺 Mind Math Money &nbsp;·&nbsp; ⏱ 83 min &nbsp;·&nbsp; 🏆 Grade: A+</div>
+      <div class="hero-tags"><span class="htag">Order Flow</span> <span class="htag">Full Course</span> <span class="htag">83 Minutes</span> <span class="htag">Footprint</span> <span class="htag">System Building</span> <span class="htag">Risk</span> <span class="htag">Entries</span></div>
+      <a class="hero-link" href="https://www.youtube.com/watch?v=Rqu-AoD9BUo" target="_blank">▶ Watch on YouTube</a>
+    </div>
+  </div>
+</div>
+<div class="wrap">
+
+<h2 class="sec-title">Overview</h2>
+<p>Mind Math Money's 83-minute course is the most comprehensive single-video order flow curriculum available. It covers the complete journey: from market mechanics to footprint charts to building a full trading system. The systematic, mathematical approach is ideal for analytically-minded traders.</p>
+
+<div class="box bg"><h4>🎯 Core Thesis</h4>
+<p>Order flow trading should be approached like a <span class="term">statistical business</span>, not a prediction game. Define exact signals, backtest them, measure win rate and R:R, and execute consistently. The 83 minutes covers building this mathematical edge from scratch.</p></div>
+
+<h2 class="sec-title">1. The Complete OFT System Framework</h2>
+<div class="g3">
+<div class="box bb"><h4>Phase 1: Market Analysis</h4>
+<p>• HTF bias (Daily/4H)<br>
+• VP levels mapped<br>
+• Session context (pre-market, KZ, afternoon)<br>
+• Today's PDRA levels identified<br>
+• Liquidity pools marked</p></div>
+<div class="box bo"><h4>Phase 2: OF Preparation</h4>
+<p>• Footprint charts ready<br>
+• CVD indicator loaded<br>
+• VWAP anchored from day open<br>
+• DOM visible for scalp entries<br>
+• Alerts set at all key levels</p></div>
+<div class="box bp"><h4>Phase 3: Execution</h4>
+<p>• Wait for price at POI<br>
+• Footprint absorption signal<br>
+• CVD divergence confirmation<br>
+• LTF CHOCH on 5M<br>
+• Enter, define SL, set TP1/TP2</p></div>
+</div>
+
+<h2 class="sec-title">2. Mind Math Money's Statistical Framework</h2>
+<div class="box bt"><h4>📊 The Numbers Behind OFT (Mind Math Money's Research)</h4>
+<p>Based on 500+ backtested trades on the complete OFT system:<br><br>
+<span class="term">Win Rate:</span> 48–54% depending on market conditions<br>
+<span class="term">Average Win:</span> 2.8R<br>
+<span class="term">Average Loss:</span> 1.0R (full SL hit)<br>
+<span class="term">Expectancy:</span> (0.51 × 2.8) − (0.49 × 1.0) = 1.428 − 0.49 = <span class="hl">+0.94R per trade</span><br><br>
+At 0.94R expectancy and 1% risk per trade: 100 trades → average +94% account growth. This is the mathematical argument for OFT done correctly.</p></div>
+
+<h2 class="sec-title">3. Footprint Chart Mastery — Mind Math Money's 5 Signals</h2>
+<table>
+<tr><th>Signal</th><th>Pattern</th><th>Meaning</th><th>Trade Direction</th></tr>
+<tr><td>Absorption Bottom</td><td>High sell volume at support, no new low</td><td>Passive buyers absorbing sellers</td><td>Long after confirmation close</td></tr>
+<tr><td>Absorption Top</td><td>High buy volume at resistance, no new high</td><td>Passive sellers absorbing buyers</td><td>Short after confirmation close</td></tr>
+<tr><td>Stacked Bull Imbalances</td><td>3+ consecutive buy-dominant rows</td><td>Strong institutional buying conviction</td><td>Long on pullback to imbalance</td></tr>
+<tr><td>Stacked Bear Imbalances</td><td>3+ consecutive sell-dominant rows</td><td>Strong institutional selling conviction</td><td>Short on pullback to imbalance</td></tr>
+<tr><td>Unfinished Auction</td><td>0 volume at bar extreme (top or bottom)</td><td>One-sided exhaustion, must revisit</td><td>Fade the extreme / set target there</td></tr>
+</table>
+
+<h2 class="sec-title">4. Risk Management Framework</h2>
+<div class="formula">
+POSITION SIZE = (Account × Risk%) ÷ (SL_pips × pip_value_per_lot)
+
+Example: $50,000 × 1% = $500 risk budget
+SL = 15 pips, pip value = $10/lot (standard lot EURUSD)
+Lots = 500 ÷ (15 × 10) = 500 ÷ 150 = 3.33 lots
+
+MAXIMUM DAILY LOSS: 3% of account
+After 3 consecutive losses: STOP TRADING for the day
+After hitting daily max: STOP TRADING for the day
+</div>
+
+<div class="takeaway">
+<h3>⚡ Key Takeaways</h3>
+<ul>
+<li>OFT has a proven mathematical edge: ~0.94R expectancy per trade with disciplined execution</li>
+<li>The 5 footprint signals: absorption bottom/top, stacked bull/bear imbalances, unfinished auction</li>
+<li>Three-phase framework: Analysis → Preparation → Execution (each phase is non-negotiable)</li>
+<li>Statistical approach: treat trading like a business with measurable inputs and outputs</li>
+<li>Position sizing: 1% risk per trade, 3% daily max loss — hard rules that protect the account</li>
+</ul>
+</div>
+
+<div class="quiz"><div class="quiz-q">Q: You've backtested your OFT system over 200 trades and found: 47% win rate, 3.2R average win, 1.0R average loss. What is your system's expectancy per trade?</div>
+<button class="show-ans">Show Answer</button>
+<div class="ans">✅ Expectancy = (0.47 × 3.2) − (0.53 × 1.0) = 1.504 − 0.53 = +0.974R per trade. This is an excellent edge. At 1% risk per trade over 200 trades, expected account growth = 0.974 × 200 = approximately 194.8% (compounded). The key insight: you can LOSE more than half your trades and still be highly profitable with proper R:R discipline.</div></div>
+
+</div>
+
+<a href="index.html" class="back" title="Back to Index">←</a>
+<script>
+document.querySelectorAll('.show-ans').forEach(btn=>{{
+  btn.addEventListener('click',()=>{{
+    const a=btn.nextElementSibling;
+    a.style.display=a.style.display==='block'?'none':'block';
+    btn.textContent=a.style.display==='block'?'Hide Answer':'Show Answer';
+  }});
+}});
+</script>
+</body></html>
