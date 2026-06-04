@@ -1,5 +1,92 @@
 # CHANGELOG
 
+## v1.1.0 — §25 External Data Integration (cTrader + MT5)
+
+Source authority: brief §1–§24 + Appendix A retained verbatim, plus a new
+§25 documented in `docs/external_data_integration.md`. All bridges default
+OFF — base build per §1–§24 unchanged when bridges disabled.
+
+Backports valuable patterns from the supplied corpus (Frozen Tundra Sierra
+Chart studies + Bookmap Python API reference) into the existing cTrader and
+MT5 builds. **No new platforms** — cTrader and MT5 remain the only execution
+targets per operator decision.
+
+### New cTrader modules (`ctrader/GODMODE_OFEA/Modules/`)
+
+- `IcebergTracker.cs` — true microstructure iceberg detector with consec-print
+  + max-depth-observed + refill-ratio rule. Adapted from `TapeOnChart.cpp`.
+  Replaces the price-pattern proxy in Setup #25.
+- `PaceOfTape.cs` — lagging-max pace-of-tape ratio. Adapted from
+  `pace_of_tape.cpp`. Surfaces N-V notification.
+- `SierraChartBridge.cs` — file-based bridge consuming Sierra Chart's
+  `JIGSAW_Export.cpp` CSV (POC/VAH/VAL/dVWAP/std-dev/ovnH/ovnL/EQ levels).
+- `BookmapBridge.cs` — file-based bridge tailing JSON-lines from a companion
+  Bookmap Python addon (DEPTH_BBO / DEPTH_SUM / ICEBERG / PRESSURE events).
+- `GoogleSheetsLevels.cs` — HTTP bridge pulling operator-curated levels from
+  a shared Google Sheet via gviz CSV. Adapted from `google_sheets_importer.cpp`.
+- `AutoRiskReward.cs` — auto-draws SL/TP/entry/R:R rectangle on every fill.
+  Implements brief §9.5 "Trade Lines". Adapted from `auto_risk_reward.cpp`.
+
+### New MT5 modules (`mt5/GODMODE_OFEA/Include/`) — 1:1 mirror
+
+- `OF_IcebergTracker.mqh`
+- `OF_PaceOfTape.mqh`
+- `OF_SierraChartBridge.mqh`
+- `OF_BookmapBridge.mqh`
+- `OF_GoogleSheetsLevels.mqh` (uses `WebRequest` — operator must whitelist
+  `https://docs.google.com` in MT5 Tools → Options → Expert Advisors)
+- `OF_AutoRiskReward.mqh`
+
+### Notification cascade extensions (both platforms)
+
+Five new tags appended to N-A through N-L. Same edge-detection + per-bar
+rate-limiting per brief §4:
+
+- `N-V` — Pace-of-Tape elevated (`pace ≥ AggressionPaceThreshold`).
+- `N-W` — Bookmap-confirmed iceberg matching trade direction. Strengthens
+  GATE 6 by one absorption star.
+- `N-X` — Sierra Chart-exported level proximity. Bonuses GATE 3.
+- `N-Y` — Operator manual level proximity (Google Sheets). Bonuses GATE 3.
+
+(N-U is reserved for the Appendix A.5 adaptive-thresholds reload tag, kept
+unchanged.)
+
+### How bridges integrate with existing gate pipeline
+
+Brief §19 rule 6 gate ordering preserved. Bridge contributions are *additive
+score-only* — they cannot promote a candidate that fails F1–F5. When a
+bridge is stale or disabled the EA falls back to its native calculation
+exactly as in v1.0.0. See `docs/external_data_integration.md` §"How each
+bridge folds into the gate pipeline".
+
+### New input parameters (cTrader + MT5, all default OFF)
+
+```
+EnableSierraChartBridge / SierraChart_FilePath
+EnableBookmapBridge / Bookmap_FilePath
+EnableGoogleSheetsLevels / GoogleSheets_BaseURL / GoogleSheets_RefreshSecs
+Iceberg_MinConsecPrints / Iceberg_MinTotalVolume / Iceberg_RefillRatio
+AggressionPaceThreshold / PaceOfTape_WindowSeconds / PaceOfTape_LaggingFraction
+AutoRiskReward_Enabled / FontSize / LineWidth / ShowCurrency
+```
+
+Operators earn enablement of each bridge via measured journal data per the
+Appendix A.6 honesty contract — measure your own data, don't trust the
+estimated lifts.
+
+### Phase-2 candidates (deferred)
+
+- Wiring of `IcebergTracker` and `PaceOfTape` into the main bar-close loops
+  of `GODMODE_OFEA.mq5` and `GODMODE_OFEA.cs` (modules built and unit-test-
+  ready; main-EA wiring pending so existing v1.0.0 acceptance tests are not
+  perturbed prior to operator review).
+- Companion Bookmap Python addon to populate the Bookmap export file. (Not
+  part of the cTrader/MT5 EA build — runs operator-side.)
+- Conformance test suite update (TESTING.md Phase 6) covering bridge-stale
+  fallback and bridge-enabled regression equivalence.
+
+---
+
 ## v1.0.0 — Initial Build
 
 Source authority: brief §1–§24 + Appendix A. Implementation traceability per module is documented in `docs/architecture.md`.

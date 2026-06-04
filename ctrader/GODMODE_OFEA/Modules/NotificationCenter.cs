@@ -9,12 +9,12 @@ namespace GodmodeOfea
 {
     public sealed class NotificationCenter
     {
-        private readonly Algo _robot;
+        private readonly Robot _robot;
         private readonly bool _sound, _push, _email, _enable;
         private readonly Dictionary<string, DateTime> _lastBarFired = new();
         private readonly Func<DateTime> _currentBarTime;
 
-        public NotificationCenter(Algo robot, bool enable, bool sound, bool push, bool email,
+        public NotificationCenter(Robot robot, bool enable, bool sound, bool push, bool email,
             Func<DateTime> currentBarTime)
         {
             _robot = robot; _enable = enable; _sound = sound; _push = push; _email = email;
@@ -70,5 +70,25 @@ namespace GodmodeOfea
             Fire("N-K_" + ev, $"Position event: {ev}", SoundType.PositiveNotification);
         public void NL_KillSwitch(string reason) =>
             Fire("N-L_" + reason, $"KILL SWITCH: {reason}", SoundType.NegativeNotification, true);
+
+        // N-V: Pace-of-Tape elevated (microstructure aggression confirmation).
+        // Brief §22 marginal-gain layer — see docs/external_data_integration.md.
+        public void NV_PaceOfTape(double pace) =>
+            Fire("N-V", $"Pace-of-Tape elevated pace={pace:F2}", SoundType.PositiveNotification);
+
+        // N-W: Bookmap-confirmed iceberg (true microstructure, not the price-pattern proxy).
+        // Fired when the BookmapBridge surfaces an ICEBERG event matching trade direction.
+        public void NW_BookmapIceberg(string side, double price, int consec, double vol, double maxDepth) =>
+            Fire("N-W", $"Bookmap iceberg {side} @ {price:F5} consec={consec} vol={vol:F0} maxDepth={maxDepth:F0}",
+                 SoundType.Announcement, true);
+
+        // N-X: Sierra Chart level proximity — close to a JIGSAW_Export-derived
+        // POC/VAH/VAL/dVWAP/std-dev band. Strengthens GATE 3 location when present.
+        public void NX_SierraChartLevel(string label, double price) =>
+            Fire("N-X", $"Sierra Chart {label} @ {price:F5}", SoundType.PositiveNotification);
+
+        // N-Y: Operator manual level proximity (Google Sheets-imported).
+        public void NY_ManualLevel(string note, double price) =>
+            Fire("N-Y", $"Manual level '{note}' @ {price:F5}", SoundType.PositiveNotification);
     }
 }

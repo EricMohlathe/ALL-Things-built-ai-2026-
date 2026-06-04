@@ -25,7 +25,7 @@ using cAlgo.API.Internals;
 
 namespace GodmodeOfea
 {
-    [Robot(AccessRights = AccessRights.FileSystem, TimeZone = TimeZones.UTC)]
+    [Robot(TimeZone = TimeZones.UTC)]
     public class GODMODE_OFEA : Robot
     {
         //=== MODE & PLATFORM ===

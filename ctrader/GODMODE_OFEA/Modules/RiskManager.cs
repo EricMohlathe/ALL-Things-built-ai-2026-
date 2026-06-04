@@ -10,7 +10,7 @@ namespace GodmodeOfea
 {
     public sealed class RiskManager
     {
-        private readonly Algo _robot;
+        private readonly Robot _robot;
         private readonly Symbol _symbol;
         private readonly double _riskPct;
         private readonly double _riskHalfPct;
@@ -28,12 +28,12 @@ namespace GodmodeOfea
         private bool _spreadFilled;
         private double _spreadMedian;
 
-        public RiskManager(Algo robot, Symbol symbol, double riskPct, double riskHalf,
+        public RiskManager(Robot robot, Symbol symbol, double riskPct, double riskHalf,
                            double maxDD, int maxConsec, double spreadMult)
         {
             _robot = robot; _symbol = symbol;
             _riskPct = Math.Min(riskPct, 2.0);   // brief §12 rule 2 hard cap
-            _riskHalfPct = riskHalf;
+            _riskHalfPct = Math.Min(riskHalf, 2.0);  // §12 rule 2: also cap half-mode
             _maxDDPct = maxDD;
             _maxConsecLosses = maxConsec;
             _maxSpreadMult = spreadMult;

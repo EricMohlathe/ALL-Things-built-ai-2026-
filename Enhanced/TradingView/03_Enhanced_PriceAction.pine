@@ -1,0 +1,55 @@
+// 03_Enhanced_PriceAction.pine — BOS / CHoCH / Equal H-L / FVG
+//@version=6
+indicator("GODMODE Price Action", "OFEA·PA", overlay=true, max_labels_count=500, max_lines_count=500, max_boxes_count=500)
+
+lkb       = input.int(20, "Swing lookback")
+tolATR    = input.float(0.10, "Equal-level tol × ATR")
+showBOS   = input.bool(true,  "Show BOS / CHoCH")
+showEQ    = input.bool(true,  "Show Equal H/L")
+showFVG   = input.bool(true,  "Show FVG")
+
+// 3-bar fractal swings
+isSwingH = high[1] > high[2] and high[1] > high[0]
+isSwingL = low[1]  < low[2]  and low[1]  < low[0]
+var float lastSH = na
+var float lastSL = na
+if isSwingH
+    lastSH := high[1]
+if isSwingL
+    lastSL := low[1]
+
+// BOS / CHoCH
+bullBreak = not na(lastSH) and close > lastSH and close[1] <= lastSH
+bearBreak = not na(lastSL) and close < lastSL and close[1] >= lastSL
+plotshape(showBOS and bullBreak, "BOS↑",  location=location.belowbar, style=shape.labelup,   color=color.lime, text="BOS↑",  size=size.tiny)
+plotshape(showBOS and bearBreak, "BOS↓",  location=location.abovebar, style=shape.labeldown, color=color.red,  text="BOS↓",  size=size.tiny)
+
+// Equal highs/lows clusters
+atr  = ta.atr(14)
+tol  = tolATR * atr
+eqH  = 0
+eqL  = 0
+for i = 1 to lkb
+    if math.abs(high[i] - nz(lastSH)) <= tol
+        eqH += 1
+    if math.abs(low[i]  - nz(lastSL)) <= tol
+        eqL += 1
+hasEqH = eqH >= 2
+hasEqL = eqL >= 2
+// FVG (Fair Value Gap = 3-bar imbalance) — detection on every bar.
+fvgUp   = low > high[2]
+fvgDown = high < low[2]
+
+// Drawing only on confirmed bars to avoid runaway object counts.
+// math.max guards against negative bar_index on the very first bars of a replay.
+if barstate.isconfirmed
+    leftEq  = math.max(0, bar_index - lkb)
+    leftFvg = math.max(0, bar_index - 1)
+    if showEQ and hasEqH
+        line.new(leftEq, lastSH, bar_index, lastSH, color=color.orange, style=line.style_dashed)
+    if showEQ and hasEqL
+        line.new(leftEq, lastSL, bar_index, lastSL, color=color.orange, style=line.style_dashed)
+    if showFVG and fvgUp
+        box.new(leftFvg, low,  bar_index + 5, high[2], border_color=color.new(color.lime, 50), bgcolor=color.new(color.lime, 85))
+    if showFVG and fvgDown
+        box.new(leftFvg, high, bar_index + 5, low[2],  border_color=color.new(color.red,  50), bgcolor=color.new(color.red,  85))

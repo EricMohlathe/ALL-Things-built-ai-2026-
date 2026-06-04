@@ -1,0 +1,74 @@
+// lib_orderflow.pine — reusable order-flow primitives for TradingView.
+// Publish on TradingView once, then `import yourname/lib_orderflow/1 as of`
+// from other scripts. Exports the math from brief §11 that you'd otherwise
+// duplicate across every Pine indicator.
+//
+//@version=6
+library("lib_orderflow", overlay=true)
+
+// §11.1 — Bar delta proxy from intra-bar range position.
+export bar_delta(simple float useVolume = 1.0) =>
+    r = high - low
+    bw = r > 0 ? (close - low) / r : 0.5
+    volume * (bw - (1.0 - bw)) * useVolume
+
+// §11.1 — Running CVD with daily reset.
+export cvd_daily() =>
+    bd = bar_delta()
+    var float c = 0.0
+    c := ta.change(time("D")) != 0 ? bd : nz(c[1], 0.0) + bd
+    c
+
+// §11.4 — Absorption-star confidence (1..5).
+export absorption_stars(bool isLong) =>
+    bd = bar_delta()
+    vMean = ta.sma(volume, 20)
+    vStd  = ta.stdev(volume, 20)
+    vZ    = vStd > 0 ? (volume - vMean) / vStd : 0.0
+    dMean = ta.sma(bd, 20)
+    dStd  = ta.stdev(bd, 20)
+    dZ    = dStd > 0 ? (bd - dMean) / dStd : 0.0
+    int s = 0
+    if vZ >= 1.0
+        s := 1
+    s += vZ >= 2.0 ? 1 : 0
+    s += vZ >= 3.0 ? 1 : 0
+    s += math.abs(dZ) >= 2.0 ? 1 : 0
+    r = high - low
+    wp = r > 0 ? (isLong ? (math.min(open, close) - low) / r : (high - math.max(open, close)) / r) : 0.0
+    s += wp >= 0.4 ? 1 : 0
+    math.min(s, 5)
+
+// §11.5 — Bullish / bearish CVD divergence over 20 bars.
+export bullish_divergence() =>
+    c = cvd_daily()
+    ta.lowest(low, 20) == low and ta.lowest(c, 20) != c
+
+export bearish_divergence() =>
+    c = cvd_daily()
+    ta.highest(high, 20) == high and ta.highest(c, 20) != c
+
+// §11.6 — SAST minute-from-midnight + session classification.
+export sast_minute(simple int extra_offset_hours = 0) =>
+    h = hour(time, "UTC") + 2 + extra_offset_hours
+    h := h >= 24 ? h - 24 : h < 0 ? h + 24 : h
+    h * 60 + minute(time, "UTC")
+
+export sast_session() =>
+    sm = sast_minute()
+    sm >= 120 and sm < 600  ? "ASIAN"    : sm >= 600 and sm < 660  ? "LDN_OPEN" : sm >= 660 and sm < 930  ? "LDN_MAIN" : sm >= 930 and sm < 1050 ? "NY_OPEN"  : sm >= 1050 and sm < 1260 ? "NY_MAIN"  : "AFTER"
+
+// §11.7 — Dual-EMA HTF bias.
+export htf_bias(simple string biasTF, simple string confTF) =>
+    h4C = request.security(syminfo.tickerid, biasTF, close,             barmerge.gaps_off, barmerge.lookahead_off)
+    h4E = request.security(syminfo.tickerid, biasTF, ta.ema(close, 20), barmerge.gaps_off, barmerge.lookahead_off)
+    d1C = request.security(syminfo.tickerid, confTF, close,             barmerge.gaps_off, barmerge.lookahead_off)
+    d1E = request.security(syminfo.tickerid, confTF, ta.ema(close, 50), barmerge.gaps_off, barmerge.lookahead_off)
+    h4B = h4C > h4E * 1.0001 ? "BULL" : h4C < h4E * 0.9999 ? "BEAR" : "NEUTRAL"
+    d1B = d1C > d1E * 1.0001 ? "BULL" : d1C < d1E * 0.9999 ? "BEAR" : "NEUTRAL"
+    h4B == d1B ? h4B : "NEUTRAL"
+
+// §22 marginal-gain — Pace-of-Tape proxy (current vol vs rolling-max).
+export pace_of_tape(simple int window = 60) =>
+    mx = ta.highest(volume, window)
+    mx > 0 ? volume / mx : 0.0

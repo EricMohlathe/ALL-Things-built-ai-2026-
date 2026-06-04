@@ -1,0 +1,332 @@
+// GODMODE_OFEA_Strategy_v2.pine
+// Strategy-mode mirror of 01_GODMODE_Dashboard.pine. Same delta-source chain
+// (volumedelta → sub-TF aggregation → close-position proxy), same gate
+// pipeline, same setup priority, same R:R math. Wraps it in strategy.entry()
+// so TradingView's Strategy Tester runs it for backtesting.
+//
+// Use this for §14 acceptance numbers: open a chart, add this strategy,
+// click the Strategy Tester tab at the bottom, view Performance Summary +
+// List of Trades.
+//
+// Brief acceptance: PF ≥ 1.5, Recovery Factor ≥ 2.0, Max DD ≤ 12%, Win
+// Rate ≥ 65% on filtered trades. Win rate is downstream — chase
+// expectancy + profit factor.
+//
+//@version=6
+strategy("GODMODE_OFEA Strategy v2", "OFEA-Strat2", overlay=true,
+     initial_capital=10000,
+     default_qty_type=strategy.percent_of_equity, default_qty_value=1.0,
+     commission_type=strategy.commission.percent, commission_value=0.005,
+     slippage=2,
+     pyramiding=0,
+     max_lines_count=500, max_boxes_count=500, max_labels_count=500)
+
+// ── INPUTS ────────────────────────────────────────────────────
+gM   = "Trade direction"
+EnableLongs  = input.bool(true,  "Enable longs",  group=gM)
+EnableShorts = input.bool(true,  "Enable shorts", group=gM)
+
+gD   = "Delta source (mirrors dashboard)"
+deltaSrc = input.string("AUTO","Bar-delta source",
+     options=["AUTO","Lower-TF aggregation","Close-position proxy"], group=gD)
+subTF    = input.timeframe("1","Lower-TF for sub-bar aggregation", group=gD)
+
+gS   = "Sessions (SAST)"
+TradeLDN  = input.bool(true, "Trade LDN Main 11:00-15:30", group=gS)
+TradeNY   = input.bool(true, "Trade NY Main 17:30-21:00",  group=gS)
+NYBlackout= input.int(20,    "NY Open blackout (mins)",    group=gS)
+SAST_off  = input.int(0,     "Broker offset from UTC (hrs)", group=gS)
+
+gV   = "Volume Profile"
+VPLen = input.int(100,"VP lookback bars", group=gV)
+VPBins= input.int(50, "VP bins", minval=10, maxval=100, group=gV)
+VAPct = input.float(0.70,"Value Area %", step=0.01, group=gV)
+LVNr  = input.float(0.20,"LVN ratio",    step=0.05, group=gV)
+HVNr  = input.float(0.70,"HVN ratio",    step=0.05, group=gV)
+LocTol= input.float(0.5, "Loc tol × ATR(14)", step=0.05, group=gV)
+
+gH   = "HTF alignment"
+H4TF = input.timeframe("240","HTF Bias TF",    group=gH)
+D1TF = input.timeframe("D",  "HTF Confirm TF", group=gH)
+RequireHTF = input.bool(true, "Require HTF aligned", group=gH, tooltip="Off = take counter-HTF half-size per §7")
+
+gO   = "Order Flow"
+VolZThr   = input.float(1.5,"Vol Z threshold", step=0.1, group=gO)
+DeltaZThr = input.float(2.0,"Delta Z threshold", step=0.1, group=gO)
+MinStars  = input.int(3,    "Min absorption stars", minval=1, maxval=5, group=gO)
+DLookback = input.int(20,   "Delta lookback bars", group=gO)
+
+gR   = "Risk + Trade Mgmt (§12)"
+RiskPct          = input.float(0.5,"Risk % (cap 2.0)", minval=0.0, maxval=2.0, step=0.1, group=gR)
+RiskPct_Half     = input.float(0.25,"Half-mode Risk %", minval=0.0, maxval=2.0, step=0.05, group=gR)
+MinRR            = input.float(2.0,"Min R:R", step=0.1, group=gR)
+MaxDDPct         = input.float(5.0,"Max Daily DD % halt", group=gR)
+MaxConsec        = input.int(3,    "Max consecutive losses halt", group=gR)
+UsePartial       = input.bool(true,"Partial close at 1R (§5)", group=gR)
+PartialPct       = input.float(50.0,"Partial close %", group=gR)
+PartialAtR       = input.float(1.0,"Partial close at R", step=0.1, group=gR)
+MoveSLToBE_AtR   = input.float(1.0,"Move SL to BE at R", step=0.1, group=gR)
+ExitAtPOC        = input.bool(true,"Exit at POC for M2 (§5 70% rule)", group=gR)
+NYCloseFlatten   = input.bool(true,"Flatten at NY Main close (§12 r1)", group=gR)
+
+gZ   = "Setups (subset, priority chain)"
+En01_AbsBot   = input.bool(true,"01 AbsBot",   group=gZ)
+En02_AbsTop   = input.bool(true,"02 AbsTop",   group=gZ)
+En14_Spring   = input.bool(true,"14 Spring",   group=gZ)
+En15_Upthrust = input.bool(true,"15 Upthrust", group=gZ)
+En18_LiqSwp   = input.bool(true,"18 LiqSwp",   group=gZ)
+En05_VALBnc   = input.bool(true,"05 VAL Bounce", group=gZ)
+En06_VAHFade  = input.bool(true,"06 VAH Fade",   group=gZ)
+En07_POCRet   = input.bool(true,"07 POC Return", group=gZ)
+En03_CVDBear  = input.bool(true,"03 CVD Bear Div", group=gZ)
+En04_CVDBull  = input.bool(true,"04 CVD Bull Div", group=gZ)
+
+// ── DELTA SOURCE CHAIN (same as 01_GODMODE_Dashboard) ──────
+// ta.requestVolumeDelta() isn't a v6 built-in and would compile-error here.
+// Use sub-TF aggregation + close-position proxy as in 01_GODMODE_Dashboard.
+subD() =>
+    sr = high - low
+    sw = sr > 0 ? (close - low) / sr : 0.5
+    volume * (sw - (1.0 - sw))
+subArr = request.security_lower_tf(syminfo.tickerid, subTF, subD())
+sumSub = 0.0
+// Sum sub-bars only on confirmed parent bars — prevents intra-bar repaint.
+if barstate.isconfirmed and array.size(subArr) > 0
+    for i = 0 to array.size(subArr) - 1
+        sumSub += array.get(subArr, i)
+
+rng_ = high - low
+bw   = rng_ > 0 ? (close - low) / rng_ : 0.5
+proxy = volume * (bw - (1.0 - bw))
+
+barDelta = deltaSrc == "AUTO" ? (array.size(subArr) > 0 ? sumSub : proxy) : deltaSrc == "Lower-TF aggregation" ? (array.size(subArr) > 0 ? sumSub : proxy) : proxy
+
+// CVD with daily reset.
+isNewDay = ta.change(time("D")) != 0
+var float cvd = 0.0
+cvd := isNewDay ? barDelta : nz(cvd[1], 0.0) + barDelta
+
+volMean = ta.sma(volume, DLookback)
+volStd  = ta.stdev(volume, DLookback)
+volZ    = volStd > 0 ? (volume - volMean) / volStd : 0.0
+dMean   = ta.sma(barDelta, DLookback)
+dStd    = ta.stdev(barDelta, DLookback)
+deltaZ  = dStd > 0 ? (barDelta - dMean) / dStd : 0.0
+
+bullDiv = ta.lowest(low, 20) == low and ta.lowest(cvd, 20) != cvd
+bearDiv = ta.highest(high,20) == high and ta.highest(cvd, 20) != cvd
+
+// ── VOLUME PROFILE (compact) ─────────────────────────────────
+var array<float> binVol  = array.new<float>(VPBins, 0.0)
+var array<bool>  lvnFlag = array.new<bool>(VPBins, false)
+var array<bool>  hvnFlag = array.new<bool>(VPBins, false)
+var float vpHi = na, vpLo = na, poc = na, vah = na, val_ = na, binSize = na
+var string profShape = "UNK", marketState = "UNKNOWN"
+
+if barstate.isconfirmed and bar_index >= VPLen
+    hi = ta.highest(high, VPLen)
+    lo = ta.lowest(low,   VPLen)
+    if hi > lo
+        vpHi := hi
+        vpLo := lo
+        binSize := (hi - lo) / VPBins
+        for i = 0 to VPBins - 1
+            array.set(binVol, i, 0.0)
+        for j = 0 to VPLen - 1
+            idx = math.min(VPBins - 1, math.max(0, int((close[j] - lo) / binSize)))
+            array.set(binVol, idx, array.get(binVol, idx) + volume[j])
+        pocBin = 0
+        pocVol = array.get(binVol, 0)
+        for k = 1 to VPBins - 1
+            v = array.get(binVol, k)
+            if v > pocVol
+                pocVol := v
+                pocBin := k
+        poc := lo + (pocBin + 0.5) * binSize
+        tot = 0.0
+        for m = 0 to VPBins - 1
+            tot += array.get(binVol, m)
+        tgt = tot * VAPct
+        acc = pocVol
+        hiB = pocBin
+        loB = pocBin
+        while acc < tgt and (hiB < VPBins - 1 or loB > 0)
+            up_ = hiB < VPBins - 1 ? array.get(binVol, hiB + 1) : -1.0
+            dn_ = loB > 0           ? array.get(binVol, loB - 1) : -1.0
+            if up_ >= dn_ and up_ >= 0
+                hiB += 1
+                acc += up_
+            else if dn_ >= 0
+                loB -= 1
+                acc += dn_
+            else
+                break
+        vah := lo + (hiB + 1) * binSize
+        val_ := lo + loB * binSize
+        for n = 0 to VPBins - 1
+            v3 = array.get(binVol, n)
+            array.set(lvnFlag, n, v3 < pocVol * LVNr)
+            array.set(hvnFlag, n, v3 > pocVol * HVNr)
+        firstNz = -1
+        lastNz  = -1
+        for o = 0 to VPBins - 1
+            if array.get(binVol, o) > 0
+                if firstNz == -1
+                    firstNz := o
+                lastNz := o
+        if firstNz >= 0
+            midBin = math.floor((firstNz + lastNz) / 2)
+            upper = 0.0
+            lower = 0.0
+            for p = midBin to lastNz
+                upper += array.get(binVol, p)
+            for q = firstNz to midBin - 1
+                lower += array.get(binVol, q)
+            tot2 = upper + lower
+            skew = tot2 > 0 ? (upper - lower) / tot2 : 0.0
+            nzC = 0
+            nzS = 0.0
+            for r = 0 to VPBins - 1
+                vR = array.get(binVol, r)
+                if vR > 0
+                    nzS += vR
+                    nzC += 1
+            peak = nzC > 0 and nzS > 0 ? pocVol / (nzS / nzC) : 1.0
+            profShape := math.abs(skew) < 0.10 and peak > 2.0 ? "D" : skew > 0.20 ? "P" : skew < -0.20 ? "b" : peak < 1.3 ? "THIN" : "D"
+            marketState := profShape == "D" ? "BALANCED" : "IMBALANCED"
+
+vpLoc(price, tol) =>
+    string loc = "OUT"
+    if not na(poc) and not na(vah) and not na(val_) and not na(binSize)
+        if math.abs(price - poc) < tol
+            loc := "POC"
+        else if math.abs(price - vah) < tol
+            loc := "VAH"
+        else if math.abs(price - val_) < tol
+            loc := "VAL"
+        else
+            i2 = int((price - vpLo) / binSize)
+            if i2 >= 0 and i2 < VPBins
+                if array.get(lvnFlag, i2)
+                    loc := "LVN"
+                else if array.get(hvnFlag, i2)
+                    loc := "HVN"
+    loc
+
+// ── SESSIONS ────────────────────────────────────────────────
+sastMin = (hour(time, "UTC") + 2 + SAST_off) * 60 + minute(time, "UTC")
+sastMin := sastMin >= 1440 ? sastMin - 1440 : sastMin < 0 ? sastMin + 1440 : sastMin
+session_ = sastMin >= 660 and sastMin < 930 ? "LDN_MAIN" : sastMin >= 1050 and sastMin < 1260 ? "NY_MAIN" : sastMin >= 930 and sastMin < 930 + NYBlackout ? "NY_BLACKOUT" : "OTHER"
+sessionOk = (session_ == "LDN_MAIN" and TradeLDN) or (session_ == "NY_MAIN" and TradeNY)
+inBlackout = session_ == "NY_BLACKOUT"
+
+// ── HTF ALIGNMENT ───────────────────────────────────────────
+h4C = request.security(syminfo.tickerid, H4TF, close,             barmerge.gaps_off, barmerge.lookahead_off)
+h4E = request.security(syminfo.tickerid, H4TF, ta.ema(close, 20), barmerge.gaps_off, barmerge.lookahead_off)
+d1C = request.security(syminfo.tickerid, D1TF, close,             barmerge.gaps_off, barmerge.lookahead_off)
+d1E = request.security(syminfo.tickerid, D1TF, ta.ema(close, 50), barmerge.gaps_off, barmerge.lookahead_off)
+h4B = h4C > h4E * 1.0001 ? "BULL" : h4C < h4E * 0.9999 ? "BEAR" : "NEUTRAL"
+d1B = d1C > d1E * 1.0001 ? "BULL" : d1C < d1E * 0.9999 ? "BEAR" : "NEUTRAL"
+htf = h4B == d1B ? h4B : "NEUTRAL"
+
+// ── ABSORPTION STARS ────────────────────────────────────────
+stars(isL) =>
+    int s = 0
+    if volZ >= 1.0
+        s := 1
+    s += volZ >= 2.0 ? 1 : 0
+    s += volZ >= 3.0 ? 1 : 0
+    s += math.abs(deltaZ) >= 2.0 ? 1 : 0
+    wp = rng_ > 0 ? (isL ? (math.min(open, close) - low) / rng_ : (high - math.max(open, close)) / rng_) : 0.0
+    s += wp >= 0.4 ? 1 : 0
+    math.min(s, 5)
+
+// ── ATR + LOCATION ──────────────────────────────────────────
+atr14 = ta.atr(14)
+locTol = atr14 * LocTol
+curLoc = vpLoc(close, locTol)
+
+// ── SETUPS (priority chain mirrors dashboard) ───────────────
+bullAbs = barDelta < 0 and volZ >= VolZThr and close >= open
+bearAbs = barDelta > 0 and volZ >= VolZThr and close <= open
+aggressionSpike = volZ >= 2.0
+
+setupRaw = En01_AbsBot   and (curLoc == "VAL" or curLoc == "LVN") and bullAbs and stars(true)  >= MinStars ? "LONG_AbsBot" : En02_AbsTop and (curLoc == "VAH" or curLoc == "HVN") and bearAbs and stars(false) >= MinStars ? "SHORT_AbsTop" : En14_Spring and low < ta.lowest(low, 30)[1] and close > ta.lowest(low, 30)[1] and bullDiv ? "LONG_Spring" : En15_Upthrust and high > ta.highest(high, 30)[1] and close < ta.highest(high, 30)[1] and bearDiv ? "SHORT_Upthrust" : En18_LiqSwp and high > ta.highest(high, 50)[1] and close < ta.highest(high, 50)[1] ? "SHORT_LiqSwp" : En18_LiqSwp and low < ta.lowest(low, 50)[1] and close > ta.lowest(low, 50)[1] ? "LONG_LiqSwp" : En05_VALBnc and curLoc == "VAL" and close > open and barDelta > 0 ? "LONG_VALBnc" : En06_VAHFade and curLoc == "VAH" and close < open and barDelta < 0 ? "SHORT_VAHFade" : En07_POCRet and curLoc == "POC" and barDelta >= 0 ? "LONG_POCRet" : En07_POCRet and curLoc == "POC" and barDelta < 0 ? "SHORT_POCRet" : En04_CVDBull and bullDiv ? "LONG_CVDBull" : En03_CVDBear and bearDiv ? "SHORT_CVDBear" : ""
+isLong  = str.startswith(setupRaw, "LONG")
+isShort = str.startswith(setupRaw, "SHORT")
+hasSetup = setupRaw != ""
+setupLabel = hasSetup ? (str.contains(setupRaw, "_") ? str.substring(setupRaw, str.pos(setupRaw, "_") + 1) : setupRaw) : ""
+
+// ── GATES ───────────────────────────────────────────────────
+g0 = not inBlackout
+g1 = sessionOk
+g2 = (session_ == "LDN_MAIN" and marketState == "BALANCED") or (session_ == "NY_MAIN" and marketState == "IMBALANCED")
+g3 = curLoc != "OUT"
+g4 = isLong ? htf == "BULL" : isShort ? htf == "BEAR" : false
+g5 = isLong ? cvd > nz(cvd[5], cvd) : isShort ? cvd < nz(cvd[5], cvd) : false
+g6 = hasSetup
+g7 = aggressionSpike
+
+slPrice = isLong ? low - 2 * syminfo.mintick : isShort ? high + 2 * syminfo.mintick : na
+tpPrice = isLong ? (na(poc) ? close + atr14 * 3 : poc) : isShort ? (na(poc) ? close - atr14 * 3 : poc) : na
+risk    = not na(slPrice) ? math.abs(close - slPrice) : 0.0
+reward  = not na(tpPrice) ? math.abs(tpPrice - close) : 0.0
+rr      = risk > 0 ? reward / risk : 0.0
+
+allowEntry = g0 and g1 and g2 and g3 and g4 and g5 and g6 and g7 and rr >= MinRR
+
+// ── §12 RISK MGMT — daily DD halt, consec-loss halt ─────────
+var float dayStart = na
+if isNewDay
+    dayStart := strategy.equity
+ddPct  = na(dayStart) or dayStart <= 0 ? 0.0 : (strategy.equity - dayStart) / dayStart * 100.0
+ddHalt = ddPct <= -MaxDDPct
+
+var int consecLosses = 0
+if strategy.closedtrades > 0 and ta.change(strategy.closedtrades) > 0
+    consecLosses := strategy.netprofit < nz(strategy.netprofit[1], 0) ? consecLosses + 1 : 0
+consecHalt = consecLosses >= MaxConsec
+
+// Half-size on counter-HTF if RequireHTF == false.
+useHalf = not RequireHTF and not g4
+riskPctActual = useHalf ? RiskPct_Half : math.min(RiskPct, 2.0)
+riskAmt = strategy.equity * riskPctActual / 100.0
+qty     = risk > 0 ? riskAmt / risk : 0.0
+
+canTrade = allowEntry and not ddHalt and not consecHalt and strategy.position_size == 0
+
+// ── EXECUTE ─────────────────────────────────────────────────
+if canTrade and isLong and EnableLongs
+    strategy.entry("L_" + setupLabel, strategy.long, qty=qty, comment=setupLabel)
+    strategy.exit("XL", "L_" + setupLabel, stop=slPrice, limit=tpPrice)
+
+if canTrade and isShort and EnableShorts
+    strategy.entry("S_" + setupLabel, strategy.short, qty=qty, comment=setupLabel)
+    strategy.exit("XS", "S_" + setupLabel, stop=slPrice, limit=tpPrice)
+
+// Partial-close at 1R (§5).
+if UsePartial and strategy.position_size != 0
+    isPosLong = strategy.position_size > 0
+    entry_ = strategy.position_avg_price
+    posRisk = math.abs(entry_ - strategy.position_size > 0 ? slPrice : slPrice)
+    if posRisk > 0
+        rMult = isPosLong ? (close - entry_) / posRisk : (entry_ - close) / posRisk
+        if rMult >= PartialAtR and ta.change(strategy.position_size) == 0
+            strategy.close(isPosLong ? "L_" + setupLabel : "S_" + setupLabel,
+                          qty_percent=PartialPct, comment="partial 1R")
+
+// NY-close flatten (§12 rule 1).
+if NYCloseFlatten and session_ != "NY_MAIN" and session_[1] == "NY_MAIN" and strategy.position_size != 0
+    strategy.close_all(comment="NY-close")
+
+// Daily-DD halt enforcement.
+if ddHalt and strategy.position_size != 0
+    strategy.close_all(comment="DD halt")
+
+// ── VISUAL ──────────────────────────────────────────────────
+plot(poc,  "POC",  color=#c850dc, linewidth=2)
+plot(vah,  "VAH",  color=#6aa9ff, style=plot.style_circles)
+plot(val_, "VAL",  color=#6aa9ff, style=plot.style_circles)
+bgcolor(session_ == "LDN_MAIN" ? color.new(#3050a0, 92) : session_ == "NY_MAIN" ? color.new(#c87828, 92) : session_ == "NY_BLACKOUT" ? color.new(#404040, 88) : na)
+plotshape(canTrade and isLong,  "Enter Long",  shape.labelup,   location.belowbar, color.lime, text="L+", textcolor=color.white, size=size.small)
+plotshape(canTrade and isShort, "Enter Short", shape.labeldown, location.abovebar, color.red,  text="S+", textcolor=color.white, size=size.small)

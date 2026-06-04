@@ -1,0 +1,43 @@
+[package]
+name = "godmode_engine"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+rust-version.workspace = true
+description = "Platform-agnostic core for the GODMODE_OFEA order-flow trading system. Mirrors mt5/ and ctrader/ builds 1:1."
+
+[lib]
+name = "godmode_engine"
+path = "src/lib.rs"
+crate-type = ["rlib", "cdylib"]
+
+[features]
+default = []
+# Enables the minimal extern "C" FFI surface for wasm32 / cdylib targets.
+ffi = []
+
+[[bin]]
+name = "godmode-replay"
+path = "src/bin/replay.rs"
+
+[dependencies]
+serde = { workspace = true }
+serde_json = { workspace = true }
+chrono = { workspace = true }
+thiserror = { workspace = true }
+anyhow = { workspace = true }
+csv = { workspace = true }
+clap = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+once_cell = "1"
+
+[dev-dependencies]
+approx = "0.5"
+proptest = "1"
+criterion = { version = "0.5", features = ["html_reports"] }
+
+[[bench]]
+name = "engine_bench"
+harness = false

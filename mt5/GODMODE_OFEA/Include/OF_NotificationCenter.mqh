@@ -104,6 +104,27 @@ public:
      {
       Fire("N-L_" + reason, StringFormat("KILL SWITCH: %s", reason), "timeout.wav", true);
      }
+
+   // N-V Pace-of-Tape elevated (brief §22 marginal-gain).
+   void NV_PaceOfTape(const double pace)
+     { Fire("N-V", StringFormat("Pace-of-Tape elevated pace=%.2f", pace), "ok.wav", false); }
+
+   // N-W Bookmap-confirmed iceberg (true microstructure).
+   void NW_BookmapIceberg(const string side, const double price, const int consec,
+                          const double vol, const double maxDepth)
+     {
+      Fire("N-W", StringFormat("Bookmap iceberg %s @ %.5f consec=%d vol=%.0f maxDepth=%.0f",
+                               side, price, consec, vol, maxDepth),
+           "alert.wav", true);
+     }
+
+   // N-X Sierra Chart level proximity (POC/VAH/VAL/dVWAP/etc).
+   void NX_SierraChartLevel(const string label, const double price)
+     { Fire("N-X", StringFormat("Sierra Chart %s @ %.5f", label, price), "ok.wav", false); }
+
+   // N-Y Operator manual level (Google Sheets).
+   void NY_ManualLevel(const string note, const double price)
+     { Fire("N-Y", StringFormat("Manual level '%s' @ %.5f", note, price), "ok.wav", false); }
   };
 
 #endif

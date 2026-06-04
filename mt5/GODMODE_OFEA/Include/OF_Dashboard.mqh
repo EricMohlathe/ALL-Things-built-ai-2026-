@@ -14,7 +14,7 @@ class CDashboard
 private:
    string m_prefix;
    color  m_okColor, m_failColor, m_waitColor;
-   datetime m_lastRefresh;
+   uint     m_lastRefresh;   // GetTickCount() millisecond timestamp
 
    void DrawLabel(const string name, const string text, const int row, const color clr)
      {
@@ -40,11 +40,12 @@ public:
 
    void Deinit() { ObjectsDeleteAll(0, m_prefix); }
 
-   //--- Throttled to 250ms (brief §23.6)
+   //--- Throttled to 250ms (brief §23.6). TimeCurrent() is second-granular,
+   //    so we use GetTickCount() for true sub-second throttling.
    bool ShouldRefresh()
      {
-      const datetime now = TimeCurrent();
-      if(now == m_lastRefresh) return false;
+      const uint now = GetTickCount();
+      if(now - m_lastRefresh < 250) return false;
       m_lastRefresh = now;
       return true;
      }

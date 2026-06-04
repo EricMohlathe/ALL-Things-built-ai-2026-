@@ -1,0 +1,38 @@
+// 06_Enhanced_HTFStrength.pine — trend strength per HTF (M15/H1/H4/D1)
+//@version=6
+indicator("GODMODE HTF Strength", "OFEA·HTF", overlay=true)
+
+emaLen   = input.int(20, "EMA length")
+adxLen   = input.int(14, "ADX length")
+
+f_strength(tf) =>
+    [_o, _h, _l, _c] = request.security(syminfo.tickerid, tf, [open, high, low, close], lookahead=barmerge.lookahead_off)
+    e   = request.security(syminfo.tickerid, tf, ta.ema(close, emaLen), lookahead=barmerge.lookahead_off)
+    a   = request.security(syminfo.tickerid, tf, ta.rma(ta.tr, adxLen), lookahead=barmerge.lookahead_off)  // Wilder's ATR (RMA of TR)
+    [_o, _h, _l, _c, e, a]
+
+[oM15, hM15, lM15, cM15, eM15, aM15] = f_strength("15")
+[oH1,  hH1,  lH1,  cH1,  eH1,  aH1]  = f_strength("60")
+[oH4,  hH4,  lH4,  cH4,  eH4,  aH4]  = f_strength("240")
+[oD1,  hD1,  lD1,  cD1,  eD1,  aD1]  = f_strength("D")
+
+row(string tf, float price, float ema, float strength) =>
+    bull   = price > ema
+    arrow  = bull ? "▲" : "▼"
+    dist   = math.abs(price - ema) / math.max(price, 0.00001) * 100.0
+    txt    = tf + "  " + arrow + "  " + str.tostring(dist, "0.00") + "%"
+    col    = bull ? color.lime : color.red
+    [txt, col]
+
+[tM15, kM15] = row("M15", cM15, eM15, aM15)
+[tH1,  kH1]  = row("H1",  cH1,  eH1,  aH1)
+[tH4,  kH4]  = row("H4",  cH4,  eH4,  aH4)
+[tD1,  kD1]  = row("D1",  cD1,  eD1,  aD1)
+
+var table tbl = table.new(position.middle_left, 1, 5, bgcolor=color.new(#0b0e14, 0), border_width=1)
+if barstate.islast
+    table.cell(tbl, 0, 0, "HTF STRENGTH", bgcolor=color.new(#6aa9ff, 70), text_color=color.white)
+    table.cell(tbl, 0, 1, tM15, text_color=kM15, text_size=size.normal)
+    table.cell(tbl, 0, 2, tH1,  text_color=kH1,  text_size=size.normal)
+    table.cell(tbl, 0, 3, tH4,  text_color=kH4,  text_size=size.normal)
+    table.cell(tbl, 0, 4, tD1,  text_color=kD1,  text_size=size.normal)

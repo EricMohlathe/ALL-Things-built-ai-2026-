@@ -1,0 +1,41 @@
+// 04_Enhanced_ProbabilityBar.pine — composite 0-100% setup grade
+//@version=6
+indicator("GODMODE Probability Bar", "OFEA·Prob", overlay=true)
+
+// Gate inputs (each 0..1). Operator can wire real values from other indicators
+// via the "Source:" dropdown on each input.
+g1  = input.float(0.5, "F1 Triple Confluence", minval=0, maxval=1, step=0.1)
+g2  = input.float(0.5, "F2 Kill Zone",         minval=0, maxval=1, step=0.1)
+g3  = input.float(0.5, "F3 HTF Alignment",     minval=0, maxval=1, step=0.1)
+g4  = input.float(0.5, "F4 CVD Confirmation",  minval=0, maxval=1, step=0.1)
+g5  = input.float(0.5, "F5 VP State",          minval=0, maxval=1, step=0.1)
+g6  = input.float(0.5, "F6 Regime Match",      minval=0, maxval=1, step=0.1)
+g7  = input.float(0.5, "F7 Sweep n/6",         minval=0, maxval=1, step=0.1)
+g8  = input.float(0.5, "F8 VWAP Side",         minval=0, maxval=1, step=0.1)
+g9  = input.float(0.5, "F9 Price Action",      minval=0, maxval=1, step=0.1)
+g10 = input.float(0.5, "F10 Pool Resilience",  minval=0, maxval=1, step=0.1)
+g11 = input.float(0.5, "F11 Spread OK",        minval=0, maxval=1, step=0.1)
+g12 = input.float(0.5, "F12 R:R",              minval=0, maxval=1, step=0.1)
+
+pct = g1*12 + g2*8 + g3*12 + g4*10 + g5*8 + g6*8 + g7*12 + g8*6 + g9*8 + g10*6 + g11*4 + g12*6
+grade = pct >= 85 ? "A+" : pct >= 75 ? "A" : pct >= 65 ? "B" : pct >= 50 ? "C" : pct >= 35 ? "D" : "F"
+fill  = pct >= 75 ? color.lime : pct >= 50 ? color.orange : color.red
+
+var table bar = table.new(position.middle_right, 1, 3, bgcolor=color.new(#0b0e14, 0), border_width=1, frame_width=1)
+if barstate.islast
+    table.cell(bar, 0, 0, "PROBABILITY",                              bgcolor=color.new(#6aa9ff, 70), text_color=color.white, text_size=size.normal)
+    table.cell(bar, 0, 1, str.tostring(pct, "0") + "%  ·  " + grade,  bgcolor=fill,                   text_color=color.white, text_size=size.huge)
+    table.cell(bar, 0, 2,
+       "F1 "  + str.tostring(g1*12,"0")  +
+       " F2 " + str.tostring(g2*8, "0")  +
+       " F3 " + str.tostring(g3*12,"0")  +
+       " F4 " + str.tostring(g4*10,"0")  +
+       " F5 " + str.tostring(g5*8, "0")  +
+       " F6 " + str.tostring(g6*8, "0")  +
+       " F7 " + str.tostring(g7*12,"0")  +
+       " F8 " + str.tostring(g8*6, "0")  +
+       " F9 " + str.tostring(g9*8, "0")  +
+       " F10 "+ str.tostring(g10*6,"0")  +
+       " F11 "+ str.tostring(g11*4,"0")  +
+       " F12 "+ str.tostring(g12*6,"0"),
+       text_color=color.silver, text_size=size.small)

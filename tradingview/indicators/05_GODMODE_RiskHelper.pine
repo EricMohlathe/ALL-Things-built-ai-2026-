@@ -1,0 +1,147 @@
+// 05_GODMODE_RiskHelper.pine
+// Manual-trading risk calculator + R:R box drawing tool.
+//
+// The operator picks the side (LONG/SHORT) and clicks two prices on the chart
+// (entry + SL). The indicator draws the canonical SL/TP/entry rectangles per
+// brief §9.5 and computes lot size from RiskPct × account equity using the
+// same formula as MT5/cTrader.
+//
+// Pine cannot read your broker's account equity directly. You input it as a
+// number. Update it manually as it changes — or wire to a webhook handler
+// that pushes equity back into a variable (advanced).
+//
+//@version=6
+indicator("05 GODMODE Risk Helper", "OFEA·Risk", overlay=true,
+     max_lines_count=50, max_boxes_count=20, max_labels_count=20)
+
+// ── INPUTS ────────────────────────────────────────────────────
+gA = "Account"
+AcctEquity   = input.float(10000.0,"Account equity (broker base currency)", group=gA, tooltip="Manually update as your equity changes")
+RiskPct      = input.float(0.5,    "Risk % per trade", minval=0.0, maxval=2.0, step=0.1, group=gA, tooltip="Hard-capped at 2.0 per brief §12 rule 2")
+PipValue     = input.float(10.0,   "Pip value per 1.00 lot (acct currency)", group=gA, tooltip="EURUSD ≈ $10/lot/pip on USD accounts. Check your broker spec.")
+
+gT = "Trade setup"
+Direction    = input.string("LONG",   "Direction", options=["LONG","SHORT"], group=gT)
+EntryPrice   = input.price(0.0, "Entry price (click chart to set)", group=gT, confirm=true)
+SLPrice      = input.price(0.0, "SL price (click chart to set)",    group=gT, confirm=true)
+TPMode       = input.string("Manual", "TP source", options=["Manual","ATR multiple","R multiple","POC (use 01_Dashboard)"], group=gT)
+TPManual     = input.price(0.0, "TP price (if Manual)", group=gT, confirm=true)
+TPATRMult    = input.float(3.0, "TP × ATR(14)",        group=gT)
+TPRMult      = input.float(2.5, "TP × R",              group=gT)
+MinRR        = input.float(2.0, "Min R:R (brief §7)",  step=0.1, group=gT)
+
+gV = "Visualisation"
+ShowBoxes    = input.bool(true,"Draw SL/TP rectangles", group=gV)
+ShowLabels   = input.bool(true,"Draw entry/SL/TP labels", group=gV)
+ShowSummary  = input.bool(true,"Show risk summary table", group=gV)
+ColorOK      = input.color(#2bbc8a, "TP color", group=gV)
+ColorFail    = input.color(#e35d6a, "SL color", group=gV)
+ColorEntry   = input.color(color.white, "Entry color", group=gV)
+ProjectBars  = input.int(20, "Project box this many bars forward", minval=5, maxval=100, group=gV)
+
+// ── COMPUTATION ──────────────────────────────────────────────
+isLong  = Direction == "LONG"
+isShort = Direction == "SHORT"
+ready   = EntryPrice > 0 and SLPrice > 0 and (isLong ? SLPrice < EntryPrice : SLPrice > EntryPrice)
+
+atr14 = ta.atr(14)
+
+tpFinal = TPMode == "Manual" and TPManual > 0 ? TPManual : TPMode == "ATR multiple" ? (isLong ? EntryPrice + atr14 * TPATRMult : EntryPrice - atr14 * TPATRMult) : TPMode == "R multiple" ? (isLong ? EntryPrice + math.abs(EntryPrice - SLPrice) * TPRMult : EntryPrice - math.abs(EntryPrice - SLPrice) * TPRMult) : na
+
+// Reject TP on the wrong side of entry (operator-error guard).
+// Long: TP must be above entry; Short: TP must be below entry.
+tpValid = not na(tpFinal) and (isLong ? tpFinal > EntryPrice : tpFinal < EntryPrice)
+
+risk = ready ? math.abs(EntryPrice - SLPrice) : 0.0
+reward = ready and tpValid ? math.abs(tpFinal - EntryPrice) : 0.0
+rr = risk > 0 and tpValid ? reward / risk : 0.0
+
+// Position sizing per brief §11.8.
+riskPctClamped = math.min(RiskPct, 2.0)
+riskAmount = AcctEquity * riskPctClamped / 100.0
+pipSize    = syminfo.mintick * (syminfo.mintick < 0.01 ? 10 : 1)   // crude 5-digit pip detection
+slPips     = risk / pipSize
+lots       = slPips > 0 and PipValue > 0 ? riskAmount / (slPips * PipValue) : 0.0
+
+passRR = rr >= MinRR
+
+// ── VISUALISATION ────────────────────────────────────────────
+var box  slBox = na
+var box  tpBox = na
+var line entryLn = na
+var label entryLbl = na
+var label slLbl = na
+var label tpLbl = na
+
+if box.tostring(slBox) != "" or true
+    if not na(slBox)
+        box.delete(slBox)
+    if not na(tpBox)
+        box.delete(tpBox)
+    if not na(entryLn)
+        line.delete(entryLn)
+    if not na(entryLbl)
+        label.delete(entryLbl)
+    if not na(slLbl)
+        label.delete(slLbl)
+    if not na(tpLbl)
+        label.delete(tpLbl)
+
+if ready and ShowBoxes and barstate.islast
+    t1 = bar_index - 10
+    t2 = bar_index + ProjectBars
+    slBox := box.new(t1, EntryPrice, t2, SLPrice,
+                     border_color=color.new(ColorFail, 0), bgcolor=color.new(ColorFail, 80),
+                     extend=extend.none)
+    if not na(tpFinal)
+        tpBox := box.new(t1, EntryPrice, t2, tpFinal,
+                         border_color=color.new(ColorOK, 0), bgcolor=color.new(ColorOK, 80),
+                         extend=extend.none)
+    entryLn := line.new(t1, EntryPrice, t2, EntryPrice,
+                        color=ColorEntry, width=2, style=line.style_solid)
+
+if ready and ShowLabels and barstate.islast
+    entryLbl := label.new(bar_index + ProjectBars, EntryPrice,
+                          str.tostring(Direction) + "  " + str.tostring(lots, "0.00") + " lots\n@ " + str.tostring(EntryPrice, format.mintick),
+                          color=color.new(ColorEntry, 50), textcolor=color.black, size=size.small,
+                          style=label.style_label_left,
+                          tooltip="Entry: " + str.tostring(EntryPrice, format.mintick) + "\nLots: " + str.tostring(lots, "0.00") + "\nRisk: " + str.tostring(riskAmount, "0.00") + " " + syminfo.currency)
+    slLbl := label.new(bar_index + ProjectBars, SLPrice,
+                       "SL\n" + str.tostring(SLPrice, format.mintick) + "\n(-" + str.tostring(slPips, "0.0") + "p)",
+                       color=color.new(ColorFail, 30), textcolor=color.white, size=size.small,
+                       style=label.style_label_left,
+                       tooltip="Stop loss: " + str.tostring(SLPrice, format.mintick) + "\nDistance: " + str.tostring(slPips, "0.0") + " pips\nRisk: " + str.tostring(riskAmount, "0.00") + " " + syminfo.currency + "\n\nBrief §15 rule: place SL 1-2 ticks beyond aggression candle, not at obvious swing extremes.")
+    if not na(tpFinal)
+        tpPips = math.abs(tpFinal - EntryPrice) / pipSize
+        tpLbl := label.new(bar_index + ProjectBars, tpFinal,
+                           "TP\n" + str.tostring(tpFinal, format.mintick) + "\n(+" + str.tostring(tpPips, "0.0") + "p / " + str.tostring(rr, "0.0") + "R)",
+                           color=color.new(ColorOK, 30), textcolor=color.white, size=size.small,
+                           style=label.style_label_left,
+                           tooltip="Target: " + str.tostring(tpFinal, format.mintick) + "\nDistance: " + str.tostring(tpPips, "0.0") + " pips\nReward: " + str.tostring(riskAmount * rr, "0.00") + " " + syminfo.currency + "\nR:R " + str.tostring(rr, "0.0") + ":1\n" + (passRR ? "✓ Meets MinRR" : "✗ Below MinRR — skip or improve location"))
+
+// ── SUMMARY TABLE ────────────────────────────────────────────
+var table riskTbl = table.new(position.middle_right, columns=2, rows=10, bgcolor=color.new(#0b0e14, 12), border_width=1, border_color=#1f2530)
+
+if ShowSummary and barstate.islast
+    table.cell(riskTbl, 0, 0, "RISK HELPER", bgcolor=color.new(#6aa9ff, 78), text_color=color.white, text_size=size.normal)
+    table.cell(riskTbl, 1, 0, syminfo.ticker,  bgcolor=color.new(#6aa9ff, 78), text_color=color.white, text_size=size.normal)
+    table.cell(riskTbl, 0, 1, "Direction",     text_color=color.silver, text_size=size.small)
+    table.cell(riskTbl, 1, 1, Direction,       text_color=isLong ? ColorOK : ColorFail, text_size=size.small)
+    table.cell(riskTbl, 0, 2, "Entry",         text_color=color.silver, text_size=size.small)
+    table.cell(riskTbl, 1, 2, ready ? str.tostring(EntryPrice, format.mintick) : "(click chart)", text_color=color.white, text_size=size.small)
+    table.cell(riskTbl, 0, 3, "SL",            text_color=color.silver, text_size=size.small)
+    table.cell(riskTbl, 1, 3, ready ? str.tostring(SLPrice, format.mintick) : "(click chart)", text_color=ColorFail, text_size=size.small)
+    table.cell(riskTbl, 0, 4, "TP",            text_color=color.silver, text_size=size.small)
+    table.cell(riskTbl, 1, 4, na(tpFinal) ? "—" : str.tostring(tpFinal, format.mintick), text_color=ColorOK, text_size=size.small)
+    table.cell(riskTbl, 0, 5, "R:R",           text_color=color.silver, text_size=size.small)
+    table.cell(riskTbl, 1, 5, str.tostring(rr, "0.0") + ":1", text_color=passRR ? ColorOK : ColorFail, text_size=size.small)
+    table.cell(riskTbl, 0, 6, "Risk amount",   text_color=color.silver, text_size=size.small)
+    table.cell(riskTbl, 1, 6, str.tostring(riskAmount, "0.00") + " " + syminfo.currency, text_color=color.white, text_size=size.small)
+    table.cell(riskTbl, 0, 7, "Lots / size",   text_color=color.silver, text_size=size.small)
+    table.cell(riskTbl, 1, 7, str.tostring(lots, "0.00"), text_color=color.white, text_size=size.small)
+    table.cell(riskTbl, 0, 8, "SL distance",   text_color=color.silver, text_size=size.small)
+    table.cell(riskTbl, 1, 8, str.tostring(slPips, "0.0") + " pips", text_color=color.white, text_size=size.small)
+    table.cell(riskTbl, 0, 9, "Verdict",       text_color=color.silver, text_size=size.normal)
+    verdictTxt = not ready ? "set Entry + SL" : not tpValid ? "✗ SKIP (TP wrong side)" : passRR ? "✓ TAKE" : "✗ SKIP (RR too low)"
+    verdictCol = not ready ? color.silver : not tpValid ? ColorFail : passRR ? ColorOK : ColorFail
+    table.cell(riskTbl, 1, 9, verdictTxt, text_color=verdictCol, text_size=size.normal)

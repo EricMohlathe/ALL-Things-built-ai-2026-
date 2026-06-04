@@ -1,0 +1,377 @@
+// 04_GODMODE_Coach.pine
+// Companion overlay that explains EVERY signal the other indicators identify.
+// Every time a gate transitions, every time a setup fires, every time a level
+// is approached — this indicator paints an on-chart label with WHAT happened,
+// WHY it matters, and WHAT TO DO.
+//
+// Apply on top of 01_GODMODE_Dashboard. Same logic re-computed (the dashboard
+// doesn't export plot values that another indicator can read directly, so we
+// recompute here — both should produce identical results bar-for-bar).
+//
+// Each label has a tooltip with extended reasoning + brief section reference.
+//
+//@version=6
+indicator("04 GODMODE Coach", "OFEA·Coach", overlay=true,
+     max_lines_count=500, max_labels_count=500, max_boxes_count=200)
+
+// ── INPUTS ────────────────────────────────────────────────────
+gC = "Coach"
+ShowGateLabels = input.bool(true, "Show gate transition labels", group=gC, tooltip="Label each time a gate flips from FAIL to PASS")
+ShowSetupCard  = input.bool(true, "Show full setup card on A+", group=gC, tooltip="Detailed multi-line card when all 8 gates align")
+ShowReasoning  = input.bool(true, "Show reasoning sub-labels", group=gC, tooltip="Smaller hints like 'CVD diverging' / 'absorbing into VAL'")
+LabelDensity   = input.string("Standard", "Label density", options=["Verbose","Standard","Minimal"], group=gC,
+     tooltip="Verbose = every event labelled. Minimal = only A+ READY card.")
+CleanOldLabels = input.bool(true, "Auto-clean older labels", group=gC, tooltip="Removes labels older than CleanAfterBars")
+CleanAfterBars = input.int(50, "Clean after this many bars", minval=10, group=gC)
+
+gT = "Pop-up theme"
+ThemeOK     = input.color(#2bbc8a, "OK signal",     group=gT)
+ThemeFail   = input.color(#e35d6a, "Fail signal",   group=gT)
+ThemeWait   = input.color(#f0a84a, "Wait signal",   group=gT)
+ThemeInfo   = input.color(#6aa9ff, "Info signal",   group=gT)
+ThemeSpecial= input.color(#c850dc, "Special signal", group=gT)
+ThemeAplus  = input.color(#ffe88a, "A+ READY card",  group=gT)
+
+gI = "Bridge to 01_GODMODE_Dashboard"
+H4TF = input.timeframe("240","HTF Bias TF",    group=gI)
+D1TF = input.timeframe("D",  "HTF Confirm TF", group=gI)
+VPLen = input.int(100,"VP lookback", group=gI)
+VPBins= input.int(50, "VP bins", minval=10, maxval=100, group=gI)
+LocTol= input.float(0.5,"Loc tol × ATR(14)", step=0.05, group=gI)
+SAST_off  = input.int(0,    "SAST offset (hrs)", group=gI)
+DLookback = input.int(20,   "Z-score lookback", group=gI)
+VolZThr   = input.float(1.5,"Vol Z threshold", step=0.1, group=gI)
+MinStars  = input.int(3,    "Min absorption stars", minval=1, maxval=5, group=gI)
+MinRR     = input.float(2.0,"Min R:R", step=0.1, group=gI)
+
+// ── RECOMPUTE THE SAME LOGIC AS 01_Dashboard ───────────────────
+// (Pine indicators cannot read other indicators' internal vars unless plotted
+// and selected as a Source — for simplicity we recompute. Numerically identical.)
+
+subD() =>
+    sr = high - low
+    sw = sr > 0 ? (close - low) / sr : 0.5
+    volume * (sw - (1.0 - sw))
+subArr = request.security_lower_tf(syminfo.tickerid, "1", subD())
+subSum = 0.0
+// Sum sub-bars only on confirmed parent bars — prevents intra-bar repaint
+// from partially-populated lower-TF arrays.
+if barstate.isconfirmed and array.size(subArr) > 0
+    for i = 0 to array.size(subArr) - 1
+        subSum += array.get(subArr, i)
+
+rng_ = high - low
+bw   = rng_ > 0 ? (close - low) / rng_ : 0.5
+proxy = volume * (bw - (1.0 - bw))
+barDelta = array.size(subArr) > 0 ? subSum : proxy
+deltaSrcName = array.size(subArr) > 0 ? "sub-TF" : "proxy"
+
+isNewDay = ta.change(time("D")) != 0
+var float cvd = 0.0
+cvd := isNewDay ? barDelta : nz(cvd[1], 0.0) + barDelta
+
+volMean = ta.sma(volume, DLookback)
+volStd  = ta.stdev(volume, DLookback)
+volZ    = volStd > 0 ? (volume - volMean) / volStd : 0.0
+dMean   = ta.sma(barDelta, DLookback)
+dStd    = ta.stdev(barDelta, DLookback)
+deltaZ  = dStd > 0 ? (barDelta - dMean) / dStd : 0.0
+
+pLL = ta.lowest(low, 20) == low
+pHH = ta.highest(high, 20) == high
+cLL = ta.lowest(cvd, 20) == cvd
+cHH = ta.highest(cvd, 20) == cvd
+bullDiv = pLL and not cLL
+bearDiv = pHH and not cHH
+
+// VP recompute (compact).
+var array<float> binVol  = array.new<float>(VPBins, 0.0)
+var array<bool>  lvnFlag = array.new<bool>(VPBins, false)
+var array<bool>  hvnFlag = array.new<bool>(VPBins, false)
+var float vpHi = na, vpLo = na, poc = na, vah = na, val_ = na, binSize = na
+var string profShape = "UNK", marketState = "UNKNOWN"
+
+if barstate.isconfirmed and bar_index >= VPLen
+    hi = ta.highest(high, VPLen)
+    lo = ta.lowest(low,   VPLen)
+    if hi > lo
+        vpHi := hi
+        vpLo := lo
+        binSize := (hi - lo) / VPBins
+        for i = 0 to VPBins - 1
+            array.set(binVol, i, 0.0)
+        for j = 0 to VPLen - 1
+            idx = math.min(VPBins - 1, math.max(0, int((close[j] - lo) / binSize)))
+            array.set(binVol, idx, array.get(binVol, idx) + volume[j])
+        pocBin = 0
+        pocVol = array.get(binVol, 0)
+        for k = 1 to VPBins - 1
+            v = array.get(binVol, k)
+            if v > pocVol
+                pocVol := v
+                pocBin := k
+        poc := lo + (pocBin + 0.5) * binSize
+        tot = 0.0
+        for m = 0 to VPBins - 1
+            tot += array.get(binVol, m)
+        tgt = tot * 0.70
+        acc = pocVol
+        hiB = pocBin
+        loB = pocBin
+        while acc < tgt and (hiB < VPBins - 1 or loB > 0)
+            up_ = hiB < VPBins - 1 ? array.get(binVol, hiB + 1) : -1.0
+            dn_ = loB > 0           ? array.get(binVol, loB - 1) : -1.0
+            if up_ >= dn_ and up_ >= 0
+                hiB += 1
+                acc += up_
+            else if dn_ >= 0
+                loB -= 1
+                acc += dn_
+            else
+                break
+        vah := lo + (hiB + 1) * binSize
+        val_ := lo + loB * binSize
+        for n = 0 to VPBins - 1
+            v3 = array.get(binVol, n)
+            array.set(lvnFlag, n, v3 < pocVol * 0.20)
+            array.set(hvnFlag, n, v3 > pocVol * 0.70)
+        // Shape
+        firstNz = -1
+        lastNz  = -1
+        for o = 0 to VPBins - 1
+            if array.get(binVol, o) > 0
+                if firstNz == -1
+                    firstNz := o
+                lastNz := o
+        if firstNz >= 0
+            midBin = math.floor((firstNz + lastNz) / 2)
+            upper = 0.0
+            lower = 0.0
+            for p = midBin to lastNz
+                upper += array.get(binVol, p)
+            for q = firstNz to midBin - 1
+                lower += array.get(binVol, q)
+            tot2 = upper + lower
+            skew = tot2 > 0 ? (upper - lower) / tot2 : 0.0
+            nzC = 0
+            nzS = 0.0
+            for r = 0 to VPBins - 1
+                vR = array.get(binVol, r)
+                if vR > 0
+                    nzS += vR
+                    nzC += 1
+            peak = nzC > 0 and nzS > 0 ? pocVol / (nzS / nzC) : 1.0
+            profShape := math.abs(skew) < 0.10 and peak > 2.0 ? "D" : skew > 0.20 ? "P" : skew < -0.20 ? "b" : peak < 1.3 ? "THIN" : "D"
+            marketState := profShape == "D" ? "BALANCED" : "IMBALANCED"
+
+vpLoc(price, tol) =>
+    string loc = "OUT"
+    if not na(poc) and not na(vah) and not na(val_) and not na(binSize)
+        if math.abs(price - poc) < tol
+            loc := "POC"
+        else if math.abs(price - vah) < tol
+            loc := "VAH"
+        else if math.abs(price - val_) < tol
+            loc := "VAL"
+        else
+            i2 = int((price - vpLo) / binSize)
+            if i2 >= 0 and i2 < VPBins
+                if array.get(lvnFlag, i2)
+                    loc := "LVN"
+                else if array.get(hvnFlag, i2)
+                    loc := "HVN"
+    loc
+
+// Sessions.
+sastMin = (hour(time, "UTC") + 2 + SAST_off) * 60 + minute(time, "UTC")
+sastMin := sastMin >= 1440 ? sastMin - 1440 : sastMin < 0 ? sastMin + 1440 : sastMin
+session_ = sastMin >= 660 and sastMin < 930 ? "LDN_MAIN" : sastMin >= 1050 and sastMin < 1260 ? "NY_MAIN" : sastMin >= 930 and sastMin < 950 ? "NY_BLACKOUT" : sastMin >= 600 and sastMin < 660 ? "LDN_OPEN" : sastMin >= 950 and sastMin < 1050 ? "NY_OPEN" : sastMin >= 120 and sastMin < 600 ? "ASIAN" : "AFTER"
+sessionOk = session_ == "LDN_MAIN" or session_ == "NY_MAIN"
+
+// HTF.
+h4C = request.security(syminfo.tickerid, H4TF, close,             barmerge.gaps_off, barmerge.lookahead_off)
+h4E = request.security(syminfo.tickerid, H4TF, ta.ema(close, 20), barmerge.gaps_off, barmerge.lookahead_off)
+d1C = request.security(syminfo.tickerid, D1TF, close,             barmerge.gaps_off, barmerge.lookahead_off)
+d1E = request.security(syminfo.tickerid, D1TF, ta.ema(close, 50), barmerge.gaps_off, barmerge.lookahead_off)
+h4B = h4C > h4E ? "BULL" : "BEAR"
+d1B = d1C > d1E ? "BULL" : "BEAR"
+htfCombined = h4B == d1B ? h4B : "NEUTRAL"
+
+// Stars.
+stars(isL) =>
+    int s = 0
+    if volZ >= 1.0
+        s := 1
+    s += volZ >= 2.0 ? 1 : 0
+    s += volZ >= 3.0 ? 1 : 0
+    s += math.abs(deltaZ) >= 2.0 ? 1 : 0
+    wp = rng_ > 0 ? (isL ? (math.min(open, close) - low) / rng_ : (high - math.max(open, close)) / rng_) : 0.0
+    s += wp >= 0.4 ? 1 : 0
+    math.min(s, 5)
+
+// Setup detection (subset).
+atr14 = ta.atr(14)
+locTol = atr14 * LocTol
+curLoc = vpLoc(close, locTol)
+bullAbs = barDelta < 0 and volZ >= VolZThr and close >= open
+bearAbs = barDelta > 0 and volZ >= VolZThr and close <= open
+aggressionSpike = volZ >= 2.0
+
+setupRaw = (curLoc == "VAL" or curLoc == "LVN") and bullAbs and stars(true)  >= MinStars ? "LONG_AbsBot" : (curLoc == "VAH" or curLoc == "HVN") and bearAbs and stars(false) >= MinStars ? "SHORT_AbsTop" : low < ta.lowest(low, 30)[1] and close > ta.lowest(low, 30)[1] and bullDiv ? "LONG_Spring" : high > ta.highest(high, 30)[1] and close < ta.highest(high, 30)[1] and bearDiv ? "SHORT_Upthrust" : high > ta.highest(high, 50)[1] and close < ta.highest(high, 50)[1] ? "SHORT_LiqSwp" : low < ta.lowest(low, 50)[1] and close > ta.lowest(low, 50)[1] ? "LONG_LiqSwp" : bullDiv ? "LONG_CVDBull" : bearDiv ? "SHORT_CVDBear" : ""
+isLong   = str.startswith(setupRaw, "LONG")
+isShort  = str.startswith(setupRaw, "SHORT")
+hasSetup = setupRaw != ""
+setupLabel = hasSetup ? (str.contains(setupRaw, "_") ? str.substring(setupRaw, str.pos(setupRaw, "_") + 1) : setupRaw) : ""
+
+// Gates.
+g1 = sessionOk
+g2 = (session_ == "LDN_MAIN" and marketState == "BALANCED") or (session_ == "NY_MAIN" and marketState == "IMBALANCED")
+g3 = curLoc != "OUT"
+g4 = isLong ? htfCombined == "BULL" : isShort ? htfCombined == "BEAR" : false
+g5 = isLong ? cvd > nz(cvd[5], cvd) : isShort ? cvd < nz(cvd[5], cvd) : false
+g6 = hasSetup
+g7 = aggressionSpike
+
+slPrice = isLong ? low - 2 * syminfo.mintick : isShort ? high + 2 * syminfo.mintick : na
+tpPrice = isLong ? (na(poc) ? close + atr14 * 3 : poc) : isShort ? (na(poc) ? close - atr14 * 3 : poc) : na
+rr      = not na(slPrice) and not na(tpPrice) ? math.abs(tpPrice - close) / math.abs(close - slPrice) : 0.0
+
+allPass = g1 and g2 and g3 and g4 and g5 and g6 and g7 and rr >= MinRR
+
+// ── LABEL HELPERS ────────────────────────────────────────────
+var array<label> coachLabels = array.new<label>()
+
+cleanup() =>
+    if CleanOldLabels and array.size(coachLabels) > 0
+        for i = array.size(coachLabels) - 1 to 0
+            lbl = array.get(coachLabels, i)
+            if bar_index - label.get_x(lbl) > CleanAfterBars
+                label.delete(lbl)
+                array.remove(coachLabels, i)
+
+paintLabel(yPos, txt, fg, bg, tip, isUp) =>
+    lbl = label.new(bar_index, yPos, txt, color=bg, textcolor=fg, size=size.small,
+                    style=isUp ? label.style_label_down : label.style_label_up,
+                    yloc=isUp ? yloc.abovebar : yloc.belowbar, tooltip=tip)
+    array.push(coachLabels, lbl)
+
+verbose = LabelDensity == "Verbose"
+standard = LabelDensity == "Standard" or verbose
+
+// ── GATE EDGE DETECTION ─────────────────────────────────────
+edge_session  = sessionOk and not sessionOk[1]
+edge_loc      = g3 and not g3[1]
+edge_htf      = g4 and not g4[1]
+edge_state    = g2 and not g2[1]
+edge_setup    = hasSetup and not hasSetup[1]
+edge_agg      = aggressionSpike and not aggressionSpike[1]
+edge_bullDiv  = bullDiv and not bullDiv[1]
+edge_bearDiv  = bearDiv and not bearDiv[1]
+edge_aplus    = allPass and not allPass[1]
+
+// ── POP-UPS ──────────────────────────────────────────────────
+if ShowGateLabels and barstate.isconfirmed and standard
+    if edge_session
+        paintLabel(high, "■ KZ active: " + session_, color.white, ThemeInfo,
+            "Kill zone " + session_ + " is now active.\n\nBrief §11.6 — 80%+ of A+ setups occur during the two main kill zones. " +
+            "LDN Main 11:00–15:30 SAST, NY Main 17:30–21:00 SAST.\n\nThis is necessary but not sufficient — you still need the other 7 gates.", true)
+    if edge_loc
+        paintLabel(low, "■ VP " + curLoc, color.white, ThemeInfo,
+            "Price has reached VP level: " + curLoc + ".\n\nBrief §11.2 — Location is 1 of the 3 ingredients of the OFT Edge Formula (Location × Signal × Context).\n\n" +
+            (curLoc == "POC" ? "POC = price magnet, expect rejection from either side." :
+             curLoc == "VAH" ? "VAH = value-area high. Acceptance above = trend extension, rejection = M2 fade." :
+             curLoc == "VAL" ? "VAL = value-area low. Same logic mirrored." :
+             curLoc == "LVN" ? "LVN = low-volume node. Price travels through these quickly. Look for acceleration." :
+             curLoc == "HVN" ? "HVN = high-volume node. Strong support/resistance. Counter-trend bias." : ""), false)
+    if edge_htf
+        paintLabel(high, "■ HTF " + htfCombined, color.white, ThemeInfo,
+            "H4 EMA(20) and D1 EMA(50) both " + htfCombined + ".\n\nBrief §11.7 — HTF alignment gives ~20–25 pp win-rate uplift on filtered trades. " +
+            "Counter-HTF entries cut win rate by the same amount.\n\nOnly take LONG when HTF is BULL. Only take SHORT when HTF is BEAR.", true)
+    if edge_state
+        paintLabel(low, "■ State: " + marketState, color.white, ThemeInfo,
+            "Profile state: " + marketState + ".\n\nBrief §11.3 — D-shape (BALANCED) → Model 2 mean-reversion. " +
+            "P/b/THIN (IMBALANCED) → Model 1 trend.\n\nMismatched model = skip the trade. " +
+            "Current model: " + (session_ == "LDN_MAIN" ? "M2 (LDN Main)" : session_ == "NY_MAIN" ? "M1 (NY Main)" : "—"), false)
+
+if ShowReasoning and barstate.isconfirmed and verbose
+    if edge_bullDiv
+        paintLabel(low, "■ Bull div", ThemeOK, color.new(ThemeOK, 80),
+            "Price made a 20-bar LOW but CVD did not.\n\nBrief §11.5 — Statistically reliable bullish reversal signal. " +
+            "Sellers exhausted; buyers absorbing.\n\nAct on this only at VAL/LVN locations with HTF=BULL. Otherwise it's noise.", false)
+    if edge_bearDiv
+        paintLabel(high, "■ Bear div", ThemeFail, color.new(ThemeFail, 80),
+            "Price made a 20-bar HIGH but CVD did not.\n\nBrief §11.5 — Statistically reliable bearish reversal signal. " +
+            "Buyers exhausted; sellers absorbing.\n\nAct on this only at VAH/HVN locations with HTF=BEAR.", true)
+    if edge_agg
+        paintLabel(high, "■ AGG " + str.tostring(volZ, "0.0") + "σ", color.white, ThemeSpecial,
+            "Volume Z-score " + str.tostring(volZ, "0.00") + " — institutional aggression print.\n\n" +
+            "Brief §11.4 — Vol Z ≥ 2.0 is statistically the upper end of normal participation; ≥ 3.0 is extreme. " +
+            "Combined with a wick of ≥ 40% range, this is the absorption signature.", true)
+
+if ShowGateLabels and barstate.isconfirmed and standard
+    if edge_setup
+        paintLabel(isLong ? low : high, "■ " + setupLabel + " ★" + str.tostring(stars(isLong)),
+            color.white, ThemeWait,
+            "Footprint setup detected: " + setupLabel + "\n\n" +
+            "Absorption stars: " + str.tostring(stars(isLong)) + "/5\n" +
+            "Direction: " + (isLong ? "LONG" : "SHORT") + "\n\n" +
+            "Brief §6 — This is one of the 25 canonical setups. " +
+            (setupLabel == "AbsBot" ? "Bullish absorption at value-low. Highest-prob reversal at this level." :
+             setupLabel == "AbsTop" ? "Bearish absorption at value-high. Highest-prob reversal at this level." :
+             setupLabel == "Spring" ? "Wyckoff spring — false break below swing low with CVD bullish div. ~75-80% win rate." :
+             setupLabel == "Upthrust" ? "Wyckoff upthrust — false break above swing high. ~74-78% win rate." :
+             setupLabel == "LiqSwp" ? "Liquidity sweep + rejection. ICT-style reversal. ~74-78% win rate." :
+             setupLabel == "CVDBull" ? "CVD bullish divergence at price low." :
+             setupLabel == "CVDBear" ? "CVD bearish divergence at price high." : "") +
+            "\n\nThis is GATE 6 — you still need GATE 7 (aggression trigger) and GATE 8 (R:R ≥ 2.0).",
+            isLong)
+
+// ── A+ READY CARD ────────────────────────────────────────────
+if ShowSetupCard and edge_aplus and barstate.isconfirmed
+    txt = "■ A+ READY · " + (isLong ? "LONG" : "SHORT") + " · " + setupLabel + "\n" +
+          "Entry: " + str.tostring(close, format.mintick) + "\n" +
+          "SL: " + str.tostring(slPrice, format.mintick) + "\n" +
+          "TP: " + str.tostring(tpPrice, format.mintick) + "\n" +
+          "R:R: " + str.tostring(rr, "0.0") + ":1\n" +
+          "★: " + str.tostring(stars(isLong)) + "/5\n" +
+          "HTF: " + htfCombined
+    tip = "ALL 8 GATES PASS.\n\n" +
+          "Why this fired:\n" +
+          "✓ Session: " + session_ + " (kill zone active)\n" +
+          "✓ State: " + marketState + " (matches active model)\n" +
+          "✓ Location: " + curLoc + " (VP key level)\n" +
+          "✓ HTF: H4 + D1 both " + htfCombined + "\n" +
+          "✓ CVD: confirming " + (isLong ? "LONG" : "SHORT") + " direction\n" +
+          "✓ Setup: " + setupLabel + " with " + str.tostring(stars(isLong)) + "★\n" +
+          "✓ Aggression: vol Z " + str.tostring(volZ, "0.00") + "\n" +
+          "✓ R:R: " + str.tostring(rr, "0.0") + ":1 ≥ " + str.tostring(MinRR, "0.0") + "\n\n" +
+          "What to do:\n" +
+          "• MODE_MANUAL: this is your A+ flag. Take the trade if your discretion agrees.\n" +
+          "• MODE_AUTO: webhook fires — your routing service places the order.\n\n" +
+          "Brief §18 — this is the user-story acceptance moment."
+    lbl = label.new(bar_index, isLong ? low : high, txt,
+                    color=ThemeAplus, textcolor=color.black, size=size.normal,
+                    style=isLong ? label.style_label_up : label.style_label_down,
+                    yloc=isLong ? yloc.belowbar : yloc.abovebar, tooltip=tip)
+    array.push(coachLabels, lbl)
+
+cleanup()
+
+// ── BLOCKING-REASON CARD (when setup forms but A+ fails) ────
+edge_blocked = hasSetup and not allPass and not (hasSetup[1] and not allPass[1])
+if ShowReasoning and standard and edge_blocked and barstate.isconfirmed
+    reasons = ""
+    reasons := not g1 ? reasons + "• Outside kill zone (currently " + session_ + ")\n" : reasons
+    reasons := not g2 ? reasons + "• State mismatch (" + marketState + " vs active model)\n" : reasons
+    reasons := not g3 ? reasons + "• Price not at a VP level\n" : reasons
+    reasons := not g4 ? reasons + "• HTF " + htfCombined + " disagrees with trade direction\n" : reasons
+    reasons := not g5 ? reasons + "• CVD slope against trade direction\n" : reasons
+    reasons := not g7 ? reasons + "• No aggression spike (vol Z = " + str.tostring(volZ, "0.0") + ")\n" : reasons
+    reasons := rr < MinRR ? reasons + "• R:R only " + str.tostring(rr, "0.0") + ":1 (need ≥ " + str.tostring(MinRR, "0.0") + ")\n" : reasons
+    if reasons != ""
+        paintLabel(isLong ? low : high, "■ " + setupLabel + " · BLOCKED",
+            color.white, color.new(ThemeFail, 30),
+            "Setup detected: " + setupLabel + " (" + (isLong ? "LONG" : "SHORT") + ")\n\n" +
+            "BLOCKED because:\n" + reasons + "\n" +
+            "Brief §2 — F1-F5 confluence stack is non-negotiable. One missing → SKIP.",
+            isLong)

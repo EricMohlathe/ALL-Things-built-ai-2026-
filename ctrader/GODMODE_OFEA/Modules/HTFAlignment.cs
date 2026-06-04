@@ -15,7 +15,7 @@ namespace GodmodeOfea
         private readonly ExponentialMovingAverage _emaH4;
         private readonly ExponentialMovingAverage _emaD1;
 
-        public HtfAlignment(Algo robot, Symbol s)
+        public HtfAlignment(Robot robot, Symbol s)
         {
             _h4 = robot.MarketData.GetBars(TimeFrame.Hour4, s.Name);
             _d1 = robot.MarketData.GetBars(TimeFrame.Daily, s.Name);
