@@ -22,6 +22,9 @@ behind organic winners. Global-English with SA + emerging-market variants.
 | Carousel cover — finance ("$760/yr hiding in your phone") | Canva — [view](https://www.canva.com/d/7EqVKzs9sdBw_bT) | Canva AI |
 | Carousel cover — side hustles ("5 faceless side hustles tonight") | Canva — [view](https://www.canva.com/d/ocXAA-8bWTR5mcD) | Canva AI |
 | Carousel cover — get paid in USD (🇿🇦🇮🇳🇳🇬) | Canva — [view](https://www.canva.com/d/h6p9p2ewBpNtNnH) | Canva AI |
+| 📊 **Full 7-slide finance carousel** (in-repo, ready to post) | [`carousel-finance/`](carousel-finance/) | hand-built SVG |
+| 🖼️ **SA thumbnail variant** ("R9,000/MONTH · paid in USD", score 84) | [`assets/youtube-ad-thumbnail-SA.png`](assets/youtube-ad-thumbnail-SA.png) | vidIQ AI |
+| 🎨 **Figma design file** (brand + app UI + landing hero) | [Figma](https://www.figma.com/design/1Dxd7McRyAxuDaYiwkoa7q) | Figma MCP |
 
 > The hero video stitches the 6 cinematic b-roll clips to the 30.5s AI voiceover with
 > animated brand captions and a "Start free — link in bio" end card — the master that

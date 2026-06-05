@@ -36,6 +36,10 @@ Dashboard (progress through the 5 steps + "get paid in USD" banner)
 - **Mobile-first:** the audience is phone-first; everything works one-handed.
 
 ## Design system
+🎨 Designed in **Figma**: https://www.figma.com/design/1Dxd7McRyAxuDaYiwkoa7q (frame
+"03 · App · Dashboard" is the product UI; "04 · Landing · Hero" the marketing screen).
+See [`../02-brand/FIGMA_DESIGN.md`](../02-brand/FIGMA_DESIGN.md).
+
 Dark, premium, high-contrast. Background `#0B0B0F`, surfaces `#15151D/#1E1E29`,
 accent **Forge Orange `#FF6A2C`** with a `#FF9A3D` gradient. Display font Space
 Grotesk, UI font Inter. Rounded corners, soft glow on primary CTAs, orange used

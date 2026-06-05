@@ -1,5 +1,9 @@
 # ViralForge — Brand Guide
 
+> 🎨 **Live Figma file:** https://www.figma.com/design/1Dxd7McRyAxuDaYiwkoa7q — the brand
+> cover, colour system, typography, app UI, and landing hero are built as frames there.
+> Details + node map in [`FIGMA_DESIGN.md`](FIGMA_DESIGN.md).
+
 ## Name
 **ViralForge** — you *forge* viral content (and income) from raw ideas. Strong,
 ownable, action-oriented, works as a verb ("forge your week").

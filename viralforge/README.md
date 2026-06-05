@@ -35,7 +35,7 @@ Full analysis: [`00-research/MARKET_RESEARCH.md`](00-research/MARKET_RESEARCH.md
 |---|---|---|
 | 📊 Research | [`00-research/`](00-research/) | Real vidIQ market data → niche decision |
 | 🧭 Strategy | [`01-strategy/`](01-strategy/) | Business plan, ICP, **multi-currency pricing**, **global** + **SA** plans |
-| 🎨 Brand | [`02-brand/`](02-brand/) | Name, voice, colour system, logo direction |
+| 🎨 Brand + Figma | [`02-brand/`](02-brand/) | Name, voice, colour system, logo + **[Figma design file](https://www.figma.com/design/1Dxd7McRyAxuDaYiwkoa7q)** |
 | 🖥️ Product (live) | [`03-product/`](03-product/) | Working web app **built in Base44** (+ localized) |
 | ✍️ Content | [`04-content/`](04-content/) | 30-day calendar, viral scripts, carousels, DM funnel |
 | 📣 Ads + Media | [`05-ads/`](05-ads/) | TikTok/IG/X/YT campaigns + **real generated assets** + AI-video brief |
@@ -47,7 +47,9 @@ Full analysis: [`00-research/MARKET_RESEARCH.md`](00-research/MARKET_RESEARCH.md
 - 🔊 **32s hero voiceover** (AI VO) — [`05-ads/assets/hero-ad-voiceover.mp3`](05-ads/assets/hero-ad-voiceover.mp3)
 - 📱 **Instagram ads** — 2 Canva designs (global + SA "get paid in dollars") + an in-repo [`SVG ad`](05-ads/assets/instagram-launch-ad.svg)
 - 🎬 **Finished 30s hero video ad** (9:16, AI VO + cinematic b-roll + captions + end card) — ▶ [watch](https://share.descript.com/view/8HEoPwDxykO) · in-repo [`05-ads/assets/hero-ad-video.mp4`](05-ads/assets/hero-ad-video.mp4)
-- 📱 **TikTok cover + 3 carousel covers** (Canva) — finance / side-hustle / get-paid-in-USD
+- 📱 **TikTok cover + 3 carousel covers** (Canva) + a **full 7-slide finance carousel** ([`05-ads/carousel-finance/`](05-ads/carousel-finance/))
+- 🖼️ **SA thumbnail variant** ("R9,000/MONTH · paid in USD", scored **84/100**) — [`05-ads/assets/youtube-ad-thumbnail-SA.png`](05-ads/assets/youtube-ad-thumbnail-SA.png)
+- 🎨 **Figma design file** — brand system + app dashboard UI + landing hero ([open](https://www.figma.com/design/1Dxd7McRyAxuDaYiwkoa7q))
 - 🎞️ **16 cinematic b-roll clips** catalogued + **Higgsfield / Seedance / Nano Banana** prompt packs — [`05-ads/GENERATIVE_MEDIA_BRIEF.md`](05-ads/GENERATIVE_MEDIA_BRIEF.md)
 - 🏆 **Scored video titles** (top **94/100**)
 
@@ -81,5 +83,6 @@ gh repo create viralforge --public --source=. --push   # needs gh + repo-create 
 
 ---
 *Expert-grade new-venture package: research → niche → product → brand → UI → ad
-campaigns → generated media → a real product to sell. Built with vidIQ, Base44, Canva,
-and AI media tooling.*
+campaigns → generated media → a real product to sell. Built with vidIQ (research,
+titles, thumbnails, voiceover, b-roll), Base44 (live app), Canva (ad creatives),
+Descript (video), and Figma (design system + UI).*
