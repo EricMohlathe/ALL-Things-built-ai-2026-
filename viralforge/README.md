@@ -46,7 +46,9 @@ Full analysis: [`00-research/MARKET_RESEARCH.md`](00-research/MARKET_RESEARCH.md
 - 🖼️ **YouTube ad thumbnail** (vidIQ AI, on-brand) — [`05-ads/assets/youtube-ad-thumbnail.png`](05-ads/assets/youtube-ad-thumbnail.png)
 - 🔊 **32s hero voiceover** (AI VO) — [`05-ads/assets/hero-ad-voiceover.mp3`](05-ads/assets/hero-ad-voiceover.mp3)
 - 📱 **Instagram ads** — 2 Canva designs (global + SA "get paid in dollars") + an in-repo [`SVG ad`](05-ads/assets/instagram-launch-ad.svg)
-- 🎬 **16 cinematic b-roll clips** catalogued + **Higgsfield / Seedance / Nano Banana** prompt packs — [`05-ads/GENERATIVE_MEDIA_BRIEF.md`](05-ads/GENERATIVE_MEDIA_BRIEF.md)
+- 🎬 **Finished 30s hero video ad** (9:16, AI VO + cinematic b-roll + captions + end card) — ▶ [watch](https://share.descript.com/view/8HEoPwDxykO) · in-repo [`05-ads/assets/hero-ad-video.mp4`](05-ads/assets/hero-ad-video.mp4)
+- 📱 **TikTok cover + 3 carousel covers** (Canva) — finance / side-hustle / get-paid-in-USD
+- 🎞️ **16 cinematic b-roll clips** catalogued + **Higgsfield / Seedance / Nano Banana** prompt packs — [`05-ads/GENERATIVE_MEDIA_BRIEF.md`](05-ads/GENERATIVE_MEDIA_BRIEF.md)
 - 🏆 **Scored video titles** (top **94/100**)
 
 ## The live product

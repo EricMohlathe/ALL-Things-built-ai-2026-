@@ -17,7 +17,7 @@ behind organic winners. Global-English with SA + emerging-market variants.
 ## Creative library — round 2 (TikTok cover · carousels · video)
 | Asset | Link | Made with |
 |---|---|---|
-| 🎬 **Hero video ad (30s, 9:16)** — VO + b-roll + captions + end card | [Descript project](https://web.descript.com/efacba8e-1813-4e8c-a443-eba4676e442e) | Descript AI editor |
+| 🎬 **Hero video ad (30s, 9:16)** — VO + b-roll + captions + end card | ▶ [Watch](https://share.descript.com/view/8HEoPwDxykO) · in-repo [`assets/hero-ad-video.mp4`](assets/hero-ad-video.mp4) · [edit](https://web.descript.com/efacba8e-1813-4e8c-a443-eba4676e442e) | Descript AI editor |
 | TikTok video cover ("I made $500/week, faceless") | Canva — [view](https://www.canva.com/d/w5Yb3xz-Rl0896a) · [edit](https://www.canva.com/d/YJDhjYoWQh-MHUr) | Canva AI |
 | Carousel cover — finance ("$760/yr hiding in your phone") | Canva — [view](https://www.canva.com/d/7EqVKzs9sdBw_bT) | Canva AI |
 | Carousel cover — side hustles ("5 faceless side hustles tonight") | Canva — [view](https://www.canva.com/d/ocXAA-8bWTR5mcD) | Canva AI |

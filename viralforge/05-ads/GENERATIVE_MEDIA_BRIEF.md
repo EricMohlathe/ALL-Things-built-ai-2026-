@@ -134,7 +134,9 @@ A 30-second 9:16 hero ad has been assembled in **Descript**: the 6 cinematic b-r
 clips cut to the 30.5s AI voiceover, animated brand captions (money words in Forge
 Orange), slow cinematic zooms, original b-roll audio muted, and a "ViralForge — Start
 free, link in bio" end card.
-- **Project:** https://web.descript.com/efacba8e-1813-4e8c-a443-eba4676e442e
+- **▶ Watch (published):** https://share.descript.com/view/8HEoPwDxykO
+- **In-repo file:** [`assets/hero-ad-video.mp4`](assets/hero-ad-video.mp4) (1080×1920, 30.5s)
+- **Edit project:** https://web.descript.com/efacba8e-1813-4e8c-a443-eba4676e442e
 - Use it as the master; export 9:16 and cut down for TikTok / Reels / Shorts.
 - Swap in the Higgsfield/Seedance hero shots below to upgrade individual beats.
 
