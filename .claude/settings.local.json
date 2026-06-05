@@ -4,7 +4,8 @@
       "Bash(dotnet build *)",
       "Bash(git init *)",
       "Bash(git branch *)",
-      "Bash(git add *)"
+      "Bash(git add *)",
+      "mcp__37895b42-3edc-4d9d-a0e4-ca78685e0200__vidiq_voiceover_generate"
     ]
   }
 }
