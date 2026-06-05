@@ -1,0 +1,25 @@
+# Dependency trees / build artifacts (re-created by setup.sh, never committed)
+node_modules/
+.venv/
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+dist/
+build/
+*.egg-info/
+out/
+.remotion/
+
+# Install logs
+.*-install.log
+
+# Env / secrets
+.env
+.env.local
+*.local
+
+# OS
+.DS_Store
