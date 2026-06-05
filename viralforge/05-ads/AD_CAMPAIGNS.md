@@ -14,6 +14,19 @@ behind organic winners. Global-English with SA + emerging-market variants.
 | Cinematic b-roll library (16 clips) | [`GENERATIVE_MEDIA_BRIEF.md`](GENERATIVE_MEDIA_BRIEF.md) | vidIQ b-roll (Pexels) |
 | Scored video titles (top 94/100) | see "YouTube" below | vidIQ AI |
 
+## Creative library — round 2 (TikTok cover · carousels · video)
+| Asset | Link | Made with |
+|---|---|---|
+| 🎬 **Hero video ad (30s, 9:16)** — VO + b-roll + captions + end card | [Descript project](https://web.descript.com/efacba8e-1813-4e8c-a443-eba4676e442e) | Descript AI editor |
+| TikTok video cover ("I made $500/week, faceless") | Canva — [view](https://www.canva.com/d/w5Yb3xz-Rl0896a) · [edit](https://www.canva.com/d/YJDhjYoWQh-MHUr) | Canva AI |
+| Carousel cover — finance ("$760/yr hiding in your phone") | Canva — [view](https://www.canva.com/d/7EqVKzs9sdBw_bT) | Canva AI |
+| Carousel cover — side hustles ("5 faceless side hustles tonight") | Canva — [view](https://www.canva.com/d/ocXAA-8bWTR5mcD) | Canva AI |
+| Carousel cover — get paid in USD (🇿🇦🇮🇳🇳🇬) | Canva — [view](https://www.canva.com/d/h6p9p2ewBpNtNnH) | Canva AI |
+
+> The hero video stitches the 6 cinematic b-roll clips to the 30.5s AI voiceover with
+> animated brand captions and a "Start free — link in bio" end card — the master that
+> the TikTok/IG/YT Shorts cutdowns are made from.
+
 ## Scored YouTube titles (vidIQ)
 1. **"$500/week with AI shorts? This actually works"** — 94
 2. "$500/week from AI shorts as a complete beginner" — 85

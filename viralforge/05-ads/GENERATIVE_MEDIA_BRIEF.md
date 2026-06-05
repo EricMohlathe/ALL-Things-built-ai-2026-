@@ -129,6 +129,15 @@ make on-brand variants). Output square/portrait as needed.
 | 25–30s | "Stop watching other people win. Forge your first $500 a week." | Seedance #2 count-up + Higgsfield #4 skyline | "$0 → $500/week" |
 | 30–32s | "ViralForge. Link in bio." | Logo + CTA card | "Start free → link in bio" |
 
+## ✅ Assembled master (already built in Descript)
+A 30-second 9:16 hero ad has been assembled in **Descript**: the 6 cinematic b-roll
+clips cut to the 30.5s AI voiceover, animated brand captions (money words in Forge
+Orange), slow cinematic zooms, original b-roll audio muted, and a "ViralForge — Start
+free, link in bio" end card.
+- **Project:** https://web.descript.com/efacba8e-1813-4e8c-a443-eba4676e442e
+- Use it as the master; export 9:16 and cut down for TikTok / Reels / Shorts.
+- Swap in the Higgsfield/Seedance hero shots below to upgrade individual beats.
+
 ## G) Assembly workflow (tools available to you)
 1. Render the hero shots in Higgsfield/Seedance/Nano Banana using the prompts above.
 2. Drop them + the b-roll links + [`hero-ad-voiceover.mp3`](assets/hero-ad-voiceover.mp3)
