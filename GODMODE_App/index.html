@@ -2,8 +2,17 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
 <title>GODMODE ⚡ Control Center</title>
+<!-- PWA / iPhone install -->
+<meta name="theme-color" content="#070B14"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="GODMODE"/>
+<link rel="manifest" href="manifest.webmanifest"/>
+<link rel="apple-touch-icon" href="apple-touch-icon.png"/>
+<link rel="icon" type="image/png" href="icon-192.png"/>
 <style>
 :root{
   --bg:#070B14; --bg2:#0B1220; --card:#101a2e; --card2:#13203a;
@@ -85,6 +94,35 @@ th,td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:left}
 th{color:var(--dim);text-transform:uppercase;font-size:10px;letter-spacing:1px}
 .dirL{color:var(--bull)}.dirS{color:var(--bear)}
 footer{margin-top:24px;text-align:center;color:var(--dim);font-size:11px}
+/* safe-area + touch */
+.wrap{padding-left:max(22px,env(safe-area-inset-left));padding-right:max(22px,env(safe-area-inset-right));
+  padding-top:max(18px,env(safe-area-inset-top));padding-bottom:max(60px,env(safe-area-inset-bottom))}
+.tab,.btn,.toggle,.upload,select{-webkit-tap-highlight-color:rgba(91,141,239,.25);touch-action:manipulation}
+/* ---- iPhone / mobile layout ---- */
+@media (max-width:640px){
+  .wrap{padding-left:max(12px,env(safe-area-inset-left));padding-right:max(12px,env(safe-area-inset-right))}
+  header{flex-direction:column;align-items:stretch;gap:12px;padding:12px}
+  .logo h1{font-size:16px} .logo small{font-size:10px}
+  .flip{max-width:none}
+  nav.tabs{position:sticky;top:0;z-index:15;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;
+    gap:6px;padding:8px 0;margin-bottom:12px;background:var(--bg);border-bottom:1px solid var(--line);scrollbar-width:none}
+  nav.tabs::-webkit-scrollbar{display:none}
+  .tab{flex:0 0 auto;padding:10px 16px;font-size:14px}
+  .stats{grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px}
+  .stat{padding:11px 12px}.stat .v{font-size:20px}
+  .grid{grid-template-columns:1fr;gap:12px}
+  .toolbar{gap:8px}
+  .toolbar input[type=text],.toolbar select,#search{flex:1 1 100%;min-width:0;padding:11px 12px;font-size:16px}
+  .btn{padding:11px 14px;font-size:14px}
+  /* bigger tap targets for the on/off toggle */
+  .toggle{width:54px;height:30px}
+  .toggle::after{width:24px;height:24px}
+  .toggle.on::after{left:26px}
+  .card .foot .risk{padding:8px 10px;font-size:16px}
+  table{font-size:11px} th,td{padding:6px 5px}
+  .panel{padding:14px}
+}
+@media (hover:none){ .card:hover{transform:none} } /* avoid stuck hover-lift on touch */
 </style>
 </head>
 <body>
@@ -179,7 +217,7 @@ footer{margin-top:24px;text-align:center;color:var(--dim);font-size:11px}
   <footer>GODMODE Master Library · MT5 + cTrader + TradingView · visualise → backtest → keep only what proves out.</footer>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4" defer></script>
 <script>
 const ARCH=[
  ["GM01","Opening Range Breakout","Breakout","First-range break with retest filter."],
@@ -210,7 +248,9 @@ const ARCH=[
  ["GM26","Confluence Stack","Meta-edge","Fires only when ≥N layers agree (4–5 floor)."]
 ];
 const RISK=["Conservative","Aggressive","Flip"];
-const state=JSON.parse(localStorage.getItem("gm_state")||"{}");
+let state={};
+try{ state=JSON.parse(localStorage.getItem("gm_state")||"{}")||{}; }
+catch(e){ console.warn("gm_state corrupt, resetting",e); try{localStorage.removeItem("gm_state");}catch(_){} state={}; }
 let journal={}; // ea -> stats
 
 const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
