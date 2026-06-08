@@ -1,0 +1,48 @@
+name: Deploy GODMODE App to GitHub Pages
+
+# Publishes GODMODE_App/ as the site root so you get a stable HTTPS URL
+# (required for installing the PWA on iPhone via Add to Home Screen).
+#
+# ONE-TIME SETUP: repo Settings → Pages → "Build and deployment" →
+# Source = "GitHub Actions". After that, this runs on every push to
+# godmode-ofea-workspace that touches the app, or manually via "Run workflow".
+
+on:
+  push:
+    branches: [godmode-ofea-workspace]
+    paths:
+      - 'GODMODE_App/**'
+      - '.github/workflows/deploy-pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow one concurrent deployment; don't cancel an in-progress production deploy.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload GODMODE_App as the site
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: GODMODE_App
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
