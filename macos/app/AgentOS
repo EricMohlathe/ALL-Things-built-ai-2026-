@@ -1,0 +1,65 @@
+#!/bin/bash
+# Agent OS.app launcher — native control panel for the Agent OS workspace
+# (Agent OS framework + Activepieces automation engine). No compilation:
+# bash + osascript dialogs, workspace payload bundled in Contents/Resources.
+set -u
+export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
+
+RES="$(cd "$(dirname "$0")/../Resources" && pwd)"
+WS="$HOME/agent-os-workspace"
+AP="$WS/software/activepieces"
+URL="http://localhost:8080"
+
+alert() { osascript -e "display dialog \"$1\" with title \"Agent OS\" buttons {\"OK\"} default button 1" >/dev/null; }
+
+ask() { # ask "message" "Yes label" -> 0 if confirmed
+  osascript -e "display dialog \"$1\" with title \"Agent OS\" buttons {\"Cancel\",\"$2\"} default button 2" >/dev/null 2>&1
+}
+
+run_in_terminal() { # show long-running work to the user
+  osascript -e "tell application \"Terminal\"
+    activate
+    do script \"bash $(printf %q "$1")\"
+  end tell" >/dev/null
+}
+
+docker_ready() { docker info >/dev/null 2>&1; }
+
+ap_up() { curl -fsS "$URL/api/v1/flags" >/dev/null 2>&1; }
+
+ensure_installed() {
+  [ -x "$WS/setup.sh" ] && return 0
+  ask "The Agent OS workspace is not installed yet.\n\nInstall it now to ~/agent-os-workspace?\n(Homebrew, git, node, uv, Docker Desktop, Activepieces)" "Install" || return 1
+  run_in_terminal "$RES/install.sh"
+  alert "Installation is running in Terminal.\n\nWhen it finishes, open Agent OS again."
+  return 1
+}
+
+start_ap() {
+  ensure_installed || return
+  if ! docker_ready; then
+    open -a Docker 2>/dev/null || { alert "Docker Desktop is not installed. Use Install / Repair."; return; }
+    for _ in $(seq 1 30); do docker_ready && break; sleep 2; done
+    docker_ready || { alert "Docker Desktop is still starting. Try again in a moment."; return; }
+  fi
+  ( cd "$AP" && docker compose up -d ) || { alert "Failed to start Activepieces (see Docker Desktop)."; return; }
+  for _ in $(seq 1 30); do ap_up && break; sleep 2; done
+  if ap_up; then open "$URL"; else alert "Activepieces is starting — the dashboard may need another minute.\n$URL"; fi
+}
+
+stop_ap() {
+  [ -d "$AP" ] && docker_ready && ( cd "$AP" && docker compose down ) && alert "Activepieces stopped." || alert "Nothing to stop."
+}
+
+while :; do
+  if ap_up; then STATUS="Activepieces: ● running ($URL)"; else STATUS="Activepieces: ○ stopped"; fi
+  CHOICE=$(osascript -e "choose from list {\"Start Activepieces\",\"Open Dashboard\",\"Stop Activepieces\",\"Open Workspace in Finder\",\"Install / Repair\"} with title \"Agent OS\" with prompt \"$STATUS\" default items {\"Start Activepieces\"} OK button name \"Go\" cancel button name \"Quit\"") || exit 0
+  case "$CHOICE" in
+    "Start Activepieces") start_ap ;;
+    "Open Dashboard") ap_up && open "$URL" || alert "Activepieces is not running yet — choose Start first." ;;
+    "Stop Activepieces") stop_ap ;;
+    "Open Workspace in Finder") [ -d "$WS" ] && open "$WS" || ensure_installed ;;
+    "Install / Repair") run_in_terminal "$RES/install.sh"; exit 0 ;;
+    "false"|"") exit 0 ;;
+  esac
+done

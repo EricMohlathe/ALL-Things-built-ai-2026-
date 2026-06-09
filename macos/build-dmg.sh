@@ -8,8 +8,8 @@ OUT="${1:-$HOME/Desktop/AgentOS-Workspace-arm64.dmg}"
 STAGE="$(mktemp -d)"
 trap 'rm -rf "$STAGE"' EXIT
 
-git -C "$ROOT" archive --format=tar.gz -o "$STAGE/agent-os-workspace.tar.gz" HEAD
-install -m 0755 "$ROOT/macos/Install Agent OS Workspace.command" "$STAGE/"
+bash "$ROOT/macos/build-app.sh" "$STAGE"
+ln -s /Applications "$STAGE/Applications"
 install -m 0644 "$ROOT/macos/DMG-README.txt" "$STAGE/"
 
 if [ "$(uname -s)" = "Darwin" ]; then
