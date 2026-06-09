@@ -260,6 +260,12 @@ def main():
     sp.add_argument("--interval", default="1d"); sp.add_argument("--limit", type=int, default=1000); sp.set_defaults(f=cmd_optimize)
     sp = sub.add_parser("serve"); sp.add_argument("--port", type=int, default=7871); sp.set_defaults(f=cmd_serve)
     sub.add_parser("godmode").set_defaults(f=cmd_godmode)
+    sp = sub.add_parser("walkforward"); sp.add_argument("strategy"); sp.add_argument("symbol")
+    sp.add_argument("--folds", type=int, default=4); sp.add_argument("--source", default="binance", choices=["binance", "yahoo", "csv"])
+    sp.add_argument("--limit", type=int, default=1000)
+    sp.set_defaults(f=lambda a: print(opt.render_wf(opt.walkforward(
+        a.strategy, datamod.get_ohlcv(a.symbol, source=a.source, limit=a.limit),
+        gate=gate(), ann=365 if a.source == "binance" else 252, folds=a.folds))))
     sp = sub.add_parser("godmode-rank"); sp.add_argument("symbol")
     sp.add_argument("--source", default="binance", choices=["binance", "yahoo", "csv"])
     sp.add_argument("--limit", type=int, default=1000); sp.set_defaults(f=cmd_godmode_rank)

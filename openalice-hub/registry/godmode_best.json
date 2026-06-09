@@ -273,5 +273,604 @@
     "oos_metric": 1.802483441764396,
     "oos_return": 0.6292263377348881,
     "is_metric": -0.3334072281305753
+  },
+  "gm01_absbot|ETHUSDT": {
+    "params": {
+      "lb": 10,
+      "k": 0.5,
+      "hold": 5
+    },
+    "exits": {},
+    "oos_metric": 0,
+    "oos_return": 0.0,
+    "is_metric": 0
+  },
+  "gm02_abstop|ETHUSDT": {
+    "params": {
+      "lb": 10,
+      "k": 0.5,
+      "hold": 20
+    },
+    "exits": {},
+    "oos_metric": 0,
+    "oos_return": 0.0,
+    "is_metric": 0.4496127725438474
+  },
+  "gm03_cvdbear|ETHUSDT": {
+    "params": {
+      "lb": 10,
+      "k": 0.5,
+      "hold": 10
+    },
+    "exits": {},
+    "oos_metric": 2.216013895851631,
+    "oos_return": 0.7335308354276087,
+    "is_metric": -0.7467229031973046
+  },
+  "gm04_cvdbull|ETHUSDT": {
+    "params": {
+      "lb": 30,
+      "k": 0.5,
+      "hold": 20
+    },
+    "exits": {},
+    "oos_metric": 0,
+    "oos_return": 0.0,
+    "is_metric": 0.9611117711674926
+  },
+  "gm05_valbnc|ETHUSDT": {
+    "params": {
+      "lb": 30,
+      "k": 0.5,
+      "hold": 10
+    },
+    "exits": {},
+    "oos_metric": -0.3243537399933325,
+    "oos_return": -0.09158040748713991,
+    "is_metric": 1.0244418880292008
+  },
+  "gm06_vahfade|ETHUSDT": {
+    "params": {
+      "lb": 10,
+      "k": 1.5,
+      "hold": 20
+    },
+    "exits": {},
+    "oos_metric": 1.852163159986936,
+    "oos_return": 0.8112025036401578,
+    "is_metric": 0.5535550392378651
+  },
+  "gm07_pocret|ETHUSDT": {
+    "params": {
+      "lb": 20,
+      "k": 0.5,
+      "hold": 10
+    },
+    "exits": {},
+    "oos_metric": -0.48677279867057643,
+    "oos_return": -0.3492262848610077,
+    "is_metric": 0.6303277696962866
+  },
+  "gm08_lvnlong|ETHUSDT": {
+    "params": {
+      "lb": 10,
+      "k": 0.5,
+      "hold": 10
+    },
+    "exits": {
+      "stop_atr": 1.5,
+      "tp_atr": 3,
+      "trail_atr": 2
+    },
+    "oos_metric": -1.4211607639528212,
+    "oos_return": -0.06550715053740586,
+    "is_metric": 2.020415405008726
+  },
+  "gm09_lvnshort|ETHUSDT": {
+    "params": {
+      "lb": 10,
+      "k": 0.5,
+      "hold": 5
+    },
+    "exits": {},
+    "oos_metric": 0.6337898384853083,
+    "oos_return": 0.039595134365619344,
+    "is_metric": 0.13576401789054188
+  },
+  "gm10_hvnrej|ETHUSDT": {
+    "params": {
+      "lb": 10,
+      "k": 1.5,
+      "hold": 20
+    },
+    "exits": {},
+    "oos_metric": -0.3036670434300438,
+    "oos_return": -0.24496595461128068,
+    "is_metric": 1.1470224534430877
+  },
+  "gm11_stackbull|ETHUSDT": {
+    "params": {
+      "lb": 20,
+      "k": 0.5,
+      "hold": 10
+    },
+    "exits": {},
+    "oos_metric": -0.5024354433286224,
+    "oos_return": -0.11534296056881665,
+    "is_metric": 2.12573018896001
+  },
+  "gm12_stackbear|ETHUSDT": {
+    "params": {
+      "lb": 20,
+      "k": 0.5,
+      "hold": 5
+    },
+    "exits": {},
+    "oos_metric": 1.1831378537457147,
+    "oos_return": 0.4884874257527929,
+    "is_metric": -0.001453325192314906
+  },
+  "gm13_pullstack|ETHUSDT": {
+    "params": {
+      "lb": 10,
+      "k": 0.5,
+      "hold": 20
+    },
+    "exits": {
+      "stop_atr": 2,
+      "trail_atr": 2.5
+    },
+    "oos_metric": 0.25413308467161705,
+    "oos_return": 0.026163618305441005,
+    "is_metric": 0.8565176021138057
+  },
+  "gm14_spring|ETHUSDT": {
+    "params": {
+      "lb": 10,
+      "k": 0.5,
+      "hold": 10
+    },
+    "exits": {
+      "stop_atr": 3,
+      "tp_atr": 6
+    },
+    "oos_metric": -0.6687135928925658,
+    "oos_return": -0.1785279159347012,
+    "is_metric": 0.9019471332373393
+  },
+  "gm15_upthrust|ETHUSDT": {
+    "params": {
+      "lb": 10,
+      "k": 0.5,
+      "hold": 20
+    },
+    "exits": {},
+    "oos_metric": 1.437744048786973,
+    "oos_return": 0.6650536558827491,
+    "is_metric": -0.6477548508143548
+  },
+  "gm16_sos|ETHUSDT": {
+    "params": {
+      "lb": 30,
+      "k": 1.5,
+      "hold": 10
+    },
+    "exits": {},
+    "oos_metric": -1.9594778195071536,
+    "oos_return": -0.2392690429448615,
+    "is_metric": 1.9346464979408866
+  },
+  "gm17_lpsy|ETHUSDT": {
+    "params": {
+      "lb": 10,
+      "k": 0.5,
+      "hold": 20
+    },
+    "exits": {},
+    "oos_metric": 1.7928025895083095,
+    "oos_return": 1.0415793806608535,
+    "is_metric": 0.5196439520141629
+  },
+  "gm18_liqsweep|ETHUSDT": {
+    "params": {
+      "lb": 10,
+      "k": 0.5,
+      "hold": 5
+    },
+    "exits": {},
+    "oos_metric": -1.036201336397944,
+    "oos_return": -0.47349139457419576,
+    "is_metric": -0.2295766740771486
+  },
+  "gm19_obreturn|ETHUSDT": {
+    "params": {
+      "lb": 30,
+      "k": 0.5,
+      "hold": 5
+    },
+    "exits": {},
+    "oos_metric": 1.1395350929397257,
+    "oos_return": 0.22573034524441526,
+    "is_metric": 0.6346988006060719
+  },
+  "gm20_smtdiv|ETHUSDT": {
+    "params": {
+      "lb": 30,
+      "k": 0.5,
+      "hold": 5
+    },
+    "exits": {},
+    "oos_metric": 1.2858241462406157,
+    "oos_return": 0.2723188180102296,
+    "is_metric": -0.06974374653884066
+  },
+  "gm21_breaker|ETHUSDT": {
+    "params": {
+      "lb": 30,
+      "k": 0.5,
+      "hold": 5
+    },
+    "exits": {},
+    "oos_metric": 0,
+    "oos_return": 0.0,
+    "is_metric": 0.7286574720866016
+  },
+  "gm22_amd|ETHUSDT": {
+    "params": {
+      "lb": 10,
+      "k": 1.5,
+      "hold": 5
+    },
+    "exits": {},
+    "oos_metric": -2.4870402306075436,
+    "oos_return": -0.28026591733055806,
+    "is_metric": 1.2575502437821557
+  },
+  "gm23_unfauc|ETHUSDT": {
+    "params": {
+      "lb": 10,
+      "k": 0.5,
+      "hold": 10
+    },
+    "exits": {},
+    "oos_metric": 0.21413808409821886,
+    "oos_return": 0.008611689910158926,
+    "is_metric": 1.35302620902586
+  },
+  "gm24_poorhl|ETHUSDT": {
+    "params": {
+      "lb": 20,
+      "k": 0.5,
+      "hold": 10
+    },
+    "exits": {},
+    "oos_metric": -0.03838911224708034,
+    "oos_return": -0.16146044431743578,
+    "is_metric": -1.0108958734389777
+  },
+  "gm25_iceberg|ETHUSDT": {
+    "params": {
+      "lb": 30,
+      "k": 1.5,
+      "hold": 20
+    },
+    "exits": {},
+    "oos_metric": 0.991759423727488,
+    "oos_return": 0.208820212553273,
+    "is_metric": 1.0983805689438104
+  },
+  "gm_confluence|ETHUSDT": {
+    "params": {
+      "lb": 10,
+      "k": 0.5,
+      "hold": 20
+    },
+    "exits": {},
+    "oos_metric": 1.9803000657236927,
+    "oos_return": 1.1854159869692498,
+    "is_metric": -0.5163941388956597
+  },
+  "gm01_absbot|SOLUSDT": {
+    "params": {
+      "lb": 20,
+      "k": 1.0,
+      "hold": 5
+    },
+    "exits": {},
+    "oos_metric": 0,
+    "oos_return": 0.0,
+    "is_metric": 0.8921863650621223
+  },
+  "gm02_abstop|SOLUSDT": {
+    "params": {
+      "lb": 10,
+      "k": 0.5,
+      "hold": 5
+    },
+    "exits": {},
+    "oos_metric": -0.2697787550965415,
+    "oos_return": -0.015732776617954025,
+    "is_metric": 0
+  },
+  "gm03_cvdbear|SOLUSDT": {
+    "params": {
+      "lb": 10,
+      "k": 0.5,
+      "hold": 20
+    },
+    "exits": {},
+    "oos_metric": 1.7589707594517063,
+    "oos_return": 0.44349234261131243,
+    "is_metric": 0.9860996085612719
+  },
+  "gm04_cvdbull|SOLUSDT": {
+    "params": {
+      "lb": 10,
+      "k": 0.5,
+      "hold": 20
+    },
+    "exits": {
+      "stop_atr": 2,
+      "trail_atr": 2.5
+    },
+    "oos_metric": -1.1570875890820917,
+    "oos_return": -0.2039364795996581,
+    "is_metric": 1.5919996744830067
+  },
+  "gm05_valbnc|SOLUSDT": {
+    "params": {
+      "lb": 10,
+      "k": 1.5,
+      "hold": 20
+    },
+    "exits": {},
+    "oos_metric": -1.51941068900614,
+    "oos_return": -0.6524335611106198,
+    "is_metric": 1.3003004948795
+  },
+  "gm06_vahfade|SOLUSDT": {
+    "params": {
+      "lb": 20,
+      "k": 1.5,
+      "hold": 20
+    },
+    "exits": {},
+    "oos_metric": 2.141990422028863,
+    "oos_return": 1.1842656428038985,
+    "is_metric": 0.5740306725358528
+  },
+  "gm07_pocret|SOLUSDT": {
+    "params": {
+      "lb": 10,
+      "k": 1.5,
+      "hold": 20
+    },
+    "exits": {},
+    "oos_metric": 0.5767530709853749,
+    "oos_return": 0.13964968739136574,
+    "is_metric": 1.2583786335454799
+  },
+  "gm08_lvnlong|SOLUSDT": {
+    "params": {
+      "lb": 10,
+      "k": 0.5,
+      "hold": 20
+    },
+    "exits": {},
+    "oos_metric": -0.2251282423831761,
+    "oos_return": -0.06181577361204149,
+    "is_metric": 1.6469924209891107
+  },
+  "gm09_lvnshort|SOLUSDT": {
+    "params": {
+      "lb": 10,
+      "k": 0.5,
+      "hold": 10
+    },
+    "exits": {},
+    "oos_metric": 0,
+    "oos_return": 0.0,
+    "is_metric": 0.7579443334006668
+  },
+  "gm10_hvnrej|SOLUSDT": {
+    "params": {
+      "lb": 30,
+      "k": 1.5,
+      "hold": 20
+    },
+    "exits": {},
+    "oos_metric": 1.0947715490355328,
+    "oos_return": 0.4326671025181481,
+    "is_metric": 0.7070732465128665
+  },
+  "gm11_stackbull|SOLUSDT": {
+    "params": {
+      "lb": 20,
+      "k": 1.5,
+      "hold": 20
+    },
+    "exits": {},
+    "oos_metric": -1.4403816571445187,
+    "oos_return": -0.4622764805596987,
+    "is_metric": 1.8778181116144854
+  },
+  "gm12_stackbear|SOLUSDT": {
+    "params": {
+      "lb": 20,
+      "k": 0.5,
+      "hold": 20
+    },
+    "exits": {},
+    "oos_metric": 2.179868285059323,
+    "oos_return": 1.2855189713036483,
+    "is_metric": -0.8075524337255021
+  },
+  "gm13_pullstack|SOLUSDT": {
+    "params": {
+      "lb": 10,
+      "k": 0.5,
+      "hold": 20
+    },
+    "exits": {},
+    "oos_metric": -1.046672478333382,
+    "oos_return": -0.3328414046689233,
+    "is_metric": 1.694135588740631
+  },
+  "gm14_spring|SOLUSDT": {
+    "params": {
+      "lb": 10,
+      "k": 0.5,
+      "hold": 20
+    },
+    "exits": {
+      "stop_atr": 1.5,
+      "tp_atr": 3,
+      "trail_atr": 2
+    },
+    "oos_metric": -0.26188015329286557,
+    "oos_return": -0.07211110740116988,
+    "is_metric": 1.8575012602069416
+  },
+  "gm15_upthrust|SOLUSDT": {
+    "params": {
+      "lb": 20,
+      "k": 0.5,
+      "hold": 20
+    },
+    "exits": {},
+    "oos_metric": 1.694437566585741,
+    "oos_return": 0.6641608987211951,
+    "is_metric": 0.6569355690018074
+  },
+  "gm16_sos|SOLUSDT": {
+    "params": {
+      "lb": 20,
+      "k": 0.5,
+      "hold": 5
+    },
+    "exits": {
+      "stop_atr": 1,
+      "tp_atr": 2,
+      "trail_atr": 1.5
+    },
+    "oos_metric": -1.0801812102350585,
+    "oos_return": -0.14730441998617205,
+    "is_metric": 2.342983654478801
+  },
+  "gm17_lpsy|SOLUSDT": {
+    "params": {
+      "lb": 30,
+      "k": 0.5,
+      "hold": 20
+    },
+    "exits": {},
+    "oos_metric": 2.0402569591607347,
+    "oos_return": 0.8532093000858061,
+    "is_metric": 0.709983741402396
+  },
+  "gm18_liqsweep|SOLUSDT": {
+    "params": {
+      "lb": 20,
+      "k": 0.5,
+      "hold": 20
+    },
+    "exits": {},
+    "oos_metric": -0.841676782410298,
+    "oos_return": -0.4840806127020505,
+    "is_metric": 0.6689292438210601
+  },
+  "gm19_obreturn|SOLUSDT": {
+    "params": {
+      "lb": 20,
+      "k": 0.5,
+      "hold": 10
+    },
+    "exits": {},
+    "oos_metric": -0.2663352215288339,
+    "oos_return": -0.1346075254028063,
+    "is_metric": 0.7516771851928624
+  },
+  "gm20_smtdiv|SOLUSDT": {
+    "params": {
+      "lb": 10,
+      "k": 0.5,
+      "hold": 10
+    },
+    "exits": {},
+    "oos_metric": 0.6145695684498824,
+    "oos_return": 0.16352003856673591,
+    "is_metric": 0.14401272323452857
+  },
+  "gm21_breaker|SOLUSDT": {
+    "params": {
+      "lb": 10,
+      "k": 0.5,
+      "hold": 5
+    },
+    "exits": {},
+    "oos_metric": -1.4871957048368747,
+    "oos_return": -0.14153797867140872,
+    "is_metric": 0.9803565977496882
+  },
+  "gm22_amd|SOLUSDT": {
+    "params": {
+      "lb": 10,
+      "k": 0.5,
+      "hold": 20
+    },
+    "exits": {
+      "stop_atr": 3,
+      "tp_atr": 6
+    },
+    "oos_metric": -1.1701519476925646,
+    "oos_return": -0.4340361938724612,
+    "is_metric": 1.702892373584659
+  },
+  "gm23_unfauc|SOLUSDT": {
+    "params": {
+      "lb": 10,
+      "k": 0.5,
+      "hold": 20
+    },
+    "exits": {
+      "stop_atr": 3,
+      "tp_atr": 6
+    },
+    "oos_metric": 0.2932469894297693,
+    "oos_return": 0.01018361508036203,
+    "is_metric": 0.52453219829934
+  },
+  "gm24_poorhl|SOLUSDT": {
+    "params": {
+      "lb": 10,
+      "k": 0.5,
+      "hold": 5
+    },
+    "exits": {},
+    "oos_metric": 2.433982408068025,
+    "oos_return": 1.8871517343848838,
+    "is_metric": -0.7367445979505519
+  },
+  "gm25_iceberg|SOLUSDT": {
+    "params": {
+      "lb": 30,
+      "k": 1.0,
+      "hold": 5
+    },
+    "exits": {},
+    "oos_metric": 0,
+    "oos_return": 0.0,
+    "is_metric": 0.9302222884235397
+  },
+  "gm_confluence|SOLUSDT": {
+    "params": {
+      "lb": 20,
+      "k": 0.5,
+      "hold": 20
+    },
+    "exits": {},
+    "oos_metric": 2.2102490608628753,
+    "oos_return": 1.3705451020538728,
+    "is_metric": -0.06498211479063637
   }
 }

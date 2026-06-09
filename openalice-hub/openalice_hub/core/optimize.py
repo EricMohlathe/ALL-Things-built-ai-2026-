@@ -80,7 +80,7 @@ def exit_search(strategy_name, params, bars, gate=None, ann=365, metric="sharpe"
         r = _score(strategy_name, params, train, gate, ann, metric, exits=ex)
         if r is None:
             continue
-        oos = _score(strategy_name, params, test, gate, ann, metric, exits=ex)
+        oos = _score(strategy_name, params, test, gate, ann, metric, exits=ex) if len(test) > 10 else None
         row = {"exits": ex, "metric": r["metric"],
                "oos_metric": oos["metric"] if oos else None,
                "oos_return": oos["return"] if oos else None}
@@ -88,6 +88,54 @@ def exit_search(strategy_name, params, bars, gate=None, ann=365, metric="sharpe"
         if best is None or row["metric"] > best["metric"]:
             best = row
     return best
+
+
+def walkforward(strategy_name, bars, gate=None, ann=365, metric="sharpe", folds=4):
+    """Rolling walk-forward: optimize on each window, trade the NEXT window with
+    those frozen params. Stitched result = honest expectation of live behavior."""
+    n = len(bars); w = n // (folds + 1)
+    grid = GRIDS.get(strategy_name) or {}
+    segs = []
+    for f in range(folds):
+        train = bars[f * w:(f + 1) * w + w // 2]
+        test = bars[(f + 1) * w + w // 2:(f + 2) * w + w // 2] if f < folds - 1 else bars[(f + 1) * w + w // 2:]
+        if len(test) < 20:
+            continue
+        best = None
+        for params in _combos(grid):
+            r = _score(strategy_name, params, train, gate, ann, metric)
+            if r and (best is None or r["metric"] > best["metric"]):
+                best = r
+        if not best:
+            continue
+        ex = exit_search(strategy_name, best["params"], train, gate=gate, ann=ann, split=1.0) or {"exits": {}}
+        oos = _score(strategy_name, best["params"], test, gate, ann, metric, exits=ex["exits"])
+        segs.append({"fold": f + 1, "params": best["params"], "exits": ex["exits"],
+                     "oos_metric": oos["metric"] if oos else None,
+                     "oos_return": oos["return"] if oos else None,
+                     "trades": oos["trades"] if oos else 0})
+    rets = [s["oos_return"] for s in segs if s["oos_return"] is not None]
+    compound = 1.0
+    for r in rets:
+        compound *= (1 + r)
+    return {"strategy": strategy_name, "folds": segs,
+            "stitched_return": compound - 1,
+            "positive_folds": sum(1 for r in rets if r > 0), "total_folds": len(rets)}
+
+
+def render_wf(w):
+    L = ["─" * 64, f"  Walk-forward — {w['strategy']}  ({w['total_folds']} folds, params re-fit each fold)", "─" * 64]
+    for s in w["folds"]:
+        p = ",".join(f"{k}={v}" for k, v in s["params"].items())
+        ex = ",".join(f"{k.split('_')[0]}{v}" for k, v in s["exits"].items()) or "raw"
+        m = f"{s['oos_metric']:.2f}" if s["oos_metric"] is not None else "-"
+        r = f"{s['oos_return']*100:+.0f}%" if s["oos_return"] is not None else "-"
+        L.append(f"  fold {s['fold']}: {p:<22} ex:{ex:<14} OOS {m:>6} {r:>6}  ({s['trades']} trd)")
+    L += ["─" * 64,
+          f"  Stitched OOS return: {w['stitched_return']*100:+.1f}%   "
+          f"positive folds: {w['positive_folds']}/{w['total_folds']}",
+          "  Every number is out-of-sample. This is the honest live expectation."]
+    return "\n".join(L)
 
 
 def render(result: dict) -> str:
