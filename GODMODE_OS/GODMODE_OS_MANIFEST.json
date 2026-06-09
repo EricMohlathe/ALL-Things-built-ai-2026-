@@ -1,0 +1,135 @@
+{
+  "name": "GODMODE OS",
+  "built": "2026-06-09",
+  "tagline": "One cockpit over everything built this session \u2014 trading, AI creation, agents, EAs.",
+  "honesty": "All performance from real backtests/live fills. No fabricated win rates. Live orders gated by a human token.",
+  "domains": [
+    {
+      "title": "Trading \u2014 OpenAlice Hub",
+      "accent": "green",
+      "items": [
+        {
+          "name": "44 strategy modules",
+          "status": "ok",
+          "desc": "18 repos + 26 GODMODE EAs behind one adapter interface.",
+          "cmd": "python3 openalice-hub/hub.py strategies"
+        },
+        {
+          "name": "Backtest engine",
+          "status": "ok",
+          "desc": "Real data (Binance/Yahoo/CSV), no lookahead, fees, paper-gated.",
+          "cmd": "python3 openalice-hub/hub.py backtest donchian BTCUSDT"
+        },
+        {
+          "name": "Parameter optimizer",
+          "status": "ok",
+          "desc": "Grid search w/ in-sample vs out-of-sample (overfit guard).",
+          "cmd": "python3 openalice-hub/hub.py optimize sma_cross BTCUSDT"
+        },
+        {
+          "name": "Execution gate",
+          "status": "ok",
+          "desc": "Paper default; live needs a human-typed per-order token.",
+          "cmd": "python3 openalice-hub/hub.py live-arm BTCUSDT buy 0.1"
+        },
+        {
+          "name": "5 platform connectors",
+          "status": "ok",
+          "desc": "tradingview-mcp (live), MT5, cTrader, tradememory.",
+          "cmd": "python3 openalice-hub/hub.py connectors"
+        }
+      ]
+    },
+    {
+      "title": "GODMODE core (your EAs)",
+      "accent": "amber",
+      "items": [
+        {
+          "name": "26 EAs (GM01\u2013GM26)",
+          "status": "ok",
+          "desc": "cTrader cBots + MT5 experts. Optimize per EA_BACKTEST_OPTIMIZATION_MANUAL.",
+          "cmd": "cTrader_MasterLibrary/ \u00b7 MT5_MasterLibrary/"
+        },
+        {
+          "name": "GODMODE_OFEA monolith",
+          "status": "warn",
+          "desc": "1,573-line cBot, ~40 ideas in one pipeline. Split thesis: decompose \u2192 backtest each in isolation (the hub does this).",
+          "cmd": "GODMODE_OFEA_MASTER_COMPENDIUM.md"
+        },
+        {
+          "name": "Control Center",
+          "status": "ok",
+          "desc": "Your existing GODMODE \u26a1 app shell.",
+          "cmd": "GODMODE_App/index.html"
+        },
+        {
+          "name": "TradingView dashboard",
+          "status": "ok",
+          "desc": "GODMODE_Dashboard.pine.",
+          "cmd": "TradingView/GODMODE_Dashboard.pine"
+        }
+      ]
+    },
+    {
+      "title": "AI creation \u2014 ai-tools",
+      "accent": "cyan",
+      "items": [
+        {
+          "name": "35 plugins + ~125 skills",
+          "status": "ok",
+          "desc": "Video/image/voice gen, agents, dev. Marketplaces registered.",
+          "cmd": "claude plugin list"
+        },
+        {
+          "name": "AI Tools Launcher",
+          "status": "ok",
+          "desc": "DMG + iPhone PWA dashboard of the media toolkit.",
+          "cmd": "~/ai-tools/AI-Tools-Launcher.dmg"
+        },
+        {
+          "name": "n8n MCP + CLIs",
+          "status": "ok",
+          "desc": "n8n workflow MCP; specify (spec-kit), higgsfield CLIs.",
+          "cmd": "claude mcp list"
+        }
+      ]
+    },
+    {
+      "title": "AI brains & system",
+      "accent": "green",
+      "items": [
+        {
+          "name": "9router gateway",
+          "status": "ok",
+          "desc": "OpenAI-compatible, 455-model catalog, loopback, pm2. Connect a provider to use.",
+          "cmd": "http://127.0.0.1:20128"
+        },
+        {
+          "name": "Hermes agent",
+          "status": "ok",
+          "desc": "Nous agent via 9router; attaches as an AI backend.",
+          "cmd": "hermes"
+        },
+        {
+          "name": "AI backends",
+          "status": "ok",
+          "desc": "Claude (native) \u00b7 Hermes/9router \u00b7 add-your-own slot.",
+          "cmd": "python3 openalice-hub/hub.py ai"
+        }
+      ]
+    }
+  ],
+  "audit": {
+    "9router": "ok",
+    "hermes": "ok",
+    "hub_cli": "ok",
+    "tradingview_mcp": "pending",
+    "strategies": "ok:44",
+    "connectors": "ok:5",
+    "plugins": "ok",
+    "ai_tools_dmg": "ok",
+    "hub_dmg": "ok",
+    "godmode_eas": "ok:26",
+    "control_center": "ok"
+  }
+}
