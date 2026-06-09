@@ -21,6 +21,10 @@ DASH = os.path.join(HUB, "dashboard")
 def _ann(source): return 365 if source == "binance" else 252
 
 
+def _res(sym, source):
+    return datamod.resolve(sym) if source == "auto" else (sym, source)
+
+
 def api_strategies():
     return {"builtin": list(builtin.REGISTRY), "grids": list(opt.GRIDS)}
 
@@ -30,6 +34,7 @@ def api_backtest(q):
     name = q.get("strategy", ["sma_cross"])[0]
     source = q.get("source", ["binance"])[0]
     interval = q.get("interval", ["1d"])[0]
+    sym, source = _res(sym, source)
     bars = datamod.get_ohlcv(sym, source=source, interval=interval, limit=1000)
     if len(bars) < 30:
         return {"error": f"only {len(bars)} bars"}
@@ -46,6 +51,7 @@ def api_optimize(q):
     name = q.get("strategy", ["sma_cross"])[0]
     source = q.get("source", ["binance"])[0]
     metric = q.get("metric", ["sharpe"])[0]
+    sym, source = _res(sym, source)
     bars = datamod.get_ohlcv(sym, source=source, limit=1000)
     if len(bars) < 60:
         return {"error": f"only {len(bars)} bars"}

@@ -47,6 +47,12 @@ def gate() -> ExecutionGate:
                          broker_creds=c.get("broker", {}))
 
 
+def _auto(a):
+    """Resolve plain symbols (EURUSD, GOLD, OIL, SPX, BTCUSDT) to source+ticker."""
+    if getattr(a, "source", None) == "auto":
+        a.symbol, a.source = datamod.resolve(a.symbol)
+
+
 def cmd_status(a):
     c = cfg(); g = gate()
     print("=" * 60)
@@ -90,6 +96,7 @@ def cmd_strategies(a):
 
 
 def cmd_data(a):
+    _auto(a)
     bars = datamod.get_ohlcv(a.symbol, source=a.source, interval=a.interval, limit=a.limit)
     import time as _t
     if not bars:
@@ -101,6 +108,7 @@ def cmd_data(a):
 
 
 def cmd_backtest(a):
+    _auto(a)
     bars = datamod.get_ohlcv(a.symbol, source=a.source, interval=a.interval, limit=a.limit)
     if len(bars) < 30:
         print(f"only {len(bars)} bars — need more history"); return
@@ -115,6 +123,7 @@ def cmd_backtest(a):
 
 
 def cmd_godmode_rank(a):
+    _auto(a)
     import time
     names = [n for n in sorted(builtin.REGISTRY) if n.startswith("gm")]
     bars = datamod.get_ohlcv(a.symbol, source=a.source, limit=a.limit)
@@ -177,6 +186,7 @@ def cmd_serve(a):
 
 
 def cmd_optimize(a):
+    _auto(a)
     bars = datamod.get_ohlcv(a.symbol, source=a.source, interval=a.interval, limit=a.limit)
     if len(bars) < 60:
         print(f"only {len(bars)} bars — need more history to split train/test"); return
@@ -246,28 +256,28 @@ def main():
     sp = sub.add_parser("add-ai"); sp.add_argument("--name", required=True); sp.add_argument("--base-url", dest="base_url", required=True)
     sp.add_argument("--model", required=True); sp.add_argument("--key", default=""); sp.set_defaults(f=cmd_add_ai)
     sp = sub.add_parser("backtest"); sp.add_argument("strategy"); sp.add_argument("symbol")
-    sp.add_argument("--source", default="binance", choices=["binance", "yahoo", "csv"]); sp.add_argument("--interval", default="1d")
+    sp.add_argument("--source", default="auto", choices=["auto", "binance", "yahoo", "csv"]); sp.add_argument("--interval", default="1d")
     sp.add_argument("--limit", type=int, default=1000); sp.add_argument("--cash", type=float, default=10000.0)
     sp.add_argument("--fee", type=float, default=10.0); sp.add_argument("--optimize", action="store_true")
     sp.add_argument("--stop", type=float, default=None); sp.add_argument("--tp", type=float, default=None)
     sp.add_argument("--trail", type=float, default=None); sp.set_defaults(f=cmd_backtest)
     sp = sub.add_parser("data"); sp.add_argument("symbol")
-    sp.add_argument("--source", default="binance", choices=["binance", "yahoo", "csv"]); sp.add_argument("--interval", default="1d")
+    sp.add_argument("--source", default="auto", choices=["auto", "binance", "yahoo", "csv"]); sp.add_argument("--interval", default="1d")
     sp.add_argument("--limit", type=int, default=1000); sp.set_defaults(f=cmd_data)
     sp = sub.add_parser("optimize"); sp.add_argument("strategy"); sp.add_argument("symbol")
     sp.add_argument("--metric", default="sharpe", choices=["sharpe", "total_return", "sortino"])
-    sp.add_argument("--top", type=int, default=10); sp.add_argument("--source", default="binance", choices=["binance", "yahoo", "csv"])
+    sp.add_argument("--top", type=int, default=10); sp.add_argument("--source", default="auto", choices=["auto", "binance", "yahoo", "csv"])
     sp.add_argument("--interval", default="1d"); sp.add_argument("--limit", type=int, default=1000); sp.set_defaults(f=cmd_optimize)
     sp = sub.add_parser("serve"); sp.add_argument("--port", type=int, default=7871); sp.set_defaults(f=cmd_serve)
     sub.add_parser("godmode").set_defaults(f=cmd_godmode)
     sp = sub.add_parser("walkforward"); sp.add_argument("strategy"); sp.add_argument("symbol")
-    sp.add_argument("--folds", type=int, default=4); sp.add_argument("--source", default="binance", choices=["binance", "yahoo", "csv"])
+    sp.add_argument("--folds", type=int, default=4); sp.add_argument("--source", default="auto", choices=["auto", "binance", "yahoo", "csv"])
     sp.add_argument("--limit", type=int, default=1000)
-    sp.set_defaults(f=lambda a: print(opt.render_wf(opt.walkforward(
+    sp.set_defaults(f=lambda a: (_auto(a), print(opt.render_wf(opt.walkforward(
         a.strategy, datamod.get_ohlcv(a.symbol, source=a.source, limit=a.limit),
-        gate=gate(), ann=365 if a.source == "binance" else 252, folds=a.folds))))
+        gate=gate(), ann=365 if a.source == "binance" else 252, folds=a.folds))))[1])
     sp = sub.add_parser("godmode-rank"); sp.add_argument("symbol")
-    sp.add_argument("--source", default="binance", choices=["binance", "yahoo", "csv"])
+    sp.add_argument("--source", default="auto", choices=["auto", "binance", "yahoo", "csv"])
     sp.add_argument("--limit", type=int, default=1000); sp.set_defaults(f=cmd_godmode_rank)
     a = p.parse_args()
     a.f(a)

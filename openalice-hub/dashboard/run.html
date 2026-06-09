@@ -29,12 +29,12 @@ th{color:#8A96A8;font-weight:600;font-size:11px;text-transform:uppercase}
 <div class=controls>
   <label>Strategy<select id=strat></select></label>
   <label>Symbol<input id=sym value="BTCUSDT"></label>
-  <label>Source<select id=src><option>binance</option><option>yahoo</option></select></label>
+  <label>Source<select id=src><option>auto</option><option>binance</option><option>yahoo</option></select></label>
   <label>Metric<select id=metric><option>sharpe</option><option>total_return</option><option>sortino</option></select></label>
   <button onclick=runBt()>Backtest</button>
   <button class=opt onclick=runOpt()>Optimize</button>
 </div>
-<div id=out><p class=note>Pick a strategy + symbol, then Backtest (real data, no keys) or Optimize (grid search with out-of-sample check). Crypto → source=binance (e.g. BTCUSDT, ETHUSDT); stocks → source=yahoo (e.g. AAPL, SPY).</p></div>
+<div id=out><p class=note>Pick a strategy + symbol, then Backtest (real data, no keys) or Optimize (grid search with out-of-sample check). source=auto handles everything: crypto (BTCUSDT) · forex (EURUSD, GBPJPY) · commodities (GOLD, OIL, SILVER, WHEAT) · indices (SPX, US30, DAX) · stocks (AAPL). Forex/futures feeds lack real volume — volume-based setups may stay flat there; price-structure setups (gm14–gm18, donchian) work everywhere.</p></div>
 </main>
 <script>
 const $=id=>document.getElementById(id), out=$('out');

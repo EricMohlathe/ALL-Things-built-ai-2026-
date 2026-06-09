@@ -69,8 +69,43 @@ def from_csv(path: str) -> list[dict]:
     return out
 
 
+# plain-name aliases -> Yahoo tickers (forex, commodities, indices)
+ALIASES = {
+    # forex majors/crosses
+    "EURUSD": "EURUSD=X", "GBPUSD": "GBPUSD=X", "USDJPY": "USDJPY=X", "USDCHF": "USDCHF=X",
+    "AUDUSD": "AUDUSD=X", "NZDUSD": "NZDUSD=X", "USDCAD": "USDCAD=X", "EURGBP": "EURGBP=X",
+    "EURJPY": "EURJPY=X", "GBPJPY": "GBPJPY=X", "USDZAR": "USDZAR=X", "EURZAR": "EURZAR=X",
+    # commodities (front-month futures)
+    "GOLD": "GC=F", "XAUUSD": "GC=F", "SILVER": "SI=F", "XAGUSD": "SI=F",
+    "OIL": "CL=F", "WTI": "CL=F", "BRENT": "BZ=F", "NATGAS": "NG=F",
+    "COPPER": "HG=F", "PLATINUM": "PL=F", "PALLADIUM": "PA=F",
+    "WHEAT": "ZW=F", "CORN": "ZC=F", "COFFEE": "KC=F", "SUGAR": "SB=F", "COCOA": "CC=F",
+    # indices
+    "SPX": "^GSPC", "SP500": "^GSPC", "NASDAQ": "^IXIC", "NAS100": "^NDX",
+    "DOW": "^DJI", "US30": "^DJI", "DAX": "^GDAXI", "FTSE": "^FTSE", "NIKKEI": "^N225",
+    "VIX": "^VIX", "DXY": "DX-Y.NYB",
+}
+
+
+def resolve(symbol: str) -> tuple[str, str]:
+    """Return (resolved_symbol, source). Auto-routes: crypto->binance, else yahoo."""
+    s = symbol.upper().strip()
+    if s in ALIASES:
+        return ALIASES[s], "yahoo"
+    if s.endswith(("USDT", "USDC", "BUSD")) and "=" not in s and "-" not in s:
+        return s, "binance"
+    if s.endswith("=X") or s.endswith("=F") or s.startswith("^") or "-" in s:
+        return s, "yahoo"
+    # 6-letter FX pair typed plain (e.g. EURNOK)
+    if len(s) == 6 and s.isalpha():
+        return s + "=X", "yahoo"
+    return s, "yahoo"   # stocks/ETFs default
+
+
 def get_ohlcv(symbol: str, source="binance", interval="1d", limit=1000,
               use_cache=True, max_age=3600) -> list[dict]:
+    if source == "auto":
+        symbol, source = resolve(symbol)
     cp = _cache_path(source, symbol, interval)
     if use_cache and os.path.exists(cp) and (time.time() - os.path.getmtime(cp) < max_age):
         try:
