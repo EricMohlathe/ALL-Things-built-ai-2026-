@@ -297,9 +297,9 @@ class GMChecklist(GM):
         for j in range(max(1, i-29), i+1): e = c[j]*k2 + e*(1-k2)
         if abs(c[i] - e) < 0.3*a:
             bull += 5; bear += 5
-        # 4 Round psychological level (+5)
+        # 4 Round psychological level (+5) — guard: oil went negative in 2020
         import math as _m
-        step = 10 ** _m.floor(_m.log10(c[i])) / 10
+        step = 10 ** _m.floor(_m.log10(abs(c[i]))) / 10 if abs(c[i]) > 1e-9 else 1.0
         if (c[i] % step) < 0.2*a or (step - c[i] % step) < 0.2*a:
             bull += 5; bear += 5
         # 5 Rejection from previous structure (+10): wick beyond, close back inside
