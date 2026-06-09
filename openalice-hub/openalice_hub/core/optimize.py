@@ -25,12 +25,23 @@ def _combos(grid: dict):
         yield dict(zip(keys, vals))
 
 
-def _score(strategy_name, params, bars, gate, ann, metric):
+# fixed exit menu (stop/tp/trail in ATR multiples); {} = strategy's own exits
+EXIT_MENU = [
+    {},
+    {"stop_atr": 2, "tp_atr": 4, "trail_atr": 3},
+    {"stop_atr": 1.5, "tp_atr": 3, "trail_atr": 2},
+    {"stop_atr": 2, "trail_atr": 2.5},
+    {"stop_atr": 3, "tp_atr": 6},
+    {"stop_atr": 1, "tp_atr": 2, "trail_atr": 1.5},
+]
+
+
+def _score(strategy_name, params, bars, gate, ann, metric, exits=None):
     # skip invalid combos (e.g. fast>=slow)
     if strategy_name == "sma_cross" and params["fast"] >= params["slow"]:
         return None
     strat = builtin.make(strategy_name, **params)
-    res = bt.run(strat, bars, gate=gate)
+    res = bt.run(strat, bars, gate=gate, **(exits or {}))
     m = met.compute(res, ann)
     if "error" in m:
         return None
@@ -58,6 +69,25 @@ def grid_search(strategy_name, bars, gate=None, ann=365, metric="sharpe", top=10
     rows.sort(key=lambda x: x["metric"], reverse=True)
     return {"strategy": strategy_name, "metric": metric, "evaluated": len(rows),
             "train_bars": len(train), "test_bars": len(test), "leaderboard": rows[:top]}
+
+
+def exit_search(strategy_name, params, bars, gate=None, ann=365, metric="sharpe", split=0.7):
+    """Given winning strategy params, find the best ATR-exit combo (train), report OOS."""
+    cut = int(len(bars) * split)
+    train, test = bars[:cut], bars[cut:]
+    best = None
+    for ex in EXIT_MENU:
+        r = _score(strategy_name, params, train, gate, ann, metric, exits=ex)
+        if r is None:
+            continue
+        oos = _score(strategy_name, params, test, gate, ann, metric, exits=ex)
+        row = {"exits": ex, "metric": r["metric"],
+               "oos_metric": oos["metric"] if oos else None,
+               "oos_return": oos["return"] if oos else None}
+        # select on TRAIN metric (picking by OOS would leak the test set)
+        if best is None or row["metric"] > best["metric"]:
+            best = row
+    return best
 
 
 def render(result: dict) -> str:

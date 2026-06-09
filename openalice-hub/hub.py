@@ -132,10 +132,14 @@ def cmd_godmode_rank(a):
         lb = r["leaderboard"]
         if not lb:
             continue
-        top = lb[0]; key = f"{name}|{a.symbol}"; sc = top.get("oos_metric")
+        top = lb[0]
+        ex = opt.exit_search(name, top["params"], bars, gate=gate(), ann=ann)
+        if ex and ex.get("oos_metric") is not None and (top.get("oos_metric") is None or ex["oos_metric"] > top["oos_metric"]):
+            top = {**top, "oos_metric": ex["oos_metric"], "oos_return": ex["oos_return"], "exits": ex["exits"]}
+        key = f"{name}|{a.symbol}"; sc = top.get("oos_metric")
         prev = best.get(key); imp = sc is not None and (prev is None or sc > prev.get("oos_metric", -1e9))
         if imp:
-            best[key] = {"params": top["params"], "oos_metric": sc,
+            best[key] = {"params": top["params"], "exits": top.get("exits") or {}, "oos_metric": sc,
                          "oos_return": top.get("oos_return"), "is_metric": top["metric"]}
         rows.append((name, top, imp))
     json.dump(best, open(bestf, "w"), indent=2)
@@ -151,7 +155,8 @@ def cmd_godmode_rank(a):
         p = ",".join(f"{k}={v}" for k, v in t["params"].items())
         oos = f"{t['oos_metric']:.2f}" if t.get("oos_metric") is not None else "-"
         oosr = f"{t['oos_return']*100:+.0f}%" if t.get("oos_return") is not None else "-"
-        print(f"  {name:<18}{p:<26}{oos:>7}{oosr:>9}{t['metric']:>7.2f}  {'↑ improved' if imp else ''}")
+        ext = ",".join(f"{k.split('_')[0]}{v}" for k, v in (t.get("exits") or {}).items())
+        print(f"  {name:<18}{p:<26}{oos:>7}{oosr:>9}{t['metric']:>7.2f}  {('ex:'+ext) if ext else '':<16}{'↑' if imp else ''}")
     print("─" * 72)
     print("  Ranked by OUT-OF-SAMPLE sharpe. Best-ever params persisted to registry/godmode_best.json")
     print("  → re-run on more data/symbols to keep improving each setup. PAPER. Past ≠ future.")
