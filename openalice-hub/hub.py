@@ -215,6 +215,43 @@ def cmd_propsize(a):
     print("─" * 56)
 
 
+def cmd_pfhunt(a):
+    """Hunt the highest OUT-OF-SAMPLE profit factor with a min-trades floor."""
+    strats = ["gm_confluence", "gm12_stackbear", "gm17_lpsy", "gm24_poorhl",
+              "gm15_upthrust", "gm18_liqsweep", "gm19_obreturn", "donchian"]
+    syms = a.symbols.split(",")
+    found = []
+    for sym in syms:
+        rsym, rsrc = datamod.resolve(sym)
+        bars = datamod.get_ohlcv(rsym, source=rsrc, limit=a.limit)
+        if len(bars) < 100:
+            continue
+        ann = 365 if rsrc == "binance" else 252
+        for st in strats:
+            r = opt.grid_search(st, bars, gate=gate(), ann=ann, metric="profit_factor", top=10)
+            cands = [x for x in r["leaderboard"]
+                     if x.get("oos_metric") is not None and x["trades"] >= a.min_trades]
+            if not cands:
+                continue
+            best = max(cands, key=lambda x: x["oos_metric"])
+            ex = opt.exit_search(st, best["params"], bars, gate=gate(), ann=ann, metric="profit_factor")
+            if ex and ex.get("oos_metric") is not None and ex["oos_metric"] > best["oos_metric"]:
+                best = {**best, "oos_metric": ex["oos_metric"], "oos_return": ex["oos_return"], "exits": ex["exits"]}
+            found.append((st, sym, best))
+    found.sort(key=lambda x: -(x[2]["oos_metric"] or 0))
+    print("─" * 78)
+    print(f"  PF HUNT — ranked by OUT-OF-SAMPLE profit factor (min {a.min_trades} trades in-sample)")
+    print(f"  {'strategy':<16}{'symbol':<9}{'params':<22}{'exits':<16}{'OOS PF':>7}{'OOS ret':>9}{'trd':>5}")
+    print("─" * 78)
+    for st, sym, b in found[:a.top]:
+        p = ",".join(f"{k}={v}" for k, v in b["params"].items())
+        ex = ",".join(f"{k.split('_')[0]}{v}" for k, v in (b.get("exits") or {}).items()) or "-"
+        pf = min(b["oos_metric"], 99)
+        print(f"  {st:<16}{sym:<9}{p:<22}{ex:<16}{pf:>7.2f}{(b['oos_return'] or 0)*100:>8.0f}%{b['trades']:>5}")
+    print("─" * 78)
+    print("  OOS PF = profit factor on unseen data. PF>1.5 strong, >2 excellent. Past ≠ future.")
+
+
 def cmd_godmode(a):
     print(gm.render())
 
@@ -309,11 +346,15 @@ def main():
     sp.add_argument("--source", default="auto", choices=["auto", "binance", "yahoo", "csv"]); sp.add_argument("--interval", default="1d")
     sp.add_argument("--limit", type=int, default=1000); sp.set_defaults(f=cmd_data)
     sp = sub.add_parser("optimize"); sp.add_argument("strategy"); sp.add_argument("symbol")
-    sp.add_argument("--metric", default="sharpe", choices=["sharpe", "total_return", "sortino", "win_rate"])
+    sp.add_argument("--metric", default="sharpe", choices=["sharpe", "total_return", "sortino", "win_rate", "profit_factor"])
     sp.add_argument("--top", type=int, default=10); sp.add_argument("--source", default="auto", choices=["auto", "binance", "yahoo", "csv"])
     sp.add_argument("--interval", default="1d"); sp.add_argument("--limit", type=int, default=1000); sp.set_defaults(f=cmd_optimize)
     sp = sub.add_parser("serve"); sp.add_argument("--port", type=int, default=7871); sp.set_defaults(f=cmd_serve)
     sub.add_parser("godmode").set_defaults(f=cmd_godmode)
+    sp = sub.add_parser("pfhunt"); sp.add_argument("--symbols", default="BTCUSDT,ETHUSDT,GOLD,ES")
+    sp.add_argument("--min-trades", dest="min_trades", type=int, default=10)
+    sp.add_argument("--top", type=int, default=15); sp.add_argument("--limit", type=int, default=1000)
+    sp.set_defaults(f=cmd_pfhunt)
     sp = sub.add_parser("propcheck"); sp.add_argument("strategy"); sp.add_argument("symbol")
     sp.add_argument("--firm", default="ftmo", choices=list(__import__("openalice_hub.core.propfirm", fromlist=["FIRMS"]).FIRMS))
     sp.add_argument("--source", default="auto", choices=["auto", "binance", "yahoo", "csv"])

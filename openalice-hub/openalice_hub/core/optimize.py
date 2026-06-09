@@ -49,7 +49,8 @@ def _score(strategy_name, params, bars, gate, ann, metric, exits=None):
     if "error" in m:
         return None
     return {"params": params, "metric": m.get(metric, 0), "return": m["total_return"],
-            "sharpe": m["sharpe"], "maxdd": m["max_drawdown"], "trades": m["num_trades"]}
+            "sharpe": m["sharpe"], "maxdd": m["max_drawdown"], "trades": m["num_trades"],
+            "pf": m["profit_factor"], "wr": m["win_rate"]}
 
 
 def grid_search(strategy_name, bars, gate=None, ann=365, metric="sharpe", top=10,

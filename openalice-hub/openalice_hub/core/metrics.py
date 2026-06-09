@@ -35,7 +35,7 @@ def compute(result: dict, ann: int = 365) -> dict:
         "total_return": total, "cagr": cagr, "sharpe": sharpe, "sortino": sortino,
         "max_drawdown": mdd, "vol_annual": sd * math.sqrt(ann),
         "num_trades": len(tr), "win_rate": (len(wins) / len(tr) if tr else 0),
-        "profit_factor": (gp / gl if gl else float("inf") if gp else 0),
+        "profit_factor": min(gp / gl if gl else (99.0 if gp else 0), 99.0),
         "buy_hold_return": result["buy_hold"] / result["cash0"] - 1,
         "final": result["final"], "cash0": result["cash0"],
     }
