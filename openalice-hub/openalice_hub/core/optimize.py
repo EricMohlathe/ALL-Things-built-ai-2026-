@@ -33,6 +33,9 @@ EXIT_MENU = [
     {"stop_atr": 2, "trail_atr": 2.5},
     {"stop_atr": 3, "tp_atr": 6},
     {"stop_atr": 1, "tp_atr": 2, "trail_atr": 1.5},
+    {"stop_atr": 3, "tp_atr": 1},      # high win-rate shape (wide stop, quick target)
+    {"stop_atr": 2.5, "tp_atr": 0.8},  # higher WR, smaller R
+    {"stop_atr": 4, "tp_atr": 1.5},
 ]
 
 

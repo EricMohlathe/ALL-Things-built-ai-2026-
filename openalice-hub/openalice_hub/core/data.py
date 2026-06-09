@@ -23,21 +23,32 @@ def _get(url: str, timeout: float = 15.0) -> bytes:
         return r.read()
 
 
-def _cache_path(source: str, symbol: str, interval: str) -> str:
-    safe = symbol.replace("/", "").replace(".", "_")
-    return os.path.join(DATA_DIR, f"{source}_{safe}_{interval}.json")
+def _cache_path(source: str, symbol: str, interval: str, limit: int = 1000) -> str:
+    safe = symbol.replace("/", "").replace(".", "_").replace("^","i").replace("=","_")
+    return os.path.join(DATA_DIR, f"{source}_{safe}_{interval}_{limit}.json")
 
 
 def from_binance(symbol="BTCUSDT", interval="1d", limit=1000) -> list[dict]:
-    url = f"https://api.binance.com/api/v3/klines?symbol={symbol.upper()}&interval={interval}&limit={min(limit,1000)}"
-    rows = json.loads(_get(url))
+    rows = []
+    end = ""
+    while len(rows) < limit:
+        n = min(1000, limit - len(rows))
+        url = (f"https://api.binance.com/api/v3/klines?symbol={symbol.upper()}"
+               f"&interval={interval}&limit={n}{end}")
+        chunk = json.loads(_get(url))
+        if not chunk:
+            break
+        rows = chunk + rows
+        if len(chunk) < n:
+            break
+        end = f"&endTime={chunk[0][0]-1}"
     # r[9] = taker buy base volume -> real per-bar order-flow (no key needed)
     return [{"t": int(r[0] // 1000), "o": float(r[1]), "h": float(r[2]),
              "l": float(r[3]), "c": float(r[4]), "v": float(r[5]),
              "bv": float(r[9]), "n": int(r[8])} for r in rows]
 
 
-def from_yahoo(symbol="AAPL", interval="1d", rng="2y") -> list[dict]:
+def from_yahoo(symbol="AAPL", interval="1d", rng="10y") -> list[dict]:
     url = (f"https://query1.finance.yahoo.com/v8/finance/chart/"
            f"{urllib.parse.quote(symbol)}?range={rng}&interval={interval}")
     d = json.loads(_get(url))
@@ -113,7 +124,7 @@ def get_ohlcv(symbol: str, source="binance", interval="1d", limit=1000,
               use_cache=True, max_age=3600) -> list[dict]:
     if source == "auto":
         symbol, source = resolve(symbol)
-    cp = _cache_path(source, symbol, interval)
+    cp = _cache_path(source, symbol, interval, limit)
     if use_cache and os.path.exists(cp) and (time.time() - os.path.getmtime(cp) < max_age):
         try:
             return json.load(open(cp))

@@ -53,6 +53,22 @@ def evaluate(equity: list[float], firm: str = "ftmo") -> dict:
             "day": len(equity) - 1, "equity": equity[-1], "firm": f}
 
 
+def rolling_pass_rate(equity: list[float], firm: str = "ftmo", window: int = 90, step: int = 30) -> dict:
+    """Evaluate the eval rules over every rolling `window`-bar slice (real evals
+    are 30-90 days, not a decade). Returns pass/fail/incomplete counts."""
+    out = {"pass": 0, "fail": 0, "incomplete": 0, "windows": 0}
+    f = FIRMS[firm]; acct = f["account"]
+    for s in range(0, max(1, len(equity) - window), step):
+        seg = equity[s:s + window]
+        base = seg[0]
+        scaled = [acct * (e / base) for e in seg]   # restart each window at account size
+        r = evaluate(scaled, firm)
+        out[r["result"].lower()] += 1
+        out["windows"] += 1
+    out["pass_rate"] = out["pass"] / out["windows"] if out["windows"] else 0.0
+    return out
+
+
 def render(r: dict, strategy: str, symbol: str) -> str:
     f = r["firm"]
     icon = {"PASS": "✅", "FAIL": "❌", "INCOMPLETE": "⏳"}[r["result"]]
