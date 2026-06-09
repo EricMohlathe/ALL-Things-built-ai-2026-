@@ -9,8 +9,9 @@
     "detector": "SetupDetectors.AbsBot",
     "line": 1459,
     "isolated_ea": "GM_OFEA_01_AbsBot",
-    "hub_backtestable": false,
-    "where": "cTrader Strategy Tester (needs order flow)"
+    "hub_backtestable": true,
+    "where": "hub: real Binance delta/CVD",
+    "py_detector": "gm01_absbot"
   },
   {
     "id": 2,
@@ -22,8 +23,9 @@
     "detector": "SetupDetectors.AbsTop",
     "line": 1460,
     "isolated_ea": "GM_OFEA_02_AbsTop",
-    "hub_backtestable": false,
-    "where": "cTrader Strategy Tester (needs order flow)"
+    "hub_backtestable": true,
+    "where": "hub: real Binance delta/CVD",
+    "py_detector": "gm02_abstop"
   },
   {
     "id": 3,
@@ -35,8 +37,9 @@
     "detector": "SetupDetectors.CvdBear",
     "line": 1461,
     "isolated_ea": "GM_OFEA_03_CvdBear",
-    "hub_backtestable": false,
-    "where": "cTrader Strategy Tester (needs order flow)"
+    "hub_backtestable": true,
+    "where": "hub: real Binance delta/CVD",
+    "py_detector": "gm03_cvdbear"
   },
   {
     "id": 4,
@@ -48,8 +51,9 @@
     "detector": "SetupDetectors.CvdBull",
     "line": 1462,
     "isolated_ea": "GM_OFEA_04_CvdBull",
-    "hub_backtestable": false,
-    "where": "cTrader Strategy Tester (needs order flow)"
+    "hub_backtestable": true,
+    "where": "hub: real Binance delta/CVD",
+    "py_detector": "gm04_cvdbull"
   },
   {
     "id": 5,
@@ -61,8 +65,9 @@
     "detector": "SetupDetectors.ValBnc",
     "line": 1463,
     "isolated_ea": "GM_OFEA_05_ValBnc",
-    "hub_backtestable": false,
-    "where": "hub (approx VP)"
+    "hub_backtestable": true,
+    "where": "hub: real volume profile",
+    "py_detector": "gm05_valbnc"
   },
   {
     "id": 6,
@@ -74,8 +79,9 @@
     "detector": "SetupDetectors.VahFade",
     "line": 1464,
     "isolated_ea": "GM_OFEA_06_VahFade",
-    "hub_backtestable": false,
-    "where": "hub (approx VP)"
+    "hub_backtestable": true,
+    "where": "hub: real volume profile",
+    "py_detector": "gm06_vahfade"
   },
   {
     "id": 7,
@@ -87,8 +93,9 @@
     "detector": "SetupDetectors.PocRet",
     "line": 1465,
     "isolated_ea": "GM_OFEA_07_PocRet",
-    "hub_backtestable": false,
-    "where": "hub (approx VP)"
+    "hub_backtestable": true,
+    "where": "hub: real volume profile",
+    "py_detector": "gm07_pocret"
   },
   {
     "id": 8,
@@ -100,8 +107,9 @@
     "detector": "SetupDetectors.LvnLong",
     "line": 1466,
     "isolated_ea": "GM_OFEA_08_LvnLong",
-    "hub_backtestable": false,
-    "where": "hub (approx VP)"
+    "hub_backtestable": true,
+    "where": "hub: real volume profile",
+    "py_detector": "gm08_lvnlong"
   },
   {
     "id": 9,
@@ -113,8 +121,9 @@
     "detector": "SetupDetectors.LvnShort",
     "line": 1467,
     "isolated_ea": "GM_OFEA_09_LvnShort",
-    "hub_backtestable": false,
-    "where": "hub (approx VP)"
+    "hub_backtestable": true,
+    "where": "hub: real volume profile",
+    "py_detector": "gm09_lvnshort"
   },
   {
     "id": 10,
@@ -126,8 +135,9 @@
     "detector": "SetupDetectors.HvnRej",
     "line": 1468,
     "isolated_ea": "GM_OFEA_10_HvnRej",
-    "hub_backtestable": false,
-    "where": "hub (approx VP)"
+    "hub_backtestable": true,
+    "where": "hub: real volume profile",
+    "py_detector": "gm10_hvnrej"
   },
   {
     "id": 11,
@@ -139,8 +149,9 @@
     "detector": "SetupDetectors.StackBull",
     "line": 1469,
     "isolated_ea": "GM_OFEA_11_StackBull",
-    "hub_backtestable": false,
-    "where": "cTrader Strategy Tester (needs order flow)"
+    "hub_backtestable": true,
+    "where": "hub: real Binance delta/CVD",
+    "py_detector": "gm11_stackbull"
   },
   {
     "id": 12,
@@ -152,8 +163,9 @@
     "detector": "SetupDetectors.StackBear",
     "line": 1470,
     "isolated_ea": "GM_OFEA_12_StackBear",
-    "hub_backtestable": false,
-    "where": "cTrader Strategy Tester (needs order flow)"
+    "hub_backtestable": true,
+    "where": "hub: real Binance delta/CVD",
+    "py_detector": "gm12_stackbear"
   },
   {
     "id": 13,
@@ -165,8 +177,9 @@
     "detector": "SetupDetectors.PullStack",
     "line": 1471,
     "isolated_ea": "GM_OFEA_13_PullStack",
-    "hub_backtestable": false,
-    "where": "cTrader Strategy Tester (needs order flow)"
+    "hub_backtestable": true,
+    "where": "hub: real Binance delta/CVD",
+    "py_detector": "gm13_pullstack"
   },
   {
     "id": 14,
@@ -179,7 +192,8 @@
     "line": 1472,
     "isolated_ea": "GM_OFEA_14_Spring",
     "hub_backtestable": true,
-    "where": "hub (OHLCV proxy)"
+    "where": "hub: real price-structure",
+    "py_detector": "gm14_spring"
   },
   {
     "id": 15,
@@ -192,7 +206,8 @@
     "line": 1473,
     "isolated_ea": "GM_OFEA_15_Upthrust",
     "hub_backtestable": true,
-    "where": "hub (OHLCV proxy)"
+    "where": "hub: real price-structure",
+    "py_detector": "gm15_upthrust"
   },
   {
     "id": 16,
@@ -205,7 +220,8 @@
     "line": 1474,
     "isolated_ea": "GM_OFEA_16_Sos",
     "hub_backtestable": true,
-    "where": "hub (OHLCV proxy)"
+    "where": "hub: real price-structure",
+    "py_detector": "gm16_sos"
   },
   {
     "id": 17,
@@ -218,7 +234,8 @@
     "line": 1475,
     "isolated_ea": "GM_OFEA_17_Lpsy",
     "hub_backtestable": true,
-    "where": "hub (OHLCV proxy)"
+    "where": "hub: real price-structure",
+    "py_detector": "gm17_lpsy"
   },
   {
     "id": 18,
@@ -231,7 +248,8 @@
     "line": 1476,
     "isolated_ea": "GM_OFEA_18_LiqSweep",
     "hub_backtestable": true,
-    "where": "hub (OHLCV proxy)"
+    "where": "hub: real price-structure",
+    "py_detector": "gm18_liqsweep"
   },
   {
     "id": 19,
@@ -244,7 +262,8 @@
     "line": 1477,
     "isolated_ea": "GM_OFEA_19_ObReturn",
     "hub_backtestable": true,
-    "where": "hub (OHLCV proxy)"
+    "where": "hub: real price-structure",
+    "py_detector": "gm19_obreturn"
   },
   {
     "id": 20,
@@ -256,8 +275,9 @@
     "detector": "SetupDetectors.SmtDiv",
     "line": 1478,
     "isolated_ea": "GM_OFEA_20_SmtDiv",
-    "hub_backtestable": false,
-    "where": "cTrader Strategy Tester (needs order flow)"
+    "hub_backtestable": true,
+    "where": "hub: CVD-divergence proxy",
+    "py_detector": "gm20_smtdiv"
   },
   {
     "id": 21,
@@ -270,7 +290,8 @@
     "line": 1479,
     "isolated_ea": "GM_OFEA_21_Breaker",
     "hub_backtestable": true,
-    "where": "hub (OHLCV proxy)"
+    "where": "hub: real price-structure",
+    "py_detector": "gm21_breaker"
   },
   {
     "id": 22,
@@ -283,7 +304,8 @@
     "line": 1480,
     "isolated_ea": "GM_OFEA_22_Amd",
     "hub_backtestable": true,
-    "where": "hub (OHLCV proxy)"
+    "where": "hub: real price-structure",
+    "py_detector": "gm22_amd"
   },
   {
     "id": 23,
@@ -295,8 +317,9 @@
     "detector": "SetupDetectors.UnfAuc",
     "line": 1481,
     "isolated_ea": "GM_OFEA_23_UnfAuc",
-    "hub_backtestable": false,
-    "where": "cTrader Strategy Tester (needs order flow)"
+    "hub_backtestable": true,
+    "where": "hub: real Binance delta/CVD",
+    "py_detector": "gm23_unfauc"
   },
   {
     "id": 24,
@@ -309,7 +332,8 @@
     "line": 1482,
     "isolated_ea": "GM_OFEA_24_PoorHL",
     "hub_backtestable": true,
-    "where": "hub (OHLCV proxy)"
+    "where": "hub: real price-structure",
+    "py_detector": "gm24_poorhl"
   },
   {
     "id": 25,
@@ -321,7 +345,8 @@
     "detector": "SetupDetectors.Iceberg",
     "line": 1483,
     "isolated_ea": "GM_OFEA_25_Iceberg",
-    "hub_backtestable": false,
-    "where": "cTrader Strategy Tester (needs order flow)"
+    "hub_backtestable": true,
+    "where": "hub: real Binance delta/CVD",
+    "py_detector": "gm25_iceberg"
   }
 ]

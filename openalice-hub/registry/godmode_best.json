@@ -1,0 +1,252 @@
+{
+  "gm01_absbot|BTCUSDT": {
+    "params": {
+      "lb": 10,
+      "k": 0.5,
+      "hold": 5
+    },
+    "oos_metric": 0,
+    "oos_return": 0.0,
+    "is_metric": 0
+  },
+  "gm02_abstop|BTCUSDT": {
+    "params": {
+      "lb": 10,
+      "k": 1.0,
+      "hold": 5
+    },
+    "oos_metric": 0,
+    "oos_return": 0.0,
+    "is_metric": 1.0024593316621284
+  },
+  "gm03_cvdbear|BTCUSDT": {
+    "params": {
+      "lb": 10,
+      "k": 0.5,
+      "hold": 5
+    },
+    "oos_metric": 0.23168931348959293,
+    "oos_return": 0.020869987865289374,
+    "is_metric": -0.9784145286961857
+  },
+  "gm04_cvdbull|BTCUSDT": {
+    "params": {
+      "lb": 30,
+      "k": 0.5,
+      "hold": 20
+    },
+    "oos_metric": -1.8497181751191019,
+    "oos_return": -0.16672404907761662,
+    "is_metric": 1.1852364086891456
+  },
+  "gm05_valbnc|BTCUSDT": {
+    "params": {
+      "lb": 10,
+      "k": 1.5,
+      "hold": 20
+    },
+    "oos_metric": -1.1794438408952306,
+    "oos_return": -0.38983620620259685,
+    "is_metric": 1.4559767576649107
+  },
+  "gm06_vahfade|BTCUSDT": {
+    "params": {
+      "lb": 30,
+      "k": 0.5,
+      "hold": 5
+    },
+    "oos_metric": 0.48570887980893307,
+    "oos_return": 0.031259738008694304,
+    "is_metric": 1.166644038438781
+  },
+  "gm07_pocret|BTCUSDT": {
+    "params": {
+      "lb": 10,
+      "k": 1.5,
+      "hold": 20
+    },
+    "oos_metric": -0.5029742100159679,
+    "oos_return": -0.2254771064139689,
+    "is_metric": -0.07682128697480549
+  },
+  "gm08_lvnlong|BTCUSDT": {
+    "params": {
+      "lb": 20,
+      "k": 0.5,
+      "hold": 20
+    },
+    "oos_metric": 0,
+    "oos_return": 0.0,
+    "is_metric": 2.0948567211013835
+  },
+  "gm09_lvnshort|BTCUSDT": {
+    "params": {
+      "lb": 30,
+      "k": 0.5,
+      "hold": 10
+    },
+    "oos_metric": 0.661357265922215,
+    "oos_return": 0.04280436380742958,
+    "is_metric": 0.2654470225825116
+  },
+  "gm10_hvnrej|BTCUSDT": {
+    "params": {
+      "lb": 10,
+      "k": 1.5,
+      "hold": 10
+    },
+    "oos_metric": -0.2907998298897879,
+    "oos_return": -0.1435564734895397,
+    "is_metric": 0.4615388685763337
+  },
+  "gm11_stackbull|BTCUSDT": {
+    "params": {
+      "lb": 10,
+      "k": 1.5,
+      "hold": 10
+    },
+    "oos_metric": -0.9532894131175602,
+    "oos_return": -0.14012985334724448,
+    "is_metric": 1.6519285592681088
+  },
+  "gm12_stackbear|BTCUSDT": {
+    "params": {
+      "lb": 30,
+      "k": 0.5,
+      "hold": 20
+    },
+    "oos_metric": 2.3720499463499394,
+    "oos_return": 0.7388220929578988,
+    "is_metric": -1.076933758070503
+  },
+  "gm13_pullstack|BTCUSDT": {
+    "params": {
+      "lb": 10,
+      "k": 0.5,
+      "hold": 10
+    },
+    "oos_metric": -1.0139760908482343,
+    "oos_return": -0.07027896213921936,
+    "is_metric": 1.0905585385011167
+  },
+  "gm14_spring|BTCUSDT": {
+    "params": {
+      "lb": 10,
+      "k": 0.5,
+      "hold": 20
+    },
+    "oos_metric": -1.1849627881202156,
+    "oos_return": -0.3972289712712792,
+    "is_metric": 2.0106590211722093
+  },
+  "gm15_upthrust|BTCUSDT": {
+    "params": {
+      "lb": 10,
+      "k": 0.5,
+      "hold": 20
+    },
+    "oos_metric": 1.0295521039020834,
+    "oos_return": 0.2892591181406001,
+    "is_metric": 0.6661824137127882
+  },
+  "gm16_sos|BTCUSDT": {
+    "params": {
+      "lb": 30,
+      "k": 1.0,
+      "hold": 20
+    },
+    "oos_metric": -1.5744538894820892,
+    "oos_return": -0.2571634384084508,
+    "is_metric": 1.963980415411541
+  },
+  "gm17_lpsy|BTCUSDT": {
+    "params": {
+      "lb": 20,
+      "k": 0.5,
+      "hold": 20
+    },
+    "oos_metric": 1.8040514545350648,
+    "oos_return": 0.6177459153324678,
+    "is_metric": -0.2898537582974454
+  },
+  "gm18_liqsweep|BTCUSDT": {
+    "params": {
+      "lb": 10,
+      "k": 0.5,
+      "hold": 5
+    },
+    "oos_metric": -1.962002468921415,
+    "oos_return": -0.5319737358463851,
+    "is_metric": -0.24159564365914643
+  },
+  "gm19_obreturn|BTCUSDT": {
+    "params": {
+      "lb": 10,
+      "k": 0.5,
+      "hold": 10
+    },
+    "oos_metric": -0.8986915926370798,
+    "oos_return": -0.1783991475332607,
+    "is_metric": 0.19574849121084187
+  },
+  "gm20_smtdiv|BTCUSDT": {
+    "params": {
+      "lb": 10,
+      "k": 0.5,
+      "hold": 5
+    },
+    "oos_metric": -1.1040906666257013,
+    "oos_return": -0.2430377165754296,
+    "is_metric": 0.03376045424827075
+  },
+  "gm21_breaker|BTCUSDT": {
+    "params": {
+      "lb": 10,
+      "k": 0.5,
+      "hold": 20
+    },
+    "oos_metric": -0.7007406201229767,
+    "oos_return": -0.07194156997127388,
+    "is_metric": 1.2783485968217763
+  },
+  "gm22_amd|BTCUSDT": {
+    "params": {
+      "lb": 30,
+      "k": 0.5,
+      "hold": 20
+    },
+    "oos_metric": -1.8126505248020954,
+    "oos_return": -0.4488077113412835,
+    "is_metric": 1.5600885211179178
+  },
+  "gm23_unfauc|BTCUSDT": {
+    "params": {
+      "lb": 20,
+      "k": 0.5,
+      "hold": 5
+    },
+    "oos_metric": -0.8281299543368577,
+    "oos_return": -0.17421574011995622,
+    "is_metric": -0.4220595192655032
+  },
+  "gm24_poorhl|BTCUSDT": {
+    "params": {
+      "lb": 20,
+      "k": 0.5,
+      "hold": 5
+    },
+    "oos_metric": 1.3693721231541574,
+    "oos_return": 0.47060235987763255,
+    "is_metric": -0.35136482171333117
+  },
+  "gm25_iceberg|BTCUSDT": {
+    "params": {
+      "lb": 10,
+      "k": 1.0,
+      "hold": 5
+    },
+    "oos_metric": 0.015587831269615715,
+    "oos_return": -0.0015296683328431815,
+    "is_metric": 1.0024593316621284
+  }
+}

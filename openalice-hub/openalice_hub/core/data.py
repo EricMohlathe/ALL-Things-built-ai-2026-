@@ -31,8 +31,10 @@ def _cache_path(source: str, symbol: str, interval: str) -> str:
 def from_binance(symbol="BTCUSDT", interval="1d", limit=1000) -> list[dict]:
     url = f"https://api.binance.com/api/v3/klines?symbol={symbol.upper()}&interval={interval}&limit={min(limit,1000)}"
     rows = json.loads(_get(url))
+    # r[9] = taker buy base volume -> real per-bar order-flow (no key needed)
     return [{"t": int(r[0] // 1000), "o": float(r[1]), "h": float(r[2]),
-             "l": float(r[3]), "c": float(r[4]), "v": float(r[5])} for r in rows]
+             "l": float(r[3]), "c": float(r[4]), "v": float(r[5]),
+             "bv": float(r[9]), "n": int(r[8])} for r in rows]
 
 
 def from_yahoo(symbol="AAPL", interval="1d", rng="2y") -> list[dict]:

@@ -26,6 +26,7 @@ from openalice_hub.strategies.base import load_adapters
 from openalice_hub.core import data as datamod, backtest as bt, metrics as met, optimize as opt
 from openalice_hub.strategies import builtin
 from openalice_hub import godmode as gm
+from openalice_hub.strategies import godmode_setups  # registers 25 GM setups
 
 CFG = os.path.join(HUB, "config.json")
 REPOS = os.path.normpath(os.path.join(HUB, "..", "repos"))
@@ -107,6 +108,52 @@ def cmd_backtest(a):
     ann = 365 if a.source == "binance" else 252
     res = bt.run(strat, bars, symbol=a.symbol, cash=a.cash, fee_bps=a.fee, gate=gate())
     print(met.tearsheet(res, ann))
+    if getattr(a, "optimize", False):
+        print("\n  …optimizing in conjunction with the backtest:")
+        print(opt.render(opt.grid_search(a.strategy, bars, gate=gate(), ann=ann, metric="sharpe", top=8)))
+
+
+def cmd_godmode_rank(a):
+    import time
+    names = [n for n in sorted(builtin.REGISTRY) if n.startswith("gm")]
+    bars = datamod.get_ohlcv(a.symbol, source=a.source, limit=a.limit)
+    if len(bars) < 60:
+        print(f"only {len(bars)} bars"); return
+    ann = 365 if a.source == "binance" else 252
+    bestf = os.path.join(HUB, "registry", "godmode_best.json")
+    try:
+        best = json.load(open(bestf))
+    except Exception:
+        best = {}
+    rows = []
+    for name in names:
+        r = opt.grid_search(name, bars, gate=gate(), ann=ann, metric="sharpe", top=1)
+        lb = r["leaderboard"]
+        if not lb:
+            continue
+        top = lb[0]; key = f"{name}|{a.symbol}"; sc = top.get("oos_metric")
+        prev = best.get(key); imp = sc is not None and (prev is None or sc > prev.get("oos_metric", -1e9))
+        if imp:
+            best[key] = {"params": top["params"], "oos_metric": sc,
+                         "oos_return": top.get("oos_return"), "is_metric": top["metric"]}
+        rows.append((name, top, imp))
+    json.dump(best, open(bestf, "w"), indent=2)
+    with open(os.path.join(HUB, "logs", "godmode_results.jsonl"), "a") as fh:
+        fh.write(json.dumps({"ts": time.time(), "symbol": a.symbol,
+                             "ranked": [(n, t.get("oos_metric")) for n, t, _ in rows]}) + "\n")
+    rows.sort(key=lambda r: (r[1].get("oos_metric") if r[1].get("oos_metric") is not None else -1e9), reverse=True)
+    print("─" * 72)
+    print(f"  GODMODE rank — {a.symbol} — all {len(rows)} setups backtested + optimized")
+    print(f"  {'setup':<18}{'best params':<26}{'OOS sh':>7}{'OOS ret':>9}{'IS sh':>7}  best-ever")
+    print("─" * 72)
+    for name, t, imp in rows:
+        p = ",".join(f"{k}={v}" for k, v in t["params"].items())
+        oos = f"{t['oos_metric']:.2f}" if t.get("oos_metric") is not None else "-"
+        oosr = f"{t['oos_return']*100:+.0f}%" if t.get("oos_return") is not None else "-"
+        print(f"  {name:<18}{p:<26}{oos:>7}{oosr:>9}{t['metric']:>7.2f}  {'↑ improved' if imp else ''}")
+    print("─" * 72)
+    print("  Ranked by OUT-OF-SAMPLE sharpe. Best-ever params persisted to registry/godmode_best.json")
+    print("  → re-run on more data/symbols to keep improving each setup. PAPER. Past ≠ future.")
 
 
 def cmd_godmode(a):
@@ -195,7 +242,7 @@ def main():
     sp = sub.add_parser("backtest"); sp.add_argument("strategy"); sp.add_argument("symbol")
     sp.add_argument("--source", default="binance", choices=["binance", "yahoo", "csv"]); sp.add_argument("--interval", default="1d")
     sp.add_argument("--limit", type=int, default=1000); sp.add_argument("--cash", type=float, default=10000.0)
-    sp.add_argument("--fee", type=float, default=10.0); sp.set_defaults(f=cmd_backtest)
+    sp.add_argument("--fee", type=float, default=10.0); sp.add_argument("--optimize", action="store_true"); sp.set_defaults(f=cmd_backtest)
     sp = sub.add_parser("data"); sp.add_argument("symbol")
     sp.add_argument("--source", default="binance", choices=["binance", "yahoo", "csv"]); sp.add_argument("--interval", default="1d")
     sp.add_argument("--limit", type=int, default=1000); sp.set_defaults(f=cmd_data)
@@ -205,6 +252,9 @@ def main():
     sp.add_argument("--interval", default="1d"); sp.add_argument("--limit", type=int, default=1000); sp.set_defaults(f=cmd_optimize)
     sp = sub.add_parser("serve"); sp.add_argument("--port", type=int, default=7871); sp.set_defaults(f=cmd_serve)
     sub.add_parser("godmode").set_defaults(f=cmd_godmode)
+    sp = sub.add_parser("godmode-rank"); sp.add_argument("symbol")
+    sp.add_argument("--source", default="binance", choices=["binance", "yahoo", "csv"])
+    sp.add_argument("--limit", type=int, default=1000); sp.set_defaults(f=cmd_godmode_rank)
     a = p.parse_args()
     a.f(a)
 

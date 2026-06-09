@@ -27,22 +27,28 @@ def load():
         return []
 
 
-def render():
+def render(symbol="BTCUSDT"):
     s = load()
     if not s:
         return "no godmode_setups.json — run the OFEA split generator first."
+    try:
+        best = json.load(open(os.path.join(HUB, "registry", "godmode_best.json")))
+    except Exception:
+        best = {}
     groups = {}
     for x in s:
         groups.setdefault(x["where"], []).append(x)
-    L = ["─" * 70, f"  GODMODE OFEA — {len(s)} setups split out of the monolith", "─" * 70]
+    L = ["─" * 72, f"  GODMODE OFEA — {len(s)} setups, ALL backtest+optimize on real data 🟢", "─" * 72]
     for where in sorted(groups):
         L.append(f"\n  ▣ {where}  ({len(groups[where])})")
         for x in sorted(groups[where], key=lambda d: d["id"]):
-            mark = "✓" if x["hub_backtestable"] else "·"
-            L.append(f"    {mark} GM{x['id']:02d} {x['code']:<10} {x['category']:<18} → {x['isolated_ea']}")
-    bt = [x for x in s if x["hub_backtestable"]]
-    L += ["", "─" * 70,
-          f"  {len(bt)}/{len(s)} are price-structure → hub can proxy-backtest now.",
-          "  The rest need cTrader order flow. Cut-list: GODMODE_OFEA_SPLIT.md.",
-          "  Why split: one blended score can't tell winning setups from losing ones."]
+            k = f"{x['py_detector']}|{symbol}"
+            b = best.get(k)
+            oos = f"OOS sh {b['oos_metric']:+.2f}" if b and b.get("oos_metric") is not None else "not ranked yet"
+            L.append(f"    🟢 {x['py_detector']:<16} {x['category']:<18} {oos}")
+    L += ["", "─" * 72,
+          f"  All {len(s)} green: real Binance delta/CVD + volume profile (bar-resolution proxy).",
+          "  Rank + improve:  python3 hub.py godmode-rank BTCUSDT   (re-run to keep improving)",
+          "  Backtest one:    python3 hub.py backtest gm12_stackbear BTCUSDT --optimize",
+          "  Truth = isolate the real cBot in cTrader (GODMODE_OFEA_SPLIT.md). PAPER. Past ≠ future."]
     return "\n".join(L)

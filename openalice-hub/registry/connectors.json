@@ -44,5 +44,14 @@
     "exec_capable": false,
     "enabled": true,
     "note": "GODMODE_Dashboard.pine \u2014 load into TradingView. Read/analyze. (Live chart control already wired as connector 'tradingview' / MCP 'tradingview-mcp'.)"
+  },
+  {
+    "name": "exchange-mcp",
+    "mcp_cmd": "(connected MCP: analyze_market / paper_trading / execute_order)",
+    "transport": "mcp",
+    "url": "",
+    "exec_capable": true,
+    "enabled": true,
+    "note": "A live exchange MCP is connected this session (paper_trading + execute_order + analyze_market). Call paper_trading_status / enable_paper_trading first. Any LIVE execute routes through ExecutionGate confirmation \u2014 never autonomous."
   }
 ]

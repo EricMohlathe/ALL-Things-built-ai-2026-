@@ -33,7 +33,7 @@
           "cmd": "python3 openalice-hub/hub.py live-arm BTCUSDT buy 0.1"
         },
         {
-          "name": "5 platform connectors",
+          "name": "6 platform connectors",
           "status": "ok",
           "desc": "tradingview-mcp (live), MT5, cTrader, tradememory.",
           "cmd": "python3 openalice-hub/hub.py connectors"
@@ -125,7 +125,7 @@
     "hub_cli": "ok",
     "tradingview_mcp": "pending",
     "strategies": "ok:44",
-    "connectors": "ok:5",
+    "connectors": "ok:6",
     "plugins": "ok",
     "ai_tools_dmg": "ok",
     "hub_dmg": "ok",
