@@ -106,7 +106,8 @@ def cmd_backtest(a):
         print(f"only {len(bars)} bars — need more history"); return
     strat = builtin.make(a.strategy)
     ann = 365 if a.source == "binance" else 252
-    res = bt.run(strat, bars, symbol=a.symbol, cash=a.cash, fee_bps=a.fee, gate=gate())
+    res = bt.run(strat, bars, symbol=a.symbol, cash=a.cash, fee_bps=a.fee, gate=gate(),
+                 stop_atr=a.stop, tp_atr=a.tp, trail_atr=a.trail)
     print(met.tearsheet(res, ann))
     if getattr(a, "optimize", False):
         print("\n  …optimizing in conjunction with the backtest:")
@@ -242,7 +243,9 @@ def main():
     sp = sub.add_parser("backtest"); sp.add_argument("strategy"); sp.add_argument("symbol")
     sp.add_argument("--source", default="binance", choices=["binance", "yahoo", "csv"]); sp.add_argument("--interval", default="1d")
     sp.add_argument("--limit", type=int, default=1000); sp.add_argument("--cash", type=float, default=10000.0)
-    sp.add_argument("--fee", type=float, default=10.0); sp.add_argument("--optimize", action="store_true"); sp.set_defaults(f=cmd_backtest)
+    sp.add_argument("--fee", type=float, default=10.0); sp.add_argument("--optimize", action="store_true")
+    sp.add_argument("--stop", type=float, default=None); sp.add_argument("--tp", type=float, default=None)
+    sp.add_argument("--trail", type=float, default=None); sp.set_defaults(f=cmd_backtest)
     sp = sub.add_parser("data"); sp.add_argument("symbol")
     sp.add_argument("--source", default="binance", choices=["binance", "yahoo", "csv"]); sp.add_argument("--interval", default="1d")
     sp.add_argument("--limit", type=int, default=1000); sp.set_defaults(f=cmd_data)

@@ -12,9 +12,34 @@ from .execution_gate import ExecutionGate, Order
 
 
 def run(strategy, bars: list[dict], symbol="ASSET", cash=10_000.0,
-        fee_bps=10.0, position_frac=1.0, gate: ExecutionGate | None = None) -> dict:
+        fee_bps=10.0, position_frac=1.0, gate: ExecutionGate | None = None,
+        stop_atr=None, tp_atr=None, trail_atr=None) -> dict:
+    """stop_atr/tp_atr/trail_atr: ATR-multiple risk exits (honest win-rate/PF lever)."""
     gate = gate or ExecutionGate(mode="paper")
     targets = strategy.positions(bars)
+    if stop_atr or tp_atr or trail_atr:
+        from . import indicators as _ind
+        atr = _ind.atr(bars, 14)
+        raw = list(targets); tg = [0] * len(bars); cur = 0; stop = tp = None
+        for i in range(len(bars)):
+            a = atr[i] or 0
+            fresh = raw[i] != 0 and (i == 0 or raw[i] != raw[i - 1])  # new signal only
+            if cur == 0:
+                if fresh and a:
+                    cur = raw[i]; px = bars[i]["c"]
+                    stop = px - cur * (stop_atr or 99) * a
+                    tp = px + cur * (tp_atr or 99) * a if tp_atr else None
+            else:
+                px = bars[i]["c"]
+                if trail_atr and a:                          # ratchet stop
+                    ns = px - cur * trail_atr * a
+                    stop = max(stop, ns) if cur > 0 else min(stop, ns)
+                hit_stop = (cur > 0 and bars[i]["l"] <= stop) or (cur < 0 and bars[i]["h"] >= stop)
+                hit_tp = tp and ((cur > 0 and bars[i]["h"] >= tp) or (cur < 0 and bars[i]["l"] <= tp))
+                if hit_stop or hit_tp or raw[i] == 0:        # risk exit or strategy exit
+                    cur = 0; stop = tp = None
+            tg[i] = cur
+        targets = tg
     fee = fee_bps / 10_000.0
     cash0 = cash
     units = 0.0          # >0 long, <0 short

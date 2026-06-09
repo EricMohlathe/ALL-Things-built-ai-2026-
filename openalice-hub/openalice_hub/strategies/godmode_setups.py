@@ -240,7 +240,22 @@ class GM25(GM):
         return 0
 
 
-CLASSES = [GM01, GM02, GM03, GM04, GM05, GM06, GM07, GM08, GM09, GM10, GM11, GM12,
+class GMConfluence(GM):
+    """N-of-M vote across the historically best OOS setups. k = votes needed."""
+    name = "gm_confluence"; gm_id = 99
+    MEMBERS = (GM12, GM17, GM24, GM15, GM09)   # top OOS rank
+
+    def positions(self, bars):
+        votes = [m(lb=self.lb, hold=self.hold).positions(bars) for m in self.MEMBERS]
+        need = max(2, int(self.k))
+        out = []
+        for i in range(len(bars)):
+            s = sum(v[i] for v in votes)
+            out.append(1 if s >= need else (-1 if s <= -need else 0))
+        return out
+
+
+CLASSES = [GMConfluence, GM01, GM02, GM03, GM04, GM05, GM06, GM07, GM08, GM09, GM10, GM11, GM12,
            GM13, GM14, GM15, GM16, GM17, GM18, GM19, GM20, GM21, GM22, GM23, GM24, GM25]
 GODMODE_REGISTRY = {c.name: c for c in CLASSES}
 GODMODE_GRID = {"lb": [10, 20, 30], "k": [0.5, 1.0, 1.5], "hold": [5, 10, 20]}
