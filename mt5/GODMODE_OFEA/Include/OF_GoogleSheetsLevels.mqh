@@ -22,7 +22,7 @@ struct ManualLevel
    double            price;
    double            price2;        // 0 if not a rectangle
    string            note;
-   string            color;
+   string            color_name;
    int               line_type;
    int               line_width;
    int               text_alignment;
@@ -102,7 +102,7 @@ private:
          m_levels[idx].price = price;
          m_levels[idx].price2 = (nf > 1) ? StringToDouble(fields[1]) : 0;
          m_levels[idx].note = (nf > 2) ? fields[2] : "";
-         m_levels[idx].color = (nf > 3) ? fields[3] : "white";
+         m_levels[idx].color_name = (nf > 3) ? fields[3] : "white";
          m_levels[idx].line_type = (nf > 4) ? (int)StringToInteger(fields[4]) : 0;
          m_levels[idx].line_width = (nf > 5) ? (int)StringToInteger(fields[5]) : 1;
          m_levels[idx].text_alignment = (nf > 6) ? (int)StringToInteger(fields[6]) : 1;

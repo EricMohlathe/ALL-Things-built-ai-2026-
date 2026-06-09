@@ -23,19 +23,19 @@ private:
    int               m_y;
    int               m_corner;
 
-   uint              ARGB(const color clr, const uchar a) { return ColorToARGB(clr, a); }
+   uint              ToARGB(const color clr, const uchar a) { return ColorToARGB(clr, a); }
 
    void              Draw(Entry &e, const uchar alpha)
      {
       e.c.Erase(0x00000000);
       // background
-      e.c.FillRectangle(0, 0, OF_TOAST_W, OF_TOAST_H, ARGB(OF_BG, alpha));
-      e.c.FillRectangle(0, 0, 4,           OF_TOAST_H, ARGB(e.accent, alpha));
-      e.c.Rectangle(0, 0, OF_TOAST_W - 1, OF_TOAST_H - 1, ARGB(OF_LINE, (uchar)(alpha * 0.7)));
+      e.c.FillRectangle(0, 0, OF_TOAST_W, OF_TOAST_H, ToARGB(OF_BG, alpha));
+      e.c.FillRectangle(0, 0, 4,           OF_TOAST_H, ToARGB(e.accent, alpha));
+      e.c.Rectangle(0, 0, OF_TOAST_W - 1, OF_TOAST_H - 1, ToARGB(OF_LINE, (uchar)(alpha * 0.7)));
       e.c.FontSet(OF_FONT_BOLD, -OF_FONT_SIZE * 10, FW_BOLD);
-      e.c.TextOut(14, 6, e.title, ARGB(OF_TEXT, alpha));
+      e.c.TextOut(14, 6, e.title, ToARGB(OF_TEXT, alpha));
       e.c.FontSet(OF_FONT, -OF_FONT_SIZE_SM * 10, FW_NORMAL);
-      e.c.TextOut(14, 24, e.body, ARGB(OF_DIM, alpha));
+      e.c.TextOut(14, 24, e.body, ToARGB(OF_DIM, alpha));
       e.c.Update();
      }
 

@@ -18,7 +18,7 @@ struct SierraChartLevel
   {
    double            price;
    string            label;
-   string            color;
+   string            color_name;
   };
 
 class CSierraChartBridge
@@ -77,7 +77,7 @@ public:
          ArrayResize(fresh, idx + 1);
          fresh[idx].price = price;
          fresh[idx].label = parts[1];
-         fresh[idx].color = (n > 2) ? parts[2] : "White";
+         fresh[idx].color_name = (n > 2) ? parts[2] : "White";
         }
       FileClose(handle);
 
