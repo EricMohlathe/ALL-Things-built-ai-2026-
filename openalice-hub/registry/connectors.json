@@ -53,5 +53,41 @@
     "exec_capable": true,
     "enabled": true,
     "note": "A live exchange MCP is connected this session (paper_trading + execute_order + analyze_market). Call paper_trading_status / enable_paper_trading first. Any LIVE execute routes through ExecutionGate confirmation \u2014 never autonomous."
+  },
+  {
+    "name": "ftmo",
+    "mcp_cmd": "(prop platform \u2014 connect via its broker platform)",
+    "transport": "native",
+    "url": "",
+    "exec_capable": true,
+    "enabled": true,
+    "note": "Prop firm \u2014 trade via MT4/MT5/cTrader/DXtrade. Use GODMODE cBots/EAs on their account. Eval sim: hub.py propcheck --firm ftmo. Live via ExecutionGate only."
+  },
+  {
+    "name": "topstep",
+    "mcp_cmd": "(prop platform \u2014 connect via its broker platform)",
+    "transport": "native",
+    "url": "",
+    "exec_capable": true,
+    "enabled": true,
+    "note": "Futures prop firm \u2014 Tradovate/NinjaTrader/TradingView platforms. Eval sim: --firm topstep."
+  },
+  {
+    "name": "apex",
+    "mcp_cmd": "(prop platform \u2014 connect via its broker platform)",
+    "transport": "native",
+    "url": "",
+    "exec_capable": true,
+    "enabled": true,
+    "note": "Futures prop firm \u2014 Tradovate/NinjaTrader (Rithmic). Eval sim: --firm apex."
+  },
+  {
+    "name": "fundednext",
+    "mcp_cmd": "(prop platform \u2014 connect via its broker platform)",
+    "transport": "native",
+    "url": "",
+    "exec_capable": true,
+    "enabled": true,
+    "note": "Prop firm \u2014 MT4/MT5/cTrader. Eval sim: --firm fundednext."
   }
 ]

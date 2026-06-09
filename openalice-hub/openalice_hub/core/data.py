@@ -80,6 +80,13 @@ ALIASES = {
     "OIL": "CL=F", "WTI": "CL=F", "BRENT": "BZ=F", "NATGAS": "NG=F",
     "COPPER": "HG=F", "PLATINUM": "PL=F", "PALLADIUM": "PA=F",
     "WHEAT": "ZW=F", "CORN": "ZC=F", "COFFEE": "KC=F", "SUGAR": "SB=F", "COCOA": "CC=F",
+    # futures (CME/CBOT front-month via Yahoo)
+    "ES": "ES=F", "MES": "ES=F", "SP500FUT": "ES=F",
+    "NQ": "NQ=F", "MNQ": "NQ=F", "YM": "YM=F", "MYM": "YM=F",
+    "RTY": "RTY=F", "M2K": "RTY=F",
+    "ZB": "ZB=F", "ZN": "ZN=F", "ZF": "ZF=F",            # bonds/notes
+    "6E": "6E=F", "6B": "6B=F", "6J": "6J=F", "6A": "6A=F", "6C": "6C=F",  # FX futures
+    "BTCFUT": "BTC=F", "ETHFUT": "ETH=F",
     # indices
     "SPX": "^GSPC", "SP500": "^GSPC", "NASDAQ": "^IXIC", "NAS100": "^NDX",
     "DOW": "^DJI", "US30": "^DJI", "DAX": "^GDAXI", "FTSE": "^FTSE", "NIKKEI": "^N225",

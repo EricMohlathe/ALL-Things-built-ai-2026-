@@ -171,6 +171,18 @@ def cmd_godmode_rank(a):
     print("  → re-run on more data/symbols to keep improving each setup. PAPER. Past ≠ future.")
 
 
+def cmd_propcheck(a):
+    _auto(a)
+    from openalice_hub.core import propfirm
+    bars = datamod.get_ohlcv(a.symbol, source=a.source, limit=a.limit)
+    if len(bars) < 60:
+        print(f"only {len(bars)} bars"); return
+    acct = propfirm.FIRMS[a.firm]["account"]
+    res = bt.run(builtin.make(a.strategy), bars, symbol=a.symbol, cash=acct, gate=gate(),
+                 position_frac=a.frac, stop_atr=a.stop, tp_atr=a.tp, trail_atr=a.trail)
+    print(propfirm.render(propfirm.evaluate([acct] + res["equity_curve"], a.firm), a.strategy, a.symbol))
+
+
 def cmd_godmode(a):
     print(gm.render())
 
@@ -270,6 +282,13 @@ def main():
     sp.add_argument("--interval", default="1d"); sp.add_argument("--limit", type=int, default=1000); sp.set_defaults(f=cmd_optimize)
     sp = sub.add_parser("serve"); sp.add_argument("--port", type=int, default=7871); sp.set_defaults(f=cmd_serve)
     sub.add_parser("godmode").set_defaults(f=cmd_godmode)
+    sp = sub.add_parser("propcheck"); sp.add_argument("strategy"); sp.add_argument("symbol")
+    sp.add_argument("--firm", default="ftmo", choices=list(__import__("openalice_hub.core.propfirm", fromlist=["FIRMS"]).FIRMS))
+    sp.add_argument("--source", default="auto", choices=["auto", "binance", "yahoo", "csv"])
+    sp.add_argument("--stop", type=float, default=None); sp.add_argument("--tp", type=float, default=None)
+    sp.add_argument("--trail", type=float, default=None); sp.add_argument("--limit", type=int, default=1000)
+    sp.add_argument("--frac", type=float, default=0.25, help="position size as fraction of account (prop discipline)")
+    sp.set_defaults(f=cmd_propcheck)
     sp = sub.add_parser("walkforward"); sp.add_argument("strategy"); sp.add_argument("symbol")
     sp.add_argument("--folds", type=int, default=4); sp.add_argument("--source", default="auto", choices=["auto", "binance", "yahoo", "csv"])
     sp.add_argument("--limit", type=int, default=1000)
