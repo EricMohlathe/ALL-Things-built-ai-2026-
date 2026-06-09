@@ -24,6 +24,7 @@
 #![cfg(feature = "ffi")]
 
 use std::collections::HashMap;
+use std::panic::{catch_unwind, AssertUnwindSafe};
 use std::sync::Mutex;
 
 use chrono::{DateTime, TimeZone, Utc};
@@ -31,6 +32,12 @@ use once_cell::sync::Lazy;
 
 use crate::common::{AccountState, Bar};
 use crate::engine::{BarCloseInput, Engine, EngineConfig};
+
+/// Run `f` and swallow any panic, returning `default` instead. Required at
+/// every `extern "C"` boundary because unwinding across FFI is UB.
+fn ffi_guard<T, F: FnOnce() -> T>(default: T, f: F) -> T {
+    catch_unwind(AssertUnwindSafe(f)).unwrap_or(default)
+}
 
 /// Opaque handle handed back to the host. Host treats it as an integer.
 pub type EngineHandle = u32;
@@ -72,44 +79,60 @@ pub unsafe extern "C" fn gme_free(ptr: *mut u8, len: usize) {
     let _ = Vec::from_raw_parts(ptr, len, len);
 }
 
-/// Construct an engine from a JSON-encoded `EngineConfig`. Returns 0 on error.
+/// Construct an engine from a JSON-encoded `EngineConfig`. Returns 0 on error
+/// (null pointer, zero length, invalid UTF-8, malformed JSON, or panic).
 ///
 /// # Safety
-/// `ptr` and `len` must point to a valid UTF-8 JSON buffer.
+/// `ptr` must be null or point to `len` bytes of valid UTF-8 JSON.
 #[no_mangle]
 pub unsafe extern "C" fn gme_engine_new(ptr: *const u8, len: usize) -> EngineHandle {
-    let bytes = std::slice::from_raw_parts(ptr, len);
-    let cfg: EngineConfig = match std::str::from_utf8(bytes)
-        .ok()
-        .and_then(|s| serde_json::from_str(s).ok())
-    {
-        Some(c) => c,
-        None => return 0,
-    };
-    let account = AccountState {
-        equity: 10_000.0,
-        balance: 10_000.0,
-        spread: 0.00002,
-        pip_size: 0.0001,
-        tick_size: 0.00001,
-        pip_value: 10.0,
-        volume_step: 0.01,
-        volume_min: 0.01,
-    };
-    let engine = Engine::new(cfg, account, now_default());
-    let mut next = NEXT_HANDLE.lock().unwrap();
-    let handle = *next;
-    *next = handle.wrapping_add(1).max(1);
-    REGISTRY.lock().unwrap().insert(
-        handle,
-        Slot {
-            engine,
-            account,
-            bars: Vec::new(),
-            pending_events: String::new(),
-        },
-    );
-    handle
+    if ptr.is_null() || len == 0 {
+        return 0;
+    }
+    ffi_guard(0, || {
+        // SAFETY: caller-asserted; null + zero-len already handled above.
+        let bytes = unsafe { std::slice::from_raw_parts(ptr, len) };
+        let cfg: EngineConfig = match std::str::from_utf8(bytes)
+            .ok()
+            .and_then(|s| serde_json::from_str(s).ok())
+        {
+            Some(c) => c,
+            None => return 0,
+        };
+        let account = AccountState {
+            equity: 10_000.0,
+            balance: 10_000.0,
+            spread: 0.00002,
+            pip_size: 0.0001,
+            tick_size: 0.00001,
+            pip_value: 10.0,
+            volume_step: 0.01,
+            volume_min: 0.01,
+        };
+        let engine = Engine::new(cfg, account, now_default());
+        let Ok(mut next) = NEXT_HANDLE.lock() else {
+            return 0;
+        };
+        let handle = *next;
+        // Avoid wrapping back to 0 (the "error" sentinel).
+        *next = handle.wrapping_add(1);
+        if *next == 0 {
+            *next = 1;
+        }
+        let Ok(mut reg) = REGISTRY.lock() else {
+            return 0;
+        };
+        reg.insert(
+            handle,
+            Slot {
+                engine,
+                account,
+                bars: Vec::new(),
+                pending_events: String::new(),
+            },
+        );
+        handle
+    })
 }
 
 /// Push a closed bar and run the gate pipeline. Events are appended (one JSON
@@ -127,72 +150,100 @@ pub extern "C" fn gme_engine_on_bar(
     volume: f64,
     equity: f64,
 ) -> i32 {
-    let mut reg = REGISTRY.lock().unwrap();
-    let Some(slot) = reg.get_mut(&handle) else {
-        return -1;
-    };
-    let ts = Utc.timestamp_opt(ts_unix, 0).single().unwrap_or(now_default());
-    let bar = Bar {
-        ts_open: ts,
-        ts_close: ts,
-        open,
-        high,
-        low,
-        close,
-        volume,
-        bar_delta: None,
-    };
-    slot.bars.push(bar);
-    let view: Vec<Bar> = slot.bars.iter().rev().cloned().collect();
-    let mut acct = slot.account;
-    acct.equity = equity;
-    let events = slot.engine.on_bar_close(BarCloseInput {
-        bars: &view,
-        h4_closes: &[],
-        d1_closes: &[],
-        atr14: 0.0006,
-        correlated_cvd_slope: 0.0,
-        account: acct,
-    });
-    for ev in &events {
-        if let Ok(s) = serde_json::to_string(ev) {
-            slot.pending_events.push_str(&s);
-            slot.pending_events.push('\n');
+    ffi_guard(-1, || {
+        // Reject obviously-bogus inputs early. NaN/Inf in OHLC will produce
+        // NaN comparisons inside the engine that propagate silently.
+        if !(open.is_finite()
+            && high.is_finite()
+            && low.is_finite()
+            && close.is_finite()
+            && volume.is_finite()
+            && equity.is_finite())
+        {
+            return -2;
         }
-    }
-    events.len() as i32
+        let Ok(mut reg) = REGISTRY.lock() else {
+            return -3;
+        };
+        let Some(slot) = reg.get_mut(&handle) else {
+            return -1;
+        };
+        let ts = Utc
+            .timestamp_opt(ts_unix, 0)
+            .single()
+            .unwrap_or_else(now_default);
+        let bar = Bar {
+            ts_open: ts,
+            ts_close: ts,
+            open,
+            high,
+            low,
+            close,
+            volume,
+            bar_delta: None,
+        };
+        slot.bars.push(bar);
+        let view: Vec<Bar> = slot.bars.iter().rev().copied().collect();
+        let mut acct = slot.account;
+        acct.equity = equity;
+        let events = slot.engine.on_bar_close(BarCloseInput {
+            bars: &view,
+            h4_closes: &[],
+            d1_closes: &[],
+            atr14: 0.0006,
+            correlated_cvd_slope: 0.0,
+            account: acct,
+        });
+        for ev in &events {
+            if let Ok(s) = serde_json::to_string(ev) {
+                slot.pending_events.push_str(&s);
+                slot.pending_events.push('\n');
+            }
+        }
+        events.len() as i32
+    })
 }
 
 #[no_mangle]
 pub extern "C" fn gme_events_ptr(handle: EngineHandle) -> *const u8 {
-    REGISTRY
-        .lock()
-        .unwrap()
-        .get(&handle)
-        .map(|s| s.pending_events.as_ptr())
-        .unwrap_or(std::ptr::null())
+    ffi_guard(std::ptr::null(), || {
+        REGISTRY
+            .lock()
+            .ok()
+            .and_then(|r| r.get(&handle).map(|s| s.pending_events.as_ptr()))
+            .unwrap_or(std::ptr::null())
+    })
 }
 
 #[no_mangle]
 pub extern "C" fn gme_events_len(handle: EngineHandle) -> usize {
-    REGISTRY
-        .lock()
-        .unwrap()
-        .get(&handle)
-        .map(|s| s.pending_events.len())
-        .unwrap_or(0)
+    ffi_guard(0, || {
+        REGISTRY
+            .lock()
+            .ok()
+            .and_then(|r| r.get(&handle).map(|s| s.pending_events.len()))
+            .unwrap_or(0)
+    })
 }
 
 #[no_mangle]
 pub extern "C" fn gme_events_clear(handle: EngineHandle) {
-    if let Some(s) = REGISTRY.lock().unwrap().get_mut(&handle) {
-        s.pending_events.clear();
-    }
+    ffi_guard((), || {
+        if let Ok(mut reg) = REGISTRY.lock() {
+            if let Some(s) = reg.get_mut(&handle) {
+                s.pending_events.clear();
+            }
+        }
+    })
 }
 
 #[no_mangle]
 pub extern "C" fn gme_engine_drop(handle: EngineHandle) {
-    REGISTRY.lock().unwrap().remove(&handle);
+    ffi_guard((), || {
+        if let Ok(mut reg) = REGISTRY.lock() {
+            reg.remove(&handle);
+        }
+    });
 }
 
 #[no_mangle]

@@ -121,6 +121,9 @@ namespace GodmodeOfea
 
         public VpLoc LocationAt(double price, double tolPips)
         {
+            // Guard: callers may invoke this from OnTick before the first
+            // Recompute() runs at bar close. _binSize == 0 would NaN the index.
+            if (_binSize <= 0 || double.IsNaN(price)) return VpLoc.None;
             double tol = tolPips * OFHelpers.PipSize(_symbol);
             if (Math.Abs(price - Poc) < tol) return VpLoc.Poc;
             if (Math.Abs(price - Vah) < tol) return VpLoc.Vah;

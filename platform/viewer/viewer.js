@@ -46,22 +46,61 @@ $('demo-btn').addEventListener('click', () => {
   render();
 });
 
+// Minimal CSV row splitter that respects double-quoted fields (RFC 4180
+// subset: doubled quotes inside a quoted field escape a literal quote).
+function splitCsvRow(line) {
+  const out = [];
+  let cur = '';
+  let inQuotes = false;
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i];
+    if (inQuotes) {
+      if (ch === '"') {
+        if (line[i + 1] === '"') { cur += '"'; i++; }
+        else { inQuotes = false; }
+      } else {
+        cur += ch;
+      }
+    } else if (ch === '"') {
+      inQuotes = true;
+    } else if (ch === ',') {
+      out.push(cur);
+      cur = '';
+    } else {
+      cur += ch;
+    }
+  }
+  out.push(cur);
+  return out;
+}
+
 function parseBarCsv(text) {
   const lines = text.trim().split(/\r?\n/);
-  const header = lines.shift().split(',').map((s) => s.trim().toLowerCase());
+  if (lines.length === 0 || !lines[0]) return [];
+  const header = splitCsvRow(lines.shift()).map((s) => s.trim().toLowerCase());
   const idx = (k) => header.indexOf(k);
+  const required = ['open', 'high', 'low', 'close'];
+  for (const k of required) {
+    if (idx(k) < 0) {
+      console.warn(`parseBarCsv: missing required column "${k}"`);
+      return [];
+    }
+  }
   const out = [];
   for (const line of lines) {
-    const cols = line.split(',');
+    if (!line) continue;
+    const cols = splitCsvRow(line);
     if (cols.length < 5) continue;
-    out.push({
-      ts: cols[idx('ts')] || cols[0],
+    const bar = {
+      ts: (idx('ts') >= 0 ? cols[idx('ts')] : cols[0]) || cols[0],
       open: +cols[idx('open')],
       high: +cols[idx('high')],
       low: +cols[idx('low')],
       close: +cols[idx('close')],
-      volume: +(cols[idx('volume')] || 0),
-    });
+      volume: +(idx('volume') >= 0 ? cols[idx('volume')] : 0) || 0,
+    };
+    if (!Number.isFinite(bar.open) || !Number.isFinite(bar.close)) continue;
+    out.push(bar);
   }
   return out;
 }
@@ -244,7 +283,7 @@ function drawSidebar() {
       ['Trades', d.trades_today ?? 0],
     ];
     dashRows.innerHTML = fmt
-      .map(([k, v]) => `<div class="row"><span class="k">${k}</span><span>${v}</span></div>`)
+      .map(([k, v]) => `<div class="row"><span class="k">${escape(k)}</span><span>${escape(v)}</span></div>`)
       .join('');
   } else {
     dashRows.innerHTML = `<div class="row"><span class="k">— no dashboard event yet —</span></div>`;
@@ -259,8 +298,8 @@ function drawSidebar() {
       const cls = gg.result.passed ? 'pass' : 'fail';
       const sym = gg.result.passed ? '✓' : '✗';
       return `<div class="gate-row ${cls}">
-        <span class="g">${gg.gate}</span>
-        <span class="n">${gg.name}</span>
+        <span class="g">${escape(gg.gate)}</span>
+        <span class="n">${escape(gg.name)}</span>
         <span class="r">${sym} ${escape(gg.result.reason)}</span>
       </div>`;
     })
@@ -269,19 +308,25 @@ function drawSidebar() {
   // Recent notifications
   const notifs = state.events.filter((e) => e.Notify).slice(-12);
   $('notif-list').innerHTML = notifs
-    .map((n) => `<div class="notif-row"><span class="tag">${n.Notify.tag}</span> ${escape(n.Notify.msg)}</div>`)
+    .map((n) => `<div class="notif-row"><span class="tag">${escape(n.Notify.tag)}</span> ${escape(n.Notify.msg)}</div>`)
     .join('') || '<div class="notif-row">— none —</div>';
 
   // Counts
   const counts = state.countsByKind;
   const keys = Object.keys(counts).sort();
   $('counts').innerHTML = keys
-    .map((k) => `<div class="row"><span class="k">${k}</span><span>${counts[k]}</span></div>`)
+    .map((k) => `<div class="row"><span class="k">${escape(k)}</span><span>${escape(counts[k])}</span></div>`)
     .join('') || '<div class="row"><span class="k">— none —</span></div>';
 }
 
+// Escape user-controlled strings before injecting via innerHTML. Covers the
+// standard HTML metacharacters plus quotes (defensive — current callsites
+// only put values in text content, but this guards against future use inside
+// attribute values).
 function escape(s) {
-  return String(s).replace(/[<>&]/g, (c) => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;' }[c]));
+  return String(s).replace(/[<>&"']/g, (c) => ({
+    '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;', "'": '&#39;',
+  }[c]));
 }
 
 // ---------- demo data ----------

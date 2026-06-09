@@ -25,8 +25,11 @@ namespace GodmodeOfea
 
         public HtfBias H4Bias()
         {
-            double ema = _emaH4.Result.Last(0);
-            double cls = _h4.ClosePrices.Last(0);
+            // Read last *closed* bar (Last(1)) to avoid mid-bar flapping.
+            if (_h4.ClosePrices.Count < 2) return HtfBias.Neutral;
+            double ema = _emaH4.Result.Last(1);
+            double cls = _h4.ClosePrices.Last(1);
+            if (double.IsNaN(ema) || ema <= 0) return HtfBias.Neutral;
             if (cls > ema * 1.0001) return HtfBias.Bull;
             if (cls < ema * 0.9999) return HtfBias.Bear;
             return HtfBias.Neutral;
@@ -34,8 +37,10 @@ namespace GodmodeOfea
 
         public HtfBias D1Bias()
         {
-            double ema = _emaD1.Result.Last(0);
-            double cls = _d1.ClosePrices.Last(0);
+            if (_d1.ClosePrices.Count < 2) return HtfBias.Neutral;
+            double ema = _emaD1.Result.Last(1);
+            double cls = _d1.ClosePrices.Last(1);
+            if (double.IsNaN(ema) || ema <= 0) return HtfBias.Neutral;
             if (cls > ema * 1.0001) return HtfBias.Bull;
             if (cls < ema * 0.9999) return HtfBias.Bear;
             return HtfBias.Neutral;

@@ -137,13 +137,17 @@ public:
      { return (m_shape == SHAPE_D) ? STATE_BALANCED :
               (m_shape == SHAPE_UNKNOWN ? STATE_UNKNOWN : STATE_IMBALANCED); }
 
-   //--- Test which key level the price is at within tolerance pips
+   //--- Test which key level the price is at within tolerance pips.
+   //    Recompute() can fail (empty data, m_binSize<=0) and leave m_poc/vah/val
+   //    at 0 — guard so the F1.A gate doesn't spuriously match LOC_POC at 0.
    ENUM_VP_LOC LocationAt(const double price, const double tolPips)
      {
+      if(m_binSize <= 0.0 || m_bins <= 0) return LOC_NONE;
+      if(m_poc <= 0.0 && m_vah <= 0.0 && m_val <= 0.0) return LOC_NONE;
       const double tol = tolPips * PipSize(m_sym);
-      if(MathAbs(price - m_poc) < tol) return LOC_POC;
-      if(MathAbs(price - m_vah) < tol) return LOC_VAH;
-      if(MathAbs(price - m_val) < tol) return LOC_VAL;
+      if(m_poc > 0.0 && MathAbs(price - m_poc) < tol) return LOC_POC;
+      if(m_vah > 0.0 && MathAbs(price - m_vah) < tol) return LOC_VAH;
+      if(m_val > 0.0 && MathAbs(price - m_val) < tol) return LOC_VAL;
 
       const int bin = (int)MathFloor((price - m_lo) / m_binSize);
       if(bin >= 0 && bin < m_bins)

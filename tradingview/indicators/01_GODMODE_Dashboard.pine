@@ -93,7 +93,9 @@ subDelta() =>
     volume * (sw - (1.0 - sw))
 subDeltas = request.security_lower_tf(syminfo.tickerid, subTF, subDelta())
 subSum = 0.0
-if array.size(subDeltas) > 0
+// Sum sub-bars only on confirmed parent bars — prevents intra-bar repaint
+// from partially-populated lower-TF arrays (matches CVD Pane, Strategy v2).
+if barstate.isconfirmed and array.size(subDeltas) > 0
     for i = 0 to array.size(subDeltas) - 1
         subSum += array.get(subDeltas, i)
 

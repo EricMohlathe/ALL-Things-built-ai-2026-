@@ -35,7 +35,14 @@ public:
       ArrayResize(m_d, m_len); ArrayInitialize(m_d, 0);
       ArrayResize(m_p, m_len); ArrayInitialize(m_p, 0);
       ArrayResize(m_c, m_len); ArrayInitialize(m_c, 0);
+      // Initialise all state fields — first-bar reads of cvdSlope/zScore/etc.
+      // by the dashboard/composite would otherwise see uninitialised memory.
       st.cvd = 0;
+      st.cvdSlope = 0;
+      st.zScore = 0;
+      st.climax = false;
+      st.deltaFlipped = false;
+      st.regime = CVD_NEUTRAL;
    }
    void OnBar(double barDelta, double closePrice, double climaxThr=2.0, int flipBars=3)
    {

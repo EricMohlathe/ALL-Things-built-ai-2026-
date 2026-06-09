@@ -7,7 +7,7 @@
 #property indicator_plots   0
 #property strict
 
-#include "../Include/OF_PriceAction.mqh"
+#include "../../Include/OF_PriceAction.mqh"
 
 input int     SwingLookback = 20;
 input double  TolEqualATR   = 0.10;
@@ -37,14 +37,21 @@ int OnCalculate(const int rates_total, const int prev_calculated,
                 const long &tick_volume[], const long &volume[], const int &spread[])
 {
    if (rates_total < 30) return rates_total;
-   if (time[rates_total-1] == lastBar) return rates_total;
-   lastBar = time[rates_total-1];
+   // Track the most recent CLOSED bar so structure labels don't flicker
+   // on intra-bar ticks and don't lock in based on partial-bar wicks.
+   const int iLast = rates_total - 2;
+   if (iLast < 1) return rates_total;
+   if (time[iLast] == lastBar) return rates_total;
+   lastBar = time[iLast];
 
    double H[], L[], C[];
    ArraySetAsSeries(H, true); ArraySetAsSeries(L, true); ArraySetAsSeries(C, true);
-   CopyHigh(_Symbol, _Period, 0, 50, H);
-   CopyLow(_Symbol, _Period, 0, 50, L);
-   CopyClose(_Symbol, _Period, 0, 50, C);
+   // Check CopyHigh/Low/Close return values — at session boundaries these
+   // can briefly fail; skip the update rather than feed undersized arrays
+   // into Update() (which would index past the end inside the swing scan).
+   if (CopyHigh (_Symbol, _Period, 0, 50, H) < 50) return rates_total;
+   if (CopyLow  (_Symbol, _Period, 0, 50, L) < 50) return rates_total;
+   if (CopyClose(_Symbol, _Period, 0, 50, C) < 50) return rates_total;
    double atrV[1];
    if (CopyBuffer(g_hAtr, 0, 0, 1, atrV) < 1) atrV[0] = 0;
    g_pa.Update(H, L, C, SwingLookback, TolEqualATR, atrV[0]);

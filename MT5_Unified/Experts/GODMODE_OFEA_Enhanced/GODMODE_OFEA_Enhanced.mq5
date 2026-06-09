@@ -39,7 +39,10 @@
 #include "../../Include/OF_KellySizer.mqh"
 #include "../../Include/OF_ProbabilityScore.mqh"
 
-input ENUM_OP_MODE  OpMode               = MODE_MANUAL;
+// Reuse the base build's mode enum (OF_Common.mqh) so the Enhanced EA's
+// OpMode shares semantics with the base EA's OperatingMode and the same
+// OPMODE_MANUAL/OPMODE_AUTO values appear in the Strategy Tester inputs.
+input ENUM_OPMODE   OpMode               = OPMODE_MANUAL;
 input double        RiskPctMax           = 0.5;
 input double        KellyKappa           = 0.25;
 input bool          UseEnhancedGates     = true;
@@ -72,6 +75,9 @@ int OnInit()
 void OnDeinit(const int r)
 {
    if (g_hAtr != INVALID_HANDLE) IndicatorRelease(g_hAtr);
+   // Release any iATR handles opened by the shared ATR() helper through
+   // included modules (FootprintAnalyzer, SetupDetectors, TradeManager).
+   OF_AtrCacheRelease();
    PrintFormat("GODMODE_OFEA Enhanced shutdown (reason=%d)", r);
 }
 
@@ -108,12 +114,14 @@ void OnBarClose()
    // 3) Regime HMM-lite.
    g_reg.Update(g_dE.st.cvdSlope, /*footImb=*/0, /*profileSkew=*/0, g_dE.st.zScore);
 
-   // 4) Price action.
+   // 4) Price action. Guard CopyHigh/Low/Close — at session boundaries
+   // these can briefly fail, and feeding undersized arrays into Update()
+   // would index past the end inside its swing scan.
    double H[], L[], C[];
    ArraySetAsSeries(H, true); ArraySetAsSeries(L, true); ArraySetAsSeries(C, true);
-   CopyHigh(_Symbol, _Period, 0, 50, H);
-   CopyLow(_Symbol, _Period, 0, 50, L);
-   CopyClose(_Symbol, _Period, 0, 50, C);
+   if (CopyHigh (_Symbol, _Period, 0, 50, H) < 50) return;
+   if (CopyLow  (_Symbol, _Period, 0, 50, L) < 50) return;
+   if (CopyClose(_Symbol, _Period, 0, 50, C) < 50) return;
    double atrV[1];
    if (CopyBuffer(g_hAtr, 0, 0, 1, atrV) < 1) atrV[0] = 0;
    g_pa.Update(H, L, C, 20, 0.10, atrV[0]);
@@ -122,8 +130,8 @@ void OnBarClose()
    double pct = ComputeCompositeProbability();
    PrintFormat("[ENHANCED] regime=%s probScore=%.0f%% grade=%s", g_reg.Name(), pct, g_prob.Grade());
 
-   // 6) Optional auto-fire (only if MODE_AUTO).
-   if (OpMode == MODE_AUTO && pct >= 85.0) FireTradeIfReady(r);
+   // 6) Optional auto-fire (only if OPMODE_AUTO).
+   if (OpMode == OPMODE_AUTO && pct >= 85.0) FireTradeIfReady(r);
 }
 
 double ComputeCompositeProbability()

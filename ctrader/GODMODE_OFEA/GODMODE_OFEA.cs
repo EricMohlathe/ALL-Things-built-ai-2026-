@@ -25,7 +25,10 @@ using cAlgo.API.Internals;
 
 namespace GodmodeOfea
 {
-    [Robot(TimeZone = TimeZones.UTC)]
+    // FullAccess required for HttpClient (GoogleSheetsLevels), file I/O
+    // (Sierra/Bookmap bridges + TradeLogger), and Notifications.SendEmail.
+    // Trader is prompted once on first install to grant the elevated rights.
+    [Robot(TimeZone = TimeZones.UTC, AccessRights = AccessRights.FullAccess)]
     public class GODMODE_OFEA : Robot
     {
         //=== MODE & PLATFORM ===
@@ -171,17 +174,31 @@ namespace GodmodeOfea
         [Parameter("24 PoorHL",   Group = "Setups", DefaultValue = true)]  public bool EnableSetup_24_PoorHL   { get; set; }
         [Parameter("25 Iceberg",  Group = "Setups", DefaultValue = true)]  public bool EnableSetup_25_Iceberg  { get; set; }
 
-        // §22 marginal-gain stack (default off - earn via logged data)
+        // §22 marginal-gain stack (default off - earn via logged data).
+        // Names & defaults mirror MT5_Unified/Experts/GODMODE_OFEA/GODMODE_OFEA.mq5
+        // one-for-one (brief §7 "parameter-mirrored" guarantee).
         [Parameter("M1 Require Liquidity Sweep", Group = "M-Refinements", DefaultValue = false)]
         public bool M1_RequireLiquiditySweep { get; set; }
+        [Parameter("M1 Sweep Lookback Bars", Group = "M-Refinements", DefaultValue = 10)]
+        public int M1_SweepLookbackBars { get; set; }
         [Parameter("M2 Require Second Touch", Group = "M-Refinements", DefaultValue = false)]
         public bool M2_RequireSecondTouch { get; set; }
+        [Parameter("M2 Touch Lookback Bars", Group = "M-Refinements", DefaultValue = 30)]
+        public int M2_TouchLookbackBars { get; set; }
+        [Parameter("M2 Touch Tol Pips", Group = "M-Refinements", DefaultValue = 3.0)]
+        public double M2_TouchTolPips { get; set; }
         [Parameter("M3 Use ATR Regime Filter", Group = "M-Refinements", DefaultValue = false)]
         public bool M3_UseATRRegimeFilter { get; set; }
+        [Parameter("M3 Min ATR Ratio", Group = "M-Refinements", DefaultValue = 0.70)]
+        public double M3_MinATRRatio { get; set; }
+        [Parameter("M3 Max ATR Ratio", Group = "M-Refinements", DefaultValue = 1.50)]
+        public double M3_MaxATRRatio { get; set; }
         [Parameter("M5 Use Correlated CVD", Group = "M-Refinements", DefaultValue = false)]
         public bool M5_UseCorrelatedCVD { get; set; }
         [Parameter("M5 Correlated Symbol", Group = "M-Refinements", DefaultValue = "EURGBP")]
         public string M5_CorrelatedSymbol { get; set; }
+        [Parameter("M5 HalfSize On Neutral", Group = "M-Refinements", DefaultValue = true)]
+        public bool M5_HalfSizeOnNeutral { get; set; }
         [Parameter("M6 Use Sub-Window Tiering", Group = "M-Refinements", DefaultValue = false)]
         public bool M6_UseSubWindowTiering { get; set; }
         [Parameter("M6 Tier B Min Score", Group = "M-Refinements", DefaultValue = 5)]
@@ -223,7 +240,18 @@ namespace GodmodeOfea
             _viz    = new ChartViz(Chart, ShowVPLevels, ShowFootprintMarkers, ShowSessionShading, ShowTradeArrows);
             _logger = new TradeLogger(Path.Combine(Environment.GetFolderPath(
                         Environment.SpecialFolder.MyDocuments), "GODMODE_OFEA_log.csv"));
+            // Wire consecutive-loss tracking. Without this hook the kill switch
+            // CheckConsecLosses never trips because _consecLosses stays at zero.
+            Positions.Closed += OnPositionClosedHook;
             Print("GODMODE_OFEA initialized — mode={0}", OperatingMode);
+        }
+
+        private void OnPositionClosedHook(PositionClosedEventArgs args)
+        {
+            if (args?.Position == null) return;
+            if (args.Position.Label != "GODMODE") return;
+            try { _risk?.NotifyTradeClosed(args.Position.NetProfit); }
+            catch (Exception e) { Print($"OnPositionClosed err: {e.Message}"); }
         }
 
         protected override void OnTick()
@@ -241,7 +269,12 @@ namespace GodmodeOfea
             RunBarClose();
         }
 
-        protected override void OnStop() { _delta?.Detach(); _dash?.Clear(); }
+        protected override void OnStop()
+        {
+            Positions.Closed -= OnPositionClosedHook;
+            _delta?.Detach();
+            _dash?.Clear();
+        }
 
         private void HandleDayRollover()
         {
@@ -321,6 +354,14 @@ namespace GodmodeOfea
             double risk = Math.Abs(best.Entry - best.Sl);
             double rr = risk > 0 ? Math.Abs(best.Tp - best.Entry) / risk : 0;
             if (rr < MinRR) return;
+            // Cap absurd R:R (parameter was previously declared but unused).
+            // MT5 build clamps the same way — keep parameter-mirrored behaviour.
+            if (MaxRR > 0 && rr > MaxRR)
+            {
+                double cappedDist = risk * MaxRR;
+                best.Tp = best.Direction == TradeDir.Long ? best.Entry + cappedDist : best.Entry - cappedDist;
+                rr = MaxRR;
+            }
             best.Score = bestScore;
             best.Priority = bestScore >= 5 ? Priority.P1 : (bestScore >= 4 ? Priority.P2 : Priority.P3);
             bool halfSize = HalfSize_OnHTFConflict && !_htf.IsAligned(best.Direction);

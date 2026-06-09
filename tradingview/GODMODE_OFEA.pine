@@ -440,10 +440,11 @@ plotshape(ShowTradeArrows and allGatesPass and isShort, "A+ SHORT", shape.labeld
 // ═══ §4 NOTIFICATION CASCADE (TradingView alerts) ════════════════
 // Each tag fires via alert() on FALSE→TRUE edge (Pine handles dedup per bar).
 n_a = ta.change(g3_loc ? 1 : 0) > 0
-n_c = ta.change(session_)
+// `ta.change()` only accepts numeric series in Pine v6 — use `!=` for strings.
+n_c = session_ != session_[1]
 n_d = ta.change(g4_htf ? 1 : 0) > 0
 n_e = ta.change(g5_cvd ? 1 : 0) > 0
-n_f = ta.change(marketState)
+n_f = marketState != marketState[1]
 n_g = hasSetup and not hasSetup[1]
 n_h = aggressionSpike and not aggressionSpike[1]
 n_i = allGatesPass and not allGatesPass[1]
@@ -451,13 +452,13 @@ n_i = allGatesPass and not allGatesPass[1]
 if EnableNotifications and barstate.isconfirmed
     if n_a
         alert("N-A · VP " + curLoc + " touch @ " + str.tostring(close, format.mintick) + " · " + syminfo.ticker, alert.freq_once_per_bar)
-    if n_c != 0
+    if n_c
         alert("N-C · Kill zone active: " + session_,  alert.freq_once_per_bar)
     if n_d
         alert("N-D · HTF aligned: " + htfCombined,    alert.freq_once_per_bar)
     if n_e
         alert("N-E · CVD confirms " + (isLong ? "LONG" : "SHORT") + " (CVD=" + str.tostring(cvd, "#") + ")", alert.freq_once_per_bar)
-    if n_f != ""
+    if n_f
         alert("N-F · Shape " + profShape + " state " + marketState, alert.freq_once_per_bar)
     if n_g
         alert("N-G · Footprint " + setupLabel + " ★" + str.tostring(absorptionStars(isLong)), alert.freq_once_per_bar)
@@ -466,7 +467,8 @@ if EnableNotifications and barstate.isconfirmed
     if n_i
         // brief §18 user story acceptance — this is the trigger
         alert("N-I · A+ READY " + (isLong ? "LONG" : "SHORT") + " " + syminfo.ticker + " setup=" + setupLabel + " score=" + str.tostring(score) + " R:R=" + str.tostring(rr, "0.0"), alert.freq_once_per_bar)
-        runtime.error("ADVISORY")  // no-op placeholder; remove if you want silent
+        // NOTE: prior `runtime.error("ADVISORY")` removed — it actually halts the
+        // script in Pine v6 (it is not a no-op). The alert above is the signal.
 
 // ═══ §13 JOURNAL (TradingView log sink — copy/paste from Pine Log pane) ═══
 if EnableNotifications and n_i and barstate.isconfirmed

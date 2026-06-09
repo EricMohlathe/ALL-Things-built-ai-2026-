@@ -38,7 +38,11 @@ namespace GodmodeOfea
             try
             {
                 if (_sound && sound.HasValue) _robot.Notifications.PlaySound(sound.Value);
-                if (_push && sendPush) _robot.Notifications.SendEmail("godmode@local", "godmode@local", tag, text);
+                // Push alerts go to the connected cTrader mobile app, not email.
+                // The previous SendEmail-as-push routing failed silently on accounts
+                // without an SMTP relay configured.
+                if (_push && sendPush) _robot.Notifications.SendMobileNotification("GODMODE", text);
+                if (_email && sendPush) _robot.Notifications.SendEmail("godmode@local", "godmode@local", tag, text);
             }
             catch { }
             try { _robot.Chart.DrawStaticText("godmode_toast", text, VerticalAlignment.Bottom, HorizontalAlignment.Left, Color.White); } catch { }

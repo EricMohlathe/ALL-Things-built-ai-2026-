@@ -40,7 +40,7 @@ notification layer.
 | `GoogleSheetsLevels.cs` | `google_sheets_importer.cpp` (Frozen Tundra) | Pulls operator-curated key levels from a shared Sheet via gviz CSV. |
 | `AutoRiskReward.cs` | `auto_risk_reward.cpp` (Frozen Tundra) | Auto-draws SL/TP/entry/R:R rectangle on every fill. Implements §9.5. |
 
-### MT5 (`mt5/GODMODE_OFEA/Include/`)
+### MT5 (`MT5_Unified/Include/`)
 
 | Module | Mirrors |
 |---|---|

@@ -21,14 +21,17 @@ int OnCalculate(const int rates_total, const int prev_calculated,
                 const double &low[], const double &close[],
                 const long &tick_volume[], const long &volume[], const int &spread[])
 {
-   Paint(time, rates_total, low, high);
+   Paint();
    return rates_total;
 }
-void OnTimer() { Paint(NULL, 0, NULL, NULL); }
+// MQL5 does not allow passing NULL to a typed-array reference parameter, so
+// the previous Paint(NULL,0,NULL,NULL) call did not compile. The session
+// light only depends on TimeCurrent() — strip the unused arrays out entirely.
+void OnTimer() { Paint(); }
 
 struct Sess { int hStart, mStart, hEnd, mEnd; string name; color col; };
 
-void Paint(const datetime &time[], int rt, const double &low[], const double &high[])
+void Paint()
 {
    ObjectsDeleteAll(0, pref);
    // Convert broker server time to SAST so session windows are correct
