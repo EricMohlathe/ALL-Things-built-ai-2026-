@@ -13,6 +13,7 @@ HUB = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, HUB)
 from openalice_hub.core import data as datamod, backtest as bt, metrics as met, optimize as opt
 from openalice_hub.strategies import builtin
+from openalice_hub.strategies import godmode_setups  # registers 26 GM setups
 from openalice_hub.core.execution_gate import ExecutionGate
 
 DASH = os.path.join(HUB, "dashboard")
