@@ -1,0 +1,4 @@
+# Agent OS Standards Index
+root:
+  activepieces-automation:
+    description: Use the self-hosted Activepieces instance (via ap-bridge.mjs) for recurring automations, app integrations, webhooks, and scheduled workflows instead of bespoke glue code.

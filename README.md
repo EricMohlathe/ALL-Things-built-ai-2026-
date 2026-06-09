@@ -29,7 +29,10 @@ exact upstream sources and commit SHAs.
 │   ├── remotion-project/           # runnable Remotion 4.x video project
 │   ├── seedance2-comfyui/          # ComfyUI custom node (drop into ComfyUI/custom_nodes)
 │   ├── gpt-image2-seedance2-workflow/   # GPT-Image-2 → Seedance2 workflow + docs
-│   └── python-aiplatform/          # Vertex AI SDK install + quickstart
+│   ├── python-aiplatform/          # Vertex AI SDK install + quickstart
+│   ├── agent-os/                   # buildermethods/agent-os v3 (spec-driven agent workflow)
+│   └── activepieces/               # Activepieces docker deployment + Agent OS bridge CLI
+├── agent-os/                       # Agent OS project install (standards/ + index.yml)
 ├── references/
 │   └── awesome-seedance/           # curated Seedance link list
 ├── setup.sh                        # rebuild all live installs in a fresh checkout
@@ -58,6 +61,8 @@ Claude Code auto-discovers every `.claude/skills/*/SKILL.md`. Highlights:
 | **Vertex AI SDK** (1.156.0) | `software/python-aiplatform` | `source software/python-aiplatform/.venv/bin/activate` then run `examples/quickstart.py` |
 | **Seedance2 ComfyUI node** | `software/seedance2-comfyui` | copy into `ComfyUI/custom_nodes/` (host provides torch) |
 | **GPT-Image-2 → Seedance2 workflow** | `software/gpt-image2-seedance2-workflow` | follow that folder's README |
+| **Agent OS** (v3) | `software/agent-os` (base) + `agent-os/` (project) | `/agent-os` slash commands in Claude Code (`.claude/commands/agent-os/`: plan-product, shape-spec, discover/index/inject-standards) |
+| **Activepieces** (0.83.0) | `software/activepieces` | `cd software/activepieces && docker compose up -d` → UI/API on `http://localhost:8080`; agents drive it via `node ap-bridge.mjs` (see `agent-os/standards/activepieces-automation.md`) |
 
 † Remotion video **rendering** needs `ffmpeg` on the host (not preinstalled in
 this container). The Studio dev server and project build do not.

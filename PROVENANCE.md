@@ -13,6 +13,8 @@ Every component in this workspace was cloned/installed from upstream on
 | Seedance2 ComfyUI node | `Anil-matcha/seedance2-comfyui` | `fd8c17db` | `software/seedance2-comfyui/` (full source) |
 | Vertex AI SDK | `googleapis/python-aiplatform` | `0c72b97b` | pip pkg `google-cloud-aiplatform` (not vendored — installed) |
 | Remotion | `remotion-dev/remotion` | `46361235` | `software/remotion-project/` (fresh project using `remotion` npm pkg) |
+| Agent OS | `buildermethods/agent-os` | `cae8e66` | `software/agent-os/` (full source) + project install: `agent-os/`, `.claude/commands/agent-os/` |
+| Activepieces | `activepieces/activepieces` | `4991f3be` | `software/activepieces/` (upstream `docker-compose.yml` + `.env.example`, image `0.83.0`; source not vendored) |
 
 ## Decisions / deviations
 
@@ -30,3 +32,12 @@ Every component in this workspace was cloned/installed from upstream on
   repos) was removed to keep the repo lean; `*_REMOVED.md` notes point to the
   originals.
 - All `node_modules/` and `.venv/` are git-ignored and rebuilt by `setup.sh`.
+- **Agent OS** (436 K) is vendored whole at `software/agent-os/` and installed
+  into the project with its own `scripts/project-install.sh` (run by `setup.sh`),
+  yielding `agent-os/standards/` and five `/agent-os` Claude Code commands.
+- **Activepieces** is a ~300 MB / 23k-file monorepo — like Remotion, not vendored
+  whole. It is deployed from the official Docker image via the upstream compose
+  file; `setup.sh` generates `.env` secrets, and `--with-activepieces-src`
+  shallow-clones full source to the git-ignored `software/activepieces/src/`.
+  Integration with Agent OS: `software/activepieces/ap-bridge.mjs` (zero-dep CLI)
+  + the indexed standard `agent-os/standards/activepieces-automation.md`.

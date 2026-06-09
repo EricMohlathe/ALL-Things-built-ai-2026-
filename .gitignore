@@ -13,6 +13,10 @@ build/
 out/
 .remotion/
 
+# Activepieces runtime (deployed via docker; source cloned on demand)
+software/activepieces/cache/
+software/activepieces/src/
+
 # Install logs
 .*-install.log
 
