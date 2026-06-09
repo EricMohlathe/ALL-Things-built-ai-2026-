@@ -1,0 +1,16 @@
+# third-party upstreams are referenced, NOT vendored (their own licenses/size)
+../repos/
+repos/
+# runtime / build artifacts
+logs/
+build/
+*.dmg
+node_modules/
+__pycache__/
+*.pyc
+.DS_Store
+# secrets — never commit
+.env
+*.key
+config.local.json
+data/

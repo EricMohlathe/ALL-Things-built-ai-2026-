@@ -1,0 +1,17 @@
+{
+  "mode": "paper",
+  "live_enabled": false,
+  "broker": {},
+  "default_ai": "hermes-9router",
+  "_safety": "mode=paper and live_enabled=false mean NO real orders can be sent. To enable live you must set live_enabled=true AND populate broker{} with credentials AND confirm each order with a typed token. Defaults are intentionally safe.",
+  "_repos_dir": "../repos",
+  "godmode_repo": "../godmode-repo",
+  "platforms": [
+    "binance",
+    "yahoo",
+    "mt5",
+    "ctrader",
+    "tradingview"
+  ],
+  "_godmode": "Configured WITH github.com/EricMohlathe/ALL-Things-built-ai-2026- (GODMODE Trading OS): 26 EAs GM01-GM26, MT5/cTrader/TradingView libraries. Honesty contract enforced by ExecutionGate + backtest engine (no fabricated win rates)."
+}

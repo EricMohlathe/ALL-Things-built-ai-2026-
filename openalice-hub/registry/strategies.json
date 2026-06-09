@@ -1,0 +1,354 @@
+[
+  {
+    "name": "openalice",
+    "repo": "OpenAlice",
+    "kind": "base",
+    "lang": "node",
+    "exec_surface": true,
+    "run_hint": "Base agent. cd repos/OpenAlice && npm install && see README for the agent entrypoint."
+  },
+  {
+    "name": "ai-trader",
+    "repo": "AI-Trader",
+    "kind": "agent",
+    "lang": "node",
+    "exec_surface": true,
+    "run_hint": "HKUDS multi-agent LLM trader. cd repos/AI-Trader && npm install."
+  },
+  {
+    "name": "quantdinger",
+    "repo": "QuantDinger",
+    "kind": "agent-mcp",
+    "lang": "mixed",
+    "exec_surface": true,
+    "run_hint": "Quant agent w/ MCP. Inspect repos/QuantDinger README for run + MCP wiring."
+  },
+  {
+    "name": "moon-dev-agents",
+    "repo": "moon-dev-ai-agents-for-trading",
+    "kind": "agent",
+    "lang": "py",
+    "exec_surface": false,
+    "run_hint": "Moon Dev AI trading agents. python venv + pip install -r requirements.txt."
+  },
+  {
+    "name": "quantmuse",
+    "repo": "QuantMuse",
+    "kind": "research",
+    "lang": "py",
+    "exec_surface": true,
+    "run_hint": "Quant research toolkit. pip install -e repos/QuantMuse."
+  },
+  {
+    "name": "ai-trading-claude",
+    "repo": "ai-trading-claude",
+    "kind": "agent",
+    "lang": "py",
+    "exec_surface": false,
+    "run_hint": "Claude-driven trading agent. pip install -r requirements.txt."
+  },
+  {
+    "name": "freqai-lstm",
+    "repo": "freqAI-LSTM",
+    "kind": "strategy",
+    "lang": "py",
+    "exec_surface": true,
+    "run_hint": "Freqtrade FreqAI LSTM strategy. Drop into a freqtrade user_data/strategies dir."
+  },
+  {
+    "name": "tradememory",
+    "repo": "tradememory-protocol",
+    "kind": "memory",
+    "lang": "py",
+    "exec_surface": true,
+    "run_hint": "Trade-memory MCP protocol. Also registered as a connector."
+  },
+  {
+    "name": "forex-trading-bot",
+    "repo": "ForexTradingBot",
+    "kind": "bot",
+    "lang": "node",
+    "exec_surface": true,
+    "run_hint": "Opselon forex bot. Inspect README; keys required; keep on PAPER/testnet."
+  },
+  {
+    "name": "trading-bot",
+    "repo": "TradingBot",
+    "kind": "bot",
+    "lang": "",
+    "exec_surface": true,
+    "run_hint": "Gifted87 trading bot. Inspect README for runtime."
+  },
+  {
+    "name": "market-swarm",
+    "repo": "Market-Swarm-Agents",
+    "kind": "agent",
+    "lang": "py",
+    "exec_surface": true,
+    "run_hint": "Multi-agent market swarm. pip install -r requirements.txt (heavier)."
+  },
+  {
+    "name": "trade-flow",
+    "repo": "trade_flow",
+    "kind": "framework",
+    "lang": "py",
+    "exec_surface": true,
+    "run_hint": "Nautilus-style trading framework. See Makefile/Tiltfile; heavier infra."
+  },
+  {
+    "name": "forex-trading-ai",
+    "repo": "Forex-Trading-AI",
+    "kind": "bot",
+    "lang": "node",
+    "exec_surface": true,
+    "run_hint": "kacf forex AI. npm install; keys required; keep on PAPER."
+  },
+  {
+    "name": "forex-ai-trader",
+    "repo": "forex-ai-trader",
+    "kind": "bot",
+    "lang": "",
+    "exec_surface": true,
+    "run_hint": "Viajante80 forex AI trader. Inspect README."
+  },
+  {
+    "name": "tradeclaw",
+    "repo": "tradeclaw",
+    "kind": "agent-mcp",
+    "lang": "node",
+    "exec_surface": true,
+    "run_hint": "tradeclaw agent + MCP. npm install; can also register as a connector."
+  },
+  {
+    "name": "crypto-arbitrage",
+    "repo": "crypto-arbitrage-bot",
+    "kind": "bot",
+    "lang": "py",
+    "exec_surface": true,
+    "run_hint": "Crypto arbitrage bot (ccxt). pip install -r requirements.txt; keep on PAPER."
+  },
+  {
+    "name": "trading-ops",
+    "repo": "trading-ops",
+    "kind": "ops",
+    "lang": "node-py",
+    "exec_surface": true,
+    "run_hint": "Trading ops/infra + MCP. Inspect README; useful for deployment/monitoring."
+  },
+  {
+    "name": "tradingview",
+    "repo": "tradingview-mcp",
+    "kind": "connector",
+    "lang": "node",
+    "exec_surface": false,
+    "run_hint": "TradingView MCP \u2014 primarily a platform connector (see connectors.json)."
+  },
+  {
+    "name": "godmode-gm01",
+    "repo": "../godmode-repo",
+    "kind": "godmode-ea",
+    "lang": "csharp",
+    "exec_surface": true,
+    "run_hint": "GODMODE GM01_OpeningRangeBreakout (Opening Range Breakout). cTrader cBot + MT5 expert. Optimize in cAlgo Strategy Tester per EA_BACKTEST_OPTIMIZATION_MANUAL.md (godmode-repo)."
+  },
+  {
+    "name": "godmode-gm02",
+    "repo": "../godmode-repo",
+    "kind": "godmode-ea",
+    "lang": "csharp",
+    "exec_surface": true,
+    "run_hint": "GODMODE GM02_SessionSweepReversal (Session Sweep Reversal). cTrader cBot + MT5 expert. Optimize in cAlgo Strategy Tester per EA_BACKTEST_OPTIMIZATION_MANUAL.md (godmode-repo)."
+  },
+  {
+    "name": "godmode-gm03",
+    "repo": "../godmode-repo",
+    "kind": "godmode-ea",
+    "lang": "csharp",
+    "exec_surface": true,
+    "run_hint": "GODMODE GM03_FVGEntry (F V G Entry). cTrader cBot + MT5 expert. Optimize in cAlgo Strategy Tester per EA_BACKTEST_OPTIMIZATION_MANUAL.md (godmode-repo)."
+  },
+  {
+    "name": "godmode-gm04",
+    "repo": "../godmode-repo",
+    "kind": "godmode-ea",
+    "lang": "csharp",
+    "exec_surface": true,
+    "run_hint": "GODMODE GM04_OrderBlockReturn (Order Block Return). cTrader cBot + MT5 expert. Optimize in cAlgo Strategy Tester per EA_BACKTEST_OPTIMIZATION_MANUAL.md (godmode-repo)."
+  },
+  {
+    "name": "godmode-gm05",
+    "repo": "../godmode-repo",
+    "kind": "godmode-ea",
+    "lang": "csharp",
+    "exec_surface": true,
+    "run_hint": "GODMODE GM05_ICTUnicorn (I C T Unicorn). cTrader cBot + MT5 expert. Optimize in cAlgo Strategy Tester per EA_BACKTEST_OPTIMIZATION_MANUAL.md (godmode-repo)."
+  },
+  {
+    "name": "godmode-gm06",
+    "repo": "../godmode-repo",
+    "kind": "godmode-ea",
+    "lang": "csharp",
+    "exec_surface": true,
+    "run_hint": "GODMODE GM06_WyckoffSpring (Wyckoff Spring). cTrader cBot + MT5 expert. Optimize in cAlgo Strategy Tester per EA_BACKTEST_OPTIMIZATION_MANUAL.md (godmode-repo)."
+  },
+  {
+    "name": "godmode-gm07",
+    "repo": "../godmode-repo",
+    "kind": "godmode-ea",
+    "lang": "csharp",
+    "exec_surface": true,
+    "run_hint": "GODMODE GM07_VWAPMeanReversion (V W A P Mean Reversion). cTrader cBot + MT5 expert. Optimize in cAlgo Strategy Tester per EA_BACKTEST_OPTIMIZATION_MANUAL.md (godmode-repo)."
+  },
+  {
+    "name": "godmode-gm08",
+    "repo": "../godmode-repo",
+    "kind": "godmode-ea",
+    "lang": "csharp",
+    "exec_surface": true,
+    "run_hint": "GODMODE GM08_MomentumDisplacement (Momentum Displacement). cTrader cBot + MT5 expert. Optimize in cAlgo Strategy Tester per EA_BACKTEST_OPTIMIZATION_MANUAL.md (godmode-repo)."
+  },
+  {
+    "name": "godmode-gm09",
+    "repo": "../godmode-repo",
+    "kind": "godmode-ea",
+    "lang": "csharp",
+    "exec_surface": true,
+    "run_hint": "GODMODE GM09_OrderFlowAbsorption (Order Flow Absorption). cTrader cBot + MT5 expert. Optimize in cAlgo Strategy Tester per EA_BACKTEST_OPTIMIZATION_MANUAL.md (godmode-repo)."
+  },
+  {
+    "name": "godmode-gm10",
+    "repo": "../godmode-repo",
+    "kind": "godmode-ea",
+    "lang": "csharp",
+    "exec_surface": true,
+    "run_hint": "GODMODE GM10_PowerOfThree_CRT (Power Of Three_ C R T). cTrader cBot + MT5 expert. Optimize in cAlgo Strategy Tester per EA_BACKTEST_OPTIMIZATION_MANUAL.md (godmode-repo)."
+  },
+  {
+    "name": "godmode-gm11",
+    "repo": "../godmode-repo",
+    "kind": "godmode-ea",
+    "lang": "csharp",
+    "exec_surface": true,
+    "run_hint": "GODMODE GM11_SilverBullet (Silver Bullet). cTrader cBot + MT5 expert. Optimize in cAlgo Strategy Tester per EA_BACKTEST_OPTIMIZATION_MANUAL.md (godmode-repo)."
+  },
+  {
+    "name": "godmode-gm12",
+    "repo": "../godmode-repo",
+    "kind": "godmode-ea",
+    "lang": "csharp",
+    "exec_surface": true,
+    "run_hint": "GODMODE GM12_OTE (O T E). cTrader cBot + MT5 expert. Optimize in cAlgo Strategy Tester per EA_BACKTEST_OPTIMIZATION_MANUAL.md (godmode-repo)."
+  },
+  {
+    "name": "godmode-gm13",
+    "repo": "../godmode-repo",
+    "kind": "godmode-ea",
+    "lang": "csharp",
+    "exec_surface": true,
+    "run_hint": "GODMODE GM13_PriceAction (Price Action). cTrader cBot + MT5 expert. Optimize in cAlgo Strategy Tester per EA_BACKTEST_OPTIMIZATION_MANUAL.md (godmode-repo)."
+  },
+  {
+    "name": "godmode-gm14",
+    "repo": "../godmode-repo",
+    "kind": "godmode-ea",
+    "lang": "csharp",
+    "exec_surface": true,
+    "run_hint": "GODMODE GM14_TurtleSoupSFP (Turtle Soup S F P). cTrader cBot + MT5 expert. Optimize in cAlgo Strategy Tester per EA_BACKTEST_OPTIMIZATION_MANUAL.md (godmode-repo)."
+  },
+  {
+    "name": "godmode-gm15",
+    "repo": "../godmode-repo",
+    "kind": "godmode-ea",
+    "lang": "csharp",
+    "exec_surface": true,
+    "run_hint": "GODMODE GM15_SupplyDemand (Supply Demand). cTrader cBot + MT5 expert. Optimize in cAlgo Strategy Tester per EA_BACKTEST_OPTIMIZATION_MANUAL.md (godmode-repo)."
+  },
+  {
+    "name": "godmode-gm16",
+    "repo": "../godmode-repo",
+    "kind": "godmode-ea",
+    "lang": "csharp",
+    "exec_surface": true,
+    "run_hint": "GODMODE GM16_MarketStructure (Market Structure). cTrader cBot + MT5 expert. Optimize in cAlgo Strategy Tester per EA_BACKTEST_OPTIMIZATION_MANUAL.md (godmode-repo)."
+  },
+  {
+    "name": "godmode-gm17",
+    "repo": "../godmode-repo",
+    "kind": "godmode-ea",
+    "lang": "csharp",
+    "exec_surface": true,
+    "run_hint": "GODMODE GM17_InitialBalance (Initial Balance). cTrader cBot + MT5 expert. Optimize in cAlgo Strategy Tester per EA_BACKTEST_OPTIMIZATION_MANUAL.md (godmode-repo)."
+  },
+  {
+    "name": "godmode-gm18",
+    "repo": "../godmode-repo",
+    "kind": "godmode-ea",
+    "lang": "csharp",
+    "exec_surface": true,
+    "run_hint": "GODMODE GM18_Harmonic (Harmonic). cTrader cBot + MT5 expert. Optimize in cAlgo Strategy Tester per EA_BACKTEST_OPTIMIZATION_MANUAL.md (godmode-repo)."
+  },
+  {
+    "name": "godmode-gm19",
+    "repo": "../godmode-repo",
+    "kind": "godmode-ea",
+    "lang": "csharp",
+    "exec_surface": true,
+    "run_hint": "GODMODE GM19_RSI2MeanReversion (R S I2 Mean Reversion). cTrader cBot + MT5 expert. Optimize in cAlgo Strategy Tester per EA_BACKTEST_OPTIMIZATION_MANUAL.md (godmode-repo)."
+  },
+  {
+    "name": "godmode-gm20",
+    "repo": "../godmode-repo",
+    "kind": "godmode-ea",
+    "lang": "csharp",
+    "exec_surface": true,
+    "run_hint": "GODMODE GM20_GapFade (Gap Fade). cTrader cBot + MT5 expert. Optimize in cAlgo Strategy Tester per EA_BACKTEST_OPTIMIZATION_MANUAL.md (godmode-repo)."
+  },
+  {
+    "name": "godmode-gm21",
+    "repo": "../godmode-repo",
+    "kind": "godmode-ea",
+    "lang": "csharp",
+    "exec_surface": true,
+    "run_hint": "GODMODE GM21_PrevDayLevels (Prev Day Levels). cTrader cBot + MT5 expert. Optimize in cAlgo Strategy Tester per EA_BACKTEST_OPTIMIZATION_MANUAL.md (godmode-repo)."
+  },
+  {
+    "name": "godmode-gm22",
+    "repo": "../godmode-repo",
+    "kind": "godmode-ea",
+    "lang": "csharp",
+    "exec_surface": true,
+    "run_hint": "GODMODE GM22_EMAPullback (E M A Pullback). cTrader cBot + MT5 expert. Optimize in cAlgo Strategy Tester per EA_BACKTEST_OPTIMIZATION_MANUAL.md (godmode-repo)."
+  },
+  {
+    "name": "godmode-gm23",
+    "repo": "../godmode-repo",
+    "kind": "godmode-ea",
+    "lang": "csharp",
+    "exec_surface": true,
+    "run_hint": "GODMODE GM23_OpeningGapCE (Opening Gap C E). cTrader cBot + MT5 expert. Optimize in cAlgo Strategy Tester per EA_BACKTEST_OPTIMIZATION_MANUAL.md (godmode-repo)."
+  },
+  {
+    "name": "godmode-gm24",
+    "repo": "../godmode-repo",
+    "kind": "godmode-ea",
+    "lang": "csharp",
+    "exec_surface": true,
+    "run_hint": "GODMODE GM24_SMTDivergence (S M T Divergence). cTrader cBot + MT5 expert. Optimize in cAlgo Strategy Tester per EA_BACKTEST_OPTIMIZATION_MANUAL.md (godmode-repo)."
+  },
+  {
+    "name": "godmode-gm25",
+    "repo": "../godmode-repo",
+    "kind": "godmode-ea",
+    "lang": "csharp",
+    "exec_surface": true,
+    "run_hint": "GODMODE GM25_BreakoutRetest (Breakout Retest). cTrader cBot + MT5 expert. Optimize in cAlgo Strategy Tester per EA_BACKTEST_OPTIMIZATION_MANUAL.md (godmode-repo)."
+  },
+  {
+    "name": "godmode-gm26",
+    "repo": "../godmode-repo",
+    "kind": "godmode-ea",
+    "lang": "csharp",
+    "exec_surface": true,
+    "run_hint": "GODMODE GM26_ConfluenceStack (Confluence Stack). cTrader cBot + MT5 expert. Optimize in cAlgo Strategy Tester per EA_BACKTEST_OPTIMIZATION_MANUAL.md (godmode-repo)."
+  }
+]

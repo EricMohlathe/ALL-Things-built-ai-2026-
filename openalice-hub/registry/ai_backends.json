@@ -1,0 +1,5 @@
+[
+  {"name": "claude", "kind": "native", "base_url": "", "model": "claude-opus-4-8", "api_key_env": "ANTHROPIC_API_KEY", "api_key": "", "enabled": true, "note": "Native Claude (this Claude Code session / Anthropic API)."},
+  {"name": "hermes-9router", "kind": "openai-compatible", "base_url": "http://127.0.0.1:20128/v1", "model": "cc/claude-sonnet-4-6", "api_key_env": "LM_API_KEY", "api_key": "ninerouter-local", "enabled": true, "note": "Hermes/any model via local 9router gateway. Needs a provider connected in 9router. This is also where the Hermes agent attaches."},
+  {"name": "my-custom-ai", "kind": "openai-compatible", "base_url": "", "model": "", "api_key_env": "MY_CUSTOM_AI_API_KEY", "api_key": "", "enabled": false, "note": "Template slot — add your own OpenAI-compatible AI here (hub.py add-ai ...)."}
+]

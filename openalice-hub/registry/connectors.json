@@ -1,0 +1,48 @@
+[
+  {
+    "name": "tradingview",
+    "mcp_cmd": "node /Users/ericmohlathe/ai-tools/trading/repos/tradingview-mcp/src/server.js",
+    "transport": "stdio",
+    "url": "",
+    "exec_capable": false,
+    "enabled": true,
+    "note": "TradingView Desktop bridge via Chrome DevTools. Open TradingView Desktop app first. WIRED into Claude as 'tradingview-mcp'.",
+    "wired": true
+  },
+  {
+    "name": "tradememory",
+    "mcp_cmd": "python -m tradememory",
+    "transport": "stdio",
+    "url": "",
+    "exec_capable": false,
+    "enabled": true,
+    "note": "Trade-memory protocol MCP. Gives agents persistent trade memory. See repos/tradememory-protocol README for the exact module."
+  },
+  {
+    "name": "ctrader",
+    "mcp_cmd": "(native cTrader Open API via GODMODE cBots)",
+    "transport": "native",
+    "url": "",
+    "exec_capable": true,
+    "enabled": true,
+    "note": "cTrader \u2014 26 GODMODE cBots GM01-GM26 in godmode-repo/cTrader_MasterLibrary. Backtest/optimize in cAlgo per EA_BACKTEST_OPTIMIZATION_MANUAL.md. Live execution ALWAYS via ExecutionGate. Wire cTrader Open API or an MCP to drive headless."
+  },
+  {
+    "name": "mt5",
+    "mcp_cmd": "(native MT5 API via GODMODE MT5_MasterLibrary)",
+    "transport": "native",
+    "url": "",
+    "exec_capable": true,
+    "enabled": true,
+    "note": "MetaTrader 5 \u2014 GODMODE Experts/Indicators in godmode-repo/MT5_MasterLibrary. Bridge with the Python 'MetaTrader5' package or an MT5 MCP. Live execution ALWAYS via ExecutionGate."
+  },
+  {
+    "name": "tradingview-godmode",
+    "mcp_cmd": "(Pine script: godmode-repo/TradingView/GODMODE_Dashboard.pine)",
+    "transport": "native",
+    "url": "",
+    "exec_capable": false,
+    "enabled": true,
+    "note": "GODMODE_Dashboard.pine \u2014 load into TradingView. Read/analyze. (Live chart control already wired as connector 'tradingview' / MCP 'tradingview-mcp'.)"
+  }
+]
