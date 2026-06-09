@@ -25,6 +25,7 @@ from openalice_hub.ai_backends import registry as aib
 from openalice_hub.strategies.base import load_adapters
 from openalice_hub.core import data as datamod, backtest as bt, metrics as met, optimize as opt
 from openalice_hub.strategies import builtin
+from openalice_hub import godmode as gm
 
 CFG = os.path.join(HUB, "config.json")
 REPOS = os.path.normpath(os.path.join(HUB, "..", "repos"))
@@ -108,6 +109,20 @@ def cmd_backtest(a):
     print(met.tearsheet(res, ann))
 
 
+def cmd_godmode(a):
+    print(gm.render())
+
+
+def cmd_serve(a):
+    from openalice_hub import server
+    import webbrowser
+    try:
+        webbrowser.open(f"http://127.0.0.1:{a.port}/run.html")
+    except Exception:
+        pass
+    server.serve(port=a.port)
+
+
 def cmd_optimize(a):
     bars = datamod.get_ohlcv(a.symbol, source=a.source, interval=a.interval, limit=a.limit)
     if len(bars) < 60:
@@ -188,6 +203,8 @@ def main():
     sp.add_argument("--metric", default="sharpe", choices=["sharpe", "total_return", "sortino"])
     sp.add_argument("--top", type=int, default=10); sp.add_argument("--source", default="binance", choices=["binance", "yahoo", "csv"])
     sp.add_argument("--interval", default="1d"); sp.add_argument("--limit", type=int, default=1000); sp.set_defaults(f=cmd_optimize)
+    sp = sub.add_parser("serve"); sp.add_argument("--port", type=int, default=7871); sp.set_defaults(f=cmd_serve)
+    sub.add_parser("godmode").set_defaults(f=cmd_godmode)
     a = p.parse_args()
     a.f(a)
 

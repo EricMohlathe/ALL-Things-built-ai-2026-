@@ -1,0 +1,87 @@
+<!doctype html><html lang=en><head><meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title>OpenAlice Hub — Live Runner</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#07090C;color:#E6ECF3;font:15px/1.5 -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+header{padding:22px;border-bottom:1px solid #1E2530}
+h1{margin:0;font-size:20px;display:flex;gap:10px;align-items:center}
+.bolt{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#F59E0B,#22D3EE);display:flex;align-items:center;justify-content:center;color:#07090C;font-weight:800}
+main{max-width:980px;margin:0 auto;padding:20px}
+.controls{display:flex;gap:10px;flex-wrap:wrap;align-items:end;background:#0E1218;border:1px solid #1E2530;border-radius:13px;padding:14px}
+label{display:flex;flex-direction:column;font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:#8A96A8;gap:5px}
+select,input{background:#07090C;border:1px solid #1E2530;color:#E6ECF3;border-radius:8px;padding:9px 11px;font-size:14px;min-width:120px}
+button{background:linear-gradient(135deg,#22C55E,#16a34a);color:#07090C;font-weight:700;border:0;border-radius:8px;padding:10px 16px;font-size:14px;cursor:pointer}
+button.opt{background:linear-gradient(135deg,#F59E0B,#d97706)}
+#out{margin-top:18px}
+.metrics{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:14px}
+.met{background:#0E1218;border:1px solid #1E2530;border-radius:11px;padding:11px 13px}
+.met .v{font-size:20px;font-weight:700}.met .l{font-size:11px;color:#8A96A8;text-transform:uppercase;letter-spacing:.5px}
+.pos{color:#22C55E}.neg{color:#EF4444}
+svg{width:100%;height:200px;background:#0E1218;border:1px solid #1E2530;border-radius:12px}
+table{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}
+th,td{text-align:right;padding:6px 9px;border-bottom:1px solid #1E2530}th:first-child,td:first-child{text-align:left}
+th{color:#8A96A8;font-weight:600;font-size:11px;text-transform:uppercase}
+.note{color:#8A96A8;font-size:12.5px;margin-top:10px}
+.spin{color:#F59E0B}
+</style></head><body>
+<header><h1><span class=bolt>⚡</span> OpenAlice Hub — Live Runner</h1></header>
+<main>
+<div class=controls>
+  <label>Strategy<select id=strat></select></label>
+  <label>Symbol<input id=sym value="BTCUSDT"></label>
+  <label>Source<select id=src><option>binance</option><option>yahoo</option></select></label>
+  <label>Metric<select id=metric><option>sharpe</option><option>total_return</option><option>sortino</option></select></label>
+  <button onclick=runBt()>Backtest</button>
+  <button class=opt onclick=runOpt()>Optimize</button>
+</div>
+<div id=out><p class=note>Pick a strategy + symbol, then Backtest (real data, no keys) or Optimize (grid search with out-of-sample check). Crypto → source=binance (e.g. BTCUSDT, ETHUSDT); stocks → source=yahoo (e.g. AAPL, SPY).</p></div>
+</main>
+<script>
+const $=id=>document.getElementById(id), out=$('out');
+fetch('/api/strategies').then(r=>r.json()).then(d=>{
+  $('strat').innerHTML=d.builtin.map(s=>`<option>${s}</option>`).join('');
+}).catch(()=>{out.innerHTML='<p class=neg>API not reachable. Start with: python3 hub.py serve</p>'});
+const pct=x=>(x*100).toFixed(2)+'%', cls=x=>x>=0?'pos':'neg';
+function q(){return `strategy=${$('strat').value}&symbol=${encodeURIComponent($('sym').value)}&source=${$('src').value}`}
+function spinner(t){out.innerHTML=`<p class=spin>⏳ ${t}… (fetching real data)</p>`}
+function sparkline(eq){
+  if(!eq||eq.length<2)return '';
+  const w=900,h=200,mn=Math.min(...eq),mx=Math.max(...eq),pad=10;
+  const pts=eq.map((v,i)=>`${pad+i/(eq.length-1)*(w-2*pad)},${h-pad-(v-mn)/((mx-mn)||1)*(h-2*pad)}`).join(' ');
+  const up=eq[eq.length-1]>=eq[0];
+  return `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio=none><polyline fill=none stroke="${up?'#22C55E':'#EF4444'}" stroke-width=2 points="${pts}"/></svg>`;
+}
+function runBt(){
+  spinner('Backtesting '+$('strat').value+' on '+$('sym').value);
+  fetch('/api/backtest?'+q()).then(r=>r.json()).then(d=>{
+    if(d.error){out.innerHTML='<p class=neg>'+d.error+'</p>';return}
+    const m=d.metrics;
+    const M=(l,v,c='')=>`<div class=met><div class="v ${c}">${v}</div><div class=l>${l}</div></div>`;
+    out.innerHTML=`<div class=metrics>
+      ${M('Total return',pct(m.total_return),cls(m.total_return))}
+      ${M('Buy & hold',pct(m.buy_hold_return))}
+      ${M('Alpha',pct(m.total_return-m.buy_hold_return),cls(m.total_return-m.buy_hold_return))}
+      ${M('Sharpe',m.sharpe.toFixed(2))}
+      ${M('Max DD',pct(m.max_drawdown),'neg')}
+      ${M('Win rate',(m.win_rate*100).toFixed(0)+'%')}
+      ${M('Trades',m.num_trades)}
+      ${M('Profit factor',m.profit_factor.toFixed(2))}
+    </div>${sparkline(d.equity)}
+    <p class=note>${d.strategy} · ${d.symbol} · ${d.bars} bars · ${d.source}. PAPER backtest, no lookahead, fees charged. Past performance ≠ future results.</p>`;
+  }).catch(e=>out.innerHTML='<p class=neg>'+e+'</p>');
+}
+function runOpt(){
+  spinner('Optimizing '+$('strat').value+' on '+$('sym').value);
+  fetch('/api/optimize?'+q()+'&metric='+$('metric').value).then(r=>r.json()).then(d=>{
+    if(d.error){out.innerHTML='<p class=neg>'+d.error+'</p>';return}
+    const rows=d.leaderboard.map(r=>{
+      const p=Object.entries(r.params).map(([k,v])=>k+'='+v).join(', ');
+      const oos=r.oos_metric==null?'-':r.oos_metric.toFixed(2);
+      const oosr=r.oos_return==null?'-':(r.oos_return*100).toFixed(0)+'%';
+      return `<tr><td>${p}</td><td>${r.metric.toFixed(2)}</td><td>${(r.return*100).toFixed(0)}%</td><td>${oos}</td><td>${oosr}</td><td>${(r.maxdd*100).toFixed(0)}%</td><td>${r.trades}</td></tr>`;
+    }).join('');
+    out.innerHTML=`<table><tr><th>params</th><th>IS ${d.metric}</th><th>IS ret</th><th>OOS ${d.metric}</th><th>OOS ret</th><th>DD</th><th>trd</th></tr>${rows}</table>
+    <p class=note>${d.evaluated} combos · train ${d.train_bars} / test ${d.test_bars} bars. Trust OOS over IS — a big drop = overfit.</p>`;
+  }).catch(e=>out.innerHTML='<p class=neg>'+e+'</p>');
+}
+</script></body></html>

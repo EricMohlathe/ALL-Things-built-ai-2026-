@@ -195,7 +195,8 @@ footer{{padding:24px 22px;text-align:center;color:#5d6b7a;font-size:12px;border-
 <div class=tag>{MANIFEST["tagline"]}</div>
 <div class=bar><span><b>{greens}/{len(ST)}</b> systems green</span><span><b>{ST['strategies'].split(':')[1]}</b> strategies</span><span><b>{ST['connectors'].split(':')[1]}</b> connectors</span><span><b>{ST['godmode_eas'].split(':')[1]}</b> GODMODE EAs</span><span>mode: <b>PAPER</b></span></div>
 <div class=honesty>⚖️ {MANIFEST["honesty"]}</div>
-<div class=links><a href="../GODMODE_App/index.html">▸ GODMODE Control Center</a><a href="../openalice-hub/dashboard/index.html">▸ OpenAlice Hub</a><a href="GODMODE_OS_AUDIT.md">▸ Audit report</a></div>
+<div class=links><a href="http://127.0.0.1:7871/run.html">▸ Live Runner (run backtests)</a><a href="../GODMODE_App/index.html">▸ GODMODE Control Center</a><a href="../openalice-hub/dashboard/index.html">▸ OpenAlice Hub</a><a href="GODMODE_OS_AUDIT.md">▸ Audit report</a></div>
+<div class=tag style="margin-top:8px">Live Runner needs the API: <code>python3 openalice-hub/hub.py serve</code> → opens the interactive backtest/optimize page.</div>
 </header><main>{doms}</main>
 <footer>GODMODE OS · unified {MANIFEST["built"]} · audited, not assumed · trading risks real loss<br>Status pills are live checks at build time, not claims.</footer>
 <script>if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{{}}))</script>
