@@ -266,3 +266,79 @@ _b.REGISTRY.update(GODMODE_REGISTRY)
 from ..core import optimize as _o
 for _n in GODMODE_REGISTRY:
     _o.GRIDS[_n] = GODMODE_GRID
+
+
+class GMChecklist(GM):
+    """ThePerfectTrade.net confluence checklist as a computable strategy.
+    7 weighted conditions per timeframe (current + 5x-aggregated 'higher TF'):
+      Trend +10 | At AOI/Rejected +10 | Touching EMA +5 | Round Psych Level +5
+      Rejection from Prev Structure +10 | Candle Rejection at AOI +10 | Break&Retest +10
+    Enter when directional confluence % >= k (param). Max 60/TF, 120 total."""
+    name = "perfect_checklist"; gm_id = 98
+
+    def _tf_score(self, i, x, bars):
+        if i < self.lb + 3:
+            return 0, 0
+        c, h, l, o = x["c"], x["h"], x["l"], x["o"]
+        a = self._atr(i, x) or (c[i] * 0.01)
+        sma50 = sum(c[max(0, i-49):i+1]) / min(50, i+1)
+        hh, ll = x["hh"][i-1], x["ll"][i-1]
+        bull = bear = 0
+        # 1 Trend (+10)
+        if c[i] > sma50: bull += 10
+        else: bear += 10
+        # 2 At AOI / rejected (+10): near lookback swing low (long AOI) or high (short AOI)
+        if hh and ll:
+            if abs(l[i] - ll) < a: bull += 10
+            if abs(h[i] - hh) < a: bear += 10
+        # 3 Touching EMA20 (+5)
+        ema = c[i]; k2 = 2/21
+        e = c[max(0, i-30)]
+        for j in range(max(1, i-29), i+1): e = c[j]*k2 + e*(1-k2)
+        if abs(c[i] - e) < 0.3*a:
+            bull += 5; bear += 5
+        # 4 Round psychological level (+5)
+        import math as _m
+        step = 10 ** _m.floor(_m.log10(c[i])) / 10
+        if (c[i] % step) < 0.2*a or (step - c[i] % step) < 0.2*a:
+            bull += 5; bear += 5
+        # 5 Rejection from previous structure (+10): wick beyond, close back inside
+        if ll and l[i] < ll and c[i] > ll: bull += 10
+        if hh and h[i] > hh and c[i] < hh: bear += 10
+        # 6 Candlestick rejection at AOI (+10): pin bar with long tail at the zone
+        rng = (h[i]-l[i]) or 1e-9
+        if (c[i]-l[i])/rng > 0.66 and ll and abs(l[i]-ll) < 1.5*a: bull += 10
+        if (h[i]-c[i])/rng > 0.66 and hh and abs(h[i]-hh) < 1.5*a: bear += 10
+        # 7 Break & retest (+10): broke swing high recently, now retesting it
+        if hh and any(c[i-j] > hh for j in range(1, 4)) and abs(c[i]-hh) < a: bull += 10
+        if ll and any(c[i-j] < ll for j in range(1, 4)) and abs(c[i]-ll) < a: bear += 10
+        return bull, bear
+
+    def positions(self, bars):
+        x = self._ctx(bars)
+        # higher timeframe = 5-bar aggregate
+        htf = [{"t": b["t"], "o": bars[max(0,j-4)]["o"], "c": b["c"],
+                "h": max(bb["h"] for bb in bars[max(0,j-4):j+1]),
+                "l": min(bb["l"] for bb in bars[max(0,j-4):j+1]),
+                "v": sum(bb["v"] for bb in bars[max(0,j-4):j+1])}
+               for j, b in enumerate(bars)]
+        x2 = self._ctx(htf)
+        n = len(bars); pos = [0]*n; cur = 0; held = 0
+        for i in range(n):
+            b1, s1 = self._tf_score(i, x, bars)
+            b2, s2 = self._tf_score(i, x2, htf)
+            bull_pct = (b1 + b2) / 120 * 100
+            bear_pct = (s1 + s2) / 120 * 100
+            sig = 1 if (bull_pct >= self.k and bull_pct > bear_pct) else (-1 if (bear_pct >= self.k and bear_pct > bull_pct) else 0)
+            if sig != 0:
+                cur = sig; held = self.hold
+            elif held > 0:
+                held -= 1
+                if held == 0: cur = 0
+            pos[i] = cur
+        return pos
+
+
+GODMODE_REGISTRY["perfect_checklist"] = GMChecklist
+_b.REGISTRY["perfect_checklist"] = GMChecklist
+_o.GRIDS["perfect_checklist"] = {"lb": [15, 25], "k": [35, 45, 55], "hold": [5, 10, 20]}
