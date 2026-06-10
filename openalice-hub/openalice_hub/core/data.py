@@ -102,14 +102,23 @@ ALIASES = {
     "SPX": "^GSPC", "SP500": "^GSPC", "NASDAQ": "^IXIC", "NAS100": "^NDX",
     "DOW": "^DJI", "US30": "^DJI", "DAX": "^GDAXI", "FTSE": "^FTSE", "NIKKEI": "^N225",
     "VIX": "^VIX", "DXY": "DX-Y.NYB",
+    # Deriv synthetics (source=deriv)
+    "VIX75": "R_75", "V75": "R_75", "VIX100": "R_100", "V100": "R_100",
+    "VIX50": "R_50", "VIX25": "R_25", "VIX10": "R_10",
+    "BOOM500": "BOOM500", "BOOM1000": "BOOM1000",
+    "CRASH500": "CRASH500", "CRASH1000": "CRASH1000",
 }
+DERIV_SYMBOLS = {"R_75","R_100","R_50","R_25","R_10","BOOM500","BOOM1000","CRASH500","CRASH1000","1HZ75V"}
 
 
 def resolve(symbol: str) -> tuple[str, str]:
     """Return (resolved_symbol, source). Auto-routes: crypto->binance, else yahoo."""
     s = symbol.upper().strip()
     if s in ALIASES:
-        return ALIASES[s], "yahoo"
+        r = ALIASES[s]
+        return r, ("deriv" if r in DERIV_SYMBOLS else "yahoo")
+    if s in DERIV_SYMBOLS:
+        return s, "deriv"
     if s.endswith(("USDT", "USDC", "BUSD")) and "=" not in s and "-" not in s:
         return s, "binance"
     if s.endswith("=X") or s.endswith("=F") or s.startswith("^") or "-" in s:
@@ -134,6 +143,10 @@ def get_ohlcv(symbol: str, source="binance", interval="1d", limit=1000,
         bars = from_binance(symbol, interval, limit)
     elif source == "yahoo":
         bars = from_yahoo(symbol, interval)
+    elif source == "deriv":
+        from . import deriv as _dv
+        gran = {"1d": 86400, "4h": 14400, "1h": 3600, "15m": 900, "5m": 300, "1m": 60}.get(interval, 86400)
+        bars = _dv.get_candles(symbol, granularity=gran, count=limit)
     elif source == "csv":
         bars = from_csv(symbol)  # symbol = path
     else:

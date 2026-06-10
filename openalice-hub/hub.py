@@ -113,7 +113,7 @@ def cmd_backtest(a):
     if len(bars) < 30:
         print(f"only {len(bars)} bars — need more history"); return
     strat = builtin.make(a.strategy)
-    ann = 365 if a.source == "binance" else 252
+    ann = 365 if a.source in ("binance","deriv") else 252
     res = bt.run(strat, bars, symbol=a.symbol, cash=a.cash, fee_bps=a.fee, gate=gate(),
                  stop_atr=a.stop, tp_atr=a.tp, trail_atr=a.trail)
     print(met.tearsheet(res, ann))
@@ -129,7 +129,7 @@ def cmd_godmode_rank(a):
     bars = datamod.get_ohlcv(a.symbol, source=a.source, limit=a.limit)
     if len(bars) < 60:
         print(f"only {len(bars)} bars"); return
-    ann = 365 if a.source == "binance" else 252
+    ann = 365 if a.source in ("binance","deriv") else 252
     bestf = os.path.join(HUB, "registry", "godmode_best.json")
     try:
         best = json.load(open(bestf))
@@ -271,7 +271,7 @@ def cmd_optimize(a):
     bars = datamod.get_ohlcv(a.symbol, source=a.source, interval=a.interval, limit=a.limit)
     if len(bars) < 60:
         print(f"only {len(bars)} bars — need more history to split train/test"); return
-    ann = 365 if a.source == "binance" else 252
+    ann = 365 if a.source in ("binance","deriv") else 252
     res = opt.grid_search(a.strategy, bars, gate=gate(), ann=ann, metric=a.metric, top=a.top)
     print(opt.render(res))
 

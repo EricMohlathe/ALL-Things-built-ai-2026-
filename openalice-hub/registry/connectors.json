@@ -96,7 +96,7 @@
     "transport": "native",
     "url": "https://api.deriv.com",
     "exec_capable": true,
-    "enabled": false,
-    "note": "Deriv synthetics (Volatility 75, Boom/Crash 500) exist ONLY on Deriv \u2014 no public feed. To wire: create API token at app.deriv.com, then their websocket API streams ticks/candles. Eval sim + ExecutionGate apply as everywhere."
+    "enabled": true,
+    "note": "Deriv synthetics WIRED (stdlib websocket, token in gitignored .env). Symbols: VIX75/V75, VIX10-100, BOOM500/1000, CRASH500/1000. Data: hub.py data VIX75 [--interval 1h]. Forge tested 2026-06-10: no edge found with archon archetypes (synthetics = RNG products)."
   }
 ]
