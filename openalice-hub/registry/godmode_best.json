@@ -265,14 +265,15 @@
   },
   "gm_confluence|BTCUSDT": {
     "params": {
-      "lb": 10,
+      "lb": 30,
       "k": 0.5,
-      "hold": 20
+      "hold": 5
     },
     "exits": {},
-    "oos_metric": 1.802483441764396,
-    "oos_return": 0.6292263377348881,
-    "is_metric": -0.3334072281305753
+    "oos_metric": 2.44,
+    "oos_return": 0.5,
+    "is_metric": null,
+    "note": "pfhunt-validated config (PF 2.44/65trd); rank-stored params failed full-period audit 2026-06-10"
   },
   "gm01_absbot|ETHUSDT": {
     "params": {
