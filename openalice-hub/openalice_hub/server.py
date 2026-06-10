@@ -26,8 +26,20 @@ def _res(sym, source):
     return datamod.resolve(sym) if source == "auto" else (sym, source)
 
 
+ELITE = {
+    "gm_confluence":  {"market": "BTCUSDT", "stats": "PF 2.44 · 65 trd · WF +33% · 1h: PF 2.13/188 trd", "concept": "orderflow vote ensemble"},
+    "gm24_poorhl":    {"market": "BTCUSDT", "stats": "PF 2.82 · 149 trd OOS",                            "concept": "auction liquidity PA"},
+    "gm12_stackbear": {"market": "BTCUSDT", "stats": "PF 6.17 · 35 trd OOS · ETH PF 28 small-sample",    "concept": "footprint orderflow"},
+    "gm17_lpsy":      {"market": "BTCUSDT", "stats": "PF 3.43 · 36 trd OOS",                             "concept": "Wyckoff orderflow"},
+    "gm19_obreturn":  {"market": "GOLD",    "stats": "PF 21.6 · 28 trd OOS (small sample) · NQ ex:stop3/tp6", "concept": "orderblock liquidity"},
+    "deity_trend":    {"market": "GOLD",    "stats": "WF +35% 3/4 folds · SILVER PF 1.95",               "concept": "CVD+breakout (orderflow+PA)"},
+    "archon_orb":     {"market": "NQ",      "stats": "PF 2.40 · 46 trd · WF +27.9% 3/4",                 "concept": "vol-breakout PA"},
+}
+
+
 def api_strategies():
-    return {"builtin": list(builtin.REGISTRY), "grids": list(opt.GRIDS)}
+    # ELITE-gated: only validated high-PF strategies exposed in the runner
+    return {"builtin": list(ELITE), "elite": ELITE, "all_count": len(builtin.REGISTRY)}
 
 
 def api_backtest(q):

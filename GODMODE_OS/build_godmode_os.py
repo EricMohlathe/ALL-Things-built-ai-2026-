@@ -74,7 +74,7 @@ MANIFEST = {
   "honesty": "All performance from real backtests/live fills. No fabricated win rates. Live orders gated by a human token.",
   "domains": [
     {"title": "Trading — OpenAlice Hub", "accent": "green", "items": [
-      {"name": f"{ST['strategies'].split(':')[1]} strategy modules", "status": "ok", "desc": "18 repos + 26 GODMODE EAs behind one adapter interface.", "cmd": "python3 openalice-hub/hub.py strategies"},
+      {"name": "ELITE 7 — validated EAs", "status": "ok", "desc": "gm_confluence(BTC) · gm24_poorhl(BTC) · gm12_stackbear(BTC) · gm17_lpsy(BTC) · gm19_obreturn(GOLD) · deity_trend(GOLD) · archon_orb(NQ). All high-PF, OOS/WF tested. Runner shows ONLY these.", "cmd": "Live Runner → elite dropdown"},
       {"name": "Backtest engine", "status": "ok", "desc": "Real data (Binance/Yahoo/CSV), no lookahead, fees, paper-gated.", "cmd": "python3 openalice-hub/hub.py backtest donchian BTCUSDT"},
       {"name": "Parameter optimizer", "status": "ok", "desc": "Grid search w/ in-sample vs out-of-sample (overfit guard).", "cmd": "python3 openalice-hub/hub.py optimize sma_cross BTCUSDT"},
       {"name": "Execution gate", "status": "ok", "desc": "Paper default; live needs a human-typed per-order token.", "cmd": "python3 openalice-hub/hub.py live-arm BTCUSDT buy 0.1"},

@@ -516,3 +516,29 @@ class ArchonSpike(GM):
 GODMODE_REGISTRY["archon_spike"]=ArchonSpike
 _b.REGISTRY["archon_spike"]=ArchonSpike
 _o.GRIDS["archon_spike"]={"lb":[10,20,40],"k":[0.8,1.2,2.0],"hold":[3,6,12]}
+
+
+class GMDeityFlow(GM):
+    """THE integration deity: ORDERFLOW (real taker delta) + LIQUIDITY (sweep of
+    lookback extreme) + PRICE ACTION (strong rejection close) + trend alignment.
+    Long: sweep below lows, buyers absorb (delta>0), close strong, uptrend. Mirror short."""
+    name = "deity_flow"; gm_id = 89
+
+    def signal(self, i, x):
+        if self._warm(i) or i < 55: return 0
+        c, h, l = x["c"], x["h"], x["l"]
+        rng = (h[i] - l[i]) or 1e-9
+        sma = sum(c[i-49:i+1]) / 50
+        # LONG: liquidity sweep low + orderflow absorption + PA strong close + trend
+        if (l[i] < x["ll"][i-1] and x["d"][i] > 0
+                and (c[i] - l[i]) / rng > 0.55 and c[i] > sma * (1 - 0.002 * self.k)):
+            return 1
+        if (h[i] > x["hh"][i-1] and x["d"][i] < 0
+                and (h[i] - c[i]) / rng > 0.55 and c[i] < sma * (1 + 0.002 * self.k)):
+            return -1
+        return 0
+
+
+GODMODE_REGISTRY["deity_flow"] = GMDeityFlow
+_b.REGISTRY["deity_flow"] = GMDeityFlow
+_o.GRIDS["deity_flow"] = {"lb": [10, 20, 30], "k": [0.5, 1.0, 2.0], "hold": [6, 12, 24]}
