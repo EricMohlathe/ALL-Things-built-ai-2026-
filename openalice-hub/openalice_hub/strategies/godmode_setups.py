@@ -373,3 +373,67 @@ class GMGated(GM):
 GODMODE_REGISTRY["gm_gated"] = GMGated
 _b.REGISTRY["gm_gated"] = GMGated
 _o.GRIDS["gm_gated"] = {"lb": [10, 20, 30], "k": [25, 35, 45], "hold": [5, 10, 20]}
+
+
+# ==== DEITY series: dead concepts reborn in high-PF structure ====
+# PF >= 3.7 comes from R-asymmetry (tiny losses, fat winners), NOT win rate.
+# Dead parents: gm04 (CVD), gm16 (SOS), gm21 (breaker), gm18 (sweep), gm14 (spring).
+
+class GMDeityTrend(GM):
+    """Trend deity: donchian breakout + trend + CVD agreement (gm04/gm16/gm21 concepts).
+    Only with-trend. Exits handled by wide trail via EXIT_MENU (let winners run)."""
+    name = "deity_trend"; gm_id = 96
+
+    def signal(self, i, x):
+        if self._warm(i) or i < 55: return 0
+        c = x["c"]
+        sma = sum(c[i-49:i+1]) / 50
+        up = c[i] > sma
+        if up and c[i] >= x["hh"][i-1] and x["cv"][i] > x["cvma"][i]:
+            return 1
+        if (not up) and c[i] <= x["ll"][i-1] and x["cv"][i] < x["cvma"][i]:
+            return -1
+        return 0
+
+
+class GMDeitySweep(GM):
+    """Sweep deity: liquidity sweep + spring (gm18/gm14 concepts) but ONLY with-trend
+    + displacement confirmation. The counter-trend versions died; this one rides."""
+    name = "deity_sweep"; gm_id = 95
+
+    def signal(self, i, x):
+        if self._warm(i) or i < 55: return 0
+        c, h, l = x["c"], x["h"], x["l"]
+        a = self._atr(i, x)
+        if not a: return 0
+        sma = sum(c[i-49:i+1]) / 50
+        rng = (h[i]-l[i]) or 1e-9
+        # uptrend: sweep below recent low, strong close back up (spring WITH trend)
+        if c[i] > sma and l[i] < x["ll"][i-1] and (c[i]-l[i])/rng > 0.6 and (h[i]-l[i]) > self.k*a:
+            return 1
+        if c[i] < sma and h[i] > x["hh"][i-1] and (h[i]-c[i])/rng > 0.6 and (h[i]-l[i]) > self.k*a:
+            return -1
+        return 0
+
+
+class GMDeityVol(GM):
+    """Volatility deity: SOS expansion (gm16 concept) fired only on low-vol -> expansion
+    transition (regime). Squeeze then go; asymmetric exits do the rest."""
+    name = "deity_vol"; gm_id = 94
+
+    def signal(self, i, x):
+        if self._warm(i) or i < 30: return 0
+        atr = x["atr"]
+        if not atr[i] or not atr[i-10]: return 0
+        squeezed = atr[i-1] < 0.8 * (atr[i-10] or 1e9)   # vol contraction
+        expanding = (x["h"][i]-x["l"][i]) > self.k * 1.5 * atr[i]
+        if squeezed and expanding:
+            if x["c"][i] > x["o"][i] and x["d"][i] > 0: return 1
+            if x["c"][i] < x["o"][i] and x["d"][i] < 0: return -1
+        return 0
+
+
+for cls in (GMDeityTrend, GMDeitySweep, GMDeityVol):
+    GODMODE_REGISTRY[cls.name] = cls
+    _b.REGISTRY[cls.name] = cls
+    _o.GRIDS[cls.name] = {"lb": [20, 40, 55], "k": [0.8, 1.2, 1.8], "hold": [10, 20, 40]}
