@@ -437,3 +437,58 @@ for cls in (GMDeityTrend, GMDeitySweep, GMDeityVol):
     GODMODE_REGISTRY[cls.name] = cls
     _b.REGISTRY[cls.name] = cls
     _o.GRIDS[cls.name] = {"lb": [20, 40, 55], "k": [0.8, 1.2, 1.8], "hold": [10, 20, 40]}
+
+
+# ==== ARCHON tier: documented quant anomalies (above deity) ====
+class ArchonTSMom(GM):
+    """Time-series momentum (Moskowitz/Ooi/Pedersen 2012) — one of the most robust
+    documented anomalies. Long if return over lookback > 0, else short. Vol-scaled by exits."""
+    name = "archon_tsmom"; gm_id = 90
+    def signal(self, i, x):
+        if i < self.lb + 2: return 0
+        c = x["c"]; r = c[i] / c[i-self.lb] - 1.0
+        thr = self.k * 0.01
+        if r > thr: return 1
+        if r < -thr: return -1
+        return 0
+
+
+class ArchonVWAPRev(GM):
+    """VWAP mean-reversion: fade extension from rolling VWAP by k*ATR, ONLY in range
+    regime (price inside its own lb-range, not trending). Classic intraday desk edge."""
+    name = "archon_vwaprev"; gm_id = 91
+    def signal(self, i, x):
+        if self._warm(i): return 0
+        c, h, l, v = x["c"], x["h"], x["l"], x["v"]
+        a = self._atr(i, x)
+        if not a: return 0
+        win = self.lb
+        num = sum(((h[j]+l[j]+c[j])/3)*v[j] for j in range(i-win+1, i+1))
+        den = sum(v[j] for j in range(i-win+1, i+1)) or 1e-9
+        vwap = num/den
+        sma = sum(c[i-win+1:i+1])/win
+        ranging = abs(c[i]-sma) < 1.5*a            # only fade when not trending
+        if ranging:
+            if c[i] < vwap - self.k*a: return 1
+            if c[i] > vwap + self.k*a: return -1
+        return 0
+
+
+class ArchonORB(GM):
+    """Opening-range breakout (Crabel/Williams volatility breakout): break of the prior
+    lb-bar range by a k*ATR buffer in the trend direction. Fat-tail trend capture."""
+    name = "archon_orb"; gm_id = 92
+    def signal(self, i, x):
+        if self._warm(i): return 0
+        c = x["c"]; a = self._atr(i, x)
+        if not a: return 0
+        sma = sum(c[max(0,i-49):i+1])/min(50, i+1)
+        if c[i] > x["hh"][i-1] + self.k*a*0.2 and c[i] > sma: return 1
+        if c[i] < x["ll"][i-1] - self.k*a*0.2 and c[i] < sma: return -1
+        return 0
+
+
+for cls in (ArchonTSMom, ArchonVWAPRev, ArchonORB):
+    GODMODE_REGISTRY[cls.name] = cls
+    _b.REGISTRY[cls.name] = cls
+    _o.GRIDS[cls.name] = {"lb": [10, 20, 40], "k": [0.5, 1.0, 2.0], "hold": [6, 12, 24]}

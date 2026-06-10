@@ -89,5 +89,14 @@
     "exec_capable": true,
     "enabled": true,
     "note": "Prop firm \u2014 MT4/MT5/cTrader. Eval sim: --firm fundednext."
+  },
+  {
+    "name": "deriv",
+    "mcp_cmd": "(Deriv API \u2014 wss://ws.derivws.com; needs your Deriv API token)",
+    "transport": "native",
+    "url": "https://api.deriv.com",
+    "exec_capable": true,
+    "enabled": false,
+    "note": "Deriv synthetics (Volatility 75, Boom/Crash 500) exist ONLY on Deriv \u2014 no public feed. To wire: create API token at app.deriv.com, then their websocket API streams ticks/candles. Eval sim + ExecutionGate apply as everywhere."
   }
 ]

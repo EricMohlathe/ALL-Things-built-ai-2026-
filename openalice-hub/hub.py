@@ -368,12 +368,12 @@ def main():
     sp.add_argument("--stop", type=float, default=2.0); sp.add_argument("--tp", type=float, default=4.0)
     sp.add_argument("--trail", type=float, default=None); sp.add_argument("--limit", type=int, default=1000)
     sp.add_argument("--days", type=int, default=90); sp.set_defaults(f=cmd_propsize)
-    sp = sub.add_parser("walkforward"); sp.add_argument("strategy"); sp.add_argument("symbol")
+    sp = sub.add_parser("walkforward"); sp.add_argument("strategy"); sp.add_argument("symbol"); sp.add_argument("--interval", default="1d")
     sp.add_argument("--folds", type=int, default=4); sp.add_argument("--source", default="auto", choices=["auto", "binance", "yahoo", "csv"])
     sp.add_argument("--limit", type=int, default=1000)
     sp.set_defaults(f=lambda a: (_auto(a), print(opt.render_wf(opt.walkforward(
-        a.strategy, datamod.get_ohlcv(a.symbol, source=a.source, limit=a.limit),
-        gate=gate(), ann=365 if a.source == "binance" else 252, folds=a.folds))))[1])
+        a.strategy, datamod.get_ohlcv(a.symbol, source=a.source, limit=a.limit, interval=a.interval),
+        gate=gate(), ann=(365*24 if a.interval=="1h" else 365) if a.source=="binance" else 252, folds=a.folds))))[1])
     sp = sub.add_parser("godmode-rank"); sp.add_argument("symbol")
     sp.add_argument("--source", default="auto", choices=["auto", "binance", "yahoo", "csv"])
     sp.add_argument("--limit", type=int, default=1000); sp.set_defaults(f=cmd_godmode_rank)
