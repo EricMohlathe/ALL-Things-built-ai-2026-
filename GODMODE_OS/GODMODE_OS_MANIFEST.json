@@ -15,6 +15,12 @@
           "cmd": "Live Runner \u2192 elite dropdown"
         },
         {
+          "name": "\u26a1 PORTFOLIO (one click)",
+          "status": "ok",
+          "desc": "deity_trend GOLD + archon_orb NQ equal-weight: +120.6%, Sharpe 0.92 (beats both solos), maxDD \u221217.3%. Runner \u2192 Portfolio button.",
+          "cmd": "python3 openalice-hub/hub.py portfolio"
+        },
+        {
           "name": "Backtest engine",
           "status": "ok",
           "desc": "Real data (Binance/Yahoo/CSV), no lookahead, fees, paper-gated.",

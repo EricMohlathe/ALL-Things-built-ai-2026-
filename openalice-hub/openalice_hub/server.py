@@ -85,7 +85,13 @@ def api_optimize(q):
     return r
 
 
+def api_portfolio(q):
+    from openalice_hub.core import portfolio as pf
+    return pf.run()
+
+
 ROUTES = {"/api/strategies": lambda q: api_strategies(),
+          "/api/portfolio": lambda q: api_portfolio(q),
           "/api/backtest": api_backtest, "/api/optimize": api_optimize}
 
 

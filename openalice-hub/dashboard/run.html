@@ -33,6 +33,7 @@ th{color:#8A96A8;font-weight:600;font-size:11px;text-transform:uppercase}
   <label>Metric<select id=metric><option>sharpe</option><option>total_return</option><option>sortino</option></select></label>
   <button onclick=runBt()>Backtest</button>
   <button class=opt onclick=runOpt()>Optimize</button>
+  <button style="background:linear-gradient(135deg,#22D3EE,#0e7490)" onclick=runPort()>⚡ Portfolio</button>
 </div>
 <div id=out><p class=note>ELITE ROSTER — validated high-PF EAs (orderflow · liquidity · price action), pre-loaded with proven markets. COVERAGE: crypto + commodities (GOLD/SILVER) + futures (NQ/ES) + indices-via-futures (NQ/ES/YM) + forex-via-FX-futures (6E/6B) + prop-firm evals (propcheck/propsize). Cash stocks & cash indices: no validated edge — honestly excluded. Options: needs a paid chain vendor; trade the validated underlying instead. Pick one, then Backtest (real data, no keys) or Optimize (grid search with out-of-sample check). source=auto handles everything: crypto (BTCUSDT) · forex (EURUSD, GBPJPY) · commodities (GOLD, OIL, SILVER, WHEAT) · indices (SPX, US30, DAX) · stocks (AAPL). Forex/futures feeds lack real volume — volume-based setups may stay flat there; price-structure setups (gm14–gm18, donchian) work everywhere.</p></div>
 </main>
@@ -84,6 +85,22 @@ function runOpt(){
     }).join('');
     out.innerHTML=`<table><tr><th>params</th><th>IS ${d.metric}</th><th>IS ret</th><th>OOS ${d.metric}</th><th>OOS ret</th><th>DD</th><th>trd</th></tr>${rows}</table>
     <p class=note>${d.evaluated} combos · train ${d.train_bars} / test ${d.test_bars} bars. Trust OOS over IS — a big drop = overfit.</p>`;
+  }).catch(e=>out.innerHTML='<p class=neg>'+e+'</p>');
+}
+function runPort(){
+  spinner('Running the GODMODE portfolio (validated legs, real data)');
+  fetch('/api/portfolio').then(r=>r.json()).then(d=>{
+    const p=d.portfolio;
+    const M=(l,v,c='')=>`<div class=met><div class="v ${c}">${v}</div><div class=l>${l}</div></div>`;
+    const legs=d.legs.map(x=>`<tr><td>${x.name}</td><td>${x.symbol}</td><td>${x.pf.toFixed(2)}</td><td>${(x.ret*100).toFixed(0)}%</td><td>${(x.dd*100).toFixed(0)}%</td><td>${(x.win_rate*100).toFixed(0)}%</td><td>${x.trades}</td></tr>`).join('');
+    out.innerHTML=`<div class=metrics>
+      ${M('Portfolio return',pct(p.return),cls(p.return))}
+      ${M('Sharpe',p.sharpe.toFixed(2))}
+      ${M('Max DD',pct(p.max_drawdown),'neg')}
+      ${M('Bars',p.bars)}
+    </div>${sparkline(d.equity)}
+    <table><tr><th>leg</th><th>market</th><th>PF</th><th>ret</th><th>DD</th><th>WR</th><th>trd</th></tr>${legs}</table>
+    <p class=note>${d.note}</p>`;
   }).catch(e=>out.innerHTML='<p class=neg>'+e+'</p>');
 }
 </script></body></html>

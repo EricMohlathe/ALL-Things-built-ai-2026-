@@ -75,6 +75,7 @@ MANIFEST = {
   "domains": [
     {"title": "Trading — OpenAlice Hub", "accent": "green", "items": [
       {"name": "ELITE 7 — validated EAs", "status": "ok", "desc": "gm_confluence(BTC) · gm24_poorhl(BTC) · gm12_stackbear(BTC) · gm17_lpsy(BTC) · gm19_obreturn(GOLD) · deity_trend(GOLD) · archon_orb(NQ). All high-PF, OOS/WF tested. Runner shows ONLY these.", "cmd": "Live Runner → elite dropdown"},
+      {"name": "⚡ PORTFOLIO (one click)", "status": "ok", "desc": "deity_trend GOLD + archon_orb NQ equal-weight: +120.6%, Sharpe 0.92 (beats both solos), maxDD −17.3%. Runner → Portfolio button.", "cmd": "python3 openalice-hub/hub.py portfolio"},
       {"name": "Backtest engine", "status": "ok", "desc": "Real data (Binance/Yahoo/CSV), no lookahead, fees, paper-gated.", "cmd": "python3 openalice-hub/hub.py backtest donchian BTCUSDT"},
       {"name": "Parameter optimizer", "status": "ok", "desc": "Grid search w/ in-sample vs out-of-sample (overfit guard).", "cmd": "python3 openalice-hub/hub.py optimize sma_cross BTCUSDT"},
       {"name": "Execution gate", "status": "ok", "desc": "Paper default; live needs a human-typed per-order token.", "cmd": "python3 openalice-hub/hub.py live-arm BTCUSDT buy 0.1"},

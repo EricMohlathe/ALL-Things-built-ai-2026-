@@ -351,6 +351,7 @@ def main():
     sp.add_argument("--interval", default="1d"); sp.add_argument("--limit", type=int, default=1000); sp.set_defaults(f=cmd_optimize)
     sp = sub.add_parser("serve"); sp.add_argument("--port", type=int, default=7871); sp.set_defaults(f=cmd_serve)
     sub.add_parser("godmode").set_defaults(f=cmd_godmode)
+    sub.add_parser("portfolio").set_defaults(f=lambda a: (lambda pf: print(pf.render(pf.run())))(__import__("openalice_hub.core.portfolio", fromlist=["x"])))
     sp = sub.add_parser("pfhunt"); sp.add_argument("--symbols", default="BTCUSDT,ETHUSDT,GOLD,ES")
     sp.add_argument("--min-trades", dest="min_trades", type=int, default=10)
     sp.add_argument("--top", type=int, default=15); sp.add_argument("--limit", type=int, default=1000)
