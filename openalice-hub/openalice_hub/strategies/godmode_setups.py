@@ -492,3 +492,27 @@ for cls in (ArchonTSMom, ArchonVWAPRev, ArchonORB):
     GODMODE_REGISTRY[cls.name] = cls
     _b.REGISTRY[cls.name] = cls
     _o.GRIDS[cls.name] = {"lb": [10, 20, 40], "k": [0.5, 1.0, 2.0], "hold": [6, 12, 24]}
+
+
+class ArchonSpike(GM):
+    """Spike-specific (Boom/Crash structure): these synthetics drift one way then
+    spike the other. BOOM = many small downs + rare up-spike -> only LONG into the
+    spike side; CRASH = mirror, only SHORT. Detect compression then directional pop."""
+    name = "archon_spike"; gm_id = 93
+    def signal(self, i, x):
+        if self._warm(i): return 0
+        c, h, l = x["c"], x["h"], x["l"]; a = self._atr(i, x)
+        if not a: return 0
+        rng = h[i] - l[i]
+        big = rng > self.k * 1.5 * a
+        up = c[i] > c[i-1]
+        # buy the up-pop after a down-drift run (boom side); sell the down-pop (crash side)
+        drift_dn = sum(1 for j in range(i-self.lb+1, i) if c[j] < c[j-1]) > self.lb*0.6
+        drift_up = sum(1 for j in range(i-self.lb+1, i) if c[j] > c[j-1]) > self.lb*0.6
+        if big and up and drift_dn: return 1
+        if big and (not up) and drift_up: return -1
+        return 0
+
+GODMODE_REGISTRY["archon_spike"]=ArchonSpike
+_b.REGISTRY["archon_spike"]=ArchonSpike
+_o.GRIDS["archon_spike"]={"lb":[10,20,40],"k":[0.8,1.2,2.0],"hold":[3,6,12]}

@@ -48,7 +48,9 @@ def from_binance(symbol="BTCUSDT", interval="1d", limit=1000) -> list[dict]:
              "bv": float(r[9]), "n": int(r[8])} for r in rows]
 
 
-def from_yahoo(symbol="AAPL", interval="1d", rng="10y") -> list[dict]:
+def from_yahoo(symbol="AAPL", interval="1d", rng=None) -> list[dict]:
+    if rng is None:
+        rng = {"1h": "730d", "15m": "60d", "5m": "60d", "1m": "7d"}.get(interval, "10y")
     url = (f"https://query1.finance.yahoo.com/v8/finance/chart/"
            f"{urllib.parse.quote(symbol)}?range={rng}&interval={interval}")
     d = json.loads(_get(url))
