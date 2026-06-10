@@ -33,7 +33,7 @@ ELITE = {
     "gm17_lpsy":      {"market": "BTCUSDT", "stats": "PF 3.43 · 36 trd OOS",                             "concept": "Wyckoff orderflow"},
     "gm19_obreturn":  {"market": "GOLD",    "stats": "PF 21.6 · 28 trd OOS (small sample) · NQ ex:stop3/tp6", "concept": "orderblock liquidity"},
     "deity_trend":    {"market": "GOLD",    "stats": "WF +35% 3/4 folds · SILVER PF 1.95",               "concept": "CVD+breakout (orderflow+PA)"},
-    "archon_orb":     {"market": "NQ",      "stats": "PF 2.40 · 46 trd · WF +27.9% 3/4",                 "concept": "vol-breakout PA"},
+    "archon_orb":     {"market": "NQ",      "stats": "PF 2.56 OOS · 79 trd · DD −9% · WF +27.9% (refined ex:stop1.5/tp3/trail2)", "concept": "vol-breakout PA"},
 }
 
 # Honest per-asset-class coverage of the elite roster (validated markets only)

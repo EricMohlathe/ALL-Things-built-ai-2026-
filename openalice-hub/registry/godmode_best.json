@@ -872,5 +872,21 @@
     "oos_metric": 2.2102490608628753,
     "oos_return": 1.3705451020538728,
     "is_metric": -0.06498211479063637
+  },
+  "archon_orb|NQ": {
+    "params": {
+      "lb": 20,
+      "k": 1.2,
+      "hold": 12
+    },
+    "exits": {
+      "stop_atr": 1.5,
+      "tp_atr": 3,
+      "trail_atr": 2
+    },
+    "oos_metric": 2.56,
+    "oos_return": 0.19,
+    "is_metric": null,
+    "note": "refined audit 2026-06-10: OOS PF 2.56, DD -9%, 79 trd full"
   }
 }
