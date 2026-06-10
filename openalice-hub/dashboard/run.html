@@ -34,7 +34,7 @@ th{color:#8A96A8;font-weight:600;font-size:11px;text-transform:uppercase}
   <button onclick=runBt()>Backtest</button>
   <button class=opt onclick=runOpt()>Optimize</button>
 </div>
-<div id=out><p class=note>ELITE ROSTER — only validated high-profit-factor strategies (orderflow · liquidity · price action), each pre-loaded with its proven market. Pick one, then Backtest (real data, no keys) or Optimize (grid search with out-of-sample check). source=auto handles everything: crypto (BTCUSDT) · forex (EURUSD, GBPJPY) · commodities (GOLD, OIL, SILVER, WHEAT) · indices (SPX, US30, DAX) · stocks (AAPL). Forex/futures feeds lack real volume — volume-based setups may stay flat there; price-structure setups (gm14–gm18, donchian) work everywhere.</p></div>
+<div id=out><p class=note>ELITE ROSTER — validated high-PF EAs (orderflow · liquidity · price action), pre-loaded with proven markets. COVERAGE: crypto + commodities (GOLD/SILVER) + futures (NQ/ES) + indices-via-futures (NQ/ES/YM) + forex-via-FX-futures (6E/6B) + prop-firm evals (propcheck/propsize). Cash stocks & cash indices: no validated edge — honestly excluded. Options: needs a paid chain vendor; trade the validated underlying instead. Pick one, then Backtest (real data, no keys) or Optimize (grid search with out-of-sample check). source=auto handles everything: crypto (BTCUSDT) · forex (EURUSD, GBPJPY) · commodities (GOLD, OIL, SILVER, WHEAT) · indices (SPX, US30, DAX) · stocks (AAPL). Forex/futures feeds lack real volume — volume-based setups may stay flat there; price-structure setups (gm14–gm18, donchian) work everywhere.</p></div>
 </main>
 <script>
 const $=id=>document.getElementById(id), out=$('out');

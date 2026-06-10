@@ -36,10 +36,22 @@ ELITE = {
     "archon_orb":     {"market": "NQ",      "stats": "PF 2.40 · 46 trd · WF +27.9% 3/4",                 "concept": "vol-breakout PA"},
 }
 
+# Honest per-asset-class coverage of the elite roster (validated markets only)
+COVERAGE = {
+    "crypto":      "gm_confluence/gm24/gm12/gm17 on BTC (+ETH)",
+    "commodities": "deity_trend GOLD·SILVER, gm19 GOLD, archon_orb GOLD",
+    "futures":     "archon_orb NQ (WF-validated) · ES screened",
+    "indices":     "via index FUTURES: NQ=NASDAQ100, ES=SP500, YM=US30 (cash-index daily: no edge found — honest)",
+    "forex":       "via FX FUTURES (real volume): deity_trend 6B PF1.41, archon_orb 6E PF1.52 (spot FX lacks volume for orderflow EAs)",
+    "stocks":      "screened SPY/AAPL: NO validated edge with elite EAs on daily bars — do not trade, says the data",
+    "options":     "no keyless options-chain feed exists; trade the validated underlying/futures instead, or add a paid vendor (Polygon/Tradier) key",
+    "prop_firms":  "propcheck/propsize vs FTMO·Topstep·Apex·FundedNext on ANY of the above",
+}
+
 
 def api_strategies():
     # ELITE-gated: only validated high-PF strategies exposed in the runner
-    return {"builtin": list(ELITE), "elite": ELITE, "all_count": len(builtin.REGISTRY)}
+    return {"builtin": list(ELITE), "elite": ELITE, "coverage": COVERAGE, "all_count": len(builtin.REGISTRY)}
 
 
 def api_backtest(q):
