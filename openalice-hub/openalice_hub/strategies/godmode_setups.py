@@ -342,3 +342,34 @@ class GMChecklist(GM):
 GODMODE_REGISTRY["perfect_checklist"] = GMChecklist
 _b.REGISTRY["perfect_checklist"] = GMChecklist
 _o.GRIDS["perfect_checklist"] = {"lb": [15, 25], "k": [35, 45, 55], "hold": [5, 10, 20]}
+
+
+class GMGated(GM):
+    """GODMODE hybrid: gm_confluence entries, taken ONLY when the PerfectTrade
+    checklist confluence agrees (regime gate). Weak signals filtered by structure."""
+    name = "gm_gated"; gm_id = 97
+
+    def positions(self, bars):
+        conf = GMConfluence(lb=self.lb, k=2, hold=self.hold).positions(bars)
+        chk = GMChecklist(lb=max(15, self.lb), k=self.k, hold=self.hold)
+        x = chk._ctx(bars)
+        out = []; cur = 0; held = 0
+        for i in range(len(bars)):
+            sig = conf[i]
+            if sig != 0 and sig != cur:
+                b, s = chk._tf_score(i, x, bars)
+                pct = (b if sig > 0 else s) / 60 * 100
+                if pct >= self.k:        # checklist must agree
+                    cur = sig; held = self.hold
+                else:
+                    sig = 0
+            if cur != 0 and conf[i] == 0:
+                held -= 1
+                if held <= 0: cur = 0
+            out.append(cur)
+        return out
+
+
+GODMODE_REGISTRY["gm_gated"] = GMGated
+_b.REGISTRY["gm_gated"] = GMGated
+_o.GRIDS["gm_gated"] = {"lb": [10, 20, 30], "k": [25, 35, 45], "hold": [5, 10, 20]}
