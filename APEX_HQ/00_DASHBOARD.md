@@ -5,7 +5,7 @@
 ## STATUS
 | Field | Value |
 |---|---|
-| Phase | **1 — Market & Product Research** (in progress) |
+| Phase | **1 — COMPLETE** ✅ → Phase 2 armed, awaiting founder GO |
 | Day | 1 (boot: 2026-06-11) |
 | Mode | **ADVISOR** (forced — no commerce connectors wired yet; see `07_CONNECTION_MAP.md`) |
 | Store | not built |
@@ -37,7 +37,7 @@
 ## LAUNCH CHECKLIST
 - [x] Boot sequence + capability surf
 - [x] HQ stood up
-- [ ] Phase 1: Top-10 Product Report → `01_PRODUCT_VAULT.md`
+- [x] Phase 1: Top-10 Product Report → `01_PRODUCT_VAULT.md` (3 niches scored · 10 products + bonus sprint · avoid list)
 - [ ] Founder confirms variables + picks niche/product (GATE)
 - [ ] Phase 2: VALIDATOR on chosen product
 - [ ] Founder wiring: Shopify · CJdropshipping · Meta BM · TikTok · Klaviyo (GATE — see Connection Map)

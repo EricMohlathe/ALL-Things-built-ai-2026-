@@ -10,6 +10,8 @@ Every consequential decision, logged. Format: ID | date | decision | reasoning |
 | D-004 | 2026-06-11 | Target market assumed **US** | Largest spend pool, CJ US warehouses, all benchmark data US-calibrated. Founder may override (e.g., ZA). | ⚠️ awaiting founder |
 | D-005 | 2026-06-11 | Niche + hero product selection | GATE: founder picks from Phase 1 report (APEX recommends top option). | 🔒 awaiting founder |
 | D-006 | 2026-06-11 | Ad budget plan $450/mo | MONEY GATE: no spend authorized; plan only until explicit YES. | 🔒 awaiting founder |
+| D-007 | 2026-06-11 | Phase 1 closed: niche rec = **N1 "Beat-the-Heat"** · hero = cooling towel bundle · challenger = dispenser tote · bridge = pet cooling vest | Cross-confirmed by 2 independent live-web runs (35+ searches, 2026 sources). Full scoring in `01_PRODUCT_VAULT.md`. Neck fan rejected (5th viral summer, ~38% landed gross, battery). | ✅ executed; pick is founder's (D-005) |
+| D-008 | 2026-06-11 | Organic-first launch strategy locked into plan | 2026 consensus for $300–600/mo budgets: validate with organic TikTok, put paid $ only behind the video earning purchase-intent comments. Protects MONEY GATE. | ✅ plan-level |
 
 ## OPEN GATES (need founder YES)
 1. Confirm/override founder variables (see Dashboard).
