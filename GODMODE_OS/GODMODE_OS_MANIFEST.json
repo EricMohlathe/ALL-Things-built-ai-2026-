@@ -39,7 +39,7 @@
           "cmd": "python3 openalice-hub/hub.py live-arm BTCUSDT buy 0.1"
         },
         {
-          "name": "11 platform connectors",
+          "name": "15 platform connectors",
           "status": "ok",
           "desc": "tradingview-mcp (live), MT5, cTrader, tradememory.",
           "cmd": "python3 openalice-hub/hub.py connectors"
@@ -101,12 +101,30 @@
       ]
     },
     {
+      "title": "Assimilated agents (this session)",
+      "accent": "cyan",
+      "items": [
+        {
+          "name": "hermes \u00b7 agent-os \u00b7 zeroclaw",
+          "status": "ok",
+          "desc": "Hermes (wired AI backend), buildermethods Agent-OS (spec framework), zeroclaw (Rust agent). + your AgentOS DMG.",
+          "cmd": "Live Runner \u2192 Systems tab"
+        },
+        {
+          "name": "BrowserOS \u00b7 activepieces",
+          "status": "ok",
+          "desc": "Agentic browser (web actions) + automation engine (signals\u2192Telegram/webhook). Cloned, registered as connectors.",
+          "cmd": "registry/systems.json"
+        }
+      ]
+    },
+    {
       "title": "AI brains & system",
       "accent": "green",
       "items": [
         {
           "name": "9router gateway",
-          "status": "ok",
+          "status": "down",
           "desc": "OpenAI-compatible, 455-model catalog, loopback, pm2. Connect a provider to use.",
           "cmd": "http://127.0.0.1:20128"
         },
@@ -126,12 +144,12 @@
     }
   ],
   "audit": {
-    "9router": "ok",
+    "9router": "down",
     "hermes": "ok",
     "hub_cli": "ok",
     "tradingview_mcp": "pending",
     "strategies": "ok:44",
-    "connectors": "ok:11",
+    "connectors": "ok:15",
     "plugins": "ok",
     "ai_tools_dmg": "ok",
     "hub_dmg": "ok",

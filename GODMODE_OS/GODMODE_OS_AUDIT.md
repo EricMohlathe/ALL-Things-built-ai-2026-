@@ -1,15 +1,15 @@
 # GODMODE OS — Audit
 
-Live checks at build time. **10/11 green.** Not 'perfect' — *measured*.
+Live checks at build time. **9/11 green.** Not 'perfect' — *measured*.
 
 | Component | Status | Note |
 |---|---|---|
-| 9router | 🟢 ok | loopback gateway; needs a provider connected to actually route |
+| 9router | 🔴 down | loopback gateway; needs a provider connected to actually route |
 | hermes | 🟢 ok | installed; pick a model (hermes model) |
 | hub_cli | 🟢 ok | orchestration CLI |
 | tradingview_mcp | 🟠 pending | connected to Claude; open TradingView Desktop to use |
 | strategies | 🟢 ok:44 | 18 repos + 26 GODMODE EAs |
-| connectors | 🟢 ok:11 | incl MT5/cTrader (gated) |
+| connectors | 🟢 ok:15 | incl MT5/cTrader (gated) |
 | plugins | 🟢 ok | 35 enabled |
 | ai_tools_dmg | 🟢 ok | media toolkit launcher |
 | hub_dmg | 🟢 ok | trading launcher |

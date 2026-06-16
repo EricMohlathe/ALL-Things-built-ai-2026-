@@ -1,0 +1,50 @@
+[
+  {
+    "name": "hermes-agent",
+    "kind": "AI agent",
+    "status": "installed",
+    "path": "~/.local/bin/hermes",
+    "desc": "Nous Hermes self-improving agent. Wired as AI backend via 9router. The brain that can talk to the hub.",
+    "how": "hermes  \u00b7  hub.py ai (hermes-9router)"
+  },
+  {
+    "name": "agent-os",
+    "kind": "agent framework",
+    "status": "cloned",
+    "path": "~/ai-tools/agents/agent-os",
+    "desc": "buildermethods spec-driven agent workflow OS. Structured specs/standards/instructions for agentic builds.",
+    "how": "copy instructions into project; buildermethods.com/agent-os"
+  },
+  {
+    "name": "AgentOS Workspace",
+    "kind": "macOS app",
+    "status": "available",
+    "path": "~/ai-tools/agents/AgentOS-arm64.dmg",
+    "desc": "Your own AgentOS macOS build (from your repo). Mountable workspace app.",
+    "how": "open the DMG \u00b7 drag app to /Applications"
+  },
+  {
+    "name": "BrowserOS",
+    "kind": "agentic browser",
+    "status": "cloned",
+    "path": "~/ai-tools/agents/BrowserOS",
+    "desc": "Open-source agentic browser (Chromium fork) \u2014 lets agents see+act in a real browser. Build needs full Chromium toolchain.",
+    "how": "see BrowserOS/README (heavy build); use as the GODMODE web-action layer"
+  },
+  {
+    "name": "activepieces",
+    "kind": "automation",
+    "status": "cloned",
+    "path": "~/ai-tools/agents/activepieces",
+    "desc": "Open-source workflow automation (Zapier/n8n alternative). Wire trade alerts\u2192Telegram/email/webhooks.",
+    "how": "docker compose up (see repo); pipes GODMODE signals to anywhere"
+  },
+  {
+    "name": "zeroclaw",
+    "kind": "Rust agent",
+    "status": "cloned",
+    "path": "~/ai-tools/agents/zeroclaw",
+    "desc": "zeroclaw-labs Rust agent runtime. Fast native agent execution.",
+    "how": "cargo build --release (needs Rust toolchain)"
+  }
+]

@@ -1,106 +1,217 @@
 <!doctype html><html lang=en><head><meta charset=utf-8>
-<meta name=viewport content="width=device-width,initial-scale=1">
-<title>OpenAlice Hub — Live Runner</title>
+<meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>GODMODE OS — Live Runner</title>
 <style>
-*{box-sizing:border-box}body{margin:0;background:#07090C;color:#E6ECF3;font:15px/1.5 -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
-header{padding:22px;border-bottom:1px solid #1E2530}
-h1{margin:0;font-size:20px;display:flex;gap:10px;align-items:center}
-.bolt{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#F59E0B,#22D3EE);display:flex;align-items:center;justify-content:center;color:#07090C;font-weight:800}
-main{max-width:980px;margin:0 auto;padding:20px}
-.controls{display:flex;gap:10px;flex-wrap:wrap;align-items:end;background:#0E1218;border:1px solid #1E2530;border-radius:13px;padding:14px}
-label{display:flex;flex-direction:column;font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:#8A96A8;gap:5px}
-select,input{background:#07090C;border:1px solid #1E2530;color:#E6ECF3;border-radius:8px;padding:9px 11px;font-size:14px;min-width:120px}
-button{background:linear-gradient(135deg,#22C55E,#16a34a);color:#07090C;font-weight:700;border:0;border-radius:8px;padding:10px 16px;font-size:14px;cursor:pointer}
-button.opt{background:linear-gradient(135deg,#F59E0B,#d97706)}
-#out{margin-top:18px}
-.metrics{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:14px}
-.met{background:#0E1218;border:1px solid #1E2530;border-radius:11px;padding:11px 13px}
-.met .v{font-size:20px;font-weight:700}.met .l{font-size:11px;color:#8A96A8;text-transform:uppercase;letter-spacing:.5px}
-.pos{color:#22C55E}.neg{color:#EF4444}
-svg{width:100%;height:200px;background:#0E1218;border:1px solid #1E2530;border-radius:12px}
-table{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}
-th,td{text-align:right;padding:6px 9px;border-bottom:1px solid #1E2530}th:first-child,td:first-child{text-align:left}
-th{color:#8A96A8;font-weight:600;font-size:11px;text-transform:uppercase}
-.note{color:#8A96A8;font-size:12.5px;margin-top:10px}
-.spin{color:#F59E0B}
+:root{
+  --bg:#06080C; --panel:rgba(18,24,34,.62); --glass:rgba(255,255,255,.04);
+  --line:rgba(255,255,255,.08); --txt:#E8EEF7; --mut:#8493A8;
+  --amber:#F59E0B; --cyan:#22D3EE; --green:#22C55E; --red:#F2545B; --violet:#8B5CF6;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--txt);font:15px/1.55 'Inter Tight',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+/* animated gradient mesh background */
+.orb{position:fixed;border-radius:50%;filter:blur(90px);opacity:.5;z-index:-1;animation:drift 22s ease-in-out infinite}
+.orb.a{width:520px;height:520px;background:radial-gradient(circle,#F59E0B,transparent 70%);top:-160px;left:-120px}
+.orb.b{width:560px;height:560px;background:radial-gradient(circle,#22D3EE,transparent 70%);bottom:-200px;right:-140px;animation-delay:-7s}
+.orb.c{width:440px;height:440px;background:radial-gradient(circle,#8B5CF6,transparent 70%);top:40%;left:55%;animation-delay:-13s;opacity:.35}
+@keyframes drift{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(60px,-40px) scale(1.1)}66%{transform:translate(-40px,50px) scale(.95)}}
+.grid-bg{position:fixed;inset:0;z-index:-1;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:48px 48px;mask:radial-gradient(circle at 50% 30%,#000 0%,transparent 75%);opacity:.4}
+/* shell */
+.shell{display:grid;grid-template-columns:236px 1fr;min-height:100vh}
+aside{border-right:1px solid var(--line);padding:22px 16px;position:sticky;top:0;height:100vh;backdrop-filter:blur(8px);background:rgba(8,11,16,.5)}
+.brand{display:flex;align-items:center;gap:11px;margin-bottom:26px;padding:0 6px}
+.bolt{width:36px;height:36px;border-radius:11px;background:linear-gradient(135deg,var(--amber),var(--cyan));display:flex;align-items:center;justify-content:center;color:#06080C;font-weight:900;font-size:18px;box-shadow:0 8px 26px -8px var(--amber)}
+.brand b{font-size:16px;letter-spacing:.3px}.brand small{display:block;color:var(--mut);font-size:11px;letter-spacing:.5px}
+nav a{display:flex;align-items:center;gap:11px;padding:11px 13px;border-radius:11px;color:var(--mut);text-decoration:none;font-weight:600;font-size:14px;cursor:pointer;transition:.2s;margin-bottom:3px}
+nav a .ic{width:20px;text-align:center;font-size:15px}
+nav a:hover{color:var(--txt);background:var(--glass)}
+nav a.on{color:var(--txt);background:linear-gradient(135deg,rgba(245,158,11,.16),rgba(34,211,238,.12));box-shadow:inset 0 0 0 1px var(--line)}
+.sidefoot{position:absolute;bottom:18px;left:16px;right:16px;font-size:11px;color:var(--mut)}
+.statusdot{width:8px;height:8px;border-radius:50%;background:var(--green);display:inline-block;box-shadow:0 0 0 0 rgba(34,197,94,.6);animation:pulse 2s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(34,197,94,.5)}70%{box-shadow:0 0 0 8px rgba(34,197,94,0)}100%{box-shadow:0 0 0 0 rgba(34,197,94,0)}}
+main{padding:26px 30px 60px;max-width:1180px}
+.top{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}
+.top h1{margin:0;font-size:24px;font-weight:800;letter-spacing:-.3px}
+.top .sub{color:var(--mut);font-size:13px;margin-top:2px}
+.pill{display:inline-flex;align-items:center;gap:7px;background:var(--glass);border:1px solid var(--line);border-radius:999px;padding:7px 13px;font-size:12.5px;color:var(--mut)}
+.pill b{color:var(--green)}
+/* controls */
+.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;backdrop-filter:blur(14px);box-shadow:0 24px 60px -30px #000}
+.controls{display:flex;gap:12px;flex-wrap:wrap;align-items:end;padding:18px}
+label.fld{display:flex;flex-direction:column;gap:6px;font-size:10.5px;text-transform:uppercase;letter-spacing:.8px;color:var(--mut);font-weight:700}
+select,input{background:#0A0E15;border:1px solid var(--line);color:var(--txt);border-radius:11px;padding:11px 13px;font-size:14px;min-width:130px;outline:none;transition:.2s}
+select:focus,input:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(34,211,238,.15)}
+.btn{position:relative;overflow:hidden;border:0;border-radius:12px;padding:12px 20px;font-size:14px;font-weight:800;cursor:pointer;color:#06080C;transition:transform .15s,box-shadow .2s}
+.btn:hover{transform:translateY(-2px)}
+.btn.g{background:linear-gradient(135deg,#34D399,#16A34A);box-shadow:0 12px 30px -12px #16A34A}
+.btn.o{background:linear-gradient(135deg,#FBBF24,#D97706);box-shadow:0 12px 30px -12px #D97706}
+.btn.c{background:linear-gradient(135deg,#34D3EE,#0E7490);box-shadow:0 12px 30px -12px #0E7490}
+.btn:active::after{content:'';position:absolute;inset:0;background:rgba(255,255,255,.25);animation:rip .4s}
+@keyframes rip{from{opacity:.6}to{opacity:0}}
+/* metrics */
+.metrics{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin:18px 0}
+.met{background:var(--glass);border:1px solid var(--line);border-radius:15px;padding:15px 16px;position:relative;overflow:hidden}
+.met::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--amber),var(--cyan))}
+.met .v{font-size:26px;font-weight:850;letter-spacing:-.5px;font-variant-numeric:tabular-nums}
+.met .l{font-size:10.5px;color:var(--mut);text-transform:uppercase;letter-spacing:.7px;margin-top:3px;font-weight:700}
+.pos{color:var(--green)}.neg{color:var(--red)}.cy{color:var(--cyan)}
+/* chart */
+.chartwrap{background:var(--glass);border:1px solid var(--line);border-radius:15px;padding:14px;margin-top:4px}
+svg.eq{width:100%;height:240px;display:block}
+.eq path.line{fill:none;stroke-width:2.5;filter:drop-shadow(0 0 6px currentColor)}
+.eq path.area{opacity:.16}
+/* tables */
+table{width:100%;border-collapse:collapse;font-size:13px;margin-top:14px}
+th,td{text-align:right;padding:10px 12px;border-bottom:1px solid var(--line)}
+th:first-child,td:first-child{text-align:left}
+th{color:var(--mut);font-size:10.5px;text-transform:uppercase;letter-spacing:.6px;font-weight:700}
+tbody tr{transition:.15s}tbody tr:hover{background:var(--glass)}
+.note{color:var(--mut);font-size:12.5px;margin-top:14px;line-height:1.6}
+/* elite cards */
+.elite{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+.ecard{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px;cursor:pointer;transition:.2s;position:relative;overflow:hidden}
+.ecard:hover{transform:translateY(-3px);border-color:rgba(34,211,238,.4);box-shadow:0 20px 40px -24px var(--cyan)}
+.ecard h4{margin:0 0 4px;font-size:15px;display:flex;align-items:center;gap:8px}
+.ecard .mk{font-size:10px;font-weight:800;color:#06080C;background:var(--cyan);border-radius:6px;padding:2px 7px}
+.ecard p{margin:6px 0 0;color:var(--mut);font-size:12px}
+.ecard .concept{margin-top:8px;font-size:11px;color:var(--amber);text-transform:uppercase;letter-spacing:.5px;font-weight:700}
+.view{display:none;animation:fade .4s ease}
+.view.on{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.shim{height:240px;border-radius:15px;background:linear-gradient(100deg,#0E1218 30%,#1a2433 50%,#0E1218 70%);background-size:200% 100%;animation:sh 1.3s infinite}
+@keyframes sh{to{background-position:-200% 0}}
+.spin{color:var(--amber);font-weight:600}
+.sys{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.scard{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px;transition:.2s}
+.scard:hover{transform:translateY(-3px);box-shadow:0 20px 40px -24px var(--violet)}
+.scard h4{margin:0;display:flex;align-items:center;gap:9px;font-size:15px}
+.tag{font-size:10px;font-weight:800;border-radius:6px;padding:2px 8px;text-transform:uppercase;letter-spacing:.4px}
+.tag.ok{background:rgba(34,197,94,.16);color:var(--green)}.tag.cl{background:rgba(245,158,11,.16);color:var(--amber)}.tag.av{background:rgba(139,92,246,.16);color:var(--violet)}
+.scard .k{font-size:11px;color:var(--mut);text-transform:uppercase;letter-spacing:.5px;margin-top:8px}
+.scard .how{font:11.5px ui-monospace,Menlo,monospace;color:#9fb0c4;background:#0A0E15;border:1px solid var(--line);border-radius:9px;padding:8px 10px;margin-top:6px;overflow:auto}
+@media(max-width:760px){.shell{grid-template-columns:1fr}aside{position:static;height:auto;display:flex;gap:8px;overflow:auto}nav{display:flex}.sidefoot,.brand small{display:none}}
 </style></head><body>
-<header><h1><span class=bolt>⚡</span> OpenAlice Hub — Live Runner</h1></header>
+<div class=orb a></div><div class=orb b></div><div class=orb c></div><div class=grid-bg></div>
+<div class=shell>
+<aside>
+  <div class=brand><div class=bolt>⚡</div><div><b>GODMODE OS</b><small>LIVE RUNNER</small></div></div>
+  <nav>
+    <a class=on data-v=trade onclick=nav('trade',this)><span class=ic>⚡</span> Trade</a>
+    <a data-v=portfolio onclick=nav('portfolio',this)><span class=ic>📊</span> Portfolio</a>
+    <a data-v=systems onclick=nav('systems',this)><span class=ic>🧩</span> Systems</a>
+    <a data-v=coverage onclick=nav('coverage',this)><span class=ic>🌐</span> Coverage</a>
+  </nav>
+  <div class=sidefoot><span class=statusdot></span> Engine online · <span id=clock></span><br>Paper-gated · No fabricated stats</div>
+</aside>
 <main>
-<div class=controls>
-  <label>Strategy<select id=strat></select></label>
-  <label>Symbol<input id=sym value="BTCUSDT"></label>
-  <label>Source<select id=src><option>auto</option><option>binance</option><option>yahoo</option></select></label>
-  <label>Metric<select id=metric><option>sharpe</option><option>total_return</option><option>sortino</option></select></label>
-  <button onclick=runBt()>Backtest</button>
-  <button class=opt onclick=runOpt()>Optimize</button>
-  <button style="background:linear-gradient(135deg,#22D3EE,#0e7490)" onclick=runPort()>⚡ Portfolio</button>
-</div>
-<div id=out><p class=note>ELITE ROSTER — validated high-PF EAs (orderflow · liquidity · price action), pre-loaded with proven markets. COVERAGE: crypto + commodities (GOLD/SILVER) + futures (NQ/ES) + indices-via-futures (NQ/ES/YM) + forex-via-FX-futures (6E/6B) + prop-firm evals (propcheck/propsize). Cash stocks & cash indices: no validated edge — honestly excluded. Options: needs a paid chain vendor; trade the validated underlying instead. Pick one, then Backtest (real data, no keys) or Optimize (grid search with out-of-sample check). source=auto handles everything: crypto (BTCUSDT) · forex (EURUSD, GBPJPY) · commodities (GOLD, OIL, SILVER, WHEAT) · indices (SPX, US30, DAX) · stocks (AAPL). Forex/futures feeds lack real volume — volume-based setups may stay flat there; price-structure setups (gm14–gm18, donchian) work everywhere.</p></div>
+  <div class=top>
+    <div><h1 id=ttl>Trade</h1><div class=sub id=sub>Validated elite strategies · real data · out-of-sample tested</div></div>
+    <div class=pill><span class=statusdot></span> <b>PAPER</b> · loopback</div>
+  </div>
+
+  <!-- TRADE -->
+  <section class="view on" id=v-trade>
+    <div class="card controls">
+      <label class=fld>Strategy<select id=strat></select></label>
+      <label class=fld>Symbol<input id=sym value=BTCUSDT></label>
+      <label class=fld>Source<select id=src><option>auto</option><option>binance</option><option>yahoo</option><option>deriv</option></select></label>
+      <label class=fld>Metric<select id=metric><option>sharpe</option><option>total_return</option><option>profit_factor</option><option>sortino</option></select></label>
+      <button class="btn g" onclick=runBt()>Backtest</button>
+      <button class="btn o" onclick=runOpt()>Optimize</button>
+    </div>
+    <div id=eliteRoster style=margin-top:18px></div>
+    <div id=out style=margin-top:18px></div>
+  </section>
+
+  <!-- PORTFOLIO -->
+  <section class=view id=v-portfolio>
+    <div class=card style=padding:18px>
+      <button class="btn c" onclick=runPort()>⚡ Run GODMODE Portfolio</button>
+      <span class=note style=margin-left:14px>Equal-weight basket of uncorrelated validated legs. Diversification = the only free lunch.</span>
+    </div>
+    <div id=portOut style=margin-top:18px></div>
+  </section>
+
+  <!-- SYSTEMS -->
+  <section class=view id=v-systems><div id=sysOut class=sys></div></section>
+
+  <!-- COVERAGE -->
+  <section class=view id=v-coverage><div id=covOut class=elite></div></section>
 </main>
+</div>
 <script>
-const $=id=>document.getElementById(id), out=$('out');
-fetch('/api/strategies').then(r=>r.json()).then(d=>{
-  $('strat').innerHTML=d.builtin.map(s=>`<option value="${s}">${s} — ${(d.elite&&d.elite[s])?d.elite[s].stats:''}</option>`).join('');
-  if(d.elite){const first=d.builtin[0]; $('sym').value=d.elite[first].market;
-    $('strat').onchange=()=>{$('sym').value=d.elite[$('strat').value].market};}
-}).catch(()=>{out.innerHTML='<p class=neg>API not reachable. Start with: python3 hub.py serve</p>'});
+const $=id=>document.getElementById(id);
+let ELITE={},COVERAGE={};
 const pct=x=>(x*100).toFixed(2)+'%', cls=x=>x>=0?'pos':'neg';
+function clock(){const d=new Date();$('clock').textContent=d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit',second:'2-digit'})}
+setInterval(clock,1000);clock();
+function nav(v,el){document.querySelectorAll('nav a').forEach(a=>a.classList.remove('on'));el.classList.add('on');
+  document.querySelectorAll('.view').forEach(s=>s.classList.remove('on'));$('v-'+v).classList.add('on');
+  $('ttl').textContent={trade:'Trade',portfolio:'Portfolio',systems:'Systems',coverage:'Coverage'}[v];
+  $('sub').textContent={trade:'Validated elite strategies · real data · out-of-sample tested',portfolio:'Combine uncorrelated edges — risk-adjusted return beats every leg',systems:'The full GODMODE stack assimilated this session',coverage:'Where each edge is validated — and honestly, where it is not'}[v];
+  if(v==='systems')loadSystems(); if(v==='coverage')loadCoverage();}
+function countUp(el,end,fmt){let s=0,st=null;const d=900;function f(t){st=st||t;let p=Math.min((t-st)/d,1);p=1-Math.pow(1-p,3);el.textContent=fmt(end*p);if(p<1)requestAnimationFrame(f)}requestAnimationFrame(f)}
+function chart(eq){if(!eq||eq.length<2)return '';const w=1000,h=240,pad=14,mn=Math.min(...eq),mx=Math.max(...eq),rg=(mx-mn)||1;
+  const X=i=>pad+i/(eq.length-1)*(w-2*pad), Y=v=>h-pad-(v-mn)/rg*(h-2*pad);
+  const pts=eq.map((v,i)=>`${X(i)},${Y(v)}`).join(' ');
+  const up=eq[eq.length-1]>=eq[0];const col=up?'#22C55E':'#F2545B';
+  const area=`M ${X(0)},${h-pad} L `+pts.replace(/ /g,' L ')+` L ${X(eq.length-1)},${h-pad} Z`;
+  return `<div class=chartwrap><svg class=eq viewBox="0 0 ${w} ${h}" preserveAspectRatio=none style="color:${col}">
+    <defs><linearGradient id=ag x1=0 y1=0 x2=0 y2=1><stop offset=0 stop-color="${col}"/><stop offset=1 stop-color="${col}" stop-opacity=0/></linearGradient></defs>
+    <path class=area d="${area}" fill="url(#ag)"/>
+    <polyline class=line stroke="${col}" points="${pts}" pathLength=1 style="stroke-dasharray:1;stroke-dashoffset:1;animation:draw 1.2s ease forwards"/>
+  </svg></div><style>@keyframes draw{to{stroke-dashoffset:0}}</style>`;}
+function mets(arr){return '<div class=metrics>'+arr.map(([l,v,c])=>`<div class=met><div class="v ${c||''}" data-end="${v.e}" data-fmt="${v.f}">${v.t}</div><div class=l>${l}</div></div>`).join('')+'</div>';}
+function animateMets(root){root.querySelectorAll('.met .v[data-end]').forEach(el=>{const e=+el.dataset.end,f=el.dataset.fmt;
+  countUp(el,e,x=>f==='pct'?(x*100).toFixed(1)+'%':f==='x2'?x.toFixed(2):Math.round(x));});}
 function q(){return `strategy=${$('strat').value}&symbol=${encodeURIComponent($('sym').value)}&source=${$('src').value}`}
-function spinner(t){out.innerHTML=`<p class=spin>⏳ ${t}… (fetching real data)</p>`}
-function sparkline(eq){
-  if(!eq||eq.length<2)return '';
-  const w=900,h=200,mn=Math.min(...eq),mx=Math.max(...eq),pad=10;
-  const pts=eq.map((v,i)=>`${pad+i/(eq.length-1)*(w-2*pad)},${h-pad-(v-mn)/((mx-mn)||1)*(h-2*pad)}`).join(' ');
-  const up=eq[eq.length-1]>=eq[0];
-  return `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio=none><polyline fill=none stroke="${up?'#22C55E':'#EF4444'}" stroke-width=2 points="${pts}"/></svg>`;
-}
-function runBt(){
-  spinner('Backtesting '+$('strat').value+' on '+$('sym').value);
-  fetch('/api/backtest?'+q()).then(r=>r.json()).then(d=>{
-    if(d.error){out.innerHTML='<p class=neg>'+d.error+'</p>';return}
-    const m=d.metrics;
-    const M=(l,v,c='')=>`<div class=met><div class="v ${c}">${v}</div><div class=l>${l}</div></div>`;
-    out.innerHTML=`<div class=metrics>
-      ${M('Total return',pct(m.total_return),cls(m.total_return))}
-      ${M('Buy & hold',pct(m.buy_hold_return))}
-      ${M('Alpha',pct(m.total_return-m.buy_hold_return),cls(m.total_return-m.buy_hold_return))}
-      ${M('Sharpe',m.sharpe.toFixed(2))}
-      ${M('Max DD',pct(m.max_drawdown),'neg')}
-      ${M('Win rate',(m.win_rate*100).toFixed(0)+'%')}
-      ${M('Trades',m.num_trades)}
-      ${M('Profit factor',m.profit_factor.toFixed(2))}
-    </div>${sparkline(d.equity)}
-    <p class=note>${d.strategy} · ${d.symbol} · ${d.bars} bars · ${d.source}. PAPER backtest, no lookahead, fees charged. Past performance ≠ future results.</p>`;
-  }).catch(e=>out.innerHTML='<p class=neg>'+e+'</p>');
-}
-function runOpt(){
-  spinner('Optimizing '+$('strat').value+' on '+$('sym').value);
-  fetch('/api/optimize?'+q()+'&metric='+$('metric').value).then(r=>r.json()).then(d=>{
-    if(d.error){out.innerHTML='<p class=neg>'+d.error+'</p>';return}
-    const rows=d.leaderboard.map(r=>{
-      const p=Object.entries(r.params).map(([k,v])=>k+'='+v).join(', ');
-      const oos=r.oos_metric==null?'-':r.oos_metric.toFixed(2);
-      const oosr=r.oos_return==null?'-':(r.oos_return*100).toFixed(0)+'%';
-      return `<tr><td>${p}</td><td>${r.metric.toFixed(2)}</td><td>${(r.return*100).toFixed(0)}%</td><td>${oos}</td><td>${oosr}</td><td>${(r.maxdd*100).toFixed(0)}%</td><td>${r.trades}</td></tr>`;
-    }).join('');
-    out.innerHTML=`<table><tr><th>params</th><th>IS ${d.metric}</th><th>IS ret</th><th>OOS ${d.metric}</th><th>OOS ret</th><th>DD</th><th>trd</th></tr>${rows}</table>
-    <p class=note>${d.evaluated} combos · train ${d.train_bars} / test ${d.test_bars} bars. Trust OOS over IS — a big drop = overfit.</p>`;
-  }).catch(e=>out.innerHTML='<p class=neg>'+e+'</p>');
-}
-function runPort(){
-  spinner('Running the GODMODE portfolio (validated legs, real data)');
-  fetch('/api/portfolio').then(r=>r.json()).then(d=>{
-    const p=d.portfolio;
-    const M=(l,v,c='')=>`<div class=met><div class="v ${c}">${v}</div><div class=l>${l}</div></div>`;
-    const legs=d.legs.map(x=>`<tr><td>${x.name}</td><td>${x.symbol}</td><td>${x.pf.toFixed(2)}</td><td>${(x.ret*100).toFixed(0)}%</td><td>${(x.dd*100).toFixed(0)}%</td><td>${(x.win_rate*100).toFixed(0)}%</td><td>${x.trades}</td></tr>`).join('');
-    out.innerHTML=`<div class=metrics>
-      ${M('Portfolio return',pct(p.return),cls(p.return))}
-      ${M('Sharpe',p.sharpe.toFixed(2))}
-      ${M('Max DD',pct(p.max_drawdown),'neg')}
-      ${M('Bars',p.bars)}
-    </div>${sparkline(d.equity)}
-    <table><tr><th>leg</th><th>market</th><th>PF</th><th>ret</th><th>DD</th><th>WR</th><th>trd</th></tr>${legs}</table>
-    <p class=note>${d.note}</p>`;
-  }).catch(e=>out.innerHTML='<p class=neg>'+e+'</p>');
-}
+function load(){fetch('/api/strategies').then(r=>r.json()).then(d=>{ELITE=d.elite||{};COVERAGE=d.coverage||{};
+  $('strat').innerHTML=d.builtin.map(s=>`<option value="${s}">${s}</option>`).join('');
+  $('sym').value=ELITE[d.builtin[0]].market;
+  $('strat').onchange=()=>{$('sym').value=ELITE[$('strat').value].market};
+  $('eliteRoster').innerHTML='<div class=elite>'+d.builtin.map(s=>`<div class=ecard onclick="pick('${s}')"><h4>${s} <span class=mk>${ELITE[s].market}</span></h4><div class=concept>${ELITE[s].concept}</div><p>${ELITE[s].stats}</p></div>`).join('')+'</div>';
+}).catch(()=>{$('out').innerHTML='<p class=neg>API offline. Run: python3 hub.py serve</p>'});}
+function pick(s){$('strat').value=s;$('sym').value=ELITE[s].market;runBt();}
+function shim(t){return `<p class=spin>⏳ ${t}…</p><div class=shim style=margin-top:10px></div>`}
+function runBt(){$('out').innerHTML=shim('Backtesting '+$('strat').value+' · '+$('sym').value);
+  fetch('/api/backtest?'+q()).then(r=>r.json()).then(d=>{if(d.error){$('out').innerHTML='<p class=neg>'+d.error+'</p>';return}
+  const m=d.metrics,al=m.total_return-m.buy_hold_return;
+  $('out').innerHTML=mets([
+    ['Total return',{t:'0%',e:m.total_return,f:'pct'},cls(m.total_return)],
+    ['Alpha vs B&H',{t:'0%',e:al,f:'pct'},cls(al)],
+    ['Profit factor',{t:'0',e:m.profit_factor,f:'x2'},'cy'],
+    ['Sharpe',{t:'0',e:m.sharpe,f:'x2'}],
+    ['Win rate',{t:'0%',e:m.win_rate,f:'pct'}],
+    ['Max DD',{t:'0%',e:m.max_drawdown,f:'pct'},'neg'],
+    ['Trades',{t:'0',e:m.num_trades,f:'int'}],
+  ])+chart(d.equity)+`<p class=note>${d.strategy} · ${d.symbol} · ${d.bars} bars · ${d.source}. PAPER · no lookahead · fees charged. Past performance ≠ future results.</p>`;
+  animateMets($('out'));}).catch(e=>$('out').innerHTML='<p class=neg>'+e+'</p>');}
+function runOpt(){$('out').innerHTML=shim('Optimizing '+$('strat').value);
+  fetch('/api/optimize?'+q()+'&metric='+$('metric').value).then(r=>r.json()).then(d=>{if(d.error){$('out').innerHTML='<p class=neg>'+d.error+'</p>';return}
+  const rows=d.leaderboard.map(r=>{const p=Object.entries(r.params).map(([k,v])=>k+'='+v).join(' ');
+    const oo=r.oos_metric==null?'—':r.oos_metric.toFixed(2),or=r.oos_return==null?'—':(r.oos_return*100).toFixed(0)+'%';
+    return `<tr><td>${p}</td><td>${r.metric.toFixed(2)}</td><td>${(r.return*100).toFixed(0)}%</td><td class=cy>${oo}</td><td>${or}</td><td class=neg>${(r.maxdd*100).toFixed(0)}%</td><td>${r.trades}</td></tr>`}).join('');
+  $('out').innerHTML=`<div class=card style=padding:16px><table><tr><th>params</th><th>IS ${d.metric}</th><th>IS ret</th><th>OOS ${d.metric}</th><th>OOS ret</th><th>DD</th><th>trd</th></tr>${rows}</table>
+   <p class=note>${d.evaluated} combos · train ${d.train_bars} / test ${d.test_bars}. Trust OOS over IS — a big drop = overfit.</p></div>`;}).catch(e=>$('out').innerHTML='<p class=neg>'+e+'</p>');}
+function runPort(){$('portOut').innerHTML=shim('Running the GODMODE portfolio');
+  fetch('/api/portfolio').then(r=>r.json()).then(d=>{const p=d.portfolio;
+  const legs=d.legs.map(x=>`<tr><td>${x.name}</td><td>${x.symbol}</td><td class=cy>${x.pf.toFixed(2)}</td><td class=${cls(x.ret)}>${(x.ret*100).toFixed(0)}%</td><td class=neg>${(x.dd*100).toFixed(0)}%</td><td>${(x.win_rate*100).toFixed(0)}%</td><td>${x.trades}</td></tr>`).join('');
+  $('portOut').innerHTML=mets([
+    ['Portfolio return',{t:'0%',e:p.return,f:'pct'},cls(p.return)],
+    ['Sharpe (combined)',{t:'0',e:p.sharpe,f:'x2'},'cy'],
+    ['Max drawdown',{t:'0%',e:p.max_drawdown,f:'pct'},'neg'],
+    ['Bars',{t:'0',e:p.bars,f:'int'}],
+  ])+chart(d.equity)+`<div class=card style="padding:16px;margin-top:14px"><table><tr><th>leg</th><th>market</th><th>PF</th><th>ret</th><th>DD</th><th>WR</th><th>trd</th></tr>${legs}</table><p class=note>${d.note}</p></div>`;
+  animateMets($('portOut'));}).catch(e=>$('portOut').innerHTML='<p class=neg>'+e+'</p>');}
+function loadSystems(){if($('sysOut').dataset.done)return;
+  fetch('/api/systems').then(r=>r.json()).then(d=>{$('sysOut').dataset.done=1;
+  const tg={installed:'ok',available:'av',cloned:'cl'};
+  $('sysOut').innerHTML=d.map(s=>`<div class=scard><h4>${s.name} <span class="tag ${tg[s.status]||'cl'}">${s.status}</span></h4>
+    <div class=k>${s.kind}</div><p class=note style=margin:6px_0>${s.desc}</p>
+    <div class=how>${s.how}</div></div>`).join('');}).catch(()=>{$('sysOut').innerHTML='<p class=neg>no /api/systems</p>'});}
+function loadCoverage(){if($('covOut').dataset.done)return;$('covOut').dataset.done=1;
+  const ico={crypto:'₿',commodities:'🥇',futures:'📈',indices:'📊',forex:'💱',stocks:'🏛',options:'⛓',prop_firms:'🏆'};
+  $('covOut').innerHTML=Object.entries(COVERAGE).map(([k,v])=>`<div class=ecard><h4>${ico[k]||'•'} ${k.replace('_',' ')}</h4><p>${v}</p></div>`).join('');}
+load();
 </script></body></html>

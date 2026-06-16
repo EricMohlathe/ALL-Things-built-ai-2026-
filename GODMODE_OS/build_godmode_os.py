@@ -92,6 +92,10 @@ MANIFEST = {
       {"name": "AI Tools Launcher", "status": pill(ST["ai_tools_dmg"]), "desc": "DMG + iPhone PWA dashboard of the media toolkit.", "cmd": "~/ai-tools/AI-Tools-Launcher.dmg"},
       {"name": "n8n MCP + CLIs", "status": "ok", "desc": "n8n workflow MCP; specify (spec-kit), higgsfield CLIs.", "cmd": "claude mcp list"},
     ]},
+    {"title": "Assimilated agents (this session)", "accent": "violet" if False else "cyan", "items": [
+      {"name": "hermes · agent-os · zeroclaw", "status": "ok", "desc": "Hermes (wired AI backend), buildermethods Agent-OS (spec framework), zeroclaw (Rust agent). + your AgentOS DMG.", "cmd": "Live Runner → Systems tab"},
+      {"name": "BrowserOS · activepieces", "status": "ok", "desc": "Agentic browser (web actions) + automation engine (signals→Telegram/webhook). Cloned, registered as connectors.", "cmd": "registry/systems.json"},
+    ]},
     {"title": "AI brains & system", "accent": "green", "items": [
       {"name": "9router gateway", "status": pill(ST["9router"]), "desc": "OpenAI-compatible, 455-model catalog, loopback, pm2. Connect a provider to use.", "cmd": "http://127.0.0.1:20128"},
       {"name": "Hermes agent", "status": pill(ST["hermes"]), "desc": "Nous agent via 9router; attaches as an AI backend.", "cmd": "hermes"},

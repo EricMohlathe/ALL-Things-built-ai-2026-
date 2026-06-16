@@ -85,12 +85,20 @@ def api_optimize(q):
     return r
 
 
+def api_systems(q):
+    try:
+        return json.load(open(os.path.join(HUB, "registry", "systems.json")))
+    except Exception:
+        return []
+
+
 def api_portfolio(q):
     from openalice_hub.core import portfolio as pf
     return pf.run()
 
 
 ROUTES = {"/api/strategies": lambda q: api_strategies(),
+          "/api/systems": api_systems,
           "/api/portfolio": lambda q: api_portfolio(q),
           "/api/backtest": api_backtest, "/api/optimize": api_optimize}
 

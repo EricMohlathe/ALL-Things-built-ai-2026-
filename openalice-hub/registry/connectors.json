@@ -98,5 +98,41 @@
     "exec_capable": true,
     "enabled": true,
     "note": "Deriv synthetics WIRED (stdlib websocket, token in gitignored .env). Symbols: VIX75/V75, VIX10-100, BOOM500/1000, CRASH500/1000. Data: hub.py data VIX75 [--interval 1h]. Forge tested 2026-06-10: no edge found with archon archetypes (synthetics = RNG products)."
+  },
+  {
+    "name": "agent-os",
+    "mcp_cmd": "(agent system \u2014 see registry/systems.json)",
+    "transport": "native",
+    "url": "",
+    "exec_capable": false,
+    "enabled": true,
+    "note": "Agent-OS framework \u2014 spec-driven agentic build workflow (~/ai-tools/agents/agent-os)."
+  },
+  {
+    "name": "browseros",
+    "mcp_cmd": "(agent system \u2014 see registry/systems.json)",
+    "transport": "native",
+    "url": "",
+    "exec_capable": false,
+    "enabled": true,
+    "note": "BrowserOS \u2014 agentic browser for web actions/scraping (~/ai-tools/agents/BrowserOS)."
+  },
+  {
+    "name": "activepieces",
+    "mcp_cmd": "(agent system \u2014 see registry/systems.json)",
+    "transport": "native",
+    "url": "",
+    "exec_capable": false,
+    "enabled": true,
+    "note": "Activepieces \u2014 automation engine; pipe GODMODE signals \u2192 Telegram/email/webhook (docker)."
+  },
+  {
+    "name": "zeroclaw",
+    "mcp_cmd": "(agent system \u2014 see registry/systems.json)",
+    "transport": "native",
+    "url": "",
+    "exec_capable": false,
+    "enabled": true,
+    "note": "zeroclaw \u2014 Rust agent runtime (cargo build)."
   }
 ]
