@@ -85,6 +85,36 @@ edge (vs ~1000 cost-losing intraday trades — see `../GODMODE_HIFREQ_EAs/`).
   them independently, risk%-sized per slot. Backtest one symbol at a time in the Strategy Tester
   (both platforms only model the chart symbol in-tester — live runs all slots).
 
+### Default roster — 14 D1 winners (breadth scan: PF≥1.5, ≥30 trades, net+ full AND OOS)
+
+| slot (broker symbol) | setup | PF | WR | trades(10yr) | OOS PF |
+|---|---|---|---|---|---|
+| XAGUSD (silver) | SPRING | 6.18 | 72% | 53 | 10.6 |
+| XAUUSD (gold) | AMD | 9.90 ⚠ | 94% ⚠ | 35 | 99 ⚠ |
+| XAUUSD | STACKBULL | 3.38 | 76% | 58 | 6.5 |
+| XAUUSD | SPRING | 2.29 | 76% | 49 | 2.8 |
+| XAGUSD | AMD | 2.64 | 77% | 30 | 5.0 |
+| XAGUSD | SOS | 1.83 | 57% | 49 | 2.9 |
+| NAS100 (NQ) | SOS | 2.90 | 64% | 59 | 2.3 |
+| US500 (ES) | SOS | 2.87 | 84% | 61 | 1.8 |
+| US30 (YM) | AMD | 2.83 | 79% | 58 | 5.2 |
+| US30 | SPRING | 2.48 | 81% | 58 | 2.0 |
+| US30 | SOS | 2.39 | 58% | 67 | 1.9 |
+| NAS100 | STACKBULL | 1.68 | 51% | 90 | 2.5 |
+| US500 | SPRING | 1.72 | 78% | 50 | 1.2 |
+| NAS100 | SPRING | 1.67 | 78% | 50 | 1.2 |
+
+⚠ **XAUUSD/AMD (PF 9.90, WR 94%)**: only 35 trades over 10yr, OOS shows ~no losers — that is a
+**small sample**. Treat the 94%/9.90 as *flattering, not reliable*. It's in the roster because it
+passed the guards, but size it like any other slot — do NOT bet the account on a 94% win rate.
+
+Aggregate ≈ ~800 trades / 10yr ≈ **~80/year (~0.3/day, ~1–2 per week)** across the 14 slots —
+the honest "more trades" lift, every one from a validated edge.
+
+**Asset-class note:** the edge in this family lives in **metals + indices**. Spot/futures **forex**
+mostly failed the guards (only GBP via gm24 passed) — forex needs a different approach, not these
+setups. Crypto intraday and all <D1 timeframes failed cost-adjusted (see `../GODMODE_HIFREQ_EAs/`).
+
 ## Audit summary (what was checked)
 
 - ✅ **Logic parity** — each EA's entry condition matches its Python detector **1:1**

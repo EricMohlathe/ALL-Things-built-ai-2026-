@@ -82,6 +82,37 @@ def from_csv(path: str) -> list[dict]:
     return out
 
 
+def from_polygon(symbol="X:BTCUSD", interval="15m", limit=5000) -> list[dict]:
+    """Paid intraday vendor (Polygon.io) — unlocks REAL intraday data for
+    stocks/forex/indices/crypto so the deity setups can be validated below D1
+    on metals/indices/forex (which free Yahoo cannot do).
+
+    Set POLYGON_API_KEY in the gitignored .env. Ticker prefixes:
+      stocks 'AAPL' · forex 'C:EURUSD' · crypto 'X:BTCUSD' · indices 'I:NDX'.
+    """
+    key = os.environ.get("POLYGON_API_KEY", "")
+    if not key:
+        # try gitignored .env
+        envp = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), ".env")
+        if os.path.exists(envp):
+            for ln in open(envp):
+                if ln.strip().startswith("POLYGON_API_KEY"):
+                    key = ln.split("=", 1)[1].strip().strip('"').strip("'")
+    if not key:
+        raise ValueError("POLYGON_API_KEY not set (env or .env) — needed for source=polygon")
+    mult, span = {"1m": (1, "minute"), "5m": (5, "minute"), "15m": (15, "minute"),
+                  "1h": (1, "hour"), "4h": (4, "hour"), "1d": (1, "day")}.get(interval, (1, "day"))
+    per_day = {"minute": 1440 // max(mult, 1), "hour": 24 // max(mult, 1), "day": 1}[span]
+    span_days = int(limit / max(per_day, 1)) + 5
+    to = int(time.time()); frm = to - span_days * 86400
+    url = (f"https://api.polygon.io/v2/aggs/ticker/{symbol}/range/{mult}/{span}/"
+           f"{frm*1000}/{to*1000}?adjusted=true&sort=asc&limit=50000&apiKey={key}")
+    data = json.loads(_get(url, timeout=30))
+    out = [{"t": r["t"] // 1000, "o": r["o"], "h": r["h"], "l": r["l"], "c": r["c"], "v": r.get("v", 0)}
+           for r in data.get("results", [])]
+    return out[-limit:] if limit else out
+
+
 # plain-name aliases -> Yahoo tickers (forex, commodities, indices)
 ALIASES = {
     # forex majors/crosses
@@ -149,6 +180,8 @@ def get_ohlcv(symbol: str, source="binance", interval="1d", limit=1000,
         from . import deriv as _dv
         gran = {"1d": 86400, "4h": 14400, "1h": 3600, "15m": 900, "5m": 300, "1m": 60}.get(interval, 86400)
         bars = _dv.get_candles(symbol, granularity=gran, count=limit)
+    elif source == "polygon":
+        bars = from_polygon(symbol, interval, limit)
     elif source == "csv":
         bars = from_csv(symbol)  # symbol = path
     else:

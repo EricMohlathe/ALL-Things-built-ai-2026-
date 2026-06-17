@@ -1,0 +1,107 @@
+{
+ "gm_confluence": {
+  "market": "BTCUSDT",
+  "symbol": "BTCUSDT",
+  "source": "binance",
+  "interval": "1h",
+  "exits": {},
+  "pf": 1.89,
+  "trades": 74,
+  "ret": 4.6,
+  "dd": -9.1,
+  "wr": 47.3
+ },
+ "gm24_poorhl": {
+  "market": "BTCUSDT",
+  "symbol": "BTCUSDT",
+  "source": "binance",
+  "interval": "1d",
+  "exits": {
+   "stop_atr": 2.5,
+   "tp_atr": 0.8
+  },
+  "pf": 1.73,
+  "trades": 81,
+  "ret": 74.2,
+  "dd": -24.4,
+  "wr": 79.0
+ },
+ "gm12_stackbear": {
+  "market": "BTCUSDT",
+  "symbol": "BTCUSDT",
+  "source": "binance",
+  "interval": "1d",
+  "exits": {
+   "stop_atr": 2,
+   "tp_atr": 4,
+   "trail_atr": 3
+  },
+  "pf": 1.5,
+  "trades": 19,
+  "ret": 27.3,
+  "dd": -29.4,
+  "wr": 42.1
+ },
+ "gm17_lpsy": {
+  "market": "BTCUSDT",
+  "symbol": "BTCUSDT",
+  "source": "binance",
+  "interval": "1d",
+  "exits": {
+   "stop_atr": 2,
+   "tp_atr": 4,
+   "trail_atr": 3
+  },
+  "pf": 0.57,
+  "trades": 22,
+  "ret": -33.8,
+  "dd": -40.6,
+  "wr": 36.4
+ },
+ "gm19_obreturn": {
+  "market": "GOLD",
+  "symbol": "GC=F",
+  "source": "yahoo",
+  "interval": "1d",
+  "exits": {
+   "stop_atr": 4,
+   "tp_atr": 1.5
+  },
+  "pf": 1.17,
+  "trades": 61,
+  "ret": -2.8,
+  "dd": -26.2,
+  "wr": 59.0
+ },
+ "deity_trend": {
+  "market": "GOLD",
+  "symbol": "GC=F",
+  "source": "yahoo",
+  "interval": "1d",
+  "exits": {
+   "stop_atr": 1,
+   "tp_atr": 2,
+   "trail_atr": 1.5
+  },
+  "pf": 1.12,
+  "trades": 85,
+  "ret": -9.4,
+  "dd": -20.4,
+  "wr": 45.9
+ },
+ "archon_orb": {
+  "market": "NQ",
+  "symbol": "NQ=F",
+  "source": "yahoo",
+  "interval": "1d",
+  "exits": {
+   "stop_atr": 3,
+   "tp_atr": 6
+  },
+  "pf": 1.38,
+  "trades": 77,
+  "ret": 58.5,
+  "dd": -22.8,
+  "wr": 49.4
+ }
+}

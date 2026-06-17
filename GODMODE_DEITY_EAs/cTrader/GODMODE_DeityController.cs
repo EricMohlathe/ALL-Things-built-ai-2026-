@@ -32,8 +32,10 @@ namespace cAlgo.Robots
     [Robot(TimeZone = TimeZones.UTC, AccessRights = AccessRights.None, AddIndicators = true)]
     public class GODMODE_DeityController : Robot
     {
+        // Default roster = 14 D1 winners validated across metals + indices (PF>=1.5, trd>=30,
+        // net-positive full-period AND out-of-sample). EDIT symbols to your broker's names.
         [Parameter("Roster", Group = "Roster", DefaultValue =
-            "XAGUSD:SPRING:0:0:0;XAUUSD:STACKBULL:3:1:0;XAUUSD:SPRING:3:1:0;NAS100:SOS:2:4:3;US500:SOS:3:1:0;US30:AMD:4:1.5:0;US30:SPRING:4:1.5:0")]
+            "XAGUSD:SPRING:0:0:0;XAUUSD:AMD:3:1:0;XAUUSD:STACKBULL:3:1:0;XAUUSD:SPRING:3:1:0;XAGUSD:AMD:2.5:0.8:0;XAGUSD:SOS:1.5:3:2;NAS100:SOS:2:4:3;US500:SOS:3:1:0;US30:AMD:4:1.5:0;US30:SPRING:4:1.5:0;US30:SOS:0:0:0;NAS100:STACKBULL:3:6:0;US500:SPRING:4:1.5:0;NAS100:SPRING:4:1.5:0")]
         public string RosterStr { get; set; }
 
         [Parameter("Lookback (LB)", Group = "Common", DefaultValue = 20, MinValue = 5)] public int LB { get; set; }

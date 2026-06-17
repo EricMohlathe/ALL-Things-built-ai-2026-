@@ -19,7 +19,9 @@
 #property strict
 #include <Trade/Trade.mqh>
 
-input string RosterStr = "XAGUSD:SPRING:0:0:0;XAUUSD:STACKBULL:3:1:0;XAUUSD:SPRING:3:1:0;NAS100:SOS:2:4:3;US500:SOS:3:1:0;US30:AMD:4:1.5:0;US30:SPRING:4:1.5:0";
+// Default roster = 14 D1 winners validated across metals + indices (PF>=1.5, trd>=30,
+// net-positive full-period AND out-of-sample). EDIT symbols to your broker's names.
+input string RosterStr = "XAGUSD:SPRING:0:0:0;XAUUSD:AMD:3:1:0;XAUUSD:STACKBULL:3:1:0;XAUUSD:SPRING:3:1:0;XAGUSD:AMD:2.5:0.8:0;XAGUSD:SOS:1.5:3:2;NAS100:SOS:2:4:3;US500:SOS:3:1:0;US30:AMD:4:1.5:0;US30:SPRING:4:1.5:0;US30:SOS:0:0:0;NAS100:STACKBULL:3:6:0;US500:SPRING:4:1.5:0;NAS100:SPRING:4:1.5:0";
 input int    LB         = 20;
 input double K          = 1.0;
 input int    Hold       = 10;

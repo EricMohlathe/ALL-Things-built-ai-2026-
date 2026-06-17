@@ -51,6 +51,14 @@ cost-adjusted bar: pass only if **net-positive full-period AND out-of-sample AND
 and below daily frequency; configs that traded daily were net losers. There is no honest
 daily-frequency intraday edge in this universe on validatable (crypto) data.
 
+## Follow-up 2: does H4 / H1 help? (Also no.)
+
+The deity D1 setups (which earn PF 3–9 on Daily) were re-tested on **H4 and H1** crypto with the
+same cost-adjusted bar. **0 of 48 configs passed.** Between the noise of 5m/15m and the edge of D1
+there is no sweet spot — H4/H1 also fail net-positive-after-cost. The edge is a *Daily* edge.
+
 If you still want to experiment intraday, do it on **demo**, on your exact symbol, with your
 broker's real spread modeled — and only keep a config that stays net-**positive** out-of-sample
-*after costs*, not just PF > 1. The tables above are why that bar matters.
+*after costs*, not just PF > 1. The tables above are why that bar matters. To validate intraday on
+metals/indices/forex you need a paid feed — a Polygon.io adapter is wired (`source=polygon`, set
+`POLYGON_API_KEY`); the free Yahoo feed has no usable intraday history for those.
