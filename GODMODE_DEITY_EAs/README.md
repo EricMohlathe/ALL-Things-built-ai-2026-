@@ -71,6 +71,20 @@ attach to a **D1** chart of the mapped symbol, set the preset inputs, enable Aut
 
 ---
 
+## GODMODE_DeityController (one EA, all markets) — the "more trades" answer
+
+`GODMODE_DeityController.{mq5,cs}` runs **all 4 setups across all their markets from one EA**
+— the honest way to raise activity: ~20–30 validated trades/year aggregate, each from a proven
+edge (vs ~1000 cost-losing intraday trades — see `../GODMODE_HIFREQ_EAs/`).
+
+- **Roster input** (editable): `SYMBOL:SETUP:stopATR:tpATR:trailATR`, slots separated by `;`.
+  Default = the validated winners. **Edit the symbols to match your broker** (XAGUSD/XAUUSD/
+  NAS100/US500/US30 shown — yours may differ).
+- Setups: `SPRING`=GM14 · `STACKBULL`=GM11 · `SOS`=GM16 · `AMD`=GM22.
+- Attach to **one D1 chart** of any symbol; it pulls each roster symbol's own D1 bars and trades
+  them independently, risk%-sized per slot. Backtest one symbol at a time in the Strategy Tester
+  (both platforms only model the chart symbol in-tester — live runs all slots).
+
 ## Audit summary (what was checked)
 
 - ✅ **Logic parity** — each EA's entry condition matches its Python detector **1:1**
