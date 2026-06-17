@@ -1,51 +1,40 @@
-# GODMODE HIGH-FREQUENCY EAs — MT5 + cTrader
+# High-Frequency Intraday — FINDINGS (no tradeable EA shipped)
 
-For when you want **trades every day**, not every few weeks. These are intraday EAs.
-Different beast from the D1 deity set (`../GODMODE_DEITY_EAs/`) — read the warning.
+**Verdict: a 4–5 trades/day edge does NOT exist in this strategy family once realistic
+costs are applied. Every high-frequency config tested loses money on adequate data.**
+No EA is shipped here on purpose — shipping a known money-loser would be dishonest.
 
-> **The honest tradeoff.** On these strategies, frequency and edge are *inversely* related.
-> The D1 deity EAs trade ~5×/year at PF 3–9. To trade ~5×/**day** you drop to a 15-minute
-> chart, and the profit factor falls to ~**1.2**. That is a *thin, grinding* edge — real, but
-> fragile. Do not expect deity numbers at day-trading frequency. Nobody honest can give you both.
+## What was tested
 
----
+Goal: find a config doing ~4–5 trades/day that keeps profit factor > 1.3 and survives
+out-of-sample. Scanned the order-flow/liquidity strategy family on BTC/ETH at 5m & 15m,
+hold and ATR-exit swept, on **crypto only** (the one market with free intraday data + real
+order-flow; metals/indices/forex intraday cannot be validated without a paid data vendor).
 
-## GM18_LiqSweep_HiFreq
+## What the data showed (the trap)
 
-Liquidity-sweep reversal, **both directions**: price sweeps the prior swing-low (of closes,
-LB) then closes in the upper half of its range → long; mirror for short.
+Short windows looked great. They were mirages — as the sample grew, the edge evaporated and
+the **net return went deeply negative**, because at 5–7 trades/day **fees + spread compound
+faster than the thin gross edge**:
 
-**Validated** (real backtest, BTC 15m, ~8000 bars / ~83 days, no-lookahead, fees on, OOS = held-out 30%):
+| config | 21–83 days | ~167 days | ~270 days |
+|--------|-----------|-----------|-----------|
+| gm16_sos ETH 5m (h5, stop3/tp1) | PF 1.40 / ret **−19%** | PF 1.20 / ret **−41%** | PF 1.01 / ret **−60%** |
+| gm18_liqsweep BTC 15m (h8, stop4/tp1.5) | PF 1.21 / ret **−50%** | PF 1.16 / ret **−75%** | PF 0.93 / ret **−93%** |
 
-| Config | PF | Win % | Trades/day | OOS PF |
-|--------|----|-------|-----------|--------|
-| BTC 15m · Hold 8 · stopATR 4 · tpATR 1.5 | **1.21** | 65% | **~5.0** | **1.13** |
+Note the tell: **profit factor > 1 while total return is negative.** PF measures gross
+win/loss; the negative return is what's left after costs. At high frequency, costs win.
 
-Defaults in the file = this config. Attach to a **15-minute** chart.
+## The honest conclusion
 
----
+- **High frequency ≠ more money here. It's a cost furnace.** The genuine edge in these
+  strategies lives on the **Daily** timeframe (`../GODMODE_DEITY_EAs/`, PF 3–9, ~5 trades/year).
+- Want *more* activity without faking an edge: **run the 4 D1 deity EAs across all their
+  validated markets at once** (SILVER, GOLD, NQ, ES, YM) → ~20–30 real trades/year aggregate,
+  each from a validated edge — instead of ~1000 break-even-or-worse intraday trades.
+- A true daily-frequency edge would require genuinely different alpha (tick-level order-flow
+  with a paid real-time feed), which cannot be honestly built or validated on free data.
 
-## ⚠️ Read before trading
-
-1. **Thin edge (PF ~1.2) = spread-sensitive.** My backtest models fees but **not your broker's
-   spread**. At ~5 trades/day, a wide spread compounds fast and can push this **below break-even**.
-   Backtest on YOUR symbol *with realistic spread/commission* in the Strategy Tester before going live.
-2. **Validated on crypto only.** BTC is the only market with free intraday data + real order-flow,
-   so it's the only one I could honestly validate. The **logic runs on any symbol** you attach —
-   the best forex pairs, metals (XAUUSD/XAGUSD), indices (NAS100/US30/US500), other crypto — but
-   you **must re-validate per-symbol** in your platform's backtester. The edge is **not guaranteed
-   to transfer** across asset classes. Treat each symbol as its own test.
-3. **It trades both directions** and flips on opposite signals. Risk-sized to RiskPct of equity per
-   trade via the ATR stop. Optional `MaxSpread` filter blocks entries when spread is too wide — use it.
-4. **This is a grinder, not a printer.** ~5/day × thin edge = many small trades, slim aggregate.
-   Position size conservatively (default 1%). Demo first, for weeks, on the exact symbol you'll trade.
-
-## How to validate per-symbol (the only honest way to trust it elsewhere)
-
-1. Attach to a **M15** chart of your target symbol (e.g. `XAUUSD`, `NAS100`, `EURUSD`).
-2. Run the Strategy Tester over 1–2 years with **real spread** modeling.
-3. Keep it only if it shows **PF > 1.2 AND positive on the out-of-sample (last 30%)** with your costs.
-4. Tune `StopATR / TpATR / Hold` per symbol if needed — but always re-check OOS, don't curve-fit.
-
-A deeper crypto hunt (BTC/ETH/SOL × 5m/15m/1h) is part of this build; any config that beats
-gm18 (higher PF at ≥3 trades/day, positive OOS) gets added here as it's found.
+If you still want to experiment intraday, do it on **demo**, on your exact symbol, with your
+broker's real spread modeled — and only keep a config that stays net-**positive** out-of-sample
+*after costs*, not just PF > 1. The table above is why that bar matters.
