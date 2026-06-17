@@ -218,8 +218,9 @@ function loadRoster(){if($('rosOut').dataset.done)return;
   fetch('/api/roster').then(r=>r.json()).then(d=>{$('rosOut').dataset.done=1;
   if(!d.full){$('rosOut').innerHTML='<p class=neg>no /api/roster</p>';return;}
   const presets=[['FULL universe',d.full,'Every validated slot. Needs a broad-instrument broker.','c'],
-    ['GODMODE (balanced)',d.godmode,'Quality-weighted: high avg PF + daily frequency. The deity build.','c'],
-    ['Broker-deployable',d.deploy,'Common FX/CFD/crypto instruments. Default in the EA.','g'],
+    ['GODMODE·DECORR ⭐',d.godmode_decorr,'Controller default. Correlation-filtered ('+(d.godmode_decorr?d.godmode_decorr.clusters:'')+' independent risk clusters, capped per cluster). Diversified, not crowded.','c'],
+    ['GODMODE (balanced)',d.godmode,'All quality slots. Higher frequency but correlated bets stacked.','c'],
+    ['Broker-deployable',d.deploy,'Every common FX/CFD/stock/crypto instrument.','g'],
     ['Best-of (quality)',d.bestof,'Top 40 by robustness (PF × OOS). Highest avg PF.','o']].filter(p=>p[1]);
   const kpi=presets.map(([nm,p,desc,c])=>`<div class=scard><h4>${nm} <span class="tag ${c==='c'?'av':c==='g'?'ok':'cl'}">${p.n} slots</span></h4>
     <div class=metrics style=margin:8px_0>
