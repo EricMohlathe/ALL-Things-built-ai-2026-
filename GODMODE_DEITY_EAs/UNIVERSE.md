@@ -173,3 +173,19 @@ instruments, ~2.58/day) as its default roster. Append the rows below that YOUR b
 | 158 | archon_orb | ETHUSDT | 1.42 | 65 | 122 | 1.22 | {'stop_atr': 3, 'tp_atr': 1} |
 | 159 | gm24_poorhl | ES | 1.42 | 46 | 104 | 1.32 | {'stop_atr': 2, 'trail_atr': 2.5} |
 | 160 | gm14_spring | RB=F | 1.41 | 73 | 55 | 1.31 | {'stop_atr': 2.5, 'tp_atr': 0.8} |
+
+
+## Roster presets (paste into the Universal Controller "Roster" input)
+
+| preset | slots | trades/day | avg PF | use when |
+|--------|-------|-----------|--------|----------|
+| FULL universe | 160 | ~4.33 | — | broad-instrument broker; max frequency (your 3-6/day) |
+| Broker-deployable (EA default) | 93 | ~2.51 | 2.08 | standard FX/CFD/crypto broker |
+| Best-of (quality) | 40 | ~0.99 | 2.56 | fewer, highest-conviction edges |
+
+Live in the cockpit: Live Runner → **Roster** tab (`/api/roster`).
+
+### Best-of-40 roster string
+```
+XAUUSD:AMD:3:1:0;XAGUSD:SPRING:0:0:0;XAUUSD:STACKBULL:3:1:0;US500:RSI2:0:0:0;XRPUSD:STACKBULL:2.5:0.8:0;US30:AMD:4:1.5:0;XAGUSD:AMD:2.5:0.8:0;JP225:AMD:0:0:0;DOGEUSD:STACKBULL:4:1.5:0;JP225:RSI2:0:0:0;NATGAS:SPRING:3:1:0;JP225:SOS:3:1:0;COPPER:STACKBULL:2.5:0.8:0;JP225:SPRING:0:0:0;USOIL:AMD:2.5:0.8:0;JP225:STACKBULL:0:0:0;NAS100:RSI2:0:0:0;EURCHF:UPTHRUST:3:1:0;LTCUSD:AMD:4:1.5:0;CHFJPY:SPRING:0:0:0;NAS100:SOS:2:4:3;XAUUSD:SPRING:3:1:0;DOGEUSD:SOS:0:0:0;XAGUSD:SOS:1.5:3:2;AUDCHF:ORB:4:1.5:0;US500:SOS:3:1:0;USDZAR:TSMOM:2.5:0.8:0;USDZAR:LIQSWEEP:2.5:0.8:0;US30:SPRING:4:1.5:0;WHEAT:TSMOM:1.5:3:2;AUDCHF:UPTHRUST:0:0:0;EURJPY:SPRING:0:0:0;USDSGD:TSMOM:2:4:3;AUDCHF:TSMOM:2.5:0.8:0;XPTUSD:STACKBULL:3:1:0;US30:SOS:0:0:0;EURNZD:TSMOM:1.5:3:2;XPTUSD:UPTHRUST:2.5:0.8:0;NAS100:STACKBULL:3:6:0;USDSEK:TSMOM:2.5:0.8:0
+```

@@ -99,6 +99,7 @@ tbody tr{transition:.15s}tbody tr:hover{background:var(--glass)}
   <nav>
     <a class=on data-v=trade onclick=nav('trade',this)><span class=ic>⚡</span> Trade</a>
     <a data-v=portfolio onclick=nav('portfolio',this)><span class=ic>📊</span> Portfolio</a>
+    <a data-v=roster onclick=nav('roster',this)><span class=ic>🛰</span> Roster</a>
     <a data-v=systems onclick=nav('systems',this)><span class=ic>🧩</span> Systems</a>
     <a data-v=coverage onclick=nav('coverage',this)><span class=ic>🌐</span> Coverage</a>
   </nav>
@@ -133,6 +134,9 @@ tbody tr{transition:.15s}tbody tr:hover{background:var(--glass)}
     <div id=portOut style=margin-top:18px></div>
   </section>
 
+  <!-- ROSTER -->
+  <section class=view id=v-roster><div id=rosOut></div></section>
+
   <!-- SYSTEMS -->
   <section class=view id=v-systems><div id=sysOut class=sys></div></section>
 
@@ -148,9 +152,9 @@ function clock(){const d=new Date();$('clock').textContent=d.toLocaleTimeString(
 setInterval(clock,1000);clock();
 function nav(v,el){document.querySelectorAll('nav a').forEach(a=>a.classList.remove('on'));el.classList.add('on');
   document.querySelectorAll('.view').forEach(s=>s.classList.remove('on'));$('v-'+v).classList.add('on');
-  $('ttl').textContent={trade:'Trade',portfolio:'Portfolio',systems:'Systems',coverage:'Coverage'}[v];
-  $('sub').textContent={trade:'Validated elite strategies · real data · out-of-sample tested',portfolio:'Combine uncorrelated edges — risk-adjusted return beats every leg',systems:'The full GODMODE stack assimilated this session',coverage:'Where each edge is validated — and honestly, where it is not'}[v];
-  if(v==='systems')loadSystems(); if(v==='coverage')loadCoverage();}
+  $('ttl').textContent={trade:'Trade',portfolio:'Portfolio',roster:'Universe Roster',systems:'Systems',coverage:'Coverage'}[v];
+  $('sub').textContent={trade:'Validated elite strategies · real data · out-of-sample tested',portfolio:'Combine uncorrelated edges — risk-adjusted return beats every leg',roster:'Portfolio of validated D1 edges across the market universe — daily frequency from breadth, not over-trading',systems:'The full GODMODE stack assimilated this session',coverage:'Where each edge is validated — and honestly, where it is not'}[v];
+  if(v==='systems')loadSystems(); if(v==='coverage')loadCoverage(); if(v==='roster')loadRoster();}
 function countUp(el,end,fmt){let s=0,st=null;const d=900;function f(t){st=st||t;let p=Math.min((t-st)/d,1);p=1-Math.pow(1-p,3);el.textContent=fmt(end*p);if(p<1)requestAnimationFrame(f)}requestAnimationFrame(f)}
 function chart(eq){if(!eq||eq.length<2)return '';const w=1000,h=240,pad=14,mn=Math.min(...eq),mx=Math.max(...eq),rg=(mx-mn)||1;
   const X=i=>pad+i/(eq.length-1)*(w-2*pad), Y=v=>h-pad-(v-mn)/rg*(h-2*pad);
@@ -210,6 +214,28 @@ function loadSystems(){if($('sysOut').dataset.done)return;
   $('sysOut').innerHTML=d.map(s=>`<div class=scard><h4>${s.name} <span class="tag ${tg[s.status]||'cl'}">${s.status}</span></h4>
     <div class=k>${s.kind}</div><p class=note style=margin:6px_0>${s.desc}</p>
     <div class=how>${s.how}</div></div>`).join('');}).catch(()=>{$('sysOut').innerHTML='<p class=neg>no /api/systems</p>'});}
+function loadRoster(){if($('rosOut').dataset.done)return;
+  fetch('/api/roster').then(r=>r.json()).then(d=>{$('rosOut').dataset.done=1;
+  if(!d.full){$('rosOut').innerHTML='<p class=neg>no /api/roster</p>';return;}
+  const presets=[['FULL universe',d.full,'Every validated slot. Needs a broad-instrument broker.','c'],
+    ['Broker-deployable',d.deploy,'Common FX/CFD/crypto instruments. Default in the EA.','g'],
+    ['Best-of (quality)',d.bestof,'Top 40 by robustness (PF × OOS). Highest avg PF.','o']];
+  const kpi=presets.map(([nm,p,desc,c])=>`<div class=scard><h4>${nm} <span class="tag ${c==='c'?'av':c==='g'?'ok':'cl'}">${p.n} slots</span></h4>
+    <div class=metrics style=margin:8px_0>
+      <div class=met><div class="v pos">${p.tpd}</div><div class=l>trades/day</div></div>
+      <div class=met><div class=v>${p.n}</div><div class=l>markets</div></div>
+      ${p.avg_pf?`<div class=met><div class="v pos">${p.avg_pf}</div><div class=l>avg PF</div></div>`:''}
+    </div><p class=note>${desc}</p></div>`).join('');
+  const rows=(d.bestof.slots||[]).map(s=>`<tr><td><b>${s.sym}</b></td><td>${s.setup}</td><td class=pos>${s.pf}</td><td>${s.wr}%</td><td>${s.trd}</td><td class=pos>${s.oos_pf}</td><td>${s.tpy}/yr</td></tr>`).join('');
+  $('rosOut').innerHTML=`<div class=sys>${kpi}</div>
+    <div class=card style="padding:16px;margin-top:16px">
+      <h4 style=margin:0_0_4px>Best-of-40 roster — paste into the Universal Controller "Roster" input</h4>
+      <p class=note>Each edge trades ~weekly; the portfolio fires several times daily. Every trade OOS-validated. Edit symbols to your broker.</p>
+      <textarea readonly style="width:100%;height:90px;background:#0b0e14;color:#9fb;border:1px solid #1e2636;border-radius:8px;padding:10px;font:11px/1.5 monospace">${d.bestof.roster}</textarea>
+    </div>
+    <div class=card style="padding:16px;margin-top:14px"><h4 style=margin:0_0_8px>Best-of-40 slots (real backtest)</h4>
+      <table><tr><th>market</th><th>setup</th><th>PF</th><th>WR</th><th>trd</th><th>OOS PF</th><th>freq</th></tr>${rows}</table></div>`;
+  }).catch(e=>$('rosOut').innerHTML='<p class=neg>'+e+'</p>');}
 function loadCoverage(){if($('covOut').dataset.done)return;$('covOut').dataset.done=1;
   const ico={crypto:'₿',commodities:'🥇',futures:'📈',indices:'📊',forex:'💱',stocks:'🏛',options:'⛓',prop_firms:'🏆'};
   $('covOut').innerHTML=Object.entries(COVERAGE).map(([k,v])=>`<div class=ecard><h4>${ico[k]||'•'} ${k.replace('_',' ')}</h4><p>${v}</p></div>`).join('');}

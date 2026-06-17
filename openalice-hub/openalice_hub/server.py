@@ -92,6 +92,14 @@ def api_systems(q):
         return []
 
 
+def api_roster(q):
+    """Validated multi-market portfolio roster (3 presets) for the Universal Controller."""
+    try:
+        return json.load(open(os.path.join(HUB, "registry", "roster_meta.json")))
+    except Exception:
+        return {}
+
+
 def api_portfolio(q):
     from openalice_hub.core import portfolio as pf
     return pf.run()
@@ -99,6 +107,7 @@ def api_portfolio(q):
 
 ROUTES = {"/api/strategies": lambda q: api_strategies(),
           "/api/systems": api_systems,
+          "/api/roster": api_roster,
           "/api/portfolio": lambda q: api_portfolio(q),
           "/api/backtest": api_backtest, "/api/optimize": api_optimize}
 

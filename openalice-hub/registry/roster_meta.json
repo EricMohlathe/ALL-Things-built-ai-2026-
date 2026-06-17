@@ -1,0 +1,548 @@
+{
+ "full": {
+  "n": 160,
+  "tpd": 4.33
+ },
+ "deploy": {
+  "n": 93,
+  "tpd": 2.51,
+  "avg_pf": 2.08
+ },
+ "bestof": {
+  "n": 40,
+  "tpd": 0.99,
+  "avg_pf": 2.56,
+  "roster": "XAUUSD:AMD:3:1:0;XAGUSD:SPRING:0:0:0;XAUUSD:STACKBULL:3:1:0;US500:RSI2:0:0:0;XRPUSD:STACKBULL:2.5:0.8:0;US30:AMD:4:1.5:0;XAGUSD:AMD:2.5:0.8:0;JP225:AMD:0:0:0;DOGEUSD:STACKBULL:4:1.5:0;JP225:RSI2:0:0:0;NATGAS:SPRING:3:1:0;JP225:SOS:3:1:0;COPPER:STACKBULL:2.5:0.8:0;JP225:SPRING:0:0:0;USOIL:AMD:2.5:0.8:0;JP225:STACKBULL:0:0:0;NAS100:RSI2:0:0:0;EURCHF:UPTHRUST:3:1:0;LTCUSD:AMD:4:1.5:0;CHFJPY:SPRING:0:0:0;NAS100:SOS:2:4:3;XAUUSD:SPRING:3:1:0;DOGEUSD:SOS:0:0:0;XAGUSD:SOS:1.5:3:2;AUDCHF:ORB:4:1.5:0;US500:SOS:3:1:0;USDZAR:TSMOM:2.5:0.8:0;USDZAR:LIQSWEEP:2.5:0.8:0;US30:SPRING:4:1.5:0;WHEAT:TSMOM:1.5:3:2;AUDCHF:UPTHRUST:0:0:0;EURJPY:SPRING:0:0:0;USDSGD:TSMOM:2:4:3;AUDCHF:TSMOM:2.5:0.8:0;XPTUSD:STACKBULL:3:1:0;US30:SOS:0:0:0;EURNZD:TSMOM:1.5:3:2;XPTUSD:UPTHRUST:2.5:0.8:0;NAS100:STACKBULL:3:6:0;USDSEK:TSMOM:2.5:0.8:0",
+  "slots": [
+   {
+    "mkt": "GOLD",
+    "sym": "XAUUSD",
+    "setup": "AMD",
+    "pf": 9.9,
+    "wr": 94,
+    "trd": 35,
+    "oos_pf": 99.0,
+    "tpy": 3.5,
+    "ex": {
+     "stop_atr": 3,
+     "tp_atr": 1
+    }
+   },
+   {
+    "mkt": "SILVER",
+    "sym": "XAGUSD",
+    "setup": "SPRING",
+    "pf": 6.18,
+    "wr": 72,
+    "trd": 53,
+    "oos_pf": 10.59,
+    "tpy": 5.3,
+    "ex": {}
+   },
+   {
+    "mkt": "GOLD",
+    "sym": "XAUUSD",
+    "setup": "STACKBULL",
+    "pf": 3.38,
+    "wr": 76,
+    "trd": 58,
+    "oos_pf": 6.48,
+    "tpy": 5.8,
+    "ex": {
+     "stop_atr": 3,
+     "tp_atr": 1
+    }
+   },
+   {
+    "mkt": "ES",
+    "sym": "US500",
+    "setup": "RSI2",
+    "pf": 2.14,
+    "wr": 78,
+    "trd": 78,
+    "oos_pf": 9.89,
+    "tpy": 7.8,
+    "ex": {}
+   },
+   {
+    "mkt": "XRPUSDT",
+    "sym": "XRPUSD",
+    "setup": "STACKBULL",
+    "pf": 1.7,
+    "wr": 62,
+    "trd": 53,
+    "oos_pf": 32.22,
+    "tpy": 4.5,
+    "ex": {
+     "stop_atr": 2.5,
+     "tp_atr": 0.8
+    }
+   },
+   {
+    "mkt": "YM",
+    "sym": "US30",
+    "setup": "AMD",
+    "pf": 2.83,
+    "wr": 79,
+    "trd": 58,
+    "oos_pf": 5.2,
+    "tpy": 5.8,
+    "ex": {
+     "stop_atr": 4,
+     "tp_atr": 1.5
+    }
+   },
+   {
+    "mkt": "SILVER",
+    "sym": "XAGUSD",
+    "setup": "AMD",
+    "pf": 2.64,
+    "wr": 77,
+    "trd": 30,
+    "oos_pf": 5.03,
+    "tpy": 3.0,
+    "ex": {
+     "stop_atr": 2.5,
+     "tp_atr": 0.8
+    }
+   },
+   {
+    "mkt": "NKD=F",
+    "sym": "JP225",
+    "setup": "AMD",
+    "pf": 2.23,
+    "wr": 65,
+    "trd": 60,
+    "oos_pf": 5.87,
+    "tpy": 6.0,
+    "ex": {}
+   },
+   {
+    "mkt": "DOGEUSDT",
+    "sym": "DOGEUSD",
+    "setup": "STACKBULL",
+    "pf": 3.17,
+    "wr": 72,
+    "trd": 47,
+    "oos_pf": 3.69,
+    "tpy": 4.7,
+    "ex": {
+     "stop_atr": 4,
+     "tp_atr": 1.5
+    }
+   },
+   {
+    "mkt": "NKD=F",
+    "sym": "JP225",
+    "setup": "RSI2",
+    "pf": 2.08,
+    "wr": 78,
+    "trd": 67,
+    "oos_pf": 5.61,
+    "tpy": 6.7,
+    "ex": {}
+   },
+   {
+    "mkt": "NATGAS",
+    "sym": "NATGAS",
+    "setup": "SPRING",
+    "pf": 3.07,
+    "wr": 78,
+    "trd": 58,
+    "oos_pf": 3.35,
+    "tpy": 5.8,
+    "ex": {
+     "stop_atr": 3,
+     "tp_atr": 1
+    }
+   },
+   {
+    "mkt": "NKD=F",
+    "sym": "JP225",
+    "setup": "SOS",
+    "pf": 3.15,
+    "wr": 72,
+    "trd": 58,
+    "oos_pf": 2.99,
+    "tpy": 5.8,
+    "ex": {
+     "stop_atr": 3,
+     "tp_atr": 1
+    }
+   },
+   {
+    "mkt": "COPPER",
+    "sym": "COPPER",
+    "setup": "STACKBULL",
+    "pf": 2.46,
+    "wr": 77,
+    "trd": 64,
+    "oos_pf": 3.59,
+    "tpy": 6.4,
+    "ex": {
+     "stop_atr": 2.5,
+     "tp_atr": 0.8
+    }
+   },
+   {
+    "mkt": "NKD=F",
+    "sym": "JP225",
+    "setup": "SPRING",
+    "pf": 2.4,
+    "wr": 68,
+    "trd": 57,
+    "oos_pf": 3.59,
+    "tpy": 5.7,
+    "ex": {}
+   },
+   {
+    "mkt": "OIL",
+    "sym": "USOIL",
+    "setup": "AMD",
+    "pf": 2.74,
+    "wr": 81,
+    "trd": 53,
+    "oos_pf": 3.12,
+    "tpy": 5.3,
+    "ex": {
+     "stop_atr": 2.5,
+     "tp_atr": 0.8
+    }
+   },
+   {
+    "mkt": "NKD=F",
+    "sym": "JP225",
+    "setup": "STACKBULL",
+    "pf": 2.04,
+    "wr": 52,
+    "trd": 87,
+    "oos_pf": 4.17,
+    "tpy": 8.7,
+    "ex": {}
+   },
+   {
+    "mkt": "NQ",
+    "sym": "NAS100",
+    "setup": "RSI2",
+    "pf": 2.06,
+    "wr": 72,
+    "trd": 75,
+    "oos_pf": 4.1,
+    "tpy": 7.5,
+    "ex": {}
+   },
+   {
+    "mkt": "EURCHF",
+    "sym": "EURCHF",
+    "setup": "UPTHRUST",
+    "pf": 2.36,
+    "wr": 68,
+    "trd": 56,
+    "oos_pf": 3.26,
+    "tpy": 5.4,
+    "ex": {
+     "stop_atr": 3,
+     "tp_atr": 1
+    }
+   },
+   {
+    "mkt": "LTCUSDT",
+    "sym": "LTCUSD",
+    "setup": "AMD",
+    "pf": 1.8,
+    "wr": 70,
+    "trd": 46,
+    "oos_pf": 4.14,
+    "tpy": 3.7,
+    "ex": {
+     "stop_atr": 4,
+     "tp_atr": 1.5
+    }
+   },
+   {
+    "mkt": "CHFJPY",
+    "sym": "CHFJPY",
+    "setup": "SPRING",
+    "pf": 2.58,
+    "wr": 71,
+    "trd": 58,
+    "oos_pf": 2.85,
+    "tpy": 5.6,
+    "ex": {}
+   },
+   {
+    "mkt": "NQ",
+    "sym": "NAS100",
+    "setup": "SOS",
+    "pf": 2.9,
+    "wr": 64,
+    "trd": 59,
+    "oos_pf": 2.31,
+    "tpy": 5.9,
+    "ex": {
+     "stop_atr": 2,
+     "tp_atr": 4,
+     "trail_atr": 3
+    }
+   },
+   {
+    "mkt": "GOLD",
+    "sym": "XAUUSD",
+    "setup": "SPRING",
+    "pf": 2.29,
+    "wr": 76,
+    "trd": 49,
+    "oos_pf": 2.78,
+    "tpy": 4.9,
+    "ex": {
+     "stop_atr": 3,
+     "tp_atr": 1
+    }
+   },
+   {
+    "mkt": "DOGEUSDT",
+    "sym": "DOGEUSD",
+    "setup": "SOS",
+    "pf": 2.47,
+    "wr": 55,
+    "trd": 51,
+    "oos_pf": 2.27,
+    "tpy": 5.1,
+    "ex": {}
+   },
+   {
+    "mkt": "SILVER",
+    "sym": "XAGUSD",
+    "setup": "SOS",
+    "pf": 1.83,
+    "wr": 57,
+    "trd": 49,
+    "oos_pf": 2.91,
+    "tpy": 4.9,
+    "ex": {
+     "stop_atr": 1.5,
+     "tp_atr": 3,
+     "trail_atr": 2
+    }
+   },
+   {
+    "mkt": "AUDCHF",
+    "sym": "AUDCHF",
+    "setup": "ORB",
+    "pf": 2.33,
+    "wr": 67,
+    "trd": 85,
+    "oos_pf": 2.27,
+    "tpy": 8.2,
+    "ex": {
+     "stop_atr": 4,
+     "tp_atr": 1.5
+    }
+   },
+   {
+    "mkt": "ES",
+    "sym": "US500",
+    "setup": "SOS",
+    "pf": 2.87,
+    "wr": 84,
+    "trd": 61,
+    "oos_pf": 1.81,
+    "tpy": 6.1,
+    "ex": {
+     "stop_atr": 3,
+     "tp_atr": 1
+    }
+   },
+   {
+    "mkt": "USDZAR",
+    "sym": "USDZAR",
+    "setup": "TSMOM",
+    "pf": 1.5,
+    "wr": 69,
+    "trd": 95,
+    "oos_pf": 3.44,
+    "tpy": 9.2,
+    "ex": {
+     "stop_atr": 2.5,
+     "tp_atr": 0.8
+    }
+   },
+   {
+    "mkt": "USDZAR",
+    "sym": "USDZAR",
+    "setup": "LIQSWEEP",
+    "pf": 1.88,
+    "wr": 65,
+    "trd": 104,
+    "oos_pf": 2.73,
+    "tpy": 10.1,
+    "ex": {
+     "stop_atr": 2.5,
+     "tp_atr": 0.8
+    }
+   },
+   {
+    "mkt": "YM",
+    "sym": "US30",
+    "setup": "SPRING",
+    "pf": 2.48,
+    "wr": 81,
+    "trd": 58,
+    "oos_pf": 2.01,
+    "tpy": 5.8,
+    "ex": {
+     "stop_atr": 4,
+     "tp_atr": 1.5
+    }
+   },
+   {
+    "mkt": "WHEAT",
+    "sym": "WHEAT",
+    "setup": "TSMOM",
+    "pf": 1.88,
+    "wr": 49,
+    "trd": 99,
+    "oos_pf": 2.62,
+    "tpy": 9.9,
+    "ex": {
+     "stop_atr": 1.5,
+     "tp_atr": 3,
+     "trail_atr": 2
+    }
+   },
+   {
+    "mkt": "AUDCHF",
+    "sym": "AUDCHF",
+    "setup": "UPTHRUST",
+    "pf": 1.66,
+    "wr": 64,
+    "trd": 61,
+    "oos_pf": 2.87,
+    "tpy": 5.9,
+    "ex": {}
+   },
+   {
+    "mkt": "EURJPY",
+    "sym": "EURJPY",
+    "setup": "SPRING",
+    "pf": 2.55,
+    "wr": 75,
+    "trd": 59,
+    "oos_pf": 1.87,
+    "tpy": 5.7,
+    "ex": {}
+   },
+   {
+    "mkt": "USDSGD",
+    "sym": "USDSGD",
+    "setup": "TSMOM",
+    "pf": 1.71,
+    "wr": 43,
+    "trd": 77,
+    "oos_pf": 2.74,
+    "tpy": 7.5,
+    "ex": {
+     "stop_atr": 2,
+     "tp_atr": 4,
+     "trail_atr": 3
+    }
+   },
+   {
+    "mkt": "AUDCHF",
+    "sym": "AUDCHF",
+    "setup": "TSMOM",
+    "pf": 1.82,
+    "wr": 67,
+    "trd": 87,
+    "oos_pf": 2.55,
+    "tpy": 8.4,
+    "ex": {
+     "stop_atr": 2.5,
+     "tp_atr": 0.8
+    }
+   },
+   {
+    "mkt": "PLATINUM",
+    "sym": "XPTUSD",
+    "setup": "STACKBULL",
+    "pf": 2.04,
+    "wr": 63,
+    "trd": 38,
+    "oos_pf": 2.26,
+    "tpy": 3.8,
+    "ex": {
+     "stop_atr": 3,
+     "tp_atr": 1
+    }
+   },
+   {
+    "mkt": "YM",
+    "sym": "US30",
+    "setup": "SOS",
+    "pf": 2.39,
+    "wr": 58,
+    "trd": 67,
+    "oos_pf": 1.85,
+    "tpy": 6.7,
+    "ex": {}
+   },
+   {
+    "mkt": "EURNZD",
+    "sym": "EURNZD",
+    "setup": "TSMOM",
+    "pf": 1.65,
+    "wr": 50,
+    "trd": 86,
+    "oos_pf": 2.67,
+    "tpy": 8.3,
+    "ex": {
+     "stop_atr": 1.5,
+     "tp_atr": 3,
+     "trail_atr": 2
+    }
+   },
+   {
+    "mkt": "PLATINUM",
+    "sym": "XPTUSD",
+    "setup": "UPTHRUST",
+    "pf": 1.89,
+    "wr": 69,
+    "trd": 29,
+    "oos_pf": 2.28,
+    "tpy": 2.9,
+    "ex": {
+     "stop_atr": 2.5,
+     "tp_atr": 0.8
+    }
+   },
+   {
+    "mkt": "NQ",
+    "sym": "NAS100",
+    "setup": "STACKBULL",
+    "pf": 1.68,
+    "wr": 51,
+    "trd": 90,
+    "oos_pf": 2.5,
+    "tpy": 9.0,
+    "ex": {
+     "stop_atr": 3,
+     "tp_atr": 6
+    }
+   },
+   {
+    "mkt": "USDSEK",
+    "sym": "USDSEK",
+    "setup": "TSMOM",
+    "pf": 1.86,
+    "wr": 68,
+    "trd": 80,
+    "oos_pf": 2.23,
+    "tpy": 7.8,
+    "ex": {
+     "stop_atr": 2.5,
+     "tp_atr": 0.8
+    }
+   }
+  ]
+ }
+}
