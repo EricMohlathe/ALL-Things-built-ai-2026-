@@ -35,6 +35,22 @@ win/loss; the negative return is what's left after costs. At high frequency, cos
 - A true daily-frequency edge would require genuinely different alpha (tick-level order-flow
   with a paid real-time feed), which cannot be honestly built or validated on free data.
 
+## Follow-up: did a DIFFERENT strategy family help? (No.)
+
+Tested conceptually different families intraday on BTC/ETH (15m + 1h, large samples), with the
+cost-adjusted bar: pass only if **net-positive full-period AND out-of-sample AND ≥1 trade/day**.
+
+| family | strategies | result |
+|--------|-----------|--------|
+| Mean reversion | rsi2, archon_vwaprev | net −37% to −42% (fail) |
+| Momentum | archon_tsmom | +23% full but OOS ~0 (breakeven), 0.6/day (fail) |
+| Trend | sma_cross, donchian | net −3% to −56% (fail) |
+| Volatility breakout | archon_orb, deity_vol, archon_spike | best OOS +15% but negative full-period & <1/day (fail) |
+
+**0 of 13 strategies × 4 families passed.** Configs with positive OOS were negative full-period
+and below daily frequency; configs that traded daily were net losers. There is no honest
+daily-frequency intraday edge in this universe on validatable (crypto) data.
+
 If you still want to experiment intraday, do it on **demo**, on your exact symbol, with your
 broker's real spread modeled — and only keep a config that stays net-**positive** out-of-sample
-*after costs*, not just PF > 1. The table above is why that bar matters.
+*after costs*, not just PF > 1. The tables above are why that bar matters.
