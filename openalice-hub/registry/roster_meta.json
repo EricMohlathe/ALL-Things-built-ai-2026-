@@ -1,18 +1,19 @@
 {
  "full": {
-  "n": 160,
-  "tpd": 4.33
+  "n": 303,
+  "tpd": 7.94
  },
  "deploy": {
-  "n": 93,
-  "tpd": 2.51,
-  "avg_pf": 2.08
+  "n": 233,
+  "tpd": 6.07,
+  "avg_pf": 2.03,
+  "roster": "XAUUSD:AMD:3:1:0;INTC:SPRING:3:1:0;XAGUSD:SPRING:0:0:0;CA60:STACKBULL:3:1:0;APTUSD:UPTHRUST:4:1.5:0;V:RSI2:0:0:0;DIS:TSMOM:3:6:0;CA60:AMD:2.5:0.8:0;MSFT:RSI2:3:1:0;WMT:SPRING:2.5:0.8:0;XAUUSD:STACKBULL:3:1:0;RUNEUSD:STACKBULL:3:1:0;AAVEUSD:RSI2:0:0:0;DOGEUSD:STACKBULL:4:1.5:0;JP225:SOS:3:1:0;JPM:STACKBULL:3:1:0;NATGAS:SPRING:3:1:0;NVDA:RSI2:0:0:0;NAS100:SOS:2:4:3;US500:SOS:3:1:0;JP225:AMD:0:0:0;US30:AMD:4:1.5:0;USOIL:AMD:2.5:0.8:0;CA60:RSI2:3:6:0;XPTUSD:LIQSWEEP:2.5:0.8:0;NVDA:SOS:4:1.5:0;FTMUSD:RSI2:3:6:0;XAGUSD:AMD:2.5:0.8:0;TSLA:SOS:0:0:0;V:SPRING:4:1.5:0;CHFJPY:SPRING:0:0:0;AUS200:AMD:2:0:2.5;EURJPY:SPRING:0:0:0;AAPL:TSMOM:3:1:0;US30:SPRING:4:1.5:0;SOLUSD:SOS:2:0:2.5;V:AMD:2.5:0.8:0;DOGEUSD:SOS:0:0:0;MCD:TSMOM:3:6:0;COPPER:STACKBULL:2.5:0.8:0;ESP35:SPRING:4:1.5:0;JP225:SPRING:0:0:0;US30:SOS:0:0:0;INTC:AMD:3:1:0;AAPL:SOS:0:0:0;USDZAR:SPRING:0:0:0;EURCHF:UPTHRUST:3:1:0;BA:TSMOM:3:6:0;AUDCHF:ORB:4:1.5:0;AXSUSD:SOS:0:0:0;CAT:STACKBULL:1.5:3:2;JPM:LIQSWEEP:3:6:0;COST:AMD:3:1:0;XAUUSD:SPRING:3:1:0;NEARUSD:SOS:1:2:1.5;AUS200:STACKBULL:3:1:0;NVDA:AMD:0:0:0;AMD:AMD:3:1:0;CADCHF:UPTHRUST:4:1.5:0;CAT:SPRING:0:0:0;COST:SOS:1:2:1.5;US500:RSI2:0:0:0;AAPL:SPRING:3:1:0;JPM:SOS:1:2:1.5;ATOMUSD:SOS:3:1:0;CSCO:SOS:0:0:0;JP225:RSI2:0:0:0;FTMUSD:SOS:3:6:0;V:TSMOM:2.5:0.8:0;NAS100:RSI2:0:0:0;GS:SPRING:4:1.5:0;JPM:AMD:1.5:3:2;NFLX:AMD:0:0:0;XPTUSD:STACKBULL:3:1:0;JP225:STACKBULL:0:0:0;NATGAS:RSI2:3:1:0;META:SOS:4:1.5:0;GOOGL:SOS:3:6:0;NEARUSD:ORB:3:1:0;PFE:POORHL:3:6:0;GOOGL:RSI2:0:0:0;CSCO:SPRING:1:2:1.5;NZDJPY:SPRING:1.5:3:2;GBPJPY:SPRING:0:0:0;AMZN:SPRING:3:1:0;DE40:SPRING:0:0:0;GBPCHF:UPTHRUST:0:0:0;JPM:SPRING:2.5:0.8:0;HD:STACKBULL:2.5:0.8:0;BNBUSD:SOS:0:0:0;ESP35:SOS:1.5:3:2;DOGEUSD:ORB:0:0:0;GS:RSI2:4:1.5:0;XPTUSD:UPTHRUST:2.5:0.8:0;ETHUSD:STACKBULL:2:4:3;WHEAT:TSMOM:1.5:3:2;USDZAR:LIQSWEEP:2.5:0.8:0;BA:AMD:1.5:3:2;US30:RSI2:0:0:0;AAVEUSD:LIQSWEEP:2.5:0.8:0;AMD:RSI2:0:0:0;GS:AMD:4:1.5:0;USDSEK:TSMOM:2.5:0.8:0;UKOIL:SOS:2:4:3;ETHUSD:SOS:1.5:3:2;SUI20:TSMOM:3:6:0;DIS:SOS:2:0:2.5;BA:SOS:3:6:0;NAS100:TSMOM:0:0:0;XAGUSD:SOS:1.5:3:2;AUDCHF:TSMOM:2.5:0.8:0;NAS100:POORHL:3:6:0;CVX:AMD:3:6:0;GBPNZD:SPRING:1.5:3:2;AAPL:AMD:2.5:0.8:0;CAT:ORB:4:1.5:0;FILUSD:SOS:2.5:0.8:0;CVX:SPRING:2.5:0.8:0;LTCUSD:AMD:4:1.5:0;LINKUSD:STACKBULL:0:0:0;AUS200:SPRING:2:0:2.5;DE40:AMD:3:1:0;OPUSD:TSMOM:2:0:2.5;XRPUSD:SOS:0:0:0;WMT:LIQSWEEP:3:6:0;XOM:STACKBULL:1.5:3:2;DE40:RSI2:3:1:0;FILUSD:TSMOM:2:0:2.5;GRTUSD:UPTHRUST:2.5:0.8:0;AAPL:STACKBULL:0:0:0;USOIL:TSMOM:2:0:2.5;US500:SPRING:4:1.5:0;BA:SPRING:4:1.5:0;INJUSD:RSI2:2:4:3;DE40:TSMOM:3:1:0;USDSGD:TSMOM:2:4:3;XRPUSD:STACKBULL:2.5:0.8:0;TSLA:RSI2:0:0:0;CHFJPY:TSMOM:2.5:0.8:0;ORCL:STACKBULL:0:0:0;SUI20:SPRING:0:0:0;WMT:STACKBULL:0:0:0;NAS100:STACKBULL:3:6:0;AMZN:STACKBULL:3:1:0;COST:POORHL:2:4:3;JPM:RSI2:3:6:0;MCD:AMD:1:2:1.5;SOYBEAN:SOS:0:0:0;NAS100:SPRING:4:1.5:0;HK50:LIQSWEEP:2:0:2.5;SUGAR:SOS:1.5:3:2;AUDCHF:UPTHRUST:0:0:0;EURNZD:TSMOM:1.5:3:2;EURGBP:SPRING:0:0:0;WMT:RSI2:0:0:0;AMD:SPRING:0:0:0;ESP35:POORHL:3:6:0;ESP35:AMD:4:1.5:0;FILUSD:UPTHRUST:4:1.5:0;JP225:ORB:3:1:0;BTCUSD:SOS:1:2:1.5;KO:LIQSWEEP:2:4:3;HD:AMD:4:1.5:0;CAT:SOS:4:1.5:0;COST:SPRING:3:6:0;NVDA:STACKBULL:0:0:0;US2000:AMD:1:2:1.5;FRA40:AMD:4:1.5:0;CHFJPY:ORB:3:1:0;DE40:SOS:0:0:0;AMD:SOS:2:0:2.5;MCD:SOS:0:0:0;TSLA:POORHL:3:6:0;OPUSD:SPRING:2.5:0.8:0;ORCL:AMD:4:1.5:0;ADAUSD:RSI2:4:1.5:0;EURJPY:ORB:1:2:1.5;BTCUSD:ORB:2.5:0.8:0;KO:SPRING:1.5:3:2;XAUUSD:POORHL:2:0:2.5;GOOGL:SPRING:3:1:0;GS:STACKBULL:1:2:1.5;CRM:AMD:0:0:0;AMD:STACKBULL:2:0:2.5;SOLUSD:ORB:0:0:0;WMT:SOS:0:0:0;ATOMUSD:RSI2:0:0:0;CORN:ORB:2.5:0.8:0;NZDUSD:UPTHRUST:2.5:0.8:0;CSCO:STACKBULL:3:1:0;US500:ORB:2:4:3;EURJPY:TSMOM:3:6:0;COPPER:SOS:2:4:3;USDZAR:TSMOM:2.5:0.8:0;CSCO:ORB:2.5:0.8:0;UK100:SPRING:3:1:0;USOIL:SOS:2:0:2.5;EURNZD:LIQSWEEP:2:4:3;AAVEUSD:SPRING:3:1:0;COTTON:TSMOM:1:2:1.5;FILUSD:STACKBULL:3:1:0;DOTUSD:ORB:2.5:0.8:0;CAT:RSI2:2.5:0.8:0;META:AMD:2.5:0.8:0;DOTUSD:UPTHRUST:1:2:1.5;DE40:STACKBULL:0:0:0;US30:POORHL:2:4:3;AUDUSD:LIQSWEEP:3:1:0;ALGOUSD:UPTHRUST:1:2:1.5;AAPL:RSI2:0:0:0;HK50:RSI2:1:2:1.5;BNBUSD:ORB:0:0:0;ESP35:LIQSWEEP:0:0:0;US2000:RSI2:1.5:3:2;CSCO:AMD:3:6:0;AVAXUSD:ORB:0:0:0;ESP35:TSMOM:2.5:0.8:0;NKE:AMD:1:2:1.5;META:ORB:1:2:1.5;XAUUSD:SOS:2:4:3;SANDUSD:ORB:1:2:1.5;AVAXUSD:POORHL:1.5:3:2;US30:STACKBULL:3:6:0;ETHUSD:ORB:3:1:0;US500:POORHL:2:0:2.5;UK100:LIQSWEEP:0:0:0;AMD:LIQSWEEP:2.5:0.8:0;GRTUSD:TSMOM:0:0:0;ICPUSD:STACKBULL:4:1.5:0;EU50:STACKBULL:1.5:3:2;AXSUSD:TSMOM:1.5:3:2;NKE:TSMOM:3:6:0;HD:ORB:4:1.5:0"
  },
- "bestof": {
-  "n": 40,
-  "tpd": 0.99,
-  "avg_pf": 2.56,
-  "roster": "XAUUSD:AMD:3:1:0;XAGUSD:SPRING:0:0:0;XAUUSD:STACKBULL:3:1:0;US500:RSI2:0:0:0;XRPUSD:STACKBULL:2.5:0.8:0;US30:AMD:4:1.5:0;XAGUSD:AMD:2.5:0.8:0;JP225:AMD:0:0:0;DOGEUSD:STACKBULL:4:1.5:0;JP225:RSI2:0:0:0;NATGAS:SPRING:3:1:0;JP225:SOS:3:1:0;COPPER:STACKBULL:2.5:0.8:0;JP225:SPRING:0:0:0;USOIL:AMD:2.5:0.8:0;JP225:STACKBULL:0:0:0;NAS100:RSI2:0:0:0;EURCHF:UPTHRUST:3:1:0;LTCUSD:AMD:4:1.5:0;CHFJPY:SPRING:0:0:0;NAS100:SOS:2:4:3;XAUUSD:SPRING:3:1:0;DOGEUSD:SOS:0:0:0;XAGUSD:SOS:1.5:3:2;AUDCHF:ORB:4:1.5:0;US500:SOS:3:1:0;USDZAR:TSMOM:2.5:0.8:0;USDZAR:LIQSWEEP:2.5:0.8:0;US30:SPRING:4:1.5:0;WHEAT:TSMOM:1.5:3:2;AUDCHF:UPTHRUST:0:0:0;EURJPY:SPRING:0:0:0;USDSGD:TSMOM:2:4:3;AUDCHF:TSMOM:2.5:0.8:0;XPTUSD:STACKBULL:3:1:0;US30:SOS:0:0:0;EURNZD:TSMOM:1.5:3:2;XPTUSD:UPTHRUST:2.5:0.8:0;NAS100:STACKBULL:3:6:0;USDSEK:TSMOM:2.5:0.8:0",
+ "godmode": {
+  "n": 168,
+  "tpd": 4.01,
+  "avg_pf": 2.24,
+  "roster": "XAUUSD:AMD:3:1:0;INTC:SPRING:3:1:0;XAGUSD:SPRING:0:0:0;CA60:STACKBULL:3:1:0;APTUSD:UPTHRUST:4:1.5:0;V:RSI2:0:0:0;DIS:TSMOM:3:6:0;CA60:AMD:2.5:0.8:0;MSFT:RSI2:3:1:0;WMT:SPRING:2.5:0.8:0;XAUUSD:STACKBULL:3:1:0;RUNEUSD:STACKBULL:3:1:0;AAVEUSD:RSI2:0:0:0;DOGEUSD:STACKBULL:4:1.5:0;JP225:SOS:3:1:0;JPM:STACKBULL:3:1:0;NATGAS:SPRING:3:1:0;NVDA:RSI2:0:0:0;NAS100:SOS:2:4:3;US500:SOS:3:1:0;JP225:AMD:0:0:0;US30:AMD:4:1.5:0;USOIL:AMD:2.5:0.8:0;CA60:RSI2:3:6:0;XPTUSD:LIQSWEEP:2.5:0.8:0;NVDA:SOS:4:1.5:0;FTMUSD:RSI2:3:6:0;XAGUSD:AMD:2.5:0.8:0;TSLA:SOS:0:0:0;V:SPRING:4:1.5:0;CHFJPY:SPRING:0:0:0;AUS200:AMD:2:0:2.5;EURJPY:SPRING:0:0:0;AAPL:TSMOM:3:1:0;US30:SPRING:4:1.5:0;SOLUSD:SOS:2:0:2.5;V:AMD:2.5:0.8:0;DOGEUSD:SOS:0:0:0;MCD:TSMOM:3:6:0;COPPER:STACKBULL:2.5:0.8:0;ESP35:SPRING:4:1.5:0;JP225:SPRING:0:0:0;US30:SOS:0:0:0;INTC:AMD:3:1:0;AAPL:SOS:0:0:0;USDZAR:SPRING:0:0:0;EURCHF:UPTHRUST:3:1:0;BA:TSMOM:3:6:0;AUDCHF:ORB:4:1.5:0;AXSUSD:SOS:0:0:0;CAT:STACKBULL:1.5:3:2;JPM:LIQSWEEP:3:6:0;COST:AMD:3:1:0;XAUUSD:SPRING:3:1:0;NEARUSD:SOS:1:2:1.5;AUS200:STACKBULL:3:1:0;NVDA:AMD:0:0:0;AMD:AMD:3:1:0;CADCHF:UPTHRUST:4:1.5:0;CAT:SPRING:0:0:0;COST:SOS:1:2:1.5;US500:RSI2:0:0:0;AAPL:SPRING:3:1:0;JPM:SOS:1:2:1.5;ATOMUSD:SOS:3:1:0;CSCO:SOS:0:0:0;JP225:RSI2:0:0:0;FTMUSD:SOS:3:6:0;V:TSMOM:2.5:0.8:0;NAS100:RSI2:0:0:0;GS:SPRING:4:1.5:0;JPM:AMD:1.5:3:2;NFLX:AMD:0:0:0;XPTUSD:STACKBULL:3:1:0;JP225:STACKBULL:0:0:0;NATGAS:RSI2:3:1:0;META:SOS:4:1.5:0;GOOGL:SOS:3:6:0;NEARUSD:ORB:3:1:0;AAVEUSD:LIQSWEEP:2.5:0.8:0;COST:POORHL:2:4:3;USDZAR:LIQSWEEP:2.5:0.8:0;WHEAT:TSMOM:1.5:3:2;DOGEUSD:ORB:0:0:0;NAS100:TSMOM:0:0:0;JP225:ORB:3:1:0;DE40:TSMOM:3:1:0;AMZN:STACKBULL:3:1:0;NAS100:STACKBULL:3:6:0;CAT:ORB:4:1.5:0;WMT:STACKBULL:0:0:0;HK50:LIQSWEEP:2:0:2.5;ORCL:STACKBULL:0:0:0;KO:LIQSWEEP:2:4:3;AUDCHF:TSMOM:2.5:0.8:0;EURNZD:TSMOM:1.5:3:2;XOM:STACKBULL:1.5:3:2;NVDA:STACKBULL:0:0:0;US30:RSI2:0:0:0;WMT:RSI2:0:0:0;GOOGL:RSI2:0:0:0;HD:STACKBULL:2.5:0.8:0;WMT:LIQSWEEP:3:6:0;AAPL:STACKBULL:0:0:0;USDSEK:TSMOM:2.5:0.8:0;CHFJPY:TSMOM:2.5:0.8:0;JPM:RSI2:3:6:0;USDSGD:TSMOM:2:4:3;AMD:RSI2:0:0:0;OPUSD:TSMOM:2:0:2.5;USOIL:TSMOM:2:0:2.5;FILUSD:TSMOM:2:0:2.5;DE40:RSI2:3:1:0;CVX:SPRING:2.5:0.8:0;CAT:SOS:4:1.5:0;DE40:SPRING:0:0:0;GS:RSI2:4:1.5:0;ETHUSD:STACKBULL:2:4:3;NZDJPY:SPRING:1.5:3:2;AUDCHF:UPTHRUST:0:0:0;SUI20:SPRING:0:0:0;BA:SPRING:4:1.5:0;GBPCHF:UPTHRUST:0:0:0;TSLA:RSI2:0:0:0;US2000:AMD:1:2:1.5;NAS100:POORHL:3:6:0;BTCUSD:SOS:1:2:1.5;GBPNZD:SPRING:1.5:3:2;CSCO:SPRING:1:2:1.5;AUS200:SPRING:2:0:2.5;BNBUSD:SOS:0:0:0;EURGBP:SPRING:0:0:0;SUGAR:SOS:1.5:3:2;GRTUSD:UPTHRUST:2.5:0.8:0;GBPJPY:SPRING:0:0:0;JPM:SPRING:2.5:0.8:0;ETHUSD:SOS:1.5:3:2;AMD:SPRING:0:0:0;FILUSD:UPTHRUST:4:1.5:0;BA:AMD:1.5:3:2;MCD:AMD:1:2:1.5;US500:SPRING:4:1.5:0;NAS100:SPRING:4:1.5:0;XAGUSD:SOS:1.5:3:2;DIS:SOS:2:0:2.5;CVX:AMD:3:6:0;UKOIL:SOS:2:4:3;ESP35:POORHL:3:6:0;SOYBEAN:SOS:0:0:0;HD:AMD:4:1.5:0;COST:SPRING:3:6:0;GS:AMD:4:1.5:0;BA:SOS:3:6:0;ESP35:SOS:1.5:3:2;XRPUSD:SOS:0:0:0;XRPUSD:STACKBULL:2.5:0.8:0;SUI20:TSMOM:3:6:0;AMZN:SPRING:3:1:0;ESP35:AMD:4:1.5:0;FRA40:AMD:4:1.5:0;PFE:POORHL:3:6:0;DE40:AMD:3:1:0;AAPL:AMD:2.5:0.8:0;INJUSD:RSI2:2:4:3;LTCUSD:AMD:4:1.5:0;FILUSD:SOS:2.5:0.8:0;XPTUSD:UPTHRUST:2.5:0.8:0;LINKUSD:STACKBULL:0:0:0",
   "slots": [
    {
     "mkt": "GOLD",
@@ -22,11 +23,17 @@
     "wr": 94,
     "trd": 35,
     "oos_pf": 99.0,
-    "tpy": 3.5,
-    "ex": {
-     "stop_atr": 3,
-     "tp_atr": 1
-    }
+    "tpy": 3.5
+   },
+   {
+    "mkt": "INTC",
+    "sym": "INTC",
+    "setup": "SPRING",
+    "pf": 6.63,
+    "wr": 80,
+    "trd": 65,
+    "oos_pf": 29.58,
+    "tpy": 6.5
    },
    {
     "mkt": "SILVER",
@@ -36,8 +43,77 @@
     "wr": 72,
     "trd": 53,
     "oos_pf": 10.59,
-    "tpy": 5.3,
-    "ex": {}
+    "tpy": 5.3
+   },
+   {
+    "mkt": "^GSPTSE",
+    "sym": "CA60",
+    "setup": "STACKBULL",
+    "pf": 4.69,
+    "wr": 80,
+    "trd": 80,
+    "oos_pf": 3.41,
+    "tpy": 8.0
+   },
+   {
+    "mkt": "APTUSDT",
+    "sym": "APTUSD",
+    "setup": "UPTHRUST",
+    "pf": 4.24,
+    "wr": 80,
+    "trd": 30,
+    "oos_pf": 61.33,
+    "tpy": 5.7
+   },
+   {
+    "mkt": "V",
+    "sym": "V",
+    "setup": "RSI2",
+    "pf": 3.83,
+    "wr": 74,
+    "trd": 70,
+    "oos_pf": 4.42,
+    "tpy": 7.0
+   },
+   {
+    "mkt": "DIS",
+    "sym": "DIS",
+    "setup": "TSMOM",
+    "pf": 3.69,
+    "wr": 58,
+    "trd": 38,
+    "oos_pf": 2.47,
+    "tpy": 3.8
+   },
+   {
+    "mkt": "^GSPTSE",
+    "sym": "CA60",
+    "setup": "AMD",
+    "pf": 3.5,
+    "wr": 75,
+    "trd": 44,
+    "oos_pf": 3.9,
+    "tpy": 4.4
+   },
+   {
+    "mkt": "MSFT",
+    "sym": "MSFT",
+    "setup": "RSI2",
+    "pf": 3.38,
+    "wr": 73,
+    "trd": 67,
+    "oos_pf": 1.59,
+    "tpy": 6.7
+   },
+   {
+    "mkt": "WMT",
+    "sym": "WMT",
+    "setup": "SPRING",
+    "pf": 3.38,
+    "wr": 85,
+    "trd": 60,
+    "oos_pf": 7.1,
+    "tpy": 6.0
    },
    {
     "mkt": "GOLD",
@@ -47,75 +123,27 @@
     "wr": 76,
     "trd": 58,
     "oos_pf": 6.48,
-    "tpy": 5.8,
-    "ex": {
-     "stop_atr": 3,
-     "tp_atr": 1
-    }
+    "tpy": 5.8
    },
    {
-    "mkt": "ES",
-    "sym": "US500",
-    "setup": "RSI2",
-    "pf": 2.14,
-    "wr": 78,
-    "trd": 78,
-    "oos_pf": 9.89,
-    "tpy": 7.8,
-    "ex": {}
-   },
-   {
-    "mkt": "XRPUSDT",
-    "sym": "XRPUSD",
+    "mkt": "RUNEUSDT",
+    "sym": "RUNEUSD",
     "setup": "STACKBULL",
-    "pf": 1.7,
-    "wr": 62,
-    "trd": 53,
-    "oos_pf": 32.22,
-    "tpy": 4.5,
-    "ex": {
-     "stop_atr": 2.5,
-     "tp_atr": 0.8
-    }
-   },
-   {
-    "mkt": "YM",
-    "sym": "US30",
-    "setup": "AMD",
-    "pf": 2.83,
+    "pf": 3.29,
     "wr": 79,
-    "trd": 58,
-    "oos_pf": 5.2,
-    "tpy": 5.8,
-    "ex": {
-     "stop_atr": 4,
-     "tp_atr": 1.5
-    }
+    "trd": 39,
+    "oos_pf": 2.71,
+    "tpy": 4.7
    },
    {
-    "mkt": "SILVER",
-    "sym": "XAGUSD",
-    "setup": "AMD",
-    "pf": 2.64,
-    "wr": 77,
-    "trd": 30,
-    "oos_pf": 5.03,
-    "tpy": 3.0,
-    "ex": {
-     "stop_atr": 2.5,
-     "tp_atr": 0.8
-    }
-   },
-   {
-    "mkt": "NKD=F",
-    "sym": "JP225",
-    "setup": "AMD",
-    "pf": 2.23,
-    "wr": 65,
-    "trd": 60,
-    "oos_pf": 5.87,
-    "tpy": 6.0,
-    "ex": {}
+    "mkt": "AAVEUSDT",
+    "sym": "AAVEUSD",
+    "setup": "RSI2",
+    "pf": 3.18,
+    "wr": 66,
+    "trd": 29,
+    "oos_pf": 1.46,
+    "tpy": 3.5
    },
    {
     "mkt": "DOGEUSDT",
@@ -125,36 +153,7 @@
     "wr": 72,
     "trd": 47,
     "oos_pf": 3.69,
-    "tpy": 4.7,
-    "ex": {
-     "stop_atr": 4,
-     "tp_atr": 1.5
-    }
-   },
-   {
-    "mkt": "NKD=F",
-    "sym": "JP225",
-    "setup": "RSI2",
-    "pf": 2.08,
-    "wr": 78,
-    "trd": 67,
-    "oos_pf": 5.61,
-    "tpy": 6.7,
-    "ex": {}
-   },
-   {
-    "mkt": "NATGAS",
-    "sym": "NATGAS",
-    "setup": "SPRING",
-    "pf": 3.07,
-    "wr": 78,
-    "trd": 58,
-    "oos_pf": 3.35,
-    "tpy": 5.8,
-    "ex": {
-     "stop_atr": 3,
-     "tp_atr": 1
-    }
+    "tpy": 4.7
    },
    {
     "mkt": "NKD=F",
@@ -164,111 +163,37 @@
     "wr": 72,
     "trd": 58,
     "oos_pf": 2.99,
-    "tpy": 5.8,
-    "ex": {
-     "stop_atr": 3,
-     "tp_atr": 1
-    }
+    "tpy": 5.8
    },
    {
-    "mkt": "COPPER",
-    "sym": "COPPER",
+    "mkt": "JPM",
+    "sym": "JPM",
     "setup": "STACKBULL",
-    "pf": 2.46,
+    "pf": 3.08,
     "wr": 77,
-    "trd": 64,
-    "oos_pf": 3.59,
-    "tpy": 6.4,
-    "ex": {
-     "stop_atr": 2.5,
-     "tp_atr": 0.8
-    }
+    "trd": 82,
+    "oos_pf": 4.4,
+    "tpy": 8.2
    },
    {
-    "mkt": "NKD=F",
-    "sym": "JP225",
+    "mkt": "NATGAS",
+    "sym": "NATGAS",
     "setup": "SPRING",
-    "pf": 2.4,
-    "wr": 68,
-    "trd": 57,
-    "oos_pf": 3.59,
-    "tpy": 5.7,
-    "ex": {}
-   },
-   {
-    "mkt": "OIL",
-    "sym": "USOIL",
-    "setup": "AMD",
-    "pf": 2.74,
-    "wr": 81,
-    "trd": 53,
-    "oos_pf": 3.12,
-    "tpy": 5.3,
-    "ex": {
-     "stop_atr": 2.5,
-     "tp_atr": 0.8
-    }
-   },
-   {
-    "mkt": "NKD=F",
-    "sym": "JP225",
-    "setup": "STACKBULL",
-    "pf": 2.04,
-    "wr": 52,
-    "trd": 87,
-    "oos_pf": 4.17,
-    "tpy": 8.7,
-    "ex": {}
-   },
-   {
-    "mkt": "NQ",
-    "sym": "NAS100",
-    "setup": "RSI2",
-    "pf": 2.06,
-    "wr": 72,
-    "trd": 75,
-    "oos_pf": 4.1,
-    "tpy": 7.5,
-    "ex": {}
-   },
-   {
-    "mkt": "EURCHF",
-    "sym": "EURCHF",
-    "setup": "UPTHRUST",
-    "pf": 2.36,
-    "wr": 68,
-    "trd": 56,
-    "oos_pf": 3.26,
-    "tpy": 5.4,
-    "ex": {
-     "stop_atr": 3,
-     "tp_atr": 1
-    }
-   },
-   {
-    "mkt": "LTCUSDT",
-    "sym": "LTCUSD",
-    "setup": "AMD",
-    "pf": 1.8,
-    "wr": 70,
-    "trd": 46,
-    "oos_pf": 4.14,
-    "tpy": 3.7,
-    "ex": {
-     "stop_atr": 4,
-     "tp_atr": 1.5
-    }
-   },
-   {
-    "mkt": "CHFJPY",
-    "sym": "CHFJPY",
-    "setup": "SPRING",
-    "pf": 2.58,
-    "wr": 71,
+    "pf": 3.07,
+    "wr": 78,
     "trd": 58,
-    "oos_pf": 2.85,
-    "tpy": 5.6,
-    "ex": {}
+    "oos_pf": 3.35,
+    "tpy": 5.8
+   },
+   {
+    "mkt": "NVDA",
+    "sym": "NVDA",
+    "setup": "RSI2",
+    "pf": 3.01,
+    "wr": 79,
+    "trd": 80,
+    "oos_pf": 3.81,
+    "tpy": 8.0
    },
    {
     "mkt": "NQ",
@@ -278,66 +203,7 @@
     "wr": 64,
     "trd": 59,
     "oos_pf": 2.31,
-    "tpy": 5.9,
-    "ex": {
-     "stop_atr": 2,
-     "tp_atr": 4,
-     "trail_atr": 3
-    }
-   },
-   {
-    "mkt": "GOLD",
-    "sym": "XAUUSD",
-    "setup": "SPRING",
-    "pf": 2.29,
-    "wr": 76,
-    "trd": 49,
-    "oos_pf": 2.78,
-    "tpy": 4.9,
-    "ex": {
-     "stop_atr": 3,
-     "tp_atr": 1
-    }
-   },
-   {
-    "mkt": "DOGEUSDT",
-    "sym": "DOGEUSD",
-    "setup": "SOS",
-    "pf": 2.47,
-    "wr": 55,
-    "trd": 51,
-    "oos_pf": 2.27,
-    "tpy": 5.1,
-    "ex": {}
-   },
-   {
-    "mkt": "SILVER",
-    "sym": "XAGUSD",
-    "setup": "SOS",
-    "pf": 1.83,
-    "wr": 57,
-    "trd": 49,
-    "oos_pf": 2.91,
-    "tpy": 4.9,
-    "ex": {
-     "stop_atr": 1.5,
-     "tp_atr": 3,
-     "trail_atr": 2
-    }
-   },
-   {
-    "mkt": "AUDCHF",
-    "sym": "AUDCHF",
-    "setup": "ORB",
-    "pf": 2.33,
-    "wr": 67,
-    "trd": 85,
-    "oos_pf": 2.27,
-    "tpy": 8.2,
-    "ex": {
-     "stop_atr": 4,
-     "tp_atr": 1.5
-    }
+    "tpy": 5.9
    },
    {
     "mkt": "ES",
@@ -347,79 +213,127 @@
     "wr": 84,
     "trd": 61,
     "oos_pf": 1.81,
-    "tpy": 6.1,
-    "ex": {
-     "stop_atr": 3,
-     "tp_atr": 1
-    }
+    "tpy": 6.1
    },
    {
-    "mkt": "USDZAR",
-    "sym": "USDZAR",
-    "setup": "TSMOM",
-    "pf": 1.5,
-    "wr": 69,
-    "trd": 95,
-    "oos_pf": 3.44,
-    "tpy": 9.2,
-    "ex": {
-     "stop_atr": 2.5,
-     "tp_atr": 0.8
-    }
-   },
-   {
-    "mkt": "USDZAR",
-    "sym": "USDZAR",
-    "setup": "LIQSWEEP",
-    "pf": 1.88,
-    "wr": 65,
-    "trd": 104,
-    "oos_pf": 2.73,
-    "tpy": 10.1,
-    "ex": {
-     "stop_atr": 2.5,
-     "tp_atr": 0.8
-    }
+    "mkt": "^N225",
+    "sym": "JP225",
+    "setup": "AMD",
+    "pf": 2.84,
+    "wr": 68,
+    "trd": 31,
+    "oos_pf": 53.64,
+    "tpy": 3.2
    },
    {
     "mkt": "YM",
     "sym": "US30",
-    "setup": "SPRING",
-    "pf": 2.48,
-    "wr": 81,
+    "setup": "AMD",
+    "pf": 2.83,
+    "wr": 79,
     "trd": 58,
-    "oos_pf": 2.01,
-    "tpy": 5.8,
-    "ex": {
-     "stop_atr": 4,
-     "tp_atr": 1.5
-    }
+    "oos_pf": 5.2,
+    "tpy": 5.8
    },
    {
-    "mkt": "WHEAT",
-    "sym": "WHEAT",
-    "setup": "TSMOM",
-    "pf": 1.88,
-    "wr": 49,
-    "trd": 99,
-    "oos_pf": 2.62,
-    "tpy": 9.9,
-    "ex": {
-     "stop_atr": 1.5,
-     "tp_atr": 3,
-     "trail_atr": 2
-    }
+    "mkt": "OIL",
+    "sym": "USOIL",
+    "setup": "AMD",
+    "pf": 2.74,
+    "wr": 81,
+    "trd": 53,
+    "oos_pf": 3.12,
+    "tpy": 5.3
    },
    {
-    "mkt": "AUDCHF",
-    "sym": "AUDCHF",
-    "setup": "UPTHRUST",
-    "pf": 1.66,
-    "wr": 64,
+    "mkt": "^GSPTSE",
+    "sym": "CA60",
+    "setup": "RSI2",
+    "pf": 2.72,
+    "wr": 78,
+    "trd": 73,
+    "oos_pf": 6.57,
+    "tpy": 7.3
+   },
+   {
+    "mkt": "PLATINUM",
+    "sym": "XPTUSD",
+    "setup": "LIQSWEEP",
+    "pf": 2.72,
+    "wr": 78,
+    "trd": 59,
+    "oos_pf": 1.45,
+    "tpy": 5.9
+   },
+   {
+    "mkt": "NVDA",
+    "sym": "NVDA",
+    "setup": "SOS",
+    "pf": 2.71,
+    "wr": 74,
     "trd": 61,
-    "oos_pf": 2.87,
-    "tpy": 5.9,
-    "ex": {}
+    "oos_pf": 1.35,
+    "tpy": 6.1
+   },
+   {
+    "mkt": "FTMUSDT",
+    "sym": "FTMUSD",
+    "setup": "RSI2",
+    "pf": 2.71,
+    "wr": 74,
+    "trd": 38,
+    "oos_pf": 3.33,
+    "tpy": 4.7
+   },
+   {
+    "mkt": "SILVER",
+    "sym": "XAGUSD",
+    "setup": "AMD",
+    "pf": 2.64,
+    "wr": 77,
+    "trd": 30,
+    "oos_pf": 5.03,
+    "tpy": 3.0
+   },
+   {
+    "mkt": "TSLA",
+    "sym": "TSLA",
+    "setup": "SOS",
+    "pf": 2.61,
+    "wr": 50,
+    "trd": 54,
+    "oos_pf": 1.98,
+    "tpy": 5.4
+   },
+   {
+    "mkt": "V",
+    "sym": "V",
+    "setup": "SPRING",
+    "pf": 2.59,
+    "wr": 83,
+    "trd": 53,
+    "oos_pf": 5.02,
+    "tpy": 5.3
+   },
+   {
+    "mkt": "CHFJPY",
+    "sym": "CHFJPY",
+    "setup": "SPRING",
+    "pf": 2.58,
+    "wr": 71,
+    "trd": 58,
+    "oos_pf": 2.85,
+    "tpy": 5.6
+   },
+   {
+    "mkt": "^AXJO",
+    "sym": "AUS200",
+    "setup": "AMD",
+    "pf": 2.57,
+    "wr": 61,
+    "trd": 38,
+    "oos_pf": 1.83,
+    "tpy": 3.8
    },
    {
     "mkt": "EURJPY",
@@ -429,51 +343,97 @@
     "wr": 75,
     "trd": 59,
     "oos_pf": 1.87,
-    "tpy": 5.7,
-    "ex": {}
+    "tpy": 5.7
    },
    {
-    "mkt": "USDSGD",
-    "sym": "USDSGD",
+    "mkt": "AAPL",
+    "sym": "AAPL",
     "setup": "TSMOM",
-    "pf": 1.71,
-    "wr": 43,
-    "trd": 77,
-    "oos_pf": 2.74,
-    "tpy": 7.5,
-    "ex": {
-     "stop_atr": 2,
-     "tp_atr": 4,
-     "trail_atr": 3
-    }
+    "pf": 2.48,
+    "wr": 80,
+    "trd": 81,
+    "oos_pf": 2.21,
+    "tpy": 8.1
    },
    {
-    "mkt": "AUDCHF",
-    "sym": "AUDCHF",
+    "mkt": "YM",
+    "sym": "US30",
+    "setup": "SPRING",
+    "pf": 2.48,
+    "wr": 81,
+    "trd": 58,
+    "oos_pf": 2.01,
+    "tpy": 5.8
+   },
+   {
+    "mkt": "SOLUSDT",
+    "sym": "SOLUSD",
+    "setup": "SOS",
+    "pf": 2.48,
+    "wr": 49,
+    "trd": 43,
+    "oos_pf": 1.29,
+    "tpy": 5.1
+   },
+   {
+    "mkt": "V",
+    "sym": "V",
+    "setup": "AMD",
+    "pf": 2.47,
+    "wr": 71,
+    "trd": 42,
+    "oos_pf": 2.73,
+    "tpy": 4.2
+   },
+   {
+    "mkt": "DOGEUSDT",
+    "sym": "DOGEUSD",
+    "setup": "SOS",
+    "pf": 2.47,
+    "wr": 55,
+    "trd": 51,
+    "oos_pf": 2.27,
+    "tpy": 5.1
+   },
+   {
+    "mkt": "MCD",
+    "sym": "MCD",
     "setup": "TSMOM",
-    "pf": 1.82,
-    "wr": 67,
-    "trd": 87,
-    "oos_pf": 2.55,
-    "tpy": 8.4,
-    "ex": {
-     "stop_atr": 2.5,
-     "tp_atr": 0.8
-    }
+    "pf": 2.46,
+    "wr": 50,
+    "trd": 32,
+    "oos_pf": 1.53,
+    "tpy": 3.2
    },
    {
-    "mkt": "PLATINUM",
-    "sym": "XPTUSD",
+    "mkt": "COPPER",
+    "sym": "COPPER",
     "setup": "STACKBULL",
-    "pf": 2.04,
-    "wr": 63,
-    "trd": 38,
-    "oos_pf": 2.26,
-    "tpy": 3.8,
-    "ex": {
-     "stop_atr": 3,
-     "tp_atr": 1
-    }
+    "pf": 2.46,
+    "wr": 77,
+    "trd": 64,
+    "oos_pf": 3.59,
+    "tpy": 6.4
+   },
+   {
+    "mkt": "^IBEX",
+    "sym": "ESP35",
+    "setup": "SPRING",
+    "pf": 2.41,
+    "wr": 77,
+    "trd": 57,
+    "oos_pf": 3.47,
+    "tpy": 5.6
+   },
+   {
+    "mkt": "NKD=F",
+    "sym": "JP225",
+    "setup": "SPRING",
+    "pf": 2.4,
+    "wr": 68,
+    "trd": 57,
+    "oos_pf": 3.59,
+    "tpy": 5.7
    },
    {
     "mkt": "YM",
@@ -483,23 +443,507 @@
     "wr": 58,
     "trd": 67,
     "oos_pf": 1.85,
-    "tpy": 6.7,
-    "ex": {}
+    "tpy": 6.7
    },
    {
-    "mkt": "EURNZD",
-    "sym": "EURNZD",
+    "mkt": "INTC",
+    "sym": "INTC",
+    "setup": "AMD",
+    "pf": 2.39,
+    "wr": 71,
+    "trd": 45,
+    "oos_pf": 5.08,
+    "tpy": 4.5
+   },
+   {
+    "mkt": "AAPL",
+    "sym": "AAPL",
+    "setup": "SOS",
+    "pf": 2.37,
+    "wr": 66,
+    "trd": 59,
+    "oos_pf": 1.46,
+    "tpy": 5.9
+   },
+   {
+    "mkt": "USDZAR",
+    "sym": "USDZAR",
+    "setup": "SPRING",
+    "pf": 2.37,
+    "wr": 66,
+    "trd": 64,
+    "oos_pf": 1.58,
+    "tpy": 6.2
+   },
+   {
+    "mkt": "EURCHF",
+    "sym": "EURCHF",
+    "setup": "UPTHRUST",
+    "pf": 2.36,
+    "wr": 68,
+    "trd": 56,
+    "oos_pf": 3.26,
+    "tpy": 5.4
+   },
+   {
+    "mkt": "BA",
+    "sym": "BA",
     "setup": "TSMOM",
-    "pf": 1.65,
+    "pf": 2.35,
+    "wr": 49,
+    "trd": 37,
+    "oos_pf": 2.53,
+    "tpy": 3.7
+   },
+   {
+    "mkt": "AUDCHF",
+    "sym": "AUDCHF",
+    "setup": "ORB",
+    "pf": 2.33,
+    "wr": 67,
+    "trd": 85,
+    "oos_pf": 2.27,
+    "tpy": 8.2
+   },
+   {
+    "mkt": "AXSUSDT",
+    "sym": "AXSUSD",
+    "setup": "SOS",
+    "pf": 2.33,
+    "wr": 55,
+    "trd": 29,
+    "oos_pf": 7.52,
+    "tpy": 3.6
+   },
+   {
+    "mkt": "CAT",
+    "sym": "CAT",
+    "setup": "STACKBULL",
+    "pf": 2.3,
+    "wr": 47,
+    "trd": 79,
+    "oos_pf": 3.32,
+    "tpy": 7.9
+   },
+   {
+    "mkt": "JPM",
+    "sym": "JPM",
+    "setup": "LIQSWEEP",
+    "pf": 2.3,
+    "wr": 58,
+    "trd": 84,
+    "oos_pf": 1.63,
+    "tpy": 8.4
+   },
+   {
+    "mkt": "COST",
+    "sym": "COST",
+    "setup": "AMD",
+    "pf": 2.29,
+    "wr": 70,
+    "trd": 44,
+    "oos_pf": 7.46,
+    "tpy": 4.4
+   },
+   {
+    "mkt": "GOLD",
+    "sym": "XAUUSD",
+    "setup": "SPRING",
+    "pf": 2.29,
+    "wr": 76,
+    "trd": 49,
+    "oos_pf": 2.78,
+    "tpy": 4.9
+   },
+   {
+    "mkt": "NEARUSDT",
+    "sym": "NEARUSD",
+    "setup": "SOS",
+    "pf": 2.27,
     "wr": 50,
+    "trd": 38,
+    "oos_pf": 2.26,
+    "tpy": 4.6
+   },
+   {
+    "mkt": "^AXJO",
+    "sym": "AUS200",
+    "setup": "STACKBULL",
+    "pf": 2.26,
+    "wr": 74,
+    "trd": 66,
+    "oos_pf": 1.59,
+    "tpy": 6.6
+   },
+   {
+    "mkt": "NVDA",
+    "sym": "NVDA",
+    "setup": "AMD",
+    "pf": 2.22,
+    "wr": 74,
+    "trd": 42,
+    "oos_pf": 4.91,
+    "tpy": 4.2
+   },
+   {
+    "mkt": "AMD",
+    "sym": "AMD",
+    "setup": "AMD",
+    "pf": 2.19,
+    "wr": 82,
+    "trd": 34,
+    "oos_pf": 3.31,
+    "tpy": 3.4
+   },
+   {
+    "mkt": "CADCHF",
+    "sym": "CADCHF",
+    "setup": "UPTHRUST",
+    "pf": 2.18,
+    "wr": 66,
+    "trd": 62,
+    "oos_pf": 1.73,
+    "tpy": 6.0
+   },
+   {
+    "mkt": "CAT",
+    "sym": "CAT",
+    "setup": "SPRING",
+    "pf": 2.18,
+    "wr": 67,
+    "trd": 51,
+    "oos_pf": 1.91,
+    "tpy": 5.1
+   },
+   {
+    "mkt": "COST",
+    "sym": "COST",
+    "setup": "SOS",
+    "pf": 2.16,
+    "wr": 55,
+    "trd": 67,
+    "oos_pf": 1.73,
+    "tpy": 6.7
+   },
+   {
+    "mkt": "ES",
+    "sym": "US500",
+    "setup": "RSI2",
+    "pf": 2.14,
+    "wr": 78,
+    "trd": 78,
+    "oos_pf": 9.89,
+    "tpy": 7.8
+   },
+   {
+    "mkt": "AAPL",
+    "sym": "AAPL",
+    "setup": "SPRING",
+    "pf": 2.12,
+    "wr": 72,
+    "trd": 47,
+    "oos_pf": 3.15,
+    "tpy": 4.7
+   },
+   {
+    "mkt": "JPM",
+    "sym": "JPM",
+    "setup": "SOS",
+    "pf": 2.1,
+    "wr": 54,
+    "trd": 57,
+    "oos_pf": 1.91,
+    "tpy": 5.7
+   },
+   {
+    "mkt": "ATOMUSDT",
+    "sym": "ATOMUSD",
+    "setup": "SOS",
+    "pf": 2.09,
+    "wr": 67,
+    "trd": 45,
+    "oos_pf": 1.45,
+    "tpy": 4.3
+   },
+   {
+    "mkt": "CSCO",
+    "sym": "CSCO",
+    "setup": "SOS",
+    "pf": 2.09,
+    "wr": 58,
+    "trd": 57,
+    "oos_pf": 2.09,
+    "tpy": 5.7
+   },
+   {
+    "mkt": "NKD=F",
+    "sym": "JP225",
+    "setup": "RSI2",
+    "pf": 2.08,
+    "wr": 78,
+    "trd": 67,
+    "oos_pf": 5.61,
+    "tpy": 6.7
+   },
+   {
+    "mkt": "FTMUSDT",
+    "sym": "FTMUSD",
+    "setup": "SOS",
+    "pf": 2.07,
+    "wr": 63,
+    "trd": 30,
+    "oos_pf": 2.07,
+    "tpy": 3.7
+   },
+   {
+    "mkt": "V",
+    "sym": "V",
+    "setup": "TSMOM",
+    "pf": 2.07,
+    "wr": 71,
     "trd": 86,
-    "oos_pf": 2.67,
-    "tpy": 8.3,
-    "ex": {
-     "stop_atr": 1.5,
-     "tp_atr": 3,
-     "trail_atr": 2
-    }
+    "oos_pf": 2.59,
+    "tpy": 8.6
+   },
+   {
+    "mkt": "NQ",
+    "sym": "NAS100",
+    "setup": "RSI2",
+    "pf": 2.06,
+    "wr": 72,
+    "trd": 75,
+    "oos_pf": 4.1,
+    "tpy": 7.5
+   },
+   {
+    "mkt": "GS",
+    "sym": "GS",
+    "setup": "SPRING",
+    "pf": 2.06,
+    "wr": 79,
+    "trd": 57,
+    "oos_pf": 1.31,
+    "tpy": 5.7
+   },
+   {
+    "mkt": "JPM",
+    "sym": "JPM",
+    "setup": "AMD",
+    "pf": 2.05,
+    "wr": 59,
+    "trd": 51,
+    "oos_pf": 1.71,
+    "tpy": 5.1
+   },
+   {
+    "mkt": "NFLX",
+    "sym": "NFLX",
+    "setup": "AMD",
+    "pf": 2.04,
+    "wr": 65,
+    "trd": 48,
+    "oos_pf": 1.56,
+    "tpy": 4.8
+   },
+   {
+    "mkt": "PLATINUM",
+    "sym": "XPTUSD",
+    "setup": "STACKBULL",
+    "pf": 2.04,
+    "wr": 63,
+    "trd": 38,
+    "oos_pf": 2.26,
+    "tpy": 3.8
+   },
+   {
+    "mkt": "NKD=F",
+    "sym": "JP225",
+    "setup": "STACKBULL",
+    "pf": 2.04,
+    "wr": 52,
+    "trd": 87,
+    "oos_pf": 4.17,
+    "tpy": 8.7
+   },
+   {
+    "mkt": "NATGAS",
+    "sym": "NATGAS",
+    "setup": "RSI2",
+    "pf": 2.02,
+    "wr": 74,
+    "trd": 42,
+    "oos_pf": 1.58,
+    "tpy": 4.2
+   },
+   {
+    "mkt": "META",
+    "sym": "META",
+    "setup": "SOS",
+    "pf": 2.01,
+    "wr": 73,
+    "trd": 62,
+    "oos_pf": 1.51,
+    "tpy": 6.2
+   },
+   {
+    "mkt": "GOOGL",
+    "sym": "GOOGL",
+    "setup": "SOS",
+    "pf": 2.01,
+    "wr": 56,
+    "trd": 59,
+    "oos_pf": 3.28,
+    "tpy": 5.9
+   },
+   {
+    "mkt": "NEARUSDT",
+    "sym": "NEARUSD",
+    "setup": "ORB",
+    "pf": 2.0,
+    "wr": 75,
+    "trd": 83,
+    "oos_pf": 1.78,
+    "tpy": 10.1
+   },
+   {
+    "mkt": "PFE",
+    "sym": "PFE",
+    "setup": "POORHL",
+    "pf": 2.0,
+    "wr": 49,
+    "trd": 41,
+    "oos_pf": 1.94,
+    "tpy": 4.1
+   },
+   {
+    "mkt": "GOOGL",
+    "sym": "GOOGL",
+    "setup": "RSI2",
+    "pf": 2.0,
+    "wr": 72,
+    "trd": 78,
+    "oos_pf": 1.44,
+    "tpy": 7.8
+   },
+   {
+    "mkt": "CSCO",
+    "sym": "CSCO",
+    "setup": "SPRING",
+    "pf": 1.99,
+    "wr": 47,
+    "trd": 55,
+    "oos_pf": 1.72,
+    "tpy": 5.5
+   },
+   {
+    "mkt": "NZDJPY",
+    "sym": "NZDJPY",
+    "setup": "SPRING",
+    "pf": 1.99,
+    "wr": 50,
+    "trd": 62,
+    "oos_pf": 1.94,
+    "tpy": 6.0
+   },
+   {
+    "mkt": "GBPJPY",
+    "sym": "GBPJPY",
+    "setup": "SPRING",
+    "pf": 1.99,
+    "wr": 72,
+    "trd": 54,
+    "oos_pf": 1.79,
+    "tpy": 5.2
+   },
+   {
+    "mkt": "AMZN",
+    "sym": "AMZN",
+    "setup": "SPRING",
+    "pf": 1.99,
+    "wr": 75,
+    "trd": 44,
+    "oos_pf": 2.06,
+    "tpy": 4.4
+   },
+   {
+    "mkt": "^GDAXI",
+    "sym": "DE40",
+    "setup": "SPRING",
+    "pf": 1.99,
+    "wr": 68,
+    "trd": 63,
+    "oos_pf": 2.55,
+    "tpy": 6.3
+   },
+   {
+    "mkt": "GBPCHF",
+    "sym": "GBPCHF",
+    "setup": "UPTHRUST",
+    "pf": 1.97,
+    "wr": 63,
+    "trd": 60,
+    "oos_pf": 2.06,
+    "tpy": 5.8
+   },
+   {
+    "mkt": "JPM",
+    "sym": "JPM",
+    "setup": "SPRING",
+    "pf": 1.96,
+    "wr": 67,
+    "trd": 52,
+    "oos_pf": 1.39,
+    "tpy": 5.2
+   },
+   {
+    "mkt": "HD",
+    "sym": "HD",
+    "setup": "STACKBULL",
+    "pf": 1.95,
+    "wr": 68,
+    "trd": 78,
+    "oos_pf": 2.01,
+    "tpy": 7.8
+   },
+   {
+    "mkt": "BNBUSDT",
+    "sym": "BNBUSD",
+    "setup": "SOS",
+    "pf": 1.92,
+    "wr": 50,
+    "trd": 68,
+    "oos_pf": 1.36,
+    "tpy": 5.4
+   },
+   {
+    "mkt": "^IBEX",
+    "sym": "ESP35",
+    "setup": "SOS",
+    "pf": 1.92,
+    "wr": 49,
+    "trd": 47,
+    "oos_pf": 1.85,
+    "tpy": 4.6
+   },
+   {
+    "mkt": "DOGEUSDT",
+    "sym": "DOGEUSD",
+    "setup": "ORB",
+    "pf": 1.89,
+    "wr": 55,
+    "trd": 98,
+    "oos_pf": 1.72,
+    "tpy": 9.7
+   },
+   {
+    "mkt": "GS",
+    "sym": "GS",
+    "setup": "RSI2",
+    "pf": 1.89,
+    "wr": 67,
+    "trd": 61,
+    "oos_pf": 2.08,
+    "tpy": 6.1
    },
    {
     "mkt": "PLATINUM",
@@ -509,25 +953,87 @@
     "wr": 69,
     "trd": 29,
     "oos_pf": 2.28,
-    "tpy": 2.9,
-    "ex": {
-     "stop_atr": 2.5,
-     "tp_atr": 0.8
-    }
+    "tpy": 2.9
    },
    {
-    "mkt": "NQ",
-    "sym": "NAS100",
+    "mkt": "ETHUSDT",
+    "sym": "ETHUSD",
     "setup": "STACKBULL",
-    "pf": 1.68,
-    "wr": 51,
-    "trd": 90,
-    "oos_pf": 2.5,
-    "tpy": 9.0,
-    "ex": {
-     "stop_atr": 3,
-     "tp_atr": 6
-    }
+    "pf": 1.89,
+    "wr": 49,
+    "trd": 77,
+    "oos_pf": 1.86,
+    "tpy": 6.0
+   },
+   {
+    "mkt": "WHEAT",
+    "sym": "WHEAT",
+    "setup": "TSMOM",
+    "pf": 1.88,
+    "wr": 49,
+    "trd": 99,
+    "oos_pf": 2.62,
+    "tpy": 9.9
+   },
+   {
+    "mkt": "USDZAR",
+    "sym": "USDZAR",
+    "setup": "LIQSWEEP",
+    "pf": 1.88,
+    "wr": 65,
+    "trd": 104,
+    "oos_pf": 2.73,
+    "tpy": 10.1
+   },
+   {
+    "mkt": "BA",
+    "sym": "BA",
+    "setup": "AMD",
+    "pf": 1.88,
+    "wr": 48,
+    "trd": 50,
+    "oos_pf": 2.18,
+    "tpy": 5.0
+   },
+   {
+    "mkt": "YM",
+    "sym": "US30",
+    "setup": "RSI2",
+    "pf": 1.87,
+    "wr": 74,
+    "trd": 82,
+    "oos_pf": 1.53,
+    "tpy": 8.2
+   },
+   {
+    "mkt": "AAVEUSDT",
+    "sym": "AAVEUSD",
+    "setup": "LIQSWEEP",
+    "pf": 1.87,
+    "wr": 78,
+    "trd": 100,
+    "oos_pf": 1.96,
+    "tpy": 12.2
+   },
+   {
+    "mkt": "AMD",
+    "sym": "AMD",
+    "setup": "RSI2",
+    "pf": 1.86,
+    "wr": 70,
+    "trd": 74,
+    "oos_pf": 1.44,
+    "tpy": 7.4
+   },
+   {
+    "mkt": "GS",
+    "sym": "GS",
+    "setup": "AMD",
+    "pf": 1.86,
+    "wr": 68,
+    "trd": 47,
+    "oos_pf": 1.21,
+    "tpy": 4.7
    },
    {
     "mkt": "USDSEK",
@@ -537,11 +1043,1065 @@
     "wr": 68,
     "trd": 80,
     "oos_pf": 2.23,
-    "tpy": 7.8,
-    "ex": {
-     "stop_atr": 2.5,
-     "tp_atr": 0.8
-    }
+    "tpy": 7.8
+   },
+   {
+    "mkt": "BRENT",
+    "sym": "UKOIL",
+    "setup": "SOS",
+    "pf": 1.86,
+    "wr": 53,
+    "trd": 49,
+    "oos_pf": 1.41,
+    "tpy": 4.9
+   },
+   {
+    "mkt": "ETHUSDT",
+    "sym": "ETHUSD",
+    "setup": "SOS",
+    "pf": 1.85,
+    "wr": 55,
+    "trd": 66,
+    "oos_pf": 1.33,
+    "tpy": 5.2
+   },
+   {
+    "mkt": "^SSMI",
+    "sym": "SUI20",
+    "setup": "TSMOM",
+    "pf": 1.85,
+    "wr": 45,
+    "trd": 44,
+    "oos_pf": 1.59,
+    "tpy": 4.4
+   },
+   {
+    "mkt": "DIS",
+    "sym": "DIS",
+    "setup": "SOS",
+    "pf": 1.84,
+    "wr": 45,
+    "trd": 49,
+    "oos_pf": 1.25,
+    "tpy": 4.9
+   },
+   {
+    "mkt": "BA",
+    "sym": "BA",
+    "setup": "SOS",
+    "pf": 1.84,
+    "wr": 55,
+    "trd": 47,
+    "oos_pf": 1.33,
+    "tpy": 4.7
+   },
+   {
+    "mkt": "NQ",
+    "sym": "NAS100",
+    "setup": "TSMOM",
+    "pf": 1.83,
+    "wr": 41,
+    "trd": 97,
+    "oos_pf": 1.68,
+    "tpy": 9.7
+   },
+   {
+    "mkt": "SILVER",
+    "sym": "XAGUSD",
+    "setup": "SOS",
+    "pf": 1.83,
+    "wr": 57,
+    "trd": 49,
+    "oos_pf": 2.91,
+    "tpy": 4.9
+   },
+   {
+    "mkt": "AUDCHF",
+    "sym": "AUDCHF",
+    "setup": "TSMOM",
+    "pf": 1.82,
+    "wr": 67,
+    "trd": 87,
+    "oos_pf": 2.55,
+    "tpy": 8.4
+   },
+   {
+    "mkt": "NQ",
+    "sym": "NAS100",
+    "setup": "POORHL",
+    "pf": 1.82,
+    "wr": 46,
+    "trd": 56,
+    "oos_pf": 1.57,
+    "tpy": 5.6
+   },
+   {
+    "mkt": "CVX",
+    "sym": "CVX",
+    "setup": "AMD",
+    "pf": 1.81,
+    "wr": 67,
+    "trd": 49,
+    "oos_pf": 1.53,
+    "tpy": 4.9
+   },
+   {
+    "mkt": "GBPNZD",
+    "sym": "GBPNZD",
+    "setup": "SPRING",
+    "pf": 1.8,
+    "wr": 51,
+    "trd": 57,
+    "oos_pf": 1.89,
+    "tpy": 5.5
+   },
+   {
+    "mkt": "AAPL",
+    "sym": "AAPL",
+    "setup": "AMD",
+    "pf": 1.8,
+    "wr": 66,
+    "trd": 38,
+    "oos_pf": 1.66,
+    "tpy": 3.8
+   },
+   {
+    "mkt": "CAT",
+    "sym": "CAT",
+    "setup": "ORB",
+    "pf": 1.8,
+    "wr": 74,
+    "trd": 88,
+    "oos_pf": 1.68,
+    "tpy": 8.8
+   },
+   {
+    "mkt": "FILUSDT",
+    "sym": "FILUSD",
+    "setup": "SOS",
+    "pf": 1.8,
+    "wr": 63,
+    "trd": 30,
+    "oos_pf": 2.11,
+    "tpy": 3.6
+   },
+   {
+    "mkt": "CVX",
+    "sym": "CVX",
+    "setup": "SPRING",
+    "pf": 1.8,
+    "wr": 71,
+    "trd": 63,
+    "oos_pf": 5.27,
+    "tpy": 6.3
+   },
+   {
+    "mkt": "LTCUSDT",
+    "sym": "LTCUSD",
+    "setup": "AMD",
+    "pf": 1.8,
+    "wr": 70,
+    "trd": 46,
+    "oos_pf": 4.14,
+    "tpy": 3.7
+   },
+   {
+    "mkt": "LINKUSDT",
+    "sym": "LINKUSD",
+    "setup": "STACKBULL",
+    "pf": 1.79,
+    "wr": 48,
+    "trd": 27,
+    "oos_pf": 1.53,
+    "tpy": 2.5
+   },
+   {
+    "mkt": "^AXJO",
+    "sym": "AUS200",
+    "setup": "SPRING",
+    "pf": 1.78,
+    "wr": 58,
+    "trd": 55,
+    "oos_pf": 1.46,
+    "tpy": 5.5
+   },
+   {
+    "mkt": "^GDAXI",
+    "sym": "DE40",
+    "setup": "AMD",
+    "pf": 1.76,
+    "wr": 71,
+    "trd": 41,
+    "oos_pf": 3.64,
+    "tpy": 4.1
+   },
+   {
+    "mkt": "OPUSDT",
+    "sym": "OPUSD",
+    "setup": "TSMOM",
+    "pf": 1.76,
+    "wr": 50,
+    "trd": 42,
+    "oos_pf": 1.97,
+    "tpy": 7.2
+   },
+   {
+    "mkt": "XRPUSDT",
+    "sym": "XRPUSD",
+    "setup": "SOS",
+    "pf": 1.75,
+    "wr": 43,
+    "trd": 53,
+    "oos_pf": 1.91,
+    "tpy": 4.5
+   },
+   {
+    "mkt": "WMT",
+    "sym": "WMT",
+    "setup": "LIQSWEEP",
+    "pf": 1.75,
+    "wr": 55,
+    "trd": 78,
+    "oos_pf": 2.06,
+    "tpy": 7.8
+   },
+   {
+    "mkt": "XOM",
+    "sym": "XOM",
+    "setup": "STACKBULL",
+    "pf": 1.74,
+    "wr": 42,
+    "trd": 83,
+    "oos_pf": 1.27,
+    "tpy": 8.3
+   },
+   {
+    "mkt": "^GDAXI",
+    "sym": "DE40",
+    "setup": "RSI2",
+    "pf": 1.74,
+    "wr": 69,
+    "trd": 64,
+    "oos_pf": 1.99,
+    "tpy": 6.4
+   },
+   {
+    "mkt": "FILUSDT",
+    "sym": "FILUSD",
+    "setup": "TSMOM",
+    "pf": 1.74,
+    "wr": 45,
+    "trd": 56,
+    "oos_pf": 2.04,
+    "tpy": 6.8
+   },
+   {
+    "mkt": "GRTUSDT",
+    "sym": "GRTUSD",
+    "setup": "UPTHRUST",
+    "pf": 1.74,
+    "wr": 74,
+    "trd": 42,
+    "oos_pf": 1.6,
+    "tpy": 5.3
+   },
+   {
+    "mkt": "AAPL",
+    "sym": "AAPL",
+    "setup": "STACKBULL",
+    "pf": 1.73,
+    "wr": 56,
+    "trd": 78,
+    "oos_pf": 1.56,
+    "tpy": 7.8
+   },
+   {
+    "mkt": "OIL",
+    "sym": "USOIL",
+    "setup": "TSMOM",
+    "pf": 1.72,
+    "wr": 36,
+    "trd": 70,
+    "oos_pf": 1.12,
+    "tpy": 7.0
+   },
+   {
+    "mkt": "ES",
+    "sym": "US500",
+    "setup": "SPRING",
+    "pf": 1.72,
+    "wr": 78,
+    "trd": 50,
+    "oos_pf": 1.24,
+    "tpy": 5.0
+   },
+   {
+    "mkt": "BA",
+    "sym": "BA",
+    "setup": "SPRING",
+    "pf": 1.72,
+    "wr": 78,
+    "trd": 58,
+    "oos_pf": 1.09,
+    "tpy": 5.8
+   },
+   {
+    "mkt": "INJUSDT",
+    "sym": "INJUSD",
+    "setup": "RSI2",
+    "pf": 1.71,
+    "wr": 65,
+    "trd": 31,
+    "oos_pf": 3.96,
+    "tpy": 3.8
+   },
+   {
+    "mkt": "^GDAXI",
+    "sym": "DE40",
+    "setup": "TSMOM",
+    "pf": 1.71,
+    "wr": 67,
+    "trd": 94,
+    "oos_pf": 1.63,
+    "tpy": 9.3
+   },
+   {
+    "mkt": "USDSGD",
+    "sym": "USDSGD",
+    "setup": "TSMOM",
+    "pf": 1.71,
+    "wr": 43,
+    "trd": 77,
+    "oos_pf": 2.74,
+    "tpy": 7.5
+   },
+   {
+    "mkt": "XRPUSDT",
+    "sym": "XRPUSD",
+    "setup": "STACKBULL",
+    "pf": 1.7,
+    "wr": 62,
+    "trd": 53,
+    "oos_pf": 32.22,
+    "tpy": 4.5
+   },
+   {
+    "mkt": "TSLA",
+    "sym": "TSLA",
+    "setup": "RSI2",
+    "pf": 1.69,
+    "wr": 68,
+    "trd": 57,
+    "oos_pf": 1.78,
+    "tpy": 5.7
+   },
+   {
+    "mkt": "CHFJPY",
+    "sym": "CHFJPY",
+    "setup": "TSMOM",
+    "pf": 1.69,
+    "wr": 72,
+    "trd": 78,
+    "oos_pf": 1.8,
+    "tpy": 7.6
+   },
+   {
+    "mkt": "ORCL",
+    "sym": "ORCL",
+    "setup": "STACKBULL",
+    "pf": 1.69,
+    "wr": 49,
+    "trd": 85,
+    "oos_pf": 2.03,
+    "tpy": 8.5
+   },
+   {
+    "mkt": "^SSMI",
+    "sym": "SUI20",
+    "setup": "SPRING",
+    "pf": 1.68,
+    "wr": 64,
+    "trd": 58,
+    "oos_pf": 2.27,
+    "tpy": 5.8
+   },
+   {
+    "mkt": "WMT",
+    "sym": "WMT",
+    "setup": "STACKBULL",
+    "pf": 1.68,
+    "wr": 60,
+    "trd": 88,
+    "oos_pf": 2.04,
+    "tpy": 8.8
+   },
+   {
+    "mkt": "NQ",
+    "sym": "NAS100",
+    "setup": "STACKBULL",
+    "pf": 1.68,
+    "wr": 51,
+    "trd": 90,
+    "oos_pf": 2.5,
+    "tpy": 9.0
+   },
+   {
+    "mkt": "AMZN",
+    "sym": "AMZN",
+    "setup": "STACKBULL",
+    "pf": 1.68,
+    "wr": 79,
+    "trd": 90,
+    "oos_pf": 2.97,
+    "tpy": 9.0
+   },
+   {
+    "mkt": "COST",
+    "sym": "COST",
+    "setup": "POORHL",
+    "pf": 1.68,
+    "wr": 50,
+    "trd": 114,
+    "oos_pf": 1.58,
+    "tpy": 11.4
+   },
+   {
+    "mkt": "JPM",
+    "sym": "JPM",
+    "setup": "RSI2",
+    "pf": 1.67,
+    "wr": 63,
+    "trd": 75,
+    "oos_pf": 1.86,
+    "tpy": 7.5
+   },
+   {
+    "mkt": "MCD",
+    "sym": "MCD",
+    "setup": "AMD",
+    "pf": 1.67,
+    "wr": 44,
+    "trd": 50,
+    "oos_pf": 1.71,
+    "tpy": 5.0
+   },
+   {
+    "mkt": "ZS=F",
+    "sym": "SOYBEAN",
+    "setup": "SOS",
+    "pf": 1.67,
+    "wr": 48,
+    "trd": 48,
+    "oos_pf": 1.96,
+    "tpy": 4.8
+   },
+   {
+    "mkt": "NQ",
+    "sym": "NAS100",
+    "setup": "SPRING",
+    "pf": 1.67,
+    "wr": 78,
+    "trd": 50,
+    "oos_pf": 1.18,
+    "tpy": 5.0
+   },
+   {
+    "mkt": "^HSI",
+    "sym": "HK50",
+    "setup": "LIQSWEEP",
+    "pf": 1.66,
+    "wr": 48,
+    "trd": 84,
+    "oos_pf": 2.03,
+    "tpy": 8.6
+   },
+   {
+    "mkt": "SUGAR",
+    "sym": "SUGAR",
+    "setup": "SOS",
+    "pf": 1.66,
+    "wr": 45,
+    "trd": 53,
+    "oos_pf": 1.7,
+    "tpy": 5.3
+   },
+   {
+    "mkt": "AUDCHF",
+    "sym": "AUDCHF",
+    "setup": "UPTHRUST",
+    "pf": 1.66,
+    "wr": 64,
+    "trd": 61,
+    "oos_pf": 2.87,
+    "tpy": 5.9
+   },
+   {
+    "mkt": "EURNZD",
+    "sym": "EURNZD",
+    "setup": "TSMOM",
+    "pf": 1.65,
+    "wr": 50,
+    "trd": 86,
+    "oos_pf": 2.67,
+    "tpy": 8.3
+   },
+   {
+    "mkt": "EURGBP",
+    "sym": "EURGBP",
+    "setup": "SPRING",
+    "pf": 1.65,
+    "wr": 62,
+    "trd": 55,
+    "oos_pf": 1.97,
+    "tpy": 5.3
+   },
+   {
+    "mkt": "WMT",
+    "sym": "WMT",
+    "setup": "RSI2",
+    "pf": 1.65,
+    "wr": 70,
+    "trd": 79,
+    "oos_pf": 2.22,
+    "tpy": 7.9
+   },
+   {
+    "mkt": "AMD",
+    "sym": "AMD",
+    "setup": "SPRING",
+    "pf": 1.65,
+    "wr": 63,
+    "trd": 51,
+    "oos_pf": 1.71,
+    "tpy": 5.1
+   },
+   {
+    "mkt": "^IBEX",
+    "sym": "ESP35",
+    "setup": "POORHL",
+    "pf": 1.64,
+    "wr": 51,
+    "trd": 49,
+    "oos_pf": 1.13,
+    "tpy": 4.8
+   },
+   {
+    "mkt": "^IBEX",
+    "sym": "ESP35",
+    "setup": "AMD",
+    "pf": 1.63,
+    "wr": 63,
+    "trd": 43,
+    "oos_pf": 2.17,
+    "tpy": 4.2
+   },
+   {
+    "mkt": "FILUSDT",
+    "sym": "FILUSD",
+    "setup": "UPTHRUST",
+    "pf": 1.63,
+    "wr": 74,
+    "trd": 42,
+    "oos_pf": 4.42,
+    "tpy": 5.1
+   },
+   {
+    "mkt": "NKD=F",
+    "sym": "JP225",
+    "setup": "ORB",
+    "pf": 1.63,
+    "wr": 69,
+    "trd": 96,
+    "oos_pf": 1.39,
+    "tpy": 9.6
+   },
+   {
+    "mkt": "BTCUSDT",
+    "sym": "BTCUSD",
+    "setup": "SOS",
+    "pf": 1.63,
+    "wr": 54,
+    "trd": 71,
+    "oos_pf": 1.46,
+    "tpy": 5.5
+   },
+   {
+    "mkt": "KO",
+    "sym": "KO",
+    "setup": "LIQSWEEP",
+    "pf": 1.62,
+    "wr": 48,
+    "trd": 85,
+    "oos_pf": 1.36,
+    "tpy": 8.5
+   },
+   {
+    "mkt": "HD",
+    "sym": "HD",
+    "setup": "AMD",
+    "pf": 1.62,
+    "wr": 65,
+    "trd": 48,
+    "oos_pf": 1.28,
+    "tpy": 4.8
+   },
+   {
+    "mkt": "CAT",
+    "sym": "CAT",
+    "setup": "SOS",
+    "pf": 1.62,
+    "wr": 68,
+    "trd": 63,
+    "oos_pf": 2.14,
+    "tpy": 6.3
+   },
+   {
+    "mkt": "COST",
+    "sym": "COST",
+    "setup": "SPRING",
+    "pf": 1.62,
+    "wr": 58,
+    "trd": 48,
+    "oos_pf": 1.28,
+    "tpy": 4.8
+   },
+   {
+    "mkt": "NVDA",
+    "sym": "NVDA",
+    "setup": "STACKBULL",
+    "pf": 1.61,
+    "wr": 56,
+    "trd": 82,
+    "oos_pf": 1.22,
+    "tpy": 8.2
+   },
+   {
+    "mkt": "RTY",
+    "sym": "US2000",
+    "setup": "AMD",
+    "pf": 1.61,
+    "wr": 49,
+    "trd": 51,
+    "oos_pf": 1.81,
+    "tpy": 5.7
+   },
+   {
+    "mkt": "^FCHI",
+    "sym": "FRA40",
+    "setup": "AMD",
+    "pf": 1.6,
+    "wr": 72,
+    "trd": 43,
+    "oos_pf": 1.18,
+    "tpy": 4.2
+   }
+  ]
+ },
+ "bestof": {
+  "n": 40,
+  "tpd": 0.9,
+  "avg_pf": 3.12,
+  "roster": "XAUUSD:AMD:3:1:0;INTC:SPRING:3:1:0;XAGUSD:SPRING:0:0:0;APTUSD:UPTHRUST:4:1.5:0;JP225:AMD:0:0:0;WMT:SPRING:2.5:0.8:0;XAUUSD:STACKBULL:3:1:0;US500:RSI2:0:0:0;CA60:RSI2:3:6:0;AXSUSD:SOS:0:0:0;COST:AMD:3:1:0;XRPUSD:STACKBULL:2.5:0.8:0;V:RSI2:0:0:0;CA60:STACKBULL:3:1:0;US30:AMD:4:1.5:0;CA60:AMD:2.5:0.8:0;JPM:STACKBULL:3:1:0;XAGUSD:AMD:2.5:0.8:0;V:SPRING:4:1.5:0;INTC:AMD:3:1:0;DOGEUSD:STACKBULL:4:1.5:0;JP225:RSI2:0:0:0;NVDA:RSI2:0:0:0;NVDA:AMD:0:0:0;NATGAS:SPRING:3:1:0;CVX:SPRING:2.5:0.8:0;JP225:SOS:3:1:0;DIS:TSMOM:3:6:0;FTMUSD:RSI2:3:6:0;RUNEUSD:STACKBULL:3:1:0;COPPER:STACKBULL:2.5:0.8:0;JP225:SPRING:0:0:0;USOIL:AMD:2.5:0.8:0;JP225:STACKBULL:0:0:0;NAS100:RSI2:0:0:0;ESP35:SPRING:4:1.5:0;EURCHF:UPTHRUST:3:1:0;CAT:STACKBULL:1.5:3:2;LTCUSD:AMD:4:1.5:0;CHFJPY:SPRING:0:0:0",
+  "slots": [
+   {
+    "mkt": "GOLD",
+    "sym": "XAUUSD",
+    "setup": "AMD",
+    "pf": 9.9,
+    "wr": 94,
+    "trd": 35,
+    "oos_pf": 99.0,
+    "tpy": 3.5
+   },
+   {
+    "mkt": "INTC",
+    "sym": "INTC",
+    "setup": "SPRING",
+    "pf": 6.63,
+    "wr": 80,
+    "trd": 65,
+    "oos_pf": 29.58,
+    "tpy": 6.5
+   },
+   {
+    "mkt": "SILVER",
+    "sym": "XAGUSD",
+    "setup": "SPRING",
+    "pf": 6.18,
+    "wr": 72,
+    "trd": 53,
+    "oos_pf": 10.59,
+    "tpy": 5.3
+   },
+   {
+    "mkt": "^GSPTSE",
+    "sym": "CA60",
+    "setup": "STACKBULL",
+    "pf": 4.69,
+    "wr": 80,
+    "trd": 80,
+    "oos_pf": 3.41,
+    "tpy": 8.0
+   },
+   {
+    "mkt": "APTUSDT",
+    "sym": "APTUSD",
+    "setup": "UPTHRUST",
+    "pf": 4.24,
+    "wr": 80,
+    "trd": 30,
+    "oos_pf": 61.33,
+    "tpy": 5.7
+   },
+   {
+    "mkt": "V",
+    "sym": "V",
+    "setup": "RSI2",
+    "pf": 3.83,
+    "wr": 74,
+    "trd": 70,
+    "oos_pf": 4.42,
+    "tpy": 7.0
+   },
+   {
+    "mkt": "DIS",
+    "sym": "DIS",
+    "setup": "TSMOM",
+    "pf": 3.69,
+    "wr": 58,
+    "trd": 38,
+    "oos_pf": 2.47,
+    "tpy": 3.8
+   },
+   {
+    "mkt": "^GSPTSE",
+    "sym": "CA60",
+    "setup": "AMD",
+    "pf": 3.5,
+    "wr": 75,
+    "trd": 44,
+    "oos_pf": 3.9,
+    "tpy": 4.4
+   },
+   {
+    "mkt": "WMT",
+    "sym": "WMT",
+    "setup": "SPRING",
+    "pf": 3.38,
+    "wr": 85,
+    "trd": 60,
+    "oos_pf": 7.1,
+    "tpy": 6.0
+   },
+   {
+    "mkt": "GOLD",
+    "sym": "XAUUSD",
+    "setup": "STACKBULL",
+    "pf": 3.38,
+    "wr": 76,
+    "trd": 58,
+    "oos_pf": 6.48,
+    "tpy": 5.8
+   },
+   {
+    "mkt": "RUNEUSDT",
+    "sym": "RUNEUSD",
+    "setup": "STACKBULL",
+    "pf": 3.29,
+    "wr": 79,
+    "trd": 39,
+    "oos_pf": 2.71,
+    "tpy": 4.7
+   },
+   {
+    "mkt": "DOGEUSDT",
+    "sym": "DOGEUSD",
+    "setup": "STACKBULL",
+    "pf": 3.17,
+    "wr": 72,
+    "trd": 47,
+    "oos_pf": 3.69,
+    "tpy": 4.7
+   },
+   {
+    "mkt": "NKD=F",
+    "sym": "JP225",
+    "setup": "SOS",
+    "pf": 3.15,
+    "wr": 72,
+    "trd": 58,
+    "oos_pf": 2.99,
+    "tpy": 5.8
+   },
+   {
+    "mkt": "JPM",
+    "sym": "JPM",
+    "setup": "STACKBULL",
+    "pf": 3.08,
+    "wr": 77,
+    "trd": 82,
+    "oos_pf": 4.4,
+    "tpy": 8.2
+   },
+   {
+    "mkt": "NATGAS",
+    "sym": "NATGAS",
+    "setup": "SPRING",
+    "pf": 3.07,
+    "wr": 78,
+    "trd": 58,
+    "oos_pf": 3.35,
+    "tpy": 5.8
+   },
+   {
+    "mkt": "NVDA",
+    "sym": "NVDA",
+    "setup": "RSI2",
+    "pf": 3.01,
+    "wr": 79,
+    "trd": 80,
+    "oos_pf": 3.81,
+    "tpy": 8.0
+   },
+   {
+    "mkt": "^N225",
+    "sym": "JP225",
+    "setup": "AMD",
+    "pf": 2.84,
+    "wr": 68,
+    "trd": 31,
+    "oos_pf": 53.64,
+    "tpy": 3.2
+   },
+   {
+    "mkt": "YM",
+    "sym": "US30",
+    "setup": "AMD",
+    "pf": 2.83,
+    "wr": 79,
+    "trd": 58,
+    "oos_pf": 5.2,
+    "tpy": 5.8
+   },
+   {
+    "mkt": "OIL",
+    "sym": "USOIL",
+    "setup": "AMD",
+    "pf": 2.74,
+    "wr": 81,
+    "trd": 53,
+    "oos_pf": 3.12,
+    "tpy": 5.3
+   },
+   {
+    "mkt": "^GSPTSE",
+    "sym": "CA60",
+    "setup": "RSI2",
+    "pf": 2.72,
+    "wr": 78,
+    "trd": 73,
+    "oos_pf": 6.57,
+    "tpy": 7.3
+   },
+   {
+    "mkt": "FTMUSDT",
+    "sym": "FTMUSD",
+    "setup": "RSI2",
+    "pf": 2.71,
+    "wr": 74,
+    "trd": 38,
+    "oos_pf": 3.33,
+    "tpy": 4.7
+   },
+   {
+    "mkt": "SILVER",
+    "sym": "XAGUSD",
+    "setup": "AMD",
+    "pf": 2.64,
+    "wr": 77,
+    "trd": 30,
+    "oos_pf": 5.03,
+    "tpy": 3.0
+   },
+   {
+    "mkt": "V",
+    "sym": "V",
+    "setup": "SPRING",
+    "pf": 2.59,
+    "wr": 83,
+    "trd": 53,
+    "oos_pf": 5.02,
+    "tpy": 5.3
+   },
+   {
+    "mkt": "CHFJPY",
+    "sym": "CHFJPY",
+    "setup": "SPRING",
+    "pf": 2.58,
+    "wr": 71,
+    "trd": 58,
+    "oos_pf": 2.85,
+    "tpy": 5.6
+   },
+   {
+    "mkt": "COPPER",
+    "sym": "COPPER",
+    "setup": "STACKBULL",
+    "pf": 2.46,
+    "wr": 77,
+    "trd": 64,
+    "oos_pf": 3.59,
+    "tpy": 6.4
+   },
+   {
+    "mkt": "^IBEX",
+    "sym": "ESP35",
+    "setup": "SPRING",
+    "pf": 2.41,
+    "wr": 77,
+    "trd": 57,
+    "oos_pf": 3.47,
+    "tpy": 5.6
+   },
+   {
+    "mkt": "NKD=F",
+    "sym": "JP225",
+    "setup": "SPRING",
+    "pf": 2.4,
+    "wr": 68,
+    "trd": 57,
+    "oos_pf": 3.59,
+    "tpy": 5.7
+   },
+   {
+    "mkt": "INTC",
+    "sym": "INTC",
+    "setup": "AMD",
+    "pf": 2.39,
+    "wr": 71,
+    "trd": 45,
+    "oos_pf": 5.08,
+    "tpy": 4.5
+   },
+   {
+    "mkt": "EURCHF",
+    "sym": "EURCHF",
+    "setup": "UPTHRUST",
+    "pf": 2.36,
+    "wr": 68,
+    "trd": 56,
+    "oos_pf": 3.26,
+    "tpy": 5.4
+   },
+   {
+    "mkt": "AXSUSDT",
+    "sym": "AXSUSD",
+    "setup": "SOS",
+    "pf": 2.33,
+    "wr": 55,
+    "trd": 29,
+    "oos_pf": 7.52,
+    "tpy": 3.6
+   },
+   {
+    "mkt": "CAT",
+    "sym": "CAT",
+    "setup": "STACKBULL",
+    "pf": 2.3,
+    "wr": 47,
+    "trd": 79,
+    "oos_pf": 3.32,
+    "tpy": 7.9
+   },
+   {
+    "mkt": "COST",
+    "sym": "COST",
+    "setup": "AMD",
+    "pf": 2.29,
+    "wr": 70,
+    "trd": 44,
+    "oos_pf": 7.46,
+    "tpy": 4.4
+   },
+   {
+    "mkt": "NVDA",
+    "sym": "NVDA",
+    "setup": "AMD",
+    "pf": 2.22,
+    "wr": 74,
+    "trd": 42,
+    "oos_pf": 4.91,
+    "tpy": 4.2
+   },
+   {
+    "mkt": "ES",
+    "sym": "US500",
+    "setup": "RSI2",
+    "pf": 2.14,
+    "wr": 78,
+    "trd": 78,
+    "oos_pf": 9.89,
+    "tpy": 7.8
+   },
+   {
+    "mkt": "NKD=F",
+    "sym": "JP225",
+    "setup": "RSI2",
+    "pf": 2.08,
+    "wr": 78,
+    "trd": 67,
+    "oos_pf": 5.61,
+    "tpy": 6.7
+   },
+   {
+    "mkt": "NQ",
+    "sym": "NAS100",
+    "setup": "RSI2",
+    "pf": 2.06,
+    "wr": 72,
+    "trd": 75,
+    "oos_pf": 4.1,
+    "tpy": 7.5
+   },
+   {
+    "mkt": "NKD=F",
+    "sym": "JP225",
+    "setup": "STACKBULL",
+    "pf": 2.04,
+    "wr": 52,
+    "trd": 87,
+    "oos_pf": 4.17,
+    "tpy": 8.7
+   },
+   {
+    "mkt": "CVX",
+    "sym": "CVX",
+    "setup": "SPRING",
+    "pf": 1.8,
+    "wr": 71,
+    "trd": 63,
+    "oos_pf": 5.27,
+    "tpy": 6.3
+   },
+   {
+    "mkt": "LTCUSDT",
+    "sym": "LTCUSD",
+    "setup": "AMD",
+    "pf": 1.8,
+    "wr": 70,
+    "trd": 46,
+    "oos_pf": 4.14,
+    "tpy": 3.7
+   },
+   {
+    "mkt": "XRPUSDT",
+    "sym": "XRPUSD",
+    "setup": "STACKBULL",
+    "pf": 1.7,
+    "wr": 62,
+    "trd": 53,
+    "oos_pf": 32.22,
+    "tpy": 4.5
    }
   ]
  }

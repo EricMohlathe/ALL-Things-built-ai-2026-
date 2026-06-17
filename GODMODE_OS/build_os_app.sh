@@ -7,9 +7,9 @@ BUILD="$OS/build"
 APP="$BUILD/GODMODE OS.app"
 rm -rf "$BUILD"; mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
 cp -R "$DASH" "$APP/Contents/Resources/cockpit"
-# also bundle the two sub-dashboards + control center so links resolve offline
-mkdir -p "$APP/Contents/Resources/openalice-hub"
-cp -R "$HOME/ai-tools/trading/openalice-hub/dashboard" "$APP/Contents/Resources/openalice-hub/dashboard" 2>/dev/null || true
+# bundle the FULL Live Runner hub (stdlib only) so the app serves run.html + /api/* (Roster/Trade/Portfolio…)
+rsync -a --exclude='.git' --exclude='data' --exclude='logs' --exclude='__pycache__' --exclude='.env' --exclude='*.dmg' \
+  "$HOME/ai-tools/trading/openalice-hub/" "$APP/Contents/Resources/hub/" 2>/dev/null || true
 cp -R "$OS/../GODMODE_App" "$APP/Contents/Resources/GODMODE_App" 2>/dev/null || true
 
 ICONSET="$BUILD/AppIcon.iconset"; mkdir -p "$ICONSET"
@@ -23,14 +23,16 @@ cat > "$APP/Contents/MacOS/launcher" <<'SH'
 #!/bin/bash
 DIR="$(cd "$(dirname "$0")/../Resources" && pwd)"
 PORT=7870
-URL="http://127.0.0.1:$PORT/cockpit/"
+URL="http://127.0.0.1:$PORT/run.html"
+HUB="$DIR/hub"
 PY=""; for p in /usr/bin/python3 /opt/homebrew/bin/python3 /usr/local/bin/python3; do [ -x "$p" ] && PY="$p" && break; done
-[ -z "$PY" ] && { open "$URL"; exit 0; }
+[ -z "$PY" ] && { open "$DIR/cockpit/index.html"; exit 0; }
 SRV=""
 if ! curl -s -o /dev/null "$URL" 2>/dev/null; then
-  ( cd "$DIR" && exec "$PY" -m http.server $PORT --bind 127.0.0.1 >/dev/null 2>&1 ) &
+  # serve the full Live Runner: run.html + /api/* (Roster/Trade/Portfolio/Systems/Coverage)
+  ( cd "$HUB" && PYTHONPATH="$HUB" exec "$PY" -c "from openalice_hub import server; server.serve($PORT)" >/tmp/godmode_os.log 2>&1 ) &
   SRV=$!
-  for i in $(seq 1 40); do curl -s -o /dev/null "$URL" 2>/dev/null && break; sleep 0.2; done
+  for i in $(seq 1 50); do curl -s -o /dev/null "$URL" 2>/dev/null && break; sleep 0.2; done
 fi
 open "$URL"
 [ -n "$SRV" ] && wait $SRV
