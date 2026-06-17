@@ -5,8 +5,9 @@
 //|  BELOW the prior swing-low of closes (lookback LB), close back     |
 //|  ABOVE it = stop-run reversal long. Long-only (long side validated)|
 //|                                                                   |
-//|  VALIDATED (real backtest, OpenAlice stdlib engine, ~1000 daily   |
-//|  bars, no-lookahead, fill next open, fees on; OOS = held-out 30%): |
+//|  VALIDATED (real backtest, 10yr / ~2513 daily bars 2016-2026,     |
+//|  no-lookahead, fill next open, fees on; OOS = held-out 30%).       |
+//|  Freq: ~5-6 trades/YEAR (53/10yr), hold ~10 trading days.         |
 //|    SILVER 1D: PF 5.74 WR 71.7% 53trd +323.5% OOS 8.96  exits NONE  |
 //|    YM     1D: PF 2.48 WR 81.0% 58trd +59.8%  OOS 2.01  stop4/tp1.5 |
 //|    GOLD   1D: PF 2.29 WR 75.5% 49trd +27.6%  OOS 2.78  stop3/tp1   |

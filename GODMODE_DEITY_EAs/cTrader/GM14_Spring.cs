@@ -5,8 +5,9 @@
 //            prior swing-low (of closes, lookback LB) then CLOSES back above it
 //            = stop-run reversal long. Long-only (only the long side validated).
 //
-//  VALIDATED (real backtest, OpenAlice stdlib engine, ~1000 daily bars, no-lookahead,
-//  signal on close, fill next open, fees on; out-of-sample = held-out tail 30%):
+//  VALIDATED (real backtest, OpenAlice stdlib engine, 10yr / ~2513 daily bars
+//  2016-2026, no-lookahead, signal on close, fill next open, fees on; OOS = held-out 30%).
+//  Frequency: ~5-6 trades/YEAR (53 over 10yr), hold ~10 trading days. Slow swing EA:
 //     SILVER(SI=F) 1D : PF 5.74 | WR 71.7% | 53 trd | +323.5% | OOS PF 8.96  | exits: NONE (hold-only)
 //     YM (US30)    1D : PF 2.48 | WR 81.0% | 58 trd | +59.8%  | OOS PF 2.01  | stopATR 4 / tpATR 1.5
 //     GOLD(GC=F)   1D : PF 2.29 | WR 75.5% | 49 trd | +27.6%  | OOS PF 2.78  | stopATR 3 / tpATR 1

@@ -93,7 +93,10 @@ attach to a **D1** chart of the mapped symbol, set the preset inputs, enable Aut
    continuous-futures series the backtest used.
 3. **Trend-aligned, long-only.** These buy springs/sweeps inside **uptrending** assets. In a
    sustained downtrend they will underperform. Honest, not a defect.
-4. **Daily timeframe.** ~50–67 trades over ~4 years ≈ low frequency. Be patient; don't force it
-   onto lower timeframes without re-validating.
+4. **Daily timeframe, LOW frequency.** Backtest span = **10 years** (2016–2026, ~2513 D1 bars).
+   50–67 trades over 10yr = **~5–6 trades per YEAR each** (≈ 1 every 6–9 weeks, ~0.02/day),
+   holding ~10 trading days per trade. These are slow swing EAs — not day-traders. For more
+   action, run all 4 across all their validated markets at once (≈ 20–30 signals/yr aggregate);
+   don't force them onto lower timeframes without re-validating (the edge is proven on D1 only).
 
 **Trade demo first. Risk only what you can lose. No EA is a money printer — these are edges, not certainties.**
