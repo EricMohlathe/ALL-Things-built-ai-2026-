@@ -128,8 +128,9 @@ tbody tr{transition:.15s}tbody tr:hover{background:var(--glass)}
   <!-- PORTFOLIO -->
   <section class=view id=v-portfolio>
     <div class=card style=padding:18px>
-      <button class="btn c" onclick=runPort()>⚡ Run GODMODE Portfolio</button>
-      <span class=note style=margin-left:14px>Equal-weight basket of uncorrelated validated legs. Diversification = the only free lunch.</span>
+      <button class="btn c" onclick=runPort()>⚡ 2-leg Portfolio</button>
+      <button class="btn g" onclick=runPortDecorr() style=margin-left:10px>🛰 GODMODE·DECORR (135 slots)</button>
+      <span class=note style=margin-left:14px>Blended equity of the full decorrelated roster at equal allocation.</span>
     </div>
     <div id=portOut style=margin-top:18px></div>
   </section>
@@ -214,6 +215,19 @@ function loadSystems(){if($('sysOut').dataset.done)return;
   $('sysOut').innerHTML=d.map(s=>`<div class=scard><h4>${s.name} <span class="tag ${tg[s.status]||'cl'}">${s.status}</span></h4>
     <div class=k>${s.kind}</div><p class=note style=margin:6px_0>${s.desc}</p>
     <div class=how>${s.how}</div></div>`).join('');}).catch(()=>{$('sysOut').innerHTML='<p class=neg>no /api/systems</p>'});}
+function runPortDecorr(){$('portOut').innerHTML='<div class=card style=padding:20px>Loading 135-slot blended backtest…</div>';
+  fetch('/api/portfolio_decorr').then(r=>r.json()).then(d=>{
+  if(d.error){$('portOut').innerHTML='<p class=neg>'+d.error+' — run tools/portfolio_backtest.py</p>';return;}
+  const m=d.metrics;
+  $('portOut').innerHTML=mets([
+    ['Total return',{t:'…',e:m.total_return,f:'pct'},cls(m.total_return)],
+    ['CAGR',{t:'…',e:m.cagr,f:'pct'},cls(m.cagr)],
+    ['Sharpe',{t:'…',e:m.sharpe,f:'x2'},cls(m.sharpe)],
+    ['Max drawdown',{t:'…',e:m.max_drawdown,f:'pct'},'neg'],
+    ['Win days',{t:'…',e:m.win_days,f:'pct'},'pos'],
+    ['Slots',{t:'…',e:d.n_slots,f:'int'},''],
+  ])+chart(d.equity)+`<div class=card style="padding:14px;margin-top:14px"><p class=note>${d.n_slots} decorrelated validated edges · equal allocation · ${m.years}yr (${d.dates[0]} → ${d.dates[1]}) · blended daily returns. Diversification turns ${d.n_slots} ~weekly edges into one smooth daily-frequency curve.</p></div>`;
+  animateMets($('portOut'));}).catch(e=>$('portOut').innerHTML='<p class=neg>'+e+'</p>');}
 function loadRoster(){if($('rosOut').dataset.done)return;
   fetch('/api/roster').then(r=>r.json()).then(d=>{$('rosOut').dataset.done=1;
   if(!d.full){$('rosOut').innerHTML='<p class=neg>no /api/roster</p>';return;}

@@ -100,6 +100,14 @@ def api_roster(q):
         return {}
 
 
+def api_portfolio_decorr(q):
+    """Combined backtest of the 135-slot decorrelated portfolio (real blended equity)."""
+    try:
+        return json.load(open(os.path.join(HUB, "registry", "portfolio_decorr.json")))
+    except Exception:
+        return {"error": "not computed yet"}
+
+
 def api_portfolio(q):
     from openalice_hub.core import portfolio as pf
     return pf.run()
@@ -108,6 +116,7 @@ def api_portfolio(q):
 ROUTES = {"/api/strategies": lambda q: api_strategies(),
           "/api/systems": api_systems,
           "/api/roster": api_roster,
+          "/api/portfolio_decorr": api_portfolio_decorr,
           "/api/portfolio": lambda q: api_portfolio(q),
           "/api/backtest": api_backtest, "/api/optimize": api_optimize}
 
