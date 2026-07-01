@@ -144,3 +144,26 @@ setups. Crypto intraday and all <D1 timeframes failed cost-adjusted (see `../GOD
    don't force them onto lower timeframes without re-validating (the edge is proven on D1 only).
 
 **Trade demo first. Risk only what you can lose. No EA is a money printer — these are edges, not certainties.**
+
+## Complete standalone EA library (one file per setup, MT5 + cTrader)
+
+Every validated setup now ships as its own self-contained EA (attach to a D1 chart of the
+validated market; presets in each file header):
+
+| EA | direction | concept | best markets |
+|----|-----------|---------|--------------|
+| GM14_Spring | long | Wyckoff spring / liquidity reclaim | SILVER, GOLD, YM, JPY crosses |
+| GM15_Upthrust | short | Wyckoff upthrust / failed breakout | EURCHF, PLATINUM, NZDUSD |
+| GM16_SOS | long | Wyckoff sign-of-strength expansion | NQ, ES, YM |
+| GM11_StackBull | long | footprint buy-delta stack | GOLD, COPPER, NQ |
+| GM22_AMD | long | ICT accumulation-manipulation-distribution | GOLD, YM, SILVER, OIL |
+| GM18_LiqSweep | both | liquidity-sweep reversal | PLATINUM, AUDUSD |
+| GM24_PoorHL | both | auction poor high/low fade (delta) | NQ, GOLD, YM, GBP |
+| ArchonORB | both | volatility / opening-range breakout | EUR, EURJPY, indices |
+| ArchonTSMom | both | time-series momentum | WHEAT, NQ, CHFJPY, OIL |
+| RSI2_Reversion | long | Connors RSI(2) mean reversion | JPY, ES, NQ (forex pack) |
+
+Plus **GODMODE_UniversalController** (runs all 10 across the full roster in one EA) and
+**GODMODE_DeityController** (the 4 long-only deity setups). All audited: logic 1:1 with the
+Python detectors, no-lookahead, risk%-sized, ATR stop/tp/trail, long-only where only the long
+side validated. Truth = your broker's Strategy Tester per symbol.
