@@ -32,12 +32,17 @@ namespace cAlgo.Robots
         [Parameter("Trail ATR mult", Group = "Risk", DefaultValue = 2.0, MinValue = 0.0)] public double TrailATR { get; set; }
         [Parameter("ATR Period", Group = "Misc", DefaultValue = 14)] public int AtrPeriod { get; set; }
         [Parameter("Label", Group = "Misc", DefaultValue = "ArchonTSMom")] public string Lbl { get; set; }
+        [Parameter("Trend SMA (0=off)", Group = "Signal", DefaultValue = 0)] public int TrendSMA { get; set; }
 
         private AverageTrueRange _atr;
         private int _entryBar = -1;
 
         protected override void OnStart()
         { _atr = Indicators.AverageTrueRange(AtrPeriod, MovingAverageType.Simple); Print("Archon TSMom started. Time-series momentum, both directions."); }
+
+        
+        private bool TrendOK(int dir)
+        { if (TrendSMA <= 0) return true; double s = 0; for (int i = 1; i <= TrendSMA; i++) s += Bars.ClosePrices.Last(i); s /= TrendSMA; double c = Bars.ClosePrices.Last(1); return dir > 0 ? c > s : c < s; }
 
         protected override void OnBar()
         {
@@ -47,7 +52,7 @@ namespace cAlgo.Robots
             int sig = 0;
             if (AllowLong && c1 > clb) sig = 1;
             else if (AllowShort && c1 < clb) sig = -1;
-            if (sig == 0) return;
+            if (sig == 0 || !TrendOK(sig)) return;
             var pos = Positions.FirstOrDefault(p => p.Label == Lbl);
             int dir = pos == null ? 0 : (pos.TradeType == TradeType.Buy ? 1 : -1);
             if (sig == dir) return;

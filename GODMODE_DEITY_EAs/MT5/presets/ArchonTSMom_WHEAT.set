@@ -1,0 +1,12 @@
+; ArchonTSMom — WHEAT validated preset (GODMODE OS)
+
+LB=20
+Hold=10
+RiskPct=1.0
+AtrPeriod=14
+AllowLong=true
+AllowShort=true
+StopATR=1.5
+TpATR=3
+TrailATR=2
+TrendSMA=0

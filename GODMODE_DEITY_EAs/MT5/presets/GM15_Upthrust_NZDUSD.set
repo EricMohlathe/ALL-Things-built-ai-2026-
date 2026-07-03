@@ -1,0 +1,9 @@
+; GM15_Upthrust — NZDUSD validated preset (GODMODE OS)
+
+LB=20
+Hold=10
+RiskPct=1.0
+AtrPeriod=14
+StopATR=2.5
+TpATR=0.8
+TrailATR=0

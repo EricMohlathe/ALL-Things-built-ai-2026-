@@ -1,0 +1,12 @@
+; RSI2_Reversion — USDJPY validated preset (GODMODE OS)
+
+LB=20
+Hold=10
+RiskPct=1.0
+AtrPeriod=14
+RsiN=2
+BuyLevel=10
+ExitLevel=60
+TrendN=200
+StopATR=4
+TpATR=1.5

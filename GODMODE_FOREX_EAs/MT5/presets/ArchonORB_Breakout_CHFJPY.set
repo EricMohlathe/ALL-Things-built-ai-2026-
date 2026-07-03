@@ -1,0 +1,13 @@
+; ArchonORB_Breakout — CHFJPY validated preset (GODMODE OS)
+
+LB=20
+Hold=12
+RiskPct=1.0
+AtrPeriod=14
+K=1.0
+TrendN=200
+AllowLong=true
+AllowShort=true
+StopATR=3
+TpATR=1
+TrailATR=0

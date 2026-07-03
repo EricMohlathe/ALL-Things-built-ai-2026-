@@ -33,6 +33,7 @@ namespace cAlgo.Robots
 
         [Parameter("ATR Period", Group = "Misc", DefaultValue = 14)] public int AtrPeriod { get; set; }
         [Parameter("Label", Group = "Misc", DefaultValue = "GM11_StackBull")] public string Lbl { get; set; }
+        [Parameter("Trend SMA (0=off)", Group = "Signal", DefaultValue = 0)] public int TrendSMA { get; set; }
 
         private AverageTrueRange _atr;
         private int _entryBar = -1;
@@ -51,6 +52,10 @@ namespace cAlgo.Robots
         private double MeanDelta()
         { double s = 0; for (int j = 1; j <= LB; j++) s += Delta(j); return s / LB; }
 
+        
+        private bool TrendOK(int dir)
+        { if (TrendSMA <= 0) return true; double s = 0; for (int i = 1; i <= TrendSMA; i++) s += Bars.ClosePrices.Last(i); s /= TrendSMA; double c = Bars.ClosePrices.Last(1); return dir > 0 ? c > s : c < s; }
+
         protected override void OnBar()
         {
             ManageOpen();
@@ -58,7 +63,7 @@ namespace cAlgo.Robots
             if (Bars.ClosePrices.Count < LB + 5) return;
 
             if (Delta(1) > 0 && Delta(2) > 0 && Delta(3) > 0 &&
-                Delta(1) > K * Math.Abs(MeanDelta()))
+                Delta(1) > K * Math.Abs(MeanDelta()) && TrendOK(1))
                 EnterLong();
         }
 

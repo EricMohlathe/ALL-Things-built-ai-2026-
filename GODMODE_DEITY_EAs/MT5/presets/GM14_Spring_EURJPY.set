@@ -1,0 +1,11 @@
+; GM14_Spring — EURJPY validated preset (GODMODE OS)
+
+LB=20
+Hold=10
+RiskPct=1.0
+AtrPeriod=14
+StopATR=3
+TpATR=1
+TrailATR=0
+TrendSMA=50
+SizingATR=3

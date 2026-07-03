@@ -32,6 +32,7 @@ namespace cAlgo.Robots
 
         [Parameter("ATR Period", Group = "Misc", DefaultValue = 14)] public int AtrPeriod { get; set; }
         [Parameter("Label", Group = "Misc", DefaultValue = "GM22_AMD")] public string Lbl { get; set; }
+        [Parameter("Trend SMA (0=off)", Group = "Signal", DefaultValue = 0)] public int TrendSMA { get; set; }
 
         private AverageTrueRange _atr;
         private int _entryBar = -1;
@@ -50,6 +51,10 @@ namespace cAlgo.Robots
         private double LowestClose(int from, int n)
         { double m = double.MaxValue; for (int s = from; s < from + n; s++) m = Math.Min(m, Bars.ClosePrices.Last(s)); return m; }
 
+        
+        private bool TrendOK(int dir)
+        { if (TrendSMA <= 0) return true; double s = 0; for (int i = 1; i <= TrendSMA; i++) s += Bars.ClosePrices.Last(i); s /= TrendSMA; double c = Bars.ClosePrices.Last(1); return dir > 0 ? c > s : c < s; }
+
         protected override void OnBar()
         {
             ManageOpen();
@@ -62,7 +67,7 @@ namespace cAlgo.Robots
 
             if (Bars.LowPrices.Last(2) < llPrev2 &&                          // prior bar swept lows
                 Bars.ClosePrices.Last(1) > Bars.ClosePrices.Last(2) &&      // now closing higher
-                rng > K * atr && Delta(1) > 0)                              // expansion + buy delta
+                rng > K * atr && Delta(1) > 0 && TrendOK(1))                // expansion + buy delta + trend
                 EnterLong(atr);
         }
 

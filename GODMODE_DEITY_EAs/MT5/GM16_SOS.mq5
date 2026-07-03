@@ -26,6 +26,7 @@ input double TpATR     = 4.0;
 input double TrailATR  = 3.0;
 input double SizingATR = 3.0;
 input int    AtrPeriod = 14;
+input int    TrendSMA  = 0;      // trend filter (0=off; ES:200, NQ:50, SILVER:100 validated)
 input long   Magic     = 814016; // GM16
 
 CTrade   trade;
@@ -69,12 +70,15 @@ void ManageOpen(){ if(!HasPosition()){ entryBarIndex=-1; return; }
       for(int i=PositionsTotal()-1;i>=0;i--){ ulong tk=PositionGetTicket(i);
          if(PositionSelectByTicket(tk)&&PositionGetString(POSITION_SYMBOL)==_Symbol&&PositionGetInteger(POSITION_MAGIC)==Magic) trade.PositionClose(tk); } } }
 
+
+bool TrendOK(int dir){ if(TrendSMA<=0) return true; double s=0; for(int i=1;i<=TrendSMA;i++) s+=iClose(_Symbol,_Period,i); s/=TrendSMA; double c=iClose(_Symbol,_Period,1); return dir>0 ? c>s : c<s; }
+
 void OnTick(){ datetime t=iTime(_Symbol,_Period,0); if(t==lastBar) return; lastBar=t; barCounter++;
    ManageOpen(); if(HasPosition()) return; if(Bars(_Symbol,_Period)<LB+5) return;
    double atr=Atr(); if(atr<=0) return;
    double rng=iHigh(_Symbol,_Period,1)-iLow(_Symbol,_Period,1);
    bool up=iClose(_Symbol,_Period,1)>iOpen(_Symbol,_Period,1);
    double hhPrev=HighestClose(2,LB);
-   if(rng>K*atr && up && Delta(1)>0 && iClose(_Symbol,_Period,1)>=hhPrev)
+   if(rng>K*atr && up && Delta(1)>0 && iClose(_Symbol,_Period,1)>=hhPrev && TrendOK(1))
       OpenLong(atr); }
 //+------------------------------------------------------------------+

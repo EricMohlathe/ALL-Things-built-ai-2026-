@@ -28,6 +28,7 @@ input double TpATR     = 1.0;    // TP   = TpATR  x ATR (0 = none)
 input double TrailATR  = 0.0;    // Trailing stop ATR mult (0 = off)
 input double SizingATR = 3.0;    // ATR mult used for sizing when StopATR=0
 input int    AtrPeriod = 14;
+input int    TrendSMA  = 0;      // trend filter (0=off; GOLD:100, EURJPY:50 validated)
 input long   Magic     = 814014; // GM14
 
 CTrade   trade;
@@ -124,6 +125,9 @@ void ManageOpen()
    }
 }
 
+
+bool TrendOK(int dir){ if(TrendSMA<=0) return true; double s=0; for(int i=1;i<=TrendSMA;i++) s+=iClose(_Symbol,_Period,i); s/=TrendSMA; double c=iClose(_Symbol,_Period,1); return dir>0 ? c>s : c<s; }
+
 void OnTick()
 {
    datetime t = iTime(_Symbol,_Period,0);
@@ -140,7 +144,7 @@ void OnTick()
    double atr      = Atr();
    if(atr<=0) return;
 
-   if(sigLow < llPrev && sigClose > llPrev)   // GM14 spring (long)
+   if(sigLow < llPrev && sigClose > llPrev && TrendOK(1))   // GM14 spring (long)
       OpenLong(atr);
 }
 //+------------------------------------------------------------------+

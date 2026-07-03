@@ -1,0 +1,11 @@
+; GM14_Spring — US30 validated preset (GODMODE OS)
+
+LB=20
+Hold=10
+RiskPct=1.0
+AtrPeriod=14
+StopATR=4
+TpATR=1.5
+TrailATR=0
+TrendSMA=0
+SizingATR=3

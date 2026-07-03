@@ -1,0 +1,11 @@
+; GM24_PoorHL — NAS100 validated preset (GODMODE OS)
+
+LB=20
+Hold=10
+RiskPct=1.0
+AtrPeriod=14
+AllowLong=true
+AllowShort=true
+StopATR=3
+TpATR=6
+TrailATR=0

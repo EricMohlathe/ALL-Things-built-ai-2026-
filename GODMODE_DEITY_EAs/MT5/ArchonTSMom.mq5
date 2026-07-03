@@ -17,7 +17,9 @@
 
 input int    LB=20; input int Hold=10; input bool AllowLong=true; input bool AllowShort=true;
 input double RiskPct=1.0; input double StopATR=1.5; input double TpATR=3.0; input double TrailATR=2.0;
-input int    AtrPeriod=14; input long Magic=814090;
+input int    AtrPeriod=14;
+input int    TrendSMA=0;   // trend filter (0=off; NQ:200 validated)
+input long   Magic=814090;
 
 CTrade trade; int hAtr; datetime lastBar=0; int entryBar=-1, barCounter=0;
 int OnInit(){ hAtr=iATR(_Symbol,_Period,AtrPeriod); if(hAtr==INVALID_HANDLE) return INIT_FAILED;
@@ -47,9 +49,12 @@ void Manage(){ int dir=CurDir(); if(dir==0){ entryBar=-1; return; }
             if(dir>0){ double n=SymbolInfoDouble(_Symbol,SYMBOL_BID)-TrailATR*a; if(n>cur) trade.PositionModify(tk,n,tp); }
             else     { double n=SymbolInfoDouble(_Symbol,SYMBOL_ASK)+TrailATR*a; if(cur==0||n<cur) trade.PositionModify(tk,n,tp); } } } }
    if(entryBar>=0 && (barCounter-entryBar)>=Hold) CloseMine(); }
+
+bool TrendOK(int dir){ if(TrendSMA<=0) return true; double s=0; for(int i=1;i<=TrendSMA;i++) s+=iClose(_Symbol,_Period,i); s/=TrendSMA; double c=iClose(_Symbol,_Period,1); return dir>0 ? c>s : c<s; }
+
 void OnTick(){ datetime t=iTime(_Symbol,_Period,0); if(t==lastBar) return; lastBar=t; barCounter++;
    Manage(); if(Bars(_Symbol,_Period)<LB+5) return; double a=Atr(); if(a<=0) return;
    double c1=iClose(_Symbol,_Period,1), clb=iClose(_Symbol,_Period,LB+1);
    int sig=0; if(AllowLong && c1>clb) sig=1; else if(AllowShort && c1<clb) sig=-1;
-   if(sig==0) return; int dir=CurDir(); if(sig==dir) return; if(dir!=0) CloseMine(); Enter(sig,a); }
+   if(sig==0 || !TrendOK(sig)) return; int dir=CurDir(); if(sig==dir) return; if(dir!=0) CloseMine(); Enter(sig,a); }
 //+------------------------------------------------------------------+

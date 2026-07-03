@@ -1,0 +1,12 @@
+; GM16_SOS — US500 validated preset (GODMODE OS)
+
+LB=20
+Hold=10
+RiskPct=1.0
+AtrPeriod=14
+K=1.0
+StopATR=3
+TpATR=1
+TrailATR=0
+TrendSMA=200
+SizingATR=3

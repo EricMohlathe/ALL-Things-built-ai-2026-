@@ -1,0 +1,11 @@
+; GM24_PoorHL — US30 validated preset (GODMODE OS)
+
+LB=20
+Hold=10
+RiskPct=1.0
+AtrPeriod=14
+AllowLong=true
+AllowShort=true
+StopATR=2
+TpATR=4
+TrailATR=3
