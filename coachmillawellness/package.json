@@ -1,0 +1,25 @@
+{
+  "name": "coachmillawellness",
+  "version": "1.0.0",
+  "private": true,
+  "description": "CoachMillaWellness — coaching practice platform. One core, four targets.",
+  "packageManager": "pnpm@10.33.0",
+  "engines": {
+    "node": ">=20.11"
+  },
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "test": "turbo run test",
+    "typecheck": "turbo run typecheck",
+    "single": "pnpm --filter @cmw/single build",
+    "single:dev": "pnpm --filter @cmw/single dev",
+    "gate:g1": "turbo run test",
+    "gate:g7": "node scripts/gate-no-secrets.mjs"
+  },
+  "devDependencies": {
+    "turbo": "^2.3.0",
+    "typescript": "^5.7.0",
+    "vitest": "^3.0.0"
+  }
+}
