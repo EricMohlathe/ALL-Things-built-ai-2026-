@@ -26,7 +26,7 @@
   --cmw-text-inverse: #0e0f1a;
   --cmw-accent: #9a7bff;
   --cmw-accent-text: #9a7bff;
-  --cmw-accent-quiet: rgba(154, 123, 255, 0.14);
+  --cmw-accent-quiet: #282645;
   --cmw-success: #5fbf9f;
   --cmw-success-text: #5fbf9f;
   --cmw-warn: #f5a524;
@@ -124,7 +124,7 @@
   --cmw-text-inverse: #ffffff;
   --cmw-accent: #6e4fe0;
   --cmw-accent-text: #6e4fe0;
-  --cmw-accent-quiet: rgba(110, 79, 224, 0.1);
+  --cmw-accent-quiet: #f1edfc;
   --cmw-success: #2f8f6f;
   --cmw-success-text: #26775c;
   --cmw-warn: #c4820e;

@@ -1,0 +1,87 @@
+# CI for CoachMillaWellness.
+#
+# The validation gates from §12, as a pipeline. Each job is a gate rather than a
+# vague "test" step, so a failure names which standard was missed.
+#
+# Note the working-directory: this monorepo currently lives in a subdirectory of a
+# larger repo. After MIGRATION.md's extraction it becomes the root, and the
+# `defaults` block is the only thing that needs deleting.
+
+name: CI
+
+on:
+  push:
+    paths: ['coachmillawellness/**']
+  pull_request:
+    paths: ['coachmillawellness/**']
+
+defaults:
+  run:
+    working-directory: coachmillawellness
+
+jobs:
+  verify:
+    name: Gates G1–G7
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: coachmillawellness/pnpm-lock.yaml
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Typecheck — strict, no any
+        run: |
+          for pkg in tokens core data ui single; do
+            pnpm --filter "@cmw/$pkg" exec tsc -p tsconfig.json --noEmit
+          done
+
+      # G1: 100% branch coverage on scoring, checklist, coherence and the wheel.
+      # These are the rules of her practice — an untested branch is a session
+      # graded wrongly.
+      - name: G1 — domain logic coverage
+        run: pnpm --filter @cmw/core test:coverage
+
+      - name: Unit tests — tokens, data
+        run: |
+          pnpm --filter @cmw/tokens test
+          pnpm --filter @cmw/data test
+
+      # G3: the single file must stay inside its 1.2MB gzipped budget, and must
+      # remain a single file.
+      - name: G3 — build and budget
+        run: pnpm --filter @cmw/single build
+
+      # G7: no credential in any shipped artefact.
+      - name: G7 — secret scan
+        run: node scripts/gate-no-secrets.mjs
+
+      - name: Install Chromium
+        run: pnpm --filter @cmw/single exec playwright install --with-deps chromium
+
+      # G2 (round-trip), G5 (axe, both themes), G6 (12-step smoke over file://).
+      - name: G2, G5, G6 — browser gates
+        run: pnpm --filter @cmw/single exec playwright test --project=desktop
+
+      - name: Upload the artefact she receives
+        uses: actions/upload-artifact@v4
+        with:
+          name: CoachMillaWellness.html
+          path: coachmillawellness/apps/single/dist/CoachMillaWellness.html
+          if-no-files-found: error
+
+      - name: Upload failure traces
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-traces
+          path: coachmillawellness/apps/single/test-results
+          if-no-files-found: ignore

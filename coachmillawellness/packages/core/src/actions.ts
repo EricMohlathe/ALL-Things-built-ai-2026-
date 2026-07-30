@@ -24,8 +24,9 @@ function outstanding(actions: ActionItem[]): ActionItem[] {
  * comparison — and means the sort never needs an `?? ''` for a value the filter
  * has already guaranteed.
  */
-type Reviewable = ActionItem & { review_date: IsoDate };
-type Dated = ActionItem & { due_date: IsoDate };
+/** An action that definitely carries a review date. */
+export type Reviewable = ActionItem & { review_date: IsoDate };
+export type Dated = ActionItem & { due_date: IsoDate };
 
 function withReview(actions: ActionItem[]): Reviewable[] {
   return outstanding(actions).filter((a): a is Reviewable => Boolean(a.review_date));

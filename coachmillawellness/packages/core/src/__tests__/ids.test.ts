@@ -93,7 +93,9 @@ describe('shareToken', () => {
     expect(shareToken(() => 0.25)).toBe(shareToken(() => 0.25));
   });
 
-  it('falls back to Buffer where btoa is unavailable', () => {
+  it('encodes without depending on btoa or Buffer', () => {
+    // @cmw/core must not reach for a host API — it runs in a browser, a Tauri
+    // webview, React Native and Node.
     const original = globalThis.btoa;
     try {
       Reflect.deleteProperty(globalThis, 'btoa');
@@ -104,6 +106,14 @@ describe('shareToken', () => {
         configurable: true,
         writable: true,
       });
+    }
+  });
+
+  it('produces url-safe output with no padding', () => {
+    for (let i = 0; i < 200; i += 1) {
+      const token = shareToken();
+      expect(token).not.toMatch(/[+/=]/);
+      expect(token).toHaveLength(22);
     }
   });
 

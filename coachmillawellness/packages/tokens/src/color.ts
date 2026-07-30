@@ -76,6 +76,15 @@ export interface ThemeColors {
   textInverse: string;
   accent: string;
   accentText: string;
+  /**
+   * The soft accent background behind active nav items, badges and accent chips.
+   *
+   * Opaque on purpose. It was a translucent `rgba()` until an axe run caught it
+   * at 4.29:1 on the glass rail: a translucent tint composites over whatever is
+   * behind it, and on the rail that is glass over `bg`, not `surface` — lighter
+   * than anything a unit test comparing against `surface` would check. Baking in
+   * the composited value makes the contrast identical wherever it lands.
+   */
   accentQuiet: string;
   success: string;
   successText: string;
@@ -105,7 +114,8 @@ export const themes: Record<'dawn' | 'morning', ThemeColors> = {
     textInverse: palette.ink950,
     accent: palette.jacaranda400,
     accentText: palette.jacaranda400,
-    accentQuiet: 'rgba(154, 123, 255, 0.14)',
+    // Opaque, not translucent — see the note on `accentQuiet` in ThemeColors.
+    accentQuiet: '#282645',
     success: palette.sage400,
     successText: palette.sage400,
     warn: palette.amber400,
@@ -132,7 +142,7 @@ export const themes: Record<'dawn' | 'morning', ThemeColors> = {
     textInverse: palette.white,
     accent: palette.jacaranda600,
     accentText: palette.jacaranda600,
-    accentQuiet: 'rgba(110, 79, 224, 0.10)',
+    accentQuiet: '#F1EDFC',
     success: palette.sage600,
     successText: palette.sage700,
     warn: palette.amber600,

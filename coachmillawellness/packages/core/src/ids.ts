@@ -87,12 +87,30 @@ export function timestampOf(uuid: string): number {
  * in a WhatsApp message without wrapping.
  */
 export function shareToken(random?: () => number): string {
-  const bytes = randomBytes(16, random, true);
-  let binary = '';
-  for (const b of bytes) binary += String.fromCharCode(b);
-  const base64 =
-    typeof btoa === 'function'
-      ? btoa(binary)
-      : Buffer.from(bytes).toString('base64');
-  return base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  return base64url(randomBytes(16, random, true));
+}
+
+const BASE64URL = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
+
+/**
+ * base64url, encoded by hand.
+ *
+ * `btoa` is browser-shaped and `Buffer` is Node-shaped; branching on which exists
+ * would mean this package quietly depends on its host. Sixteen lines of bit
+ * shifting keeps `@cmw/core` genuinely platform-free, which is the whole premise
+ * of one core across four targets.
+ */
+function base64url(bytes: readonly number[]): string {
+  let out = '';
+  for (let i = 0; i < bytes.length; i += 3) {
+    const a = bytes[i]!;
+    const b = bytes[i + 1];
+    const c = bytes[i + 2];
+    const triple = (a << 16) | ((b ?? 0) << 8) | (c ?? 0);
+
+    out += BASE64URL[(triple >> 18) & 63]! + BASE64URL[(triple >> 12) & 63]!;
+    if (b !== undefined) out += BASE64URL[(triple >> 6) & 63]!;
+    if (c !== undefined) out += BASE64URL[triple & 63]!;
+  }
+  return out;
 }

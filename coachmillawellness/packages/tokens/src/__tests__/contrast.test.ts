@@ -94,6 +94,17 @@ describe.each(themeNames)('%s theme — accessibility floor', (themeName) => {
     ).toBeGreaterThanOrEqual(WCAG.bodyText);
   });
 
+  it('keeps accent text legible on the quiet accent background', () => {
+    /**
+     * Regression: `accentQuiet` used to be a translucent rgba, and an axe run
+     * caught it at 4.29:1 on the glass rail — a translucent tint composites over
+     * whatever sits behind it, which on the rail is glass over `bg`, not
+     * `surface`. Now that it is opaque this assertion is the whole story
+     * wherever the token is used.
+     */
+    expect(ratio(t.accentText, t.accentQuiet)).toBeGreaterThanOrEqual(WCAG.bodyText);
+  });
+
   it('keeps the focus ring visible against every surface', () => {
     for (const backdrop of textBackdrops) {
       expect(

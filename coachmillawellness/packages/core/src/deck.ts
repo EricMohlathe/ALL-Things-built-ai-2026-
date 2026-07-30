@@ -14,6 +14,7 @@ import {
   reviewsDueWithin,
   sessionStreakWeeks,
   type CoacheeRisk,
+  type Reviewable,
 } from './actions.js';
 import { publishStreak } from './coherence.js';
 import { toIsoDate } from './dates.js';
@@ -34,9 +35,13 @@ export interface DeckSummary {
   greeting: GreetingKey;
   today_sessions: Session[];
   next_session: Session | null;
-  overdue_reviews: ActionItem[];
-  reviews_due_today: ActionItem[];
-  reviews_due_soon: ActionItem[];
+  /**
+   * Narrowed to `Reviewable`, so a widget rendering "review was 3 days ago" gets
+   * a date it can rely on rather than one it has to guard.
+   */
+  overdue_reviews: Reviewable[];
+  reviews_due_today: Reviewable[];
+  reviews_due_soon: Reviewable[];
   content_due_today: ContentItem[];
   session_streak_weeks: number;
   publish_streak_days: number;
@@ -143,8 +148,8 @@ export function buildDeck(input: DeckInput): DeckSummary {
  */
 function focusSentence(input: {
   todaySessions: Session[];
-  overdue: ActionItem[];
-  dueToday: ActionItem[];
+  overdue: Reviewable[];
+  dueToday: Reviewable[];
   contentDue: ContentItem[];
   risks: CoacheeRisk[];
   coachees: Coachee[];
