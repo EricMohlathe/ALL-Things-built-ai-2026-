@@ -60,13 +60,18 @@ git init && git add -A && git commit -m "CoachMillaWellness — Phase 1"
 
 ## After the move
 
-Two small things, neither urgent:
+Two small things:
 
-- `apps/single/shots.mjs` is a screenshot helper used while building. Keep it or
-  delete it; nothing imports it.
+- **Move the CI workflow in.** It currently sits at the *parent* repo's root as
+  `.github/workflows/coachmillawellness-ci.yml`, because GitHub Actions only reads
+  workflows from the repository root — a copy inside `coachmillawellness/` looks
+  correct and silently never runs. After extraction, move it to
+  `.github/workflows/ci.yml` in the new repo and delete its `defaults.run.
+  working-directory` block and the `paths:` filters, which exist only to scope it
+  to a subdirectory.
 - The Playwright config prefers a Chromium already on the machine (a CI-image
-  concern). On your own machine `pnpm exec playwright install chromium` once, and
-  it will use that instead — the config falls through automatically.
+  concern). On your own machine run `pnpm exec playwright install chromium` once
+  and it will use that instead — the config falls through automatically.
 
 Nothing else is environment-specific. There are no secrets, no `.env`, no
 hard-coded paths, and no network calls at build or run time.

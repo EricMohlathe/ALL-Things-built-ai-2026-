@@ -1,13 +1,16 @@
 # CI for CoachMillaWellness.
 #
-# The validation gates from §12, as a pipeline. Each job is a gate rather than a
-# vague "test" step, so a failure names which standard was missed.
+# The validation gates from §12, as a pipeline. Each step is a named gate rather
+# than a vague "test", so a failure says which standard was missed.
 #
-# Note the working-directory: this monorepo currently lives in a subdirectory of a
-# larger repo. After MIGRATION.md's extraction it becomes the root, and the
-# `defaults` block is the only thing that needs deleting.
+# This file lives at the *repository* root, not inside `coachmillawellness/`.
+# GitHub Actions only reads workflows from the root `.github/workflows/`, so a
+# copy under the subdirectory looks right and never runs. `defaults.run.
+# working-directory` is what points it at the monorepo; after MIGRATION.md's
+# extraction the monorepo becomes the root and that block is the only thing to
+# delete.
 
-name: CI
+name: CoachMillaWellness CI
 
 on:
   push:
