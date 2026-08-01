@@ -138,6 +138,12 @@ A phase ships when its gates are green. Current state:
 - **P4 · Pocket (co-primary №1)** — `apps/mobile` (Expo), Share Kit, Nudge
   Engine. Google's 14-day closed test starts day 1.
 - **P5 · Launch**, **P6 · Desktop cockpit**.
+- **P9 · Store prep — written.** `docs/STORE-PREP.md` carries the listing copy,
+  privacy-label and Data Safety answers derived from §3.1, the Guideline 4.2
+  appeal letter, and the screenshot script. It is written *early* on purpose:
+  Google's 14-day closed test needs a $25 account and twelve named testers, and
+  that clock is the critical path to launch — it can start months before there
+  is an app worth testing.
 
 ## Two rules the Copilot adds
 

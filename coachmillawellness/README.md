@@ -53,7 +53,9 @@ and Node. `packages/ui` is the React app that the single file, the website and
 the desktop shell all mount — only the storage adapter differs.
 
 See **CLAUDE.md** for the operating context and laws, **MIGRATION.md** for lifting
-this into its own repo, and **docs/COMPENDIUM.md** for the full build brief.
+this into its own repo, **docs/STORE-PREP.md** for the store gauntlet (start the
+Play Console clock early — it is the critical path), and **docs/COMPENDIUM.md**
+for the full build brief.
 
 ## Quality
 
