@@ -170,7 +170,13 @@ Not oversights — sequencing:
   are in place. The surfaces are web and mobile work.
 - **Webfonts.** Build 1 must make zero network requests, so Gambetta and General
   Sans need subsetting and base64 inlining as a build step. Until then the
-  fallback chain carries the typography.
+  fallback chain carries the typography, which degrades in shape but never in
+  legibility. *Blocked in the sandbox, not merely unstarted:* this environment's
+  network policy allows package registries only, so the font files cannot be
+  fetched here at all. Do it on a machine with open network access — download the
+  woff2s, subset with `pyftsubset` to the Latin range actually used, base64 them
+  into `@font-face` blocks in a generated CSS file, and check the result against
+  the G3 budget, which the fonts will move materially.
 - **The digest on a schedule.** §9 wants a Monday 06:00 cron; Build 1 has no
   scheduler, so the brief is offered on the Deck with a button rather than fired
   on open. Generating it automatically would spend her money on a morning she
