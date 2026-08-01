@@ -43,6 +43,7 @@ coachmillawellness/
 ├─ packages/data/        DataStore contract + Dexie/memory adapters + transfer
 ├─ packages/ai/          The Copilot — prompts from her methodology, contracts, cost ledger
 ├─ packages/ui/          The shared React UI — primitives, wheel, all screens
+├─ supabase/functions/   The AI proxy Edge Function (Deno — outside every tsconfig)
 └─ scripts/              Gate scripts (bundle budget, secret scan)
 ```
 
@@ -128,9 +129,12 @@ A phase ships when its gates are green. Current state:
   Build 1 behind a key she supplies, plus M5's Insights Observatory and the
   Coach Growth Curve. Every call is logged to `ai_run` with tokens and cost, and
   the soft monthly cap warns at 80% rather than refusing.
-- **P3 · Website (co-primary №2) — next.** `apps/web`, Supabase, the Edge
-  Function AI proxy (`proxyTransport` already speaks its wire format), and the
-  M8 client surface: Progress Links, Client Pulse, OG previews.
+- **P3 · Website (co-primary №2) — next.** `apps/web` and the M8 client surface:
+  Progress Links, Client Pulse, OG previews. Two of its foundations are already
+  in and tested: the LWW **sync engine** (`packages/data/src/sync.ts`, 1,000
+  random interleavings converge) and the **AI proxy Edge Function**
+  (`supabase/functions/ai-proxy`). What remains is the Postgres schema with RLS,
+  the Next.js app, and the tokenized client routes.
 - **P4 · Pocket (co-primary №1)** — `apps/mobile` (Expo), Share Kit, Nudge
   Engine. Google's 14-day closed test starts day 1.
 - **P5 · Launch**, **P6 · Desktop cockpit**.
@@ -141,6 +145,11 @@ A phase ships when its gates are green. Current state:
 Ratings land in editable chips, suggested actions have to be ticked, and she
 presses one button at the end. A grade she did not agree with, silently saved,
 would make her own adherence chart a record of the machine's opinion.
+
+**Sync converges or it is broken.** `packages/data/src/sync.ts` is last-write-wins
+on `updated_at`, with same-millisecond ties broken by canonical JSON so two
+devices independently pick the same winner. `MemoryRemote` in that file is the
+executable specification the Postgres side must match — not a test double.
 
 **Every call is on the ledger, including the ones that failed.** A response that
 fails its contract was still billed, so `AiError` carries the `ai_run` row and
@@ -156,8 +165,6 @@ Not oversights — sequencing:
 - **Webfonts.** Build 1 must make zero network requests, so Gambetta and General
   Sans need subsetting and base64 inlining as a build step. Until then the
   fallback chain carries the typography.
-- **Sync engine (P6 in the prompt pack).** The `DataStore` contract and the
-  `outbox`/`conflict_log` shape are designed for it.
 - **The digest on a schedule.** §9 wants a Monday 06:00 cron; Build 1 has no
   scheduler, so the brief is offered on the Deck with a button rather than fired
   on open. Generating it automatically would spend her money on a morning she

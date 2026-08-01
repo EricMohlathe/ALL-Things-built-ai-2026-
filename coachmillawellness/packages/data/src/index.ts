@@ -44,3 +44,23 @@ export {
 } from './transfer.js';
 
 export { seedDataset } from './seed.js';
+
+export {
+  BACKOFF_BASE_MS,
+  BACKOFF_CAP_MS,
+  MemoryRemote,
+  Outbox,
+  SyncEngine,
+  backoffMs,
+  canonicalJson,
+  lwwCompare,
+  mergeRow,
+  type ConflictEntry,
+  type ConflictWinner,
+  type MergeOutcome,
+  type OutboxEntry,
+  type RemoteAdapter,
+  type SyncOptions,
+  type SyncResult,
+  type SyncRow,
+} from './sync.js';

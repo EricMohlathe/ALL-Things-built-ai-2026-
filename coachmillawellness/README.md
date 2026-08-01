@@ -60,7 +60,7 @@ this into its own repo, and **docs/COMPENDIUM.md** for the full build brief.
 Not aspirations — commands.
 
 ```bash
-pnpm -r test                                      # 533 unit tests
+pnpm -r test                                      # 558 unit tests
 pnpm --filter @cmw/core test:coverage             # 100% branch on the rules
 pnpm --filter @cmw/single exec playwright test    # 25 browser tests over file://
 node scripts/gate-no-secrets.mjs                  # no credential in any bundle
