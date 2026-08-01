@@ -10,7 +10,12 @@
  * product rather than only in a document she signed once.
  */
 
-import { DATASET_TABLES, type CmwDataset, type DatasetTable } from '@cmw/core';
+import {
+  DATASET_TABLES,
+  type AiRunKind,
+  type CmwDataset,
+  type DatasetTable,
+} from '@cmw/core';
 import {
   BACKUP_INTERVAL_DAYS,
   SETTING_KEYS,
@@ -20,10 +25,11 @@ import {
   type StoreKind,
 } from '@cmw/data';
 import { themeNames, type ThemeName } from '@cmw/tokens';
-import { AlertTriangle, Database, Download, ShieldCheck, Upload } from 'lucide-react';
+import { AlertTriangle, Database, Download, ShieldCheck, Sparkles, Upload } from 'lucide-react';
 import { useRef, useState } from 'react';
 
 import { StatTile } from '../charts/index.js';
+import { AI_MODELS_SETTING, modelOptions, useAiSettings, useCopilot } from '../app/copilot.js';
 import { useStore } from '../app/store.js';
 import {
   Button,
@@ -34,9 +40,12 @@ import {
   PageHeader,
   Reveal,
   SectionHeader,
+  Select,
+  TextInput,
   cn,
 } from '../primitives/index.js';
 import { downloadText } from '../wheel/export.js';
+import { BudgetMeter } from './Copilot.js';
 
 const TABLE_LABELS: Partial<Record<DatasetTable, string>> = {
   coachees: 'Coachees',
@@ -279,10 +288,25 @@ export function Vault({
                     Add a consent line to your client agreement covering the notes you keep, before
                     any client-facing link exists.
                   </li>
+                  <li>
+                    If you switch the Copilot on, session notes are sent to Anthropic to be
+                    analysed. First names only, contact details stripped — but the notes themselves
+                    still describe a named person, so that belongs in the consent line too.
+                  </li>
                 </ul>
               </div>
             </div>
           </Card>
+        </section>
+
+        {/*
+          Full width, and last. A `col-span-2` card placed mid-grid pushes the
+          section after it onto a row of its own and leaves a hole beside the one
+          before — so the wide card goes at the end where it has nothing to split.
+        */}
+        <section className="lg:col-span-2">
+          <SectionHeader title="AI Copilot" hint="Optional — the app is complete without it" />
+          <CopilotSettings data={data} />
         </section>
       </div>
 
@@ -351,3 +375,128 @@ export function Vault({
     </div>
   );
 }
+
+/**
+ * The Copilot's settings (§9).
+ *
+ * The key field is the sensitive part of this whole build, so three things are
+ * true of it at once and all three are said out loud on the screen: it is stored
+ * only in this browser, it is excluded from every backup file she exports, and
+ * removing it turns the Copilot off without touching anything else.
+ *
+ * It is a password field with no reveal toggle. She pastes it once; a reveal
+ * button would exist only for the case where someone is reading it off her
+ * screen.
+ */
+function CopilotSettings({ data }: { data: CmwDataset }) {
+  const { apiKey, budgetUsd, models } = useAiSettings();
+  const copilot = useCopilot();
+
+  const [draftKey, setDraftKey] = useState(apiKey);
+  const [budget, setBudget] = useState(String(budgetUsd));
+
+  const save = useStore.getState().saveSetting;
+
+  return (
+    <Card>
+      <div className="grid gap-5 lg:grid-cols-2">
+        <div>
+          <TextInput
+            label="Anthropic API key"
+            type="password"
+            value={draftKey}
+            onChange={setDraftKey}
+            placeholder="sk-ant-…"
+            hint="Stored in this browser only. Never included in a backup file, never sent anywhere but Anthropic."
+          />
+          <div className="mt-3 flex flex-wrap gap-2">
+            <Button
+              variant="primary"
+              disabled={draftKey.trim() === apiKey}
+              onClick={() => {
+                void save(SETTING_KEYS.anthropicApiKey, draftKey.trim());
+                useStore
+                  .getState()
+                  .toast(
+                    'success',
+                    draftKey.trim() ? 'Copilot switched on.' : 'Copilot switched off.',
+                  );
+              }}
+            >
+              Save key
+            </Button>
+            {apiKey ? (
+              <Button
+                variant="quiet"
+                onClick={() => {
+                  setDraftKey('');
+                  void save(SETTING_KEYS.anthropicApiKey, '');
+                  useStore.getState().toast('info', 'Key removed from this device.');
+                }}
+              >
+                Remove key
+              </Button>
+            ) : null}
+          </div>
+
+          <p className="mt-3 flex items-center gap-2 text-sm text-lo">
+            <Sparkles size={14} className="shrink-0 text-accent-ink" aria-hidden />
+            {copilot.available
+              ? `Running on ${copilot.transportLabel}.`
+              : 'Off. Sessions, wheels and content all work exactly as they do now.'}
+          </p>
+        </div>
+
+        <div>
+          <TextInput
+            label="Monthly budget"
+            type="number"
+            value={budget}
+            onChange={setBudget}
+            hint="A soft cap. At 80% you get a warning; past it, each run asks first rather than refusing."
+          />
+          <Button
+            variant="quiet"
+            className="mt-3"
+            disabled={Number(budget) === budgetUsd || !Number.isFinite(Number(budget))}
+            onClick={() => void save(SETTING_KEYS.aiBudgetUsd, Math.max(0, Number(budget)))}
+          >
+            Save budget
+          </Button>
+
+          <div className="mt-5 border-t border-edge pt-4">
+            <BudgetMeter runs={data.ai_runs} capUsd={budgetUsd} />
+          </div>
+        </div>
+      </div>
+
+      {copilot.available ? (
+        <div className="mt-6 border-t border-edge pt-5">
+          <p className="mb-1 text-sm font-medium text-hi">Which model does what</p>
+          <p className="mb-4 text-sm text-lo">
+            Sonnet is the default everywhere except the Monday digest, which summarises rather than
+            judges. Opus reads a session more carefully and costs roughly five times as much.
+          </p>
+          <div className="grid gap-4 sm:grid-cols-2">
+            {(Object.keys(AI_FEATURE_LABELS) as AiRunKind[]).map((kind) => (
+              <Select
+                key={kind}
+                label={AI_FEATURE_LABELS[kind]}
+                value={models[kind] ?? copilot.modelFor(kind)}
+                options={modelOptions(kind)}
+                onChange={(model) => void save(AI_MODELS_SETTING, { ...models, [kind]: model })}
+              />
+            ))}
+          </div>
+        </div>
+      ) : null}
+    </Card>
+  );
+}
+
+const AI_FEATURE_LABELS: Record<AiRunKind, string> = {
+  session_analyzer: 'Session Analyzer',
+  coherence_checker: 'Coherence Checker',
+  weekly_digest: 'Weekly Digest',
+  prep_whisperer: 'Prep Whisperer',
+};

@@ -41,6 +41,7 @@ coachmillawellness/
 ├─ packages/tokens/      First Light design system, single source of truth
 ├─ packages/core/        Domain logic. Pure TS, no I/O, no dependencies
 ├─ packages/data/        DataStore contract + Dexie/memory adapters + transfer
+├─ packages/ai/          The Copilot — prompts from her methodology, contracts, cost ledger
 ├─ packages/ui/          The shared React UI — primitives, wheel, all screens
 └─ scripts/              Gate scripts (bundle budget, secret scan)
 ```
@@ -110,7 +111,7 @@ A phase ships when its gates are green. Current state:
 |---|---|---|
 | G1 | 100% branch coverage on scoring/checklist/coherence/wheel | green |
 | G2 | Export → wipe → import round-trips exactly | green |
-| G3 | Single file ≤1.2MB gzipped | green, ~191KB |
+| G3 | Single file ≤1.2MB gzipped | green, ~248KB |
 | G4 | Motion audit — no gaps, reduced-motion pass | green |
 | G5 | axe: no critical or serious, both themes | green |
 | G6 | 12-step smoke script over `file://` | green |
@@ -123,24 +124,33 @@ A phase ships when its gates are green. Current state:
 
 - **P1 · First Light — done.** Monorepo, tokens, core, data, and the single-file
   app with modules M0/M1/M2/M3/M4/M7.
-- **P2 · Copilot — next.** `packages/ai`, Session Analyzer, Coherence Checker,
-  Coach Growth Curve chart. The core functions and the `ai_run` cost table
-  already exist; the seams are marked.
-- **P3 · Website (co-primary №2)** — `apps/web`, Supabase, and the M8 client
-  surface: Progress Links, Client Pulse, OG previews.
+- **P2 · Copilot — done.** `packages/ai` with all four §9 features wired into
+  Build 1 behind a key she supplies, plus M5's Insights Observatory and the
+  Coach Growth Curve. Every call is logged to `ai_run` with tokens and cost, and
+  the soft monthly cap warns at 80% rather than refusing.
+- **P3 · Website (co-primary №2) — next.** `apps/web`, Supabase, the Edge
+  Function AI proxy (`proxyTransport` already speaks its wire format), and the
+  M8 client surface: Progress Links, Client Pulse, OG previews.
 - **P4 · Pocket (co-primary №1)** — `apps/mobile` (Expo), Share Kit, Nudge
   Engine. Google's 14-day closed test starts day 1.
 - **P5 · Launch**, **P6 · Desktop cockpit**.
+
+## Two rules the Copilot adds
+
+**AI proposes, coach disposes.** Nothing the model returns is saved on arrival.
+Ratings land in editable chips, suggested actions have to be ticked, and she
+presses one button at the end. A grade she did not agree with, silently saved,
+would make her own adherence chart a record of the machine's opinion.
+
+**Every call is on the ledger, including the ones that failed.** A response that
+fails its contract was still billed, so `AiError` carries the `ai_run` row and
+the caller persists it anyway. A budget meter that under-reports is worse than
+none.
 
 ## What is deliberately not built yet
 
 Not oversights — sequencing:
 
-- **AI (M6).** §6 says ship Build 1 without it. The Deck's focus sentence is
-  deterministic so it works offline and with no key; the Copilot replaces it in
-  P2 and has a quality bar to beat.
-- **Insights Observatory (M5).** Excluded from Build 1 by §6. `coachGrowthCurve`
-  is written and tested; it has no screen yet.
 - **Engage (M8).** Schema, share-token minting and `firstName` privacy helper
   are in place. The surfaces are web and mobile work.
 - **Webfonts.** Build 1 must make zero network requests, so Gambetta and General
@@ -148,3 +158,7 @@ Not oversights — sequencing:
   fallback chain carries the typography.
 - **Sync engine (P6 in the prompt pack).** The `DataStore` contract and the
   `outbox`/`conflict_log` shape are designed for it.
+- **The digest on a schedule.** §9 wants a Monday 06:00 cron; Build 1 has no
+  scheduler, so the brief is offered on the Deck with a button rather than fired
+  on open. Generating it automatically would spend her money on a morning she
+  only wanted to check a date. The cron lands with `apps/web`.

@@ -28,6 +28,7 @@ import {
   SectionHeader,
   cn,
 } from '../primitives/index.js';
+import { WeeklyBrief } from './WeeklyBrief.js';
 import { hrefFor } from '../app/router.js';
 import { liveCoachees } from '../app/store.js';
 
@@ -75,6 +76,9 @@ export function Deck({ data, onStart }: { data: CmwDataset; onStart: () => void 
           <p className="mt-3 max-w-2xl text-lg text-hi">{deck.focus}</p>
         </div>
       </div>
+
+      {/* M6 — the Monday brief, when she has switched the Copilot on. */}
+      <WeeklyBrief data={data} />
 
       {/* Streaks and load, at a glance. */}
       <div className="mb-7 grid grid-cols-2 gap-3 sm:grid-cols-4">

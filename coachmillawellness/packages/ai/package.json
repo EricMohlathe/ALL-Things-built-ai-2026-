@@ -1,0 +1,22 @@
+{
+  "name": "@cmw/ai",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AI Copilot — prompt templates embedding her methodology, JSON output contracts, cost ledger and budget guardrail.",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.115.0",
+    "@cmw/core": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0",
+    "vitest": "^3.0.0"
+  }
+}

@@ -53,6 +53,7 @@ export default defineConfig({
         replacement: resolve(root, 'packages/tokens/src/theme.css'),
       },
       { find: '@cmw/ui/styles.css', replacement: resolve(root, 'packages/ui/src/styles/styles.css') },
+      { find: '@cmw/ai', replacement: resolve(root, 'packages/ai/src/index.ts') },
       { find: '@cmw/core', replacement: resolve(root, 'packages/core/src/index.ts') },
       { find: '@cmw/data', replacement: resolve(root, 'packages/data/src/index.ts') },
       { find: '@cmw/tokens', replacement: resolve(root, 'packages/tokens/src/index.ts') },

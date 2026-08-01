@@ -2,10 +2,22 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "paths": {
-      "@cmw/core": ["../core/src/index.ts"],
-      "@cmw/data": ["../data/src/index.ts"],
-      "@cmw/tokens": ["../tokens/src/index.ts"]
+      "@cmw/ai": [
+        "../ai/src/index.ts"
+      ],
+      "@cmw/core": [
+        "../core/src/index.ts"
+      ],
+      "@cmw/data": [
+        "../data/src/index.ts"
+      ],
+      "@cmw/tokens": [
+        "../tokens/src/index.ts"
+      ]
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx"]
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx"
+  ]
 }

@@ -3,13 +3,14 @@
 A coaching practice platform for a solo health & life coach. Local-first, hers
 forever — no account, no subscription, and her data exports whole at any time.
 
-**Phase 1 (First Light) is complete**: `CoachMillaWellness.html` — one file,
-zero external requests, opens from a phone's Files app or a WhatsApp forward.
+**Phases 1–2 are complete**: `CoachMillaWellness.html` — one file, zero external
+requests, opens from a phone's Files app or a WhatsApp forward, with the AI
+Copilot inside it and optional.
 
 ```bash
 pnpm install
 pnpm --filter @cmw/single build
-# → apps/single/dist/CoachMillaWellness.html   (191 KB gzipped)
+# → apps/single/dist/CoachMillaWellness.html   (248 KB gzipped)
 ```
 
 Open that file directly in a browser. No server.
@@ -25,7 +26,9 @@ Open that file directly in a browser. No server.
 | **Session Engine** | GROW and GREAT graded per element against her own question banks, with the reminders checklist auto-graded and the closing script surfaced exactly when it is owed |
 | **Wheel of Life Lab** | The Living Wheel — drag or keyboard to score, timeline scrub between snapshots, before/after split view, PNG export |
 | **Content Studio** | Message pillars, pipeline, publishing consistency, and the coherence map that shows whether what she posts matches what she stands for |
-| **Vault** | One-tap backup, drag-and-drop restore, CSV export, the 14-day backup nudge, and a plain-language POPIA note |
+| **Insights Observatory** | The Coach Growth Curve — her adherence per element, month by month — plus client movement and what the Copilot has cost |
+| **AI Copilot** | Session Analyzer, Coherence Checker, Weekly Digest and Prep Whisperer, graded against her own frameworks. Optional: no key, no nagging |
+| **Vault** | One-tap backup, drag-and-drop restore, CSV export, the 14-day backup nudge, AI key and budget, and a plain-language POPIA note |
 
 ## Three things it does that bought platforms do not
 
@@ -36,6 +39,11 @@ Open that file directly in a browser. No server.
    morphs between snapshot dates. Exportable as a PNG she can send a client.
 3. **It catches message drift.** Pillars × published work, with starved pillars
    named in words rather than implied by a pale square.
+
+And the Copilot does the one thing a general chat assistant cannot: it grades
+against *her* methodology, because the system prompt is rendered from the same
+`frameworks.ts` the Session Engine reads. Edit a question bank and the AI's
+standard moves with it.
 
 ## Architecture
 
@@ -52,9 +60,9 @@ this into its own repo, and **docs/COMPENDIUM.md** for the full build brief.
 Not aspirations — commands.
 
 ```bash
-pnpm -r test                                      # 408 unit tests
+pnpm -r test                                      # 533 unit tests
 pnpm --filter @cmw/core test:coverage             # 100% branch on the rules
-pnpm --filter @cmw/single exec playwright test    # 19 browser tests over file://
+pnpm --filter @cmw/single exec playwright test    # 25 browser tests over file://
 node scripts/gate-no-secrets.mjs                  # no credential in any bundle
 ```
 

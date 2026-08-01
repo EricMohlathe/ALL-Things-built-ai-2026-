@@ -44,6 +44,7 @@ import {
   TextInput,
   cn,
 } from '../primitives/index.js';
+import { CoherenceChecker } from './CoherenceChecker.js';
 
 const TYPES: ContentType[] = ['Reel', 'Story', 'Video', 'Post', 'Short'];
 const PLATFORMS: ContentPlatform[] = ['IG', 'TikTok', 'YouTube', 'WhatsApp Status', 'LinkedIn'];
@@ -334,6 +335,13 @@ function ContentModal({
   const existing = id ? data.content_items.find((c) => c.id === id) : undefined;
   const pillars = livePillars(data);
 
+  // Newest first, published only — the same rule the coherence map uses, so the
+  // "where your message already is" context matches what the map shows.
+  const publishedRecently = liveContent(data)
+    .filter((c) => c.id !== id && (c.status === 'posted' || c.status === 'analyzed'))
+    .sort((a, b) => (b.publish_date ?? '').localeCompare(a.publish_date ?? ''))
+    .slice(0, 5);
+
   const [title, setTitle] = useState(existing?.title ?? '');
   const [type, setType] = useState<ContentType>(existing?.type ?? 'Reel');
   const [platform, setPlatform] = useState<ContentPlatform>(existing?.platform ?? 'IG');
@@ -443,6 +451,29 @@ function ContentModal({
           hint="Scheduled, or the day it actually went out."
         />
         <TextArea label="Script" value={script} onChange={setScript} rows={5} />
+
+        {/*
+          The check runs on this draft, not on the saved row — the answer is only
+          worth having before it goes out.
+        */}
+        <CoherenceChecker
+          draft={{
+            id: existing?.id ?? 'draft',
+            title,
+            type,
+            platform,
+            pillar_id: pillarId || null,
+            status: existing?.status ?? 'idea',
+            hook: hook || null,
+            cta: cta || null,
+            script: script || null,
+            publish_date: publishDate || null,
+            updated_at: existing?.updated_at ?? '',
+          }}
+          pillar={pillars.find((p) => p.id === pillarId) ?? null}
+          recent={publishedRecently}
+          onUseHook={setHook}
+        />
       </div>
     </Modal>
   );

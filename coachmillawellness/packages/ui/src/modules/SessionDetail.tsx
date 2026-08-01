@@ -12,8 +12,10 @@
  *  - The reminders checklist is graded from the data, live, with an honest "not
  *    applicable" — so a clear checklist means something.
  *
- * Every rating is editable: the AI proposes and the coach disposes (§2 M2). In
- * this build there is no AI yet, so every rating is simply hers.
+ * Every rating is editable: the AI proposes and the coach disposes (§2 M2). The
+ * Analyzer sits above the stepper and writes into these same fields, so a graded
+ * session and a hand-scored one are indistinguishable afterwards — which is what
+ * lets the Coach Growth Curve treat them as one series.
  */
 
 import {
@@ -31,6 +33,7 @@ import {
   type ChecklistState,
   type CmwDataset,
   type ElementKey,
+  type Framework,
   type Rating,
   type Uuid,
 } from '@cmw/core';
@@ -62,6 +65,8 @@ import {
   cn,
   type Tone,
 } from '../primitives/index.js';
+import { PrepWhisperer } from './PrepWhisperer.js';
+import { SessionAnalyzer } from './SessionAnalyzer.js';
 
 const RATING_TONES: Record<Rating, Tone> = {
   Strong: 'success',
@@ -154,7 +159,27 @@ export function SessionDetail({ data, id }: { data: CmwDataset; id: Uuid }) {
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_21rem]">
         <div className="flex flex-col gap-6">
-          <PrepCard data={data} sessionId={session.id} participantId={participantId} />
+          <PrepCard
+            data={data}
+            sessionId={session.id}
+            participantId={participantId}
+            framework={session.framework}
+          />
+
+          {/* M6 — grades this cycle from her notes and proposes the scorecard. */}
+          {coachee ? (
+            <SessionAnalyzer
+              session={session}
+              coachee={coachee}
+              participants={session.participants.flatMap((p) => {
+                const found = coacheeById(data, p);
+                return found ? [found] : [];
+              })}
+              goals={participantId ? goalsFor(data, participantId) : []}
+              wheel={wheel}
+              openActions={sessionActions.filter((a) => a.status !== 'done')}
+            />
+          ) : null}
 
           {/* ── The framework stepper ─────────────────────────────────── */}
           <section>
@@ -388,18 +413,23 @@ function PrepCard({
   data,
   sessionId,
   participantId,
+  framework,
 }: {
   data: CmwDataset;
   sessionId: Uuid;
   participantId: Uuid | undefined;
+  framework: Framework;
 }) {
   if (!participantId) return null;
 
+  const coachee = coacheeById(data, participantId);
   const history = sessionsFor(data, participantId).filter((s) => s.id !== sessionId);
   const previous = history[0];
   const open = actionsFor(data, participantId).filter((a) => a.status !== 'done');
 
-  if (!previous && open.length === 0) return null;
+  // The Whisperer can brief a first session from goals and the wheel alone, so
+  // the card now earns its place even with no history to summarise.
+  if (!previous && open.length === 0 && !coachee) return null;
 
   return (
     <Card>
@@ -421,6 +451,16 @@ function PrepCard({
             ))}
           </ul>
         </div>
+      ) : null}
+
+      {coachee ? (
+        <PrepWhisperer
+          data={data}
+          coachee={coachee}
+          framework={framework}
+          previous={previous ?? null}
+          openActions={open}
+        />
       ) : null}
     </Card>
   );

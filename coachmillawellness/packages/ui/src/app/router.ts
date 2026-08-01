@@ -18,6 +18,7 @@ export type Route =
   | { name: 'session-new' }
   | { name: 'wheel'; id?: string }
   | { name: 'content' }
+  | { name: 'insights' }
   | { name: 'vault' };
 
 export type ClientTab = 'overview' | 'wheel' | 'sessions' | 'actions' | 'notes';
@@ -49,6 +50,8 @@ export function parseHash(hash: string): Route {
       return second === undefined ? { name: 'wheel' } : { name: 'wheel', id: second };
     case 'content':
       return { name: 'content' };
+    case 'insights':
+      return { name: 'insights' };
     case 'vault':
       return { name: 'vault' };
     default:
@@ -75,6 +78,8 @@ export function hrefFor(route: Route): string {
       return route.id ? `#/wheel/${route.id}` : '#/wheel';
     case 'content':
       return '#/content';
+    case 'insights':
+      return '#/insights';
     case 'vault':
       return '#/vault';
   }
@@ -122,6 +127,7 @@ export function navKeyFor(route: Route): NavKey {
     case 'content':
       return 'content';
     case 'wheel':
+    case 'insights':
     case 'vault':
       return 'more';
   }

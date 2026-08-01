@@ -14,6 +14,7 @@ import { Deck } from '../modules/Deck.js';
 import { ClientDetail } from '../modules/ClientDetail.js';
 import { Clients } from '../modules/Clients.js';
 import { Content } from '../modules/Content.js';
+import { Insights } from '../modules/Insights.js';
 import { SessionDetail } from '../modules/SessionDetail.js';
 import { Sessions } from '../modules/Sessions.js';
 import { Vault } from '../modules/Vault.js';
@@ -103,6 +104,8 @@ function Routed({
       return <WheelLab data={data} {...(route.id ? { id: route.id } : {})} />;
     case 'content':
       return <Content data={data} />;
+    case 'insights':
+      return <Insights data={data} />;
     case 'vault':
       return <Vault data={data} storeKind={storeKind} theme={theme} />;
   }

@@ -55,4 +55,24 @@ export { Sessions } from './modules/Sessions.js';
 export { SessionDetail } from './modules/SessionDetail.js';
 export { WheelLab } from './modules/WheelLab.js';
 export { Content } from './modules/Content.js';
+export { Insights } from './modules/Insights.js';
+export { WeeklyBrief } from './modules/WeeklyBrief.js';
+export { SessionAnalyzer } from './modules/SessionAnalyzer.js';
+export { PrepWhisperer } from './modules/PrepWhisperer.js';
+export { CoherenceChecker } from './modules/CoherenceChecker.js';
+export {
+  AiCaveat,
+  BudgetMeter,
+  CopilotOffNote,
+  CopilotRunBar,
+  ProposalCard,
+} from './modules/Copilot.js';
+export {
+  AI_MODELS_SETTING,
+  AI_PROXY_SETTING,
+  modelOptions,
+  useAiSettings,
+  useCopilot,
+  useCopilotRun,
+} from './app/copilot.js';
 export { Vault } from './modules/Vault.js';

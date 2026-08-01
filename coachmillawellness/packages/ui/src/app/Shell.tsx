@@ -7,7 +7,15 @@
  * six-item tab bar on a phone is four items and two mistakes.
  */
 
-import { CircleGauge, FileText, LayoutGrid, MoreHorizontal, Users, Video } from 'lucide-react';
+import {
+  CircleGauge,
+  FileText,
+  LayoutGrid,
+  MoreHorizontal,
+  TrendingUp,
+  Users,
+  Video,
+} from 'lucide-react';
 import type { ReactNode } from 'react';
 import { useState } from 'react';
 
@@ -49,6 +57,14 @@ export function Shell({
       >
         <CircleGauge size={18} />
         Wheel Lab
+      </a>
+      <a
+        href={hrefFor({ name: 'insights' })}
+        onClick={() => setMoreOpen(false)}
+        className="flex min-h-11 items-center gap-3 rounded-md px-3 text-hi transition-colors duration-150 hover:bg-raised"
+      >
+        <TrendingUp size={18} />
+        Insights
       </a>
       <a
         href={hrefFor({ name: 'vault' })}

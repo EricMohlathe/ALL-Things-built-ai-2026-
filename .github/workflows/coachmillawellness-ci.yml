@@ -43,7 +43,7 @@ jobs:
 
       - name: Typecheck — strict, no any
         run: |
-          for pkg in tokens core data ui single; do
+          for pkg in tokens core data ai ui single; do
             pnpm --filter "@cmw/$pkg" exec tsc -p tsconfig.json --noEmit
           done
 
@@ -53,10 +53,11 @@ jobs:
       - name: G1 — domain logic coverage
         run: pnpm --filter @cmw/core test:coverage
 
-      - name: Unit tests — tokens, data
+      - name: Unit tests — tokens, data, ai
         run: |
           pnpm --filter @cmw/tokens test
           pnpm --filter @cmw/data test
+          pnpm --filter @cmw/ai test
 
       # G3: the single file must stay inside its 1.2MB gzipped budget, and must
       # remain a single file.

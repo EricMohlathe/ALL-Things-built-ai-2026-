@@ -2,7 +2,7 @@
   "name": "@cmw/ui",
   "version": "1.0.0",
   "private": true,
-  "description": "The shared React UI — primitives, the Living Wheel, and every module screen. Web, single-HTML and desktop all mount this.",
+  "description": "The shared React UI \u2014 primitives, the Living Wheel, and every module screen. Web, single-HTML and desktop all mount this.",
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
@@ -13,6 +13,7 @@
     "typecheck": "tsc -p tsconfig.json"
   },
   "dependencies": {
+    "@cmw/ai": "workspace:*",
     "@cmw/core": "workspace:*",
     "@cmw/data": "workspace:*",
     "@cmw/tokens": "workspace:*",

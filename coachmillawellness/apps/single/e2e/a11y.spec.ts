@@ -23,6 +23,7 @@ const ROUTES = [
   { hash: '#/sessions', name: 'Sessions' },
   { hash: '#/content', name: 'Content' },
   { hash: '#/wheel', name: 'Wheel Lab' },
+  { hash: '#/insights', name: 'Insights' },
   { hash: '#/vault', name: 'Vault' },
 ];
 
@@ -42,11 +43,33 @@ async function seed(page: Page): Promise<void> {
  */
 async function settle(page: Page): Promise<void> {
   await page.evaluate(async () => {
-    const finite = document.getAnimations().filter((animation) => {
-      const timing = animation.effect?.getComputedTiming();
-      return timing !== undefined && timing.iterations !== Number.POSITIVE_INFINITY;
-    });
-    await Promise.all(finite.map((animation) => animation.finished.catch(() => undefined)));
+    /**
+     * Two frames before collecting, and again after.
+     *
+     * A CSS transition only joins `document.getAnimations()` once it has
+     * actually started, which is a frame or two after the styles that trigger
+     * it are applied. Collecting immediately therefore finds an empty list on a
+     * screen that is about to animate, and axe samples a mid-transition colour —
+     * the same measure-during-motion trap that once made the touch-target audit
+     * report 42.2px for a 44px control. Waiting first makes the audit
+     * deterministic instead of merely usually right.
+     */
+    const frame = (): Promise<void> =>
+      new Promise((resolve) => requestAnimationFrame(() => resolve()));
+
+    const drain = async (): Promise<void> => {
+      const finite = document.getAnimations().filter((animation) => {
+        const timing = animation.effect?.getComputedTiming();
+        return timing !== undefined && timing.iterations !== Number.POSITIVE_INFINITY;
+      });
+      await Promise.all(finite.map((animation) => animation.finished.catch(() => undefined)));
+    };
+
+    await frame();
+    await frame();
+    await drain();
+    // A finished enter can start a follow-on transition; one more pass catches it.
+    await drain();
   });
 }
 

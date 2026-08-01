@@ -19,6 +19,7 @@ import {
   toIsoDateTime,
   uuidv7,
   type ActionItem,
+  type AiRun,
   type ChecklistItem,
   type ChecklistState,
   type Coachee,
@@ -92,6 +93,8 @@ interface CmwState {
     element: ElementKey,
     rating: Rating,
     notes?: string,
+    /** The quote the rating rests on. The Analyzer fills it; she can edit it. */
+    evidence?: string,
   ) => Promise<void>;
   clearElementRating: (sessionId: Uuid, coacheeId: Uuid, element: ElementKey) => Promise<void>;
   recordChecklist: (
@@ -127,6 +130,14 @@ interface CmwState {
   setContentStatus: (id: Uuid, status: ContentStatus) => Promise<void>;
   removeContent: (id: Uuid) => Promise<void>;
 
+  // AI (§9)
+  /**
+   * Writes the ledger row for a call that has already happened. Separate from
+   * the call itself so `@cmw/ai` stays storage-free and the same Copilot runs
+   * against IndexedDB, Supabase and SQLite unchanged.
+   */
+  logAiRun: (run: AiRun) => Promise<void>;
+
   // Vault
   exportBackup: () => string;
   importBackup: (json: string) => Promise<void>;
@@ -134,6 +145,7 @@ interface CmwState {
   clearAll: () => Promise<void>;
   markBackedUp: () => Promise<void>;
   setting: <T>(key: string, fallback: T) => T;
+  saveSetting: (key: string, value: unknown) => Promise<void>;
 }
 
 /** The live adapter. Held outside the store so it never lands in React state. */
@@ -313,7 +325,7 @@ export const useStore = create<CmwState>((set, get) => {
     updateSession: (id, patch) => patchRow('sessions', id, patch),
     removeSession: (id) => softDelete('sessions', id),
 
-    async rateElement(sessionId, coacheeId, element, rating, notes) {
+    async rateElement(sessionId, coacheeId, element, rating, notes, evidence) {
       const existing = get().data.session_element_scores.find(
         (s) =>
           s.session_id === sessionId &&
@@ -329,7 +341,7 @@ export const useStore = create<CmwState>((set, get) => {
         element,
         rating,
         notes: notes ?? existing?.notes ?? null,
-        evidence: existing?.evidence ?? null,
+        evidence: evidence ?? existing?.evidence ?? null,
         updated_at: now(),
       };
       await commit('session_element_scores', [row]);
@@ -486,6 +498,9 @@ export const useStore = create<CmwState>((set, get) => {
 
     removeContent: (id) => softDelete('content_items', id),
 
+    // ── AI ───────────────────────────────────────────────────────────────
+    logAiRun: (run) => commit('ai_runs', [run]),
+
     // ── Vault ────────────────────────────────────────────────────────────
     exportBackup() {
       return exportJSON(get().data, { now: now() });
@@ -520,6 +535,8 @@ export const useStore = create<CmwState>((set, get) => {
       const found = get().data.settings.find((s) => s.key === key);
       return found === undefined || found.value === null ? fallback : (found.value as T);
     },
+
+    saveSetting: putSetting,
   };
 });
 

@@ -429,7 +429,10 @@ export function TextInput({
   placeholder?: string;
   hint?: string;
   error?: string;
-  type?: 'text' | 'date' | 'url' | 'email' | 'number';
+  // `password` exists for exactly one field — the Anthropic API key. It has no
+  // reveal toggle: she pastes it once, and a reveal button would only ever help
+  // whoever is reading over her shoulder.
+  type?: 'text' | 'date' | 'url' | 'email' | 'number' | 'password';
   onEnter?: () => void;
   autoFocus?: boolean;
 }) {
