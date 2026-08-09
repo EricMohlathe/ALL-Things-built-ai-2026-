@@ -9,7 +9,7 @@ been tested against real market data rather than reasoned about.
 |---|---|
 | **Data** | Dukascopy tick feed, decoded to M1 bars, **real bid-ask spread per minute** |
 | **Period** | 2026-02-02 → 2026-08-01 (~125 trading sessions, spans the March DST change) |
-| **Symbols** | 13 — FX majors, gold, silver, copper, WTI, Brent, Nasdaq, BTC, ETH |
+| **Symbols** | 19 — FX majors and crosses, gold, silver, copper, WTI, Brent, Nasdaq, BTC, ETH |
 | **Strategy** | 9:30 NY opening range, direct break (the default model) |
 | **Targets** | 1.5R and 2.0R, structural stop at the opposite boundary |
 | **Costs** | Real spread paid on entry and exit. No fixed-spread assumption. |
@@ -17,8 +17,23 @@ been tested against real market data rather than reasoned about.
 
 ## The headline
 
-**24 runs. Only 4 had 100+ sessions. Of those 4: median profit factor 0.98,
-median win rate 38.7%, mean expectancy −0.0027 R.**
+Expanded to the full 19-symbol universe at 2R:
+
+**18 runs. Only 3 had 100+ sessions. Of those 3: median profit factor 1.00,
+median win rate 35.2%, mean expectancy +0.0058 R — statistically
+indistinguishable from zero.**
+
+The three deep-sample instruments all land on the same number:
+
+| Symbol | Sessions | WR | Break-even | PF | E[R] |
+|---|---|---|---|---|---|
+| XAUUSD gold | 123 | 33.9% | 33.3% | 0.97 | −0.021 |
+| Nasdaq | 114 | 38.4% | 33.3% | 1.06 | +0.037 |
+| AUDJPY | 100 | 35.2% | 33.3% | 1.00 | +0.002 |
+
+Profit factor 0.97, 1.06, 1.00. Every instrument with a real sample sits on
+1.0. That is not three separate results; it is one result observed three
+times.
 
 Portfolio across all 12 streams that traded, at 2R:
 
@@ -56,9 +71,23 @@ not show an edge on any instrument tested, after real costs.**
 
 Bold session counts clear the 100-session gate. Nothing else does.
 
+## EURGBP: a 60% win rate that loses money
+
+```
+EURGBP  2.0R   5 trades   5 sessions   WR 60.0%   PF 0.70   E -0.121R
+```
+
+Sixty percent win rate. Profit factor **0.70**. It loses money.
+
+Three of the five wins were small partial-credit exits and the two losses were
+full stops, so the average win was far below the average loss. This single row
+is the cleanest possible demonstration that **win rate on its own carries no
+information about whether a system makes money.** Anyone quoting a win rate
+without the payout and the sample size is quoting nothing.
+
 ## Read the USDCHF row again
 
-**62.5% win rate. Profit factor 2.41. Expectancy +0.53 R.**
+**62.5% win rate at 1.5R, profit factor 2.41. At 2.0R: 54.2% and PF 2.12.**
 
 That is, almost exactly, the result requested at the start of this project —
 a win rate above 60% with a much higher profit factor. It is also built on
@@ -116,12 +145,26 @@ The payout is setting the win rate; the signal is not.
 And note where a 60% win rate actually lives: **0.75R, profit factor 1.16.**
 Not 3:1. Not "extremely high."
 
+## A data-quality caveat, stated plainly
+
+Dukascopy rate-limits under sustained load. The fetch log for the later
+symbols shows failures climbing — 149 of 1,200 hourly files failed after
+retries on the last symbol in the queue. Missing hours mean missing bars,
+which means some sessions never formed a range and were skipped.
+
+That is part of why several symbols show far fewer sessions than gold's 123.
+It does **not** bias the direction of the result — a missing hour removes a
+session, it does not tilt the ones that remain — but it does mean the thin
+rows are thinner than the calendar alone would explain. Re-running the fetch
+for those symbols alone, at lower concurrency, would fill them in.
+
 ## What this does and does not prove
 
 **Does:** the 9:30 opening-range break, taken mechanically at 1.5R or 2R with
-a structural stop, across 13 instruments and ~125 sessions of real spread-aware
-data, does not have a positive expectancy. The portfolio p-value is 0.74 —
-nowhere near significance in the favourable direction.
+a structural stop, across 19 instruments and ~125 sessions of real
+spread-aware data, does not have a positive expectancy. The portfolio p-value
+is 0.74 — nowhere near significance in the favourable direction. Every
+instrument with a 100+ session sample returned a profit factor of 1.0.
 
 **Does not:** prove the strategy family is worthless everywhere and forever.
 Six months is one regime. Specifically untested here:
