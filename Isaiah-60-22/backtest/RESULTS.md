@@ -201,6 +201,44 @@ Zarattini result stands, but it was US equities with a different RVOL
 definition; it does not transfer to a 5-minute FX/metals opening window
 unexamined.
 
+## Strategy 02, the Asian sweep — first test, weak variant only
+
+Overnight hours fetched (23:00-17:00 UTC) and the sweep run on gold, 90
+sessions:
+
+| Target | WR | Break-even | PF | E[R] |
+|---|---|---|---|---|
+| 1.5R | 30.0% | 40.0% | 0.57 | −0.301 |
+| 2.0R | 24.4% | 33.3% | 0.54 | −0.348 |
+| 3.0R | 21.1% | 25.0% | 0.62 | −0.296 |
+
+Below break-even at every target, by 10 points at 1.5R. This is materially
+worse than the opening range, which at least sat on 1.0.
+
+**Read the caveat before drawing a conclusion from this.** The engine
+implements `sweep_reclaim` — sweep the level, close back inside, enter. That
+is the variant the strategy document itself labels *"deliberately weaker: no
+MSS. Included so you can measure what the MSS filter is actually worth."*
+
+Two filters the EA defaults to are NOT in this test:
+
+- **The market structure shift.** The EA's default model is `SWEEP_MSS`,
+  which requires price to break the opposing swing after the reclaim before
+  entering. The engine does not implement MSS.
+- **The higher-timeframe bias.** The EA defaults it ON with "no bias, no
+  trade", and `strategies/02` states plainly that the sweep predicts
+  volatility rather than direction, so direction must come from elsewhere.
+  The engine ran with bias OFF.
+
+So what this measures is the sweep with both of its directional filters
+removed — and it comes out at −0.3R per trade. That is not evidence against
+the strategy as designed. If anything it is consistent with the
+documentation's own claim that a reclaim on its own is not a tradeable
+signal, which is exactly why those filters exist.
+
+**Testing the real thing needs MSS and bias in the engine.** Until that is
+built, Strategy 02 is untested and should be treated as such.
+
 ## What this does and does not prove
 
 **Does:** the 9:30 opening-range break, taken mechanically at 1.5R or 2R with
