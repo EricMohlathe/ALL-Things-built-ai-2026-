@@ -21,9 +21,10 @@ Isaiah 60:22; the folder spells it safely.
 | `strategies/01-ny-0930-opening-range.md` | The 9:30 AM New York opening-range model. Mark the first 5-minute candle, trade the break. |
 | `strategies/02-asian-range-liquidity-sweep.md` | The Asian-range / 10:00 AM liquidity-sweep model. Mark the overnight range, trade the sweep and the structure shift. |
 | `strategies/03-risk-and-evidence-protocol.md` | Position sizing, the daily kill-switches, and the six gates a variant must clear before it sees live money. |
+| `strategies/04-the-ceiling.md` | What win rate, payout, profit factor and trade volume can actually be had at the same time — and the three tools built to get as close to that ceiling as the market allows. |
 | `MT5/` | The MetaTrader 5 build: two Expert Advisors over one shared core (`Isaiah6022_Core.mqh`). |
 | `cTrader/` | The cTrader build: the same two strategies as self-contained cBots. Reads UTC directly, so there is no broker-offset input to get wrong. |
-| `SessionRange_Forge/` | The research engine that came first: one MT5 EA with five entry models behind a dropdown, plus `srf_forensics.py` — the script that grades every journal in this workspace. |
+| `SessionRange_Forge/` | The measurement half. `srf_forensics.py` grades any journal against six gates; `target_curve.py` finds where the win-rate/payout dial should sit on your data; `portfolio.py` combines every stream and reports effective breadth. Plus the original five-model research EA. |
 | `journal/` | The manual trade log and the pre-flight checklist, for the sessions you trade by hand. |
 | `sources/` | The source documents these rules were extracted from, archived as PDFs, with a note on what each one actually claims and what none of them mention. |
 

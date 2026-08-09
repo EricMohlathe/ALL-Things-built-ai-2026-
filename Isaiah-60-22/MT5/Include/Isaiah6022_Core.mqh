@@ -58,6 +58,8 @@ struct I22Config
    int               maxBarsToTrigger;
    double            minRangePts;
    double            maxRangeATR;
+   double            minRVOL;           // relative volume floor, 0 = off
+   int               rvolLookbackDays;  // sessions averaged for the RVOL baseline
 
    // bias
    ENUM_I22_BIAS     biasMode;
@@ -124,6 +126,8 @@ bool     g_haltedToday  = false;
 bool     g_haltedTotal  = false;
 bool     g_daySkipped   = false;
 string   g_skipReason   = "";
+double   g_rvol         = 0.0;    // this session's range-window volume vs its baseline
+double   g_rvolAtEntry  = 0.0;
 
 // live position
 ulong    g_ticket       = 0;
@@ -389,6 +393,7 @@ void ResetSession(const string newKey)
    g_rangeLow    = 0.0;
    g_rangeReady  = false;
    g_rangeATR    = 0.0;
+   g_rvol        = 0.0;
    g_rangeDir    = 0;
    g_tradesToday = 0;
    g_haltedToday = false;
@@ -436,6 +441,78 @@ void UpdateRange()
   }
 
 //+------------------------------------------------------------------+
+//| RELATIVE VOLUME                                                   |
+//|                                                                   |
+//| Volume traded inside today's range window, divided by the mean of |
+//| the same window over the previous N sessions.                     |
+//|                                                                   |
+//| This is the one selection filter with published evidence behind   |
+//| it. Zarattini, Barbon & Aziz (2024) found the opening-range edge   |
+//| lives in WHICH DAYS you trade, not in the entry trigger — and      |
+//| relative volume is how they chose. A range formed on thin volume   |
+//| is not the same event as one formed on heavy volume, even when     |
+//| the two look identical on the chart.                               |
+//|                                                                    |
+//| Returns 1.0 when there is not enough history to judge, so a short  |
+//| backtest warm-up never silently rejects every session.             |
+//+------------------------------------------------------------------+
+double ComputeRVOL()
+  {
+   if(g_cfg.minRVOL <= 0.0) return 1.0;
+
+   int need = g_cfg.rvolLookbackDays;
+   if(need < 1) return 1.0;
+
+   double todayVol = 0.0;
+   double prior[];
+   ArrayResize(prior, need);
+   ArrayInitialize(prior, 0.0);
+
+   string  seenKey[];
+   ArrayResize(seenKey, need);
+   for(int i = 0; i < need; i++) seenKey[i] = "";
+
+   int  filled  = 0;
+   int  maxBars = MathMin(Bars(_Symbol, g_cfg.rangeTF) - 1, 20000);
+
+   for(int i = 1; i <= maxBars; i++)
+     {
+      datetime bt = iTime(_Symbol, g_cfg.rangeTF, i);
+      if(bt <= 0) break;
+
+      int m = MinuteOfDayNY(bt);
+      if(!InWindow(m, g_cfg.rangeStartMin, g_cfg.rangeEndMin)) continue;
+
+      string key = RangeDayKey(bt);
+      double v   = (double)iTickVolume(_Symbol, g_cfg.rangeTF, i);
+
+      if(key == g_dayKey) { todayVol += v; continue; }
+
+      // bucket this bar into its session
+      int slot = -1;
+      for(int s = 0; s < filled; s++)
+         if(seenKey[s] == key) { slot = s; break; }
+
+      if(slot < 0)
+        {
+         if(filled >= need) break;      // we have all the history we need
+         slot = filled++;
+         seenKey[slot] = key;
+        }
+      prior[slot] += v;
+     }
+
+   if(filled < 2 || todayVol <= 0.0) return 1.0;   // not enough to judge
+
+   double sum = 0.0;
+   for(int s = 0; s < filled; s++) sum += prior[s];
+   double baseline = sum / filled;
+   if(baseline <= 0.0) return 1.0;
+
+   return todayVol / baseline;
+  }
+
+//+------------------------------------------------------------------+
 //| Close the range once the formation window has passed, and decide  |
 //| whether the session is tradeable at all.                          |
 //+------------------------------------------------------------------+
@@ -445,6 +522,7 @@ void FinaliseRange()
 
    g_rangeReady = true;
    g_rangeATR   = ATRValue();
+   g_rvol       = ComputeRVOL();
 
    double rangePts = (g_rangeHigh - g_rangeLow) / Pt();
    double atrPts   = (g_rangeATR > 0.0) ? g_rangeATR / Pt() : 0.0;
@@ -459,6 +537,11 @@ void FinaliseRange()
       g_daySkipped = true;
       g_skipReason = StringFormat("range %.1f x ATR > max %.1f", rangePts / atrPts, g_cfg.maxRangeATR);
      }
+   else if(g_cfg.minRVOL > 0.0 && g_rvol < g_cfg.minRVOL)
+     {
+      g_daySkipped = true;
+      g_skipReason = StringFormat("relative volume %.2f < min %.2f", g_rvol, g_cfg.minRVOL);
+     }
 
    if(g_cfg.drawObjects)
      {
@@ -470,9 +553,9 @@ void FinaliseRange()
       ObjectSetInteger(0, "I22_RangeLow", OBJPROP_STYLE, STYLE_DOT);
      }
 
-   PrintFormat("Isaiah 60:22 | %s range set  H=%s L=%s  (%.0f pts, %.2f x ATR)%s",
+   PrintFormat("Isaiah 60:22 | %s range set  H=%s L=%s  (%.0f pts, %.2f x ATR, RVOL %.2f)%s",
                g_dayKey, DoubleToString(g_rangeHigh, _Digits), DoubleToString(g_rangeLow, _Digits),
-               rangePts, (atrPts > 0.0 ? rangePts / atrPts : 0.0),
+               rangePts, (atrPts > 0.0 ? rangePts / atrPts : 0.0), g_rvol,
                (g_daySkipped ? "  SKIPPED: " + g_skipReason : ""));
   }
 
@@ -607,7 +690,7 @@ void EnsureJournalHeader()
              "entry_price", "exit_price", "sl_price", "tp_price",
              "risk_points", "r_realized", "mfe_r", "mae_r",
              "spread_pts_entry", "range_high", "range_low", "range_pts",
-             "atr_pts", "range_atr_ratio", "bias", "lots",
+             "atr_pts", "range_atr_ratio", "rvol", "bias", "lots",
              "profit_ccy", "balance_after", "bars_held", "exit_reason");
    FileClose(h);
   }
@@ -642,7 +725,7 @@ void WriteJournalRow(const double exitPrice, const datetime exitTime,
              DoubleToString(g_entrySpread, 1),
              DoubleToString(g_rangeHigh, _Digits), DoubleToString(g_rangeLow, _Digits),
              DoubleToString(rangePts, 1), DoubleToString(atrPts, 1),
-             DoubleToString(ratio, 3), g_biasAtEntry,
+             DoubleToString(ratio, 3), DoubleToString(g_rvolAtEntry, 3), g_biasAtEntry,
              DoubleToString(g_entryLots, 2), DoubleToString(profit, 2),
              DoubleToString(AccountInfoDouble(ACCOUNT_BALANCE), 2),
              IntegerToString(bars), reason);
@@ -737,6 +820,7 @@ bool OpenPosition(const int dir, double stopPrice, const string trigger)
    string lbl;
    CurrentBias(lbl);
    g_biasAtEntry = lbl;
+   g_rvolAtEntry = g_rvol;
 
    PrintFormat("Isaiah 60:22 | %s %s  %.2f lots @ %s  SL %s  TP %s  risk %.0f pts  [%s]",
                g_cfg.strategyTag, (dir > 0 ? "LONG" : "SHORT"), lots,
@@ -910,7 +994,7 @@ void DrawDashboard(const string extra)
       "Isaiah 60:22  |  %s / %s\n"
       "NY time    %02d:%02d:%02d   (broker GMT%+.1f winter)\n"
       "session    %s\n"
-      "range      %s  /  %s\n"
+      "range      %s  /  %s   RVOL %.2f\n"
       "state      %s\n"
       "trades     %d of %d today   consec losses %d\n"
       "%s",
@@ -918,7 +1002,7 @@ void DrawDashboard(const string extra)
       t.hour, t.min, t.sec, g_gmtOffset,
       g_dayKey,
       (g_rangeHigh > 0.0 ? DoubleToString(g_rangeHigh, _Digits) : "-"),
-      (g_rangeLow  > 0.0 ? DoubleToString(g_rangeLow,  _Digits) : "-"),
+      (g_rangeLow  > 0.0 ? DoubleToString(g_rangeLow,  _Digits) : "-"), g_rvol,
       state,
       g_tradesToday, g_cfg.maxTradesPerDay, g_consecLosses,
       extra);

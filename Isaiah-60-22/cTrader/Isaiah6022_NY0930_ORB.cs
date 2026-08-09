@@ -133,6 +133,15 @@ namespace cAlgo.Robots
         [Parameter("Max range as x ATR, 0 = off", Group = "3. Signal", DefaultValue = 3.0)]
         public double MaxRangeAtr { get; set; }
 
+        // Relative volume: the one selection filter with published evidence
+        // behind it. Zarattini, Barbon & Aziz (2024) found the opening-range
+        // edge lives in WHICH DAYS you trade, not in the entry trigger.
+        [Parameter("Min relative volume, 0 = off", Group = "3. Signal", DefaultValue = 1.5)]
+        public double MinRvol { get; set; }
+
+        [Parameter("RVOL baseline sessions", Group = "3. Signal", DefaultValue = 20)]
+        public int RvolLookbackDays { get; set; }
+
         // ── 4. Bias ────────────────────────────────────────────────────────
         [Parameter("Bias filter", Group = "4. Bias", DefaultValue = BiasMode.Off)]
         public BiasMode Bias { get; set; }
@@ -227,6 +236,8 @@ namespace cAlgo.Robots
         private bool _rangeReady, _daySkipped;
         private string _skipReason = "";
         private double _rangeAtr;
+        private double _rvol;
+        private double _rvolAtEntry;
         private int _rangeDir;
         private int _tradesToday, _consecLosses;
         private double _dayStartEquity, _peakEquity;
@@ -413,7 +424,8 @@ namespace cAlgo.Robots
             _dayKey = newKey;
             _rangeHigh = 0; _rangeLow = 0;
             _rangeReady = false; _daySkipped = false; _skipReason = "";
-            _rangeAtr = 0; _rangeDir = 0;
+            _rangeAtr = 0;
+            _rvol = 0; _rangeDir = 0;
             _tradesToday = 0;
             _haltedToday = false;
             _dayStartEquity = Account.Equity;
@@ -464,6 +476,7 @@ namespace cAlgo.Robots
 
             _rangeReady = true;
             _rangeAtr = _atr.Result.Last(1);
+            _rvol = ComputeRvol();
 
             double rangePips = (_rangeHigh - _rangeLow) / Symbol.PipSize;
             double atrPips = _rangeAtr > 0 ? _rangeAtr / Symbol.PipSize : 0;
@@ -479,6 +492,12 @@ namespace cAlgo.Robots
                 _skipReason = string.Format("range {0:F2} x ATR > max {1:F2}", rangePips / atrPips, MaxRangeAtr);
             }
 
+            if (!_daySkipped && MinRvol > 0 && _rvol < MinRvol)
+            {
+                _daySkipped = true;
+                _skipReason = string.Format("relative volume {0:F2} < min {1:F2}", _rvol, MinRvol);
+            }
+
             if (DrawObjects)
             {
                 Chart.DrawHorizontalLine("I22_RangeHigh", _rangeHigh, Color.DodgerBlue, 1, LineStyle.Dots);
@@ -489,6 +508,42 @@ namespace cAlgo.Robots
                   _dayKey, Math.Round(_rangeHigh, Symbol.Digits), Math.Round(_rangeLow, Symbol.Digits),
                   rangePips, atrPips > 0 ? rangePips / atrPips : 0,
                   _daySkipped ? "  SKIPPED: " + _skipReason : "");
+        }
+
+
+        // Volume traded inside today's range window, over the mean of the same
+        // window across the previous N sessions. Returns 1.0 when history is
+        // too thin to judge, so a short warm-up never rejects every session.
+        private double ComputeRvol()
+        {
+            if (MinRvol <= 0 || RvolLookbackDays < 1) return 1.0;
+
+            double todayVol = 0;
+            var prior = new System.Collections.Generic.Dictionary<string, double>();
+            int scanned = Math.Min(_rangeBars.Count - 1, 20000);
+
+            for (int i = 1; i <= scanned; i++)
+            {
+                var barNy = ToNy(_rangeBars.OpenTimes.Last(i));
+                if (!InWindow(MinuteOfDay(barNy), RangeStartMin, RangeEndMin)) continue;
+
+                string key = RangeDayKey(barNy);
+                double v = _rangeBars.TickVolumes.Last(i);
+
+                if (key == _dayKey) { todayVol += v; continue; }
+
+                if (!prior.ContainsKey(key))
+                {
+                    if (prior.Count >= RvolLookbackDays) break;
+                    prior[key] = 0;
+                }
+                prior[key] += v;
+            }
+
+            if (prior.Count < 2 || todayVol <= 0) return 1.0;
+
+            double baseline = prior.Values.Average();
+            return baseline > 0 ? todayVol / baseline : 1.0;
         }
 
         // ══════════════════════════════════════════════════════════════════
@@ -848,6 +903,7 @@ namespace cAlgo.Robots
             _mfePips = 0; _maePips = 0;
             _bePlaced = false; _partialDone = false;
             _biasAtEntry = biasLbl;
+            _rvolAtEntry = _rvol;
             _tradesToday++;
 
             Print("Isaiah 60:22 | {0} {1} units @ {2}  SL {3}  TP {4}  risk {5:F1} pips  [{6}]",
@@ -934,7 +990,7 @@ namespace cAlgo.Robots
                     "entry_price", "exit_price", "sl_price", "tp_price",
                     "risk_points", "r_realized", "mfe_r", "mae_r",
                     "spread_pts_entry", "range_high", "range_low", "range_pts",
-                    "atr_pts", "range_atr_ratio", "bias", "lots",
+                    "atr_pts", "range_atr_ratio", "rvol", "bias", "lots",
                     "profit_ccy", "balance_after", "bars_held", "exit_reason") + Environment.NewLine);
             }
             catch (Exception ex)
@@ -1003,6 +1059,7 @@ namespace cAlgo.Robots
                     rangePips.ToString("F1", inv),
                     atrPips.ToString("F1", inv),
                     (atrPips > 0 ? rangePips / atrPips : 0).ToString("F3", inv),
+                    _rvolAtEntry.ToString("F3", inv),
                     _biasAtEntry,
                     _entryVolume.ToString("F2", inv),
                     p.NetProfit.ToString("F2", inv),
@@ -1044,7 +1101,7 @@ namespace cAlgo.Robots
                 "Isaiah 60:22  |  NY_ORB_0930 / {0}\n" +
                 "NY time    {1}\n" +
                 "session    {2}\n" +
-                "range      {3}  /  {4}\n" +
+                "range      {3}  /  {4}   RVOL " + _rvol.ToString("F2") + "\n" +
                 "state      {5}\n" +
                 "signal     {6}\n" +
                 "trades     {7} of {8} today   consec losses {9}",

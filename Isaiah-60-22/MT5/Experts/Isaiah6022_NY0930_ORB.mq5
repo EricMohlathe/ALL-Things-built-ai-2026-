@@ -72,6 +72,9 @@ input int               InpRetestMaxBars     = 20;    // Retest must occur withi
 input double            InpMinRangePts       = 0;     // Skip the day if the range is narrower than this
 input double            InpMaxRangeATR       = 3.0;   // Skip the day if range > N x ATR (0 = off)
 
+input double            InpMinRVOL           = 1.5;   // Min relative volume to trade the day (0 = off)
+input int               InpRVOLLookbackDays  = 20;    // Sessions averaged for the RVOL baseline
+
 input group             "===  4. DIRECTIONAL BIAS  ==="
 input ENUM_I22_BIAS     InpBiasMode          = I22_BIAS_OFF;   // Bias filter (get a baseline before adding one)
 input ENUM_TIMEFRAMES   InpBiasTF            = PERIOD_H4;      // Bias timeframe
@@ -163,6 +166,8 @@ int OnInit()
    g_cfg.maxBarsToTrigger = InpMaxBarsToTrigger;
    g_cfg.minRangePts      = InpMinRangePts;
    g_cfg.maxRangeATR      = InpMaxRangeATR;
+   g_cfg.minRVOL          = InpMinRVOL;
+   g_cfg.rvolLookbackDays = InpRVOLLookbackDays;
 
    g_cfg.biasMode         = InpBiasMode;
    g_cfg.biasTF           = InpBiasTF;
