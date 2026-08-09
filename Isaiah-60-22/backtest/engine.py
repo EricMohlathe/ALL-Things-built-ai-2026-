@@ -234,6 +234,11 @@ def bias_at(series, mode: str, when: pd.Timestamp, price: float) -> int:
     return 0
 
 
+def MinuteOfDayNY_ts(t: pd.Timestamp) -> int:
+    ny = to_ny(t)
+    return ny.hour * 60 + ny.minute
+
+
 def bars_midnight(g: pd.DataFrame) -> float:
     """Opening price of the 00:00 New York bar for this session."""
     m = g[g["ny_min"] == 0]
@@ -245,7 +250,8 @@ def run(symbol: str, strategy: str, model: str, target_r: float,
         partial_at_r: float, partial_pct: float,
         risk_pct: float, run_tag: str,
         bias_mode: str = "off", require_bias: bool = False,
-        use_midnight_open: bool = False) -> pd.DataFrame:
+        use_midnight_open: bool = False,
+        entry_tf_min: int = 1) -> pd.DataFrame:
 
     path = os.path.join(DATA_DIR, f"{symbol}_M1.csv.gz")
     if not os.path.exists(path):
@@ -316,6 +322,28 @@ def run(symbol: str, strategy: str, model: str, target_r: float,
             continue
 
         bars = g.reset_index(drop=True)
+
+        # SIGNAL FRAME. The EAs evaluate signals on an entry timeframe (M5 for
+        # the sweep) while managing the open position continuously. Mirror
+        # that: resample for signal detection, but walk forward on M1 so the
+        # stop and target are checked at the finest resolution available.
+        if entry_tf_min > 1:
+            tmp = bars.set_index("time_utc")
+            sig = pd.DataFrame({
+                "open": tmp["open"].resample(f"{entry_tf_min}min").first(),
+                "high": tmp["high"].resample(f"{entry_tf_min}min").max(),
+                "low": tmp["low"].resample(f"{entry_tf_min}min").min(),
+                "close": tmp["close"].resample(f"{entry_tf_min}min").last(),
+            }).dropna(subset=["open"]).reset_index()
+            # index of the first M1 bar strictly AFTER each signal bar closes
+            m1_times = bars["time_utc"].to_numpy()
+            sig_close = (sig["time_utc"] +
+                         pd.Timedelta(minutes=entry_tf_min)).to_numpy()
+            sig["m1_next"] = np.searchsorted(m1_times, sig_close, side="left")
+            sig["ny_min"] = [MinuteOfDayNY_ts(t) for t in sig["time_utc"]]
+        else:
+            sig = None
+
         trd_idx = np.where(trd_mask)[0]
         if len(trd_idx) == 0:
             continue
@@ -338,9 +366,36 @@ def run(symbol: str, strategy: str, model: str, target_r: float,
         reclaimed = False
         i = first_trd
 
-        while i <= last_trd and trades_today < p["max_trades"]:
-            bar = bars.iloc[i]
-            c, h, l = float(bar["close"]), float(bar["high"]), float(bar["low"])
+        # When a signal timeframe is set, `si` walks the resampled frame and
+        # `i` is the M1 bar the fill would land on. Otherwise they are the same.
+        use_sig = sig is not None and len(sig) > 0
+        si = 0
+        if use_sig:
+            while si < len(sig) and int(sig["m1_next"].iloc[si]) <= first_trd:
+                si += 1
+
+        while trades_today < p["max_trades"]:
+            if use_sig:
+                if si >= len(sig):
+                    break
+                srow = sig.iloc[si]
+                i = int(srow["m1_next"]) - 1
+                if i > last_trd:
+                    break
+                if not in_window(int(srow["ny_min"]), p["trade_start"], p["trade_end"]):
+                    si += 1
+                    continue
+                c = float(srow["close"]); h = float(srow["high"]); l = float(srow["low"])
+                sbars = sig
+                sidx = si
+            else:
+                if i > last_trd:
+                    break
+                bar = bars.iloc[i]
+                c, h, l = float(bar["close"]), float(bar["high"]), float(bar["low"])
+                sbars = bars
+                sidx = i
+
             sig_dir, stop_price, trigger = 0, 0.0, ""
 
             if strategy == "orb":
@@ -358,7 +413,7 @@ def run(symbol: str, strategy: str, model: str, target_r: float,
                     if bars_since_break > 60:
                         break_dir = 0
                     elif model == "retest" and 1 <= bars_since_break <= 20:
-                        o = float(bar["open"])
+                        o = float(sbars["open"].iloc[sidx])
                         if break_dir > 0 and l <= break_level and c > break_level and c > o:
                             sig_dir, stop_price, trigger = 1, l, "retest_rejection"
                         elif break_dir < 0 and h >= break_level and c < break_level and c < o:
@@ -390,7 +445,7 @@ def run(symbol: str, strategy: str, model: str, target_r: float,
                         # bias: the sweep predicts volatility, not direction,
                         # so direction has to come from here
                         b = bias_at(bias_series, bias_mode,
-                                    bars.iloc[i]["time_utc"], c)
+                                    sbars["time_utc"].iloc[sidx], c)
                         blocked = (require_bias and b == 0) or (b != 0 and b != want)
 
                         # midnight open: buy BELOW it, sell ABOVE it
@@ -400,7 +455,7 @@ def run(symbol: str, strategy: str, model: str, target_r: float,
 
                         if not blocked:
                             if model == "sweep_mss":
-                                prot = detect_mss(bars, i, want)
+                                prot = detect_mss(sbars, sidx, want)
                                 if prot is not None:
                                     sig_dir = want
                                     stop_price = prot
@@ -411,7 +466,10 @@ def run(symbol: str, strategy: str, model: str, target_r: float,
                                 trigger = "sweep_reclaim"
 
             if sig_dir == 0 or i + 1 > last_trd:
-                i += 1
+                if use_sig:
+                    si += 1
+                else:
+                    i += 1
                 continue
 
             # ── fill on the NEXT bar's open, paying half the spread each side
@@ -421,7 +479,8 @@ def run(symbol: str, strategy: str, model: str, target_r: float,
 
             risk = abs(entry - stop_price)
             if risk <= 0:
-                i += 1
+                if use_sig: si += 1
+                else: i += 1
                 continue
 
             # stop floor/ceiling in ATR terms, same as the EA
@@ -431,11 +490,13 @@ def run(symbol: str, strategy: str, model: str, target_r: float,
                     risk_pts = 0.25 * atr_pts
                     risk = risk_pts * pip
                 if risk_pts > 3.0 * atr_pts:
-                    i += 1
+                    if use_sig: si += 1
+                    else: i += 1
                     continue
             # spread gate: reject if the spread is more than 10% of the stop
             if risk_pts > 0 and (spread / pip) / risk_pts > 0.10:
-                i += 1
+                if use_sig: si += 1
+                else: i += 1
                 continue
 
             sl = entry - risk if sig_dir > 0 else entry + risk
@@ -514,6 +575,9 @@ def run(symbol: str, strategy: str, model: str, target_r: float,
                    bars_held=str(exit_idx - i - 1), exit_reason=exit_reason)
 
             i = exit_idx + 1
+            if use_sig:
+                while si < len(sig) and int(sig["m1_next"].iloc[si]) <= i:
+                    si += 1
             break_dir, sweep_side, reclaimed = 0, 0, False
 
     return jr.frame()
@@ -533,6 +597,8 @@ def main() -> None:
     ap.add_argument("--partial-at-r", type=float, default=0.0)
     ap.add_argument("--partial-pct", type=float, default=50.0)
     ap.add_argument("--risk-pct", type=float, default=0.5)
+    ap.add_argument("--entry-tf-min", type=int, default=1,
+                    help="minutes per signal bar (EA sweep default is 5)")
     ap.add_argument("--bias", default="off", choices=["off", "htf_ema", "prev_day"])
     ap.add_argument("--require-bias", action="store_true")
     ap.add_argument("--midnight-open", action="store_true")
@@ -547,7 +613,8 @@ def main() -> None:
     df = run(args.symbol, args.strategy, args.model, args.target_r,
              args.exit_mode, args.min_rvol, args.be_at_r,
              args.partial_at_r, args.partial_pct, args.risk_pct, tag,
-             args.bias, args.require_bias, args.midnight_open)
+             args.bias, args.require_bias, args.midnight_open,
+             args.entry_tf_min)
 
     if df.empty:
         print(f"{args.symbol:14s} {tag:34s} NO TRADES")

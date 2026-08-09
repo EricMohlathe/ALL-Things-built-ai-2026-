@@ -218,33 +218,55 @@ Break-even at 2R is 33.3%. The best configuration reaches 28.9% — **4.4 points
 short, with every variant deeply negative.** The full stack of filters moved
 profit factor from 0.54 to 0.65 and never crossed 1.0.
 
-### The MSS filter barely filtered
+### CORRECTION: the M1 test was measuring the wrong thing
 
-Adding the market structure shift removed **one trade out of ninety**.
+The ablation above ran the signal on **M1**. The EA defaults the sweep's entry
+timeframe to **M5**. That difference turned out to dominate everything else:
 
-The source material calls the MSS *"the single most important filter for this
-strategy"* and *"the confirmation that price has rejected the swept level."*
-As implemented here it is very nearly a no-op, and the reason is mechanical:
-on M1 bars with a 2-bar fractal, confirmed swings print constantly and price
-breaks one within a few bars almost every time. A filter that passes 99% of
-candidates is not selecting anything.
+| Gold, MSS + midnight open | Trades | Sessions | WR | PF | E[R] |
+|---|---|---|---|---|---|
+| M1 signal | 87 | 87 | 26.4% | 0.62 | −0.279 |
+| **M5 signal (the EA default)** | 67 | 67 | **38.8%** | **0.95** | −0.028 |
+| M15 signal | 27 | 27 | 37.0% | 0.66 | −0.183 |
 
-**Caveat that cuts the other way:** the EA defaults the sweep's entry
-timeframe to **M5**, and this engine runs the signal on **M1**. On M5 the
-swings are fewer and further apart, so MSS would bite harder and could behave
-quite differently. That is the single most important untested detail left in
-Strategy 02, and it is a data-resampling change rather than new logic.
+Profit factor 0.62 → 0.95 purely from resampling the signal. **The earlier
+conclusion that the sweep is "materially worse than the opening range" was an
+artifact of testing it on the wrong timeframe.** On its own default it is
+roughly break-even, not badly negative.
 
-### The bias filter cut the sample in half and did not help
+The mechanism is the one flagged above: on M1 with a 2-bar fractal, confirmed
+swings print constantly and MSS passes almost everything. On M5 the swings are
+fewer and the filter actually selects. MSS is doing real work — it just needed
+the timeframe it was designed for.
 
-Requiring a higher-timeframe bias took 89 trades to 40 and moved profit factor
-from 0.59 to 0.52 — slightly worse. `strategies/02` predicted the opposite,
-on the reasoning that the sweep predicts volatility rather than direction so
-direction must come from elsewhere. On this sample it did not.
+### The EA's shipped default, across three symbols
 
-That is the falsification run the strategy document asked for, and the answer
-came back negative. Per `strategies/02`: *"if the bias filter does not improve
-the result, the strategy has no premise left."*
+M5 signal + MSS + higher-timeframe bias + midnight open, 2R:
+
+| Symbol | Trades | Sessions | WR | PF | E[R] |
+|---|---|---|---|---|---|
+| XAUUSD | 23 | 23 | 47.8% | **1.31** | +0.161 |
+| GBPUSD | 37 | 37 | 32.4% | 1.02 | +0.011 |
+| EURUSD | 38 | 38 | 31.6% | 0.85 | −0.100 |
+
+Gold at 47.8% and PF 1.31 is the best result anywhere in this project. It is
+also **23 sessions**, which is a quarter of the gate. Same caution as USDCHF
+applies, and for the same reason.
+
+The bias filter also flips sign on M5: on gold it takes PF from 0.95 to 1.31,
+where on M1 it had made things worse. That reverses the earlier reading too —
+and it is a reminder that a filter tested on the wrong timeframe tells you
+about the timeframe, not the filter.
+
+### What the sweep now looks like, honestly
+
+- On its designed timeframe it is **around break-even**, not badly negative.
+- The best configuration on the deepest available sample (gold, M5, MSS +
+  midnight, 67 sessions) is **PF 0.95** — still below 1.0.
+- Adding bias lifts gold to PF 1.31 but cuts the sample to 23 sessions, which
+  is not enough to conclude anything.
+- Nothing here has 100+ sessions, so **no gate has been cleared**. The sweep
+  is promising enough to deserve a longer test and nothing more than that.
 
 ## What this does and does not prove
 
