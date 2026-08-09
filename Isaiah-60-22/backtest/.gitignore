@@ -1,0 +1,4 @@
+# Raw tick-derived M1 bars: large, and reproducible with fetch_dukascopy.py.
+# The journals are the evidence and they ARE committed.
+data/
+fetch.log
