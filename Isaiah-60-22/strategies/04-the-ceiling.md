@@ -59,8 +59,9 @@ Raising the target lowers the win rate mechanically, before any skill enters
 the picture. You choose a point on that curve; you do not escape it.
 
 **Win rate against volume — on one instrument.** Every filter that raises the
-win rate rejects sessions. The RVOL filter added in this update is a good
-filter, and it will cut your trade count roughly in half. That is it working.
+win rate rejects sessions. That trade-off is structural. But a filter only
+earns its cost if it actually raises the win rate, and the RVOL filter shipped
+here did not — see the correction below.
 
 **Volume against independence — across instruments.** This is the one place
 the trade-off can be beaten, and it is the entire answer to "for everything."
@@ -96,12 +97,23 @@ Three additions, all shipped:
 
 **1. Relative-volume selection filter** — in all four EAs (`InpMinRVOL` /
 `Min relative volume`). Volume in today's range window over the mean of the
-last 20 sessions' same window. This is the single filter with peer-reviewed
-evidence behind it: Zarattini, Barbon & Aziz (2024) found the opening-range
-edge lives in *which days you trade*, not in the entry trigger. A range built
-on thin volume is a different event from one built on heavy volume, even when
-the two look identical on the chart. Expect it to reject 40–60% of sessions.
-That is the mechanism by which win rate goes up.
+last 20 sessions' same window.
+
+**CORRECTED AFTER TESTING — it defaults to OFF.** When this was written it was
+described as the one filter with peer-reviewed evidence behind it (Zarattini,
+Barbon & Aziz 2024, where the opening-range edge lives in *which days you
+trade*). Backtesting exposed two problems:
+
+- The shipped default of 1.5 sits **beyond the 95th percentile** of the actual
+  distribution. Gold's opening-window RVOL has a median of 1.00 and a p95 of
+  1.24; **0.0% of sessions reach 1.5**. The EAs would never have traded.
+- Calibrated to 1.05–1.10 it does trade, but it does not replicate: it helped
+  gold (PF 0.97 → 1.31) and hurt Nasdaq (1.06 → 0.92) and AUDJPY (1.00 → 0.88).
+  Two of three worse is noise, not a filter.
+
+The Zarattini result stands on its own terms — US equities, a different RVOL
+definition — but it does not transfer unexamined to a 5-minute FX and metals
+opening window. Full measurement in `../backtest/RESULTS.md`.
 
 **2. `target_curve.py`** — finds where the win-rate/payout dial should sit on
 *your* data instead of on a number from a thumbnail. It reconstructs what every
@@ -171,7 +183,28 @@ plainly.
 
 That is what the gates are for. They are not there to lower your expectations;
 they are there so that if you ever *do* find something extraordinary, you will
-be able to tell the difference between that and a good-looking accident. Right
-now, with no compiled build and no backtest, neither of us knows which you have.
+be able to tell the difference between that and a good-looking accident.
 
-Go find out. The tools are built.
+## Since this was written, the backtest happened
+
+`../backtest/RESULTS.md` has the full run: 19 instruments, ~125 sessions, real
+per-minute spread. In short:
+
+- **The 9:30 opening range has no edge.** Every instrument with a 100+ session
+  sample returned profit factor 1.0. The win rate tracks `1/(1+R)` at every
+  target, which is the signature of an entry carrying no directional
+  information. On gold the raw edge is +0.108R and the spread costs 0.130R.
+- **The Asian sweep is around break-even** on its designed M5 timeframe, on
+  samples too small to conclude from.
+- **Nothing came close to 60% at 3:1.** The rows that looked like it — USDCHF
+  at PF 2.41, EURUSD at PF 6.00, gold sweep at PF 1.31 — rest on 23, 3 and 23
+  sessions respectively. Each is exactly what the sample-size gate exists to
+  catch.
+
+So the realistic table above is, if anything, optimistic for *these two
+strategies on these instruments over this period*. It remains a fair
+description of what a working retail system looks like; it is not a promise
+that either strategy here is one.
+
+The tools are built, the data pipeline is built, and the gates caught my own
+results as readily as anyone else's. That is the part worth keeping.
