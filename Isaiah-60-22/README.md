@@ -24,7 +24,7 @@ Isaiah 60:22; the folder spells it safely.
 | `strategies/04-the-ceiling.md` | What win rate, payout, profit factor and trade volume can actually be had at the same time — and the three tools built to get as close to that ceiling as the market allows. |
 | `MT5/` | The MetaTrader 5 build: two Expert Advisors over one shared core (`Isaiah6022_Core.mqh`). |
 | `cTrader/` | The cTrader build: the same two strategies as self-contained cBots. Reads UTC directly, so there is no broker-offset input to get wrong. |
-| `SessionRange_Forge/` | The measurement half. `srf_forensics.py` grades any journal against six gates; `target_curve.py` finds where the win-rate/payout dial should sit on your data; `portfolio.py` combines every stream and reports effective breadth. Plus the original five-model research EA. |
+| `SessionRange_Forge/` | The measurement half. `srf_forensics.py` grades any journal against six gates; `target_curve.py` finds where the win-rate/payout dial should sit on your data; `pf_lab.py` raises profit factor while holding a win-rate floor; `portfolio.py` combines every stream and reports effective breadth. Plus the original five-model research EA. |
 | `journal/` | The manual trade log and the pre-flight checklist, for the sessions you trade by hand. |
 | `sources/` | The source documents these rules were extracted from, archived as PDFs, with a note on what each one actually claims and what none of them mention. |
 

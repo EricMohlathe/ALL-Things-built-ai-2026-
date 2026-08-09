@@ -113,7 +113,26 @@ scanning the grid.
 python3 target_curve.py I22_ORB_journal.csv --want-win-rate 0.60
 ```
 
-**3. `portfolio.py`** — combines every symbol/session/model stream into one
+**3. `pf_lab.py`** — the answer to "hold the win rate, raise the profit factor."
+It decomposes your PF into its three terms, prices what each lever is worth,
+then searches target / break-even / runner policies for the highest profit
+factor that still holds a win-rate floor you set.
+
+The finding it exists to surface: **profit factor has a denominator.** Cutting
+the average loss from 1.0R to 0.7R is worth as much as raising the average win
+by the same proportion — and unlike raising the win, it costs no win rate. On
+a 63% / 1:1 baseline the tool lifted PF from 1.72 to 2.07 by exit shaping
+alone, while win rate went *up* to 67%.
+
+```bash
+python3 pf_lab.py I22_ORB_journal.csv --min-win-rate 0.62
+```
+
+It also refuses to guess about break-even stops. Whether a break-even helps
+depends on the ORDER of the excursions, which the journal does not record, so
+it brackets the answer and tells you to settle it with one A/B backtest.
+
+**4. `portfolio.py`** — combines every symbol/session/model stream into one
 measured result. Reports total volume, blended win rate and profit factor,
 portfolio expectancy with a session bootstrap, and the **effective breadth**:
 how many genuinely independent streams you have after correlation, which is
