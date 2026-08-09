@@ -251,7 +251,8 @@ def run(symbol: str, strategy: str, model: str, target_r: float,
         risk_pct: float, run_tag: str,
         bias_mode: str = "off", require_bias: bool = False,
         use_midnight_open: bool = False,
-        entry_tf_min: int = 1) -> pd.DataFrame:
+        entry_tf_min: int = 1,
+        min_range_coverage: float = 0.70) -> pd.DataFrame:
 
     path = os.path.join(DATA_DIR, f"{symbol}_M1.csv.gz")
     if not os.path.exists(path):
@@ -298,7 +299,17 @@ def run(symbol: str, strategy: str, model: str, target_r: float,
         trd_mask = np.array([in_window(x, p["trade_start"], p["trade_end"]) for x in m])
         hold_mask = np.array([in_window(x, p["trade_start"], p["flat"]) for x in m])
 
-        if rng_mask.sum() < 2 or trd_mask.sum() < 5:
+        # DATA COVERAGE GUARD.
+        # A gap inside the range window does not merely lose a session — it
+        # produces a range built from partial data, i.e. a level that is
+        # silently wrong, which then generates spurious breaks and sweeps.
+        # Require most of the window's expected minutes to actually be present.
+        expected = p["range_end"] - p["range_start"]
+        if expected <= 0:
+            expected += 24 * 60                      # window wraps midnight
+        if rng_mask.sum() < max(2, int(min_range_coverage * expected)):
+            continue
+        if trd_mask.sum() < 5:
             continue
 
         rh = float(g.loc[rng_mask, "high"].max())
@@ -597,6 +608,8 @@ def main() -> None:
     ap.add_argument("--partial-at-r", type=float, default=0.0)
     ap.add_argument("--partial-pct", type=float, default=50.0)
     ap.add_argument("--risk-pct", type=float, default=0.5)
+    ap.add_argument("--min-range-coverage", type=float, default=0.70,
+                    help="fraction of the range window that must have bars")
     ap.add_argument("--entry-tf-min", type=int, default=1,
                     help="minutes per signal bar (EA sweep default is 5)")
     ap.add_argument("--bias", default="off", choices=["off", "htf_ema", "prev_day"])
@@ -614,7 +627,7 @@ def main() -> None:
              args.exit_mode, args.min_rvol, args.be_at_r,
              args.partial_at_r, args.partial_pct, args.risk_pct, tag,
              args.bias, args.require_bias, args.midnight_open,
-             args.entry_tf_min)
+             args.entry_tf_min, args.min_range_coverage)
 
     if df.empty:
         print(f"{args.symbol:14s} {tag:34s} NO TRADES")
