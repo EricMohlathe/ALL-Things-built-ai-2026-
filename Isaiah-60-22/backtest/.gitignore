@@ -5,3 +5,7 @@ data_orb/
 data_*/
 *_M1.csv.gz
 fetch.log
+
+# Python bytecode
+__pycache__/
+*.pyc
