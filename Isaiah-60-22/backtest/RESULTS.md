@@ -158,6 +158,49 @@ session, it does not tilt the ones that remain — but it does mean the thin
 rows are thinner than the calendar alone would explain. Re-running the fetch
 for those symbols alone, at lower concurrency, would fill them in.
 
+## The RVOL filter tested — and a defect in the shipped defaults
+
+The EAs shipped with `InpMinRVOL = 1.5` (ORB) and `1.3` (sweep) turned ON by
+default. Backtesting that exact configuration exposed a bug: **it does not
+filter, it annihilates.**
+
+```
+RVOL >= 1.5, 20 symbols:   gold NO TRADES (from 183)
+                           silver NO TRADES (from 59)
+                           Nasdaq 1 trade (from 159)
+```
+
+The reason is that the opening-window RVOL distribution is far tighter than
+the threshold assumed:
+
+| Symbol | median | p75 | p90 | p95 | % of sessions >= 1.5 |
+|---|---|---|---|---|---|
+| XAUUSD | 1.00 | 1.11 | 1.19 | 1.24 | **0.0%** |
+| Nasdaq | 1.02 | 1.07 | 1.11 | 1.22 | 0.9% |
+| EURUSD | 0.79 | 1.03 | 1.32 | 1.79 | 8.0% |
+
+A 1.5 gate sits beyond the 95th percentile on the liquid instruments. Anyone
+running the shipped defaults would have watched the EA sit on its hands for
+months and concluded the code was broken. It was the default that was broken.
+
+Calibrated down so it actually triggers, the filter still does not replicate:
+
+| Symbol | RVOL off | RVOL 1.05 | RVOL 1.10 |
+|---|---|---|---|
+| XAUUSD | PF 0.97 (123 sess) | PF 1.06 (49) | PF 1.31 (34) |
+| Nasdaq | PF 1.06 (114 sess) | PF 0.98 (41) | PF 0.92 (13) |
+| AUDJPY | PF 1.00 (100 sess) | PF 0.76 (39) | PF 0.88 (34) |
+
+It helps gold and hurts the other two. Two of three worse is noise, not a
+filter — and gold's improvement costs 72% of its sessions, leaving 34, which
+is below the gate anyway.
+
+**The default is now 0 (off) in all four EAs**, with the distribution numbers
+recorded in the source so the next person does not re-derive this. The
+Zarattini result stands, but it was US equities with a different RVOL
+definition; it does not transfer to a 5-minute FX/metals opening window
+unexamined.
+
 ## What this does and does not prove
 
 **Does:** the 9:30 opening-range break, taken mechanically at 1.5R or 2R with
@@ -169,8 +212,6 @@ instrument with a 100+ session sample returned a profit factor of 1.0.
 **Does not:** prove the strategy family is worthless everywhere and forever.
 Six months is one regime. Specifically untested here:
 
-- The **RVOL filter** — the one selection filter with published evidence
-  behind it. Not applied in this run.
 - The **Asian sweep** strategy — needs overnight hours that were not fetched.
 - **Break-even stops and runners** — `pf_lab.py` says these are the biggest
   untested lever, and they cannot be settled from these journals.

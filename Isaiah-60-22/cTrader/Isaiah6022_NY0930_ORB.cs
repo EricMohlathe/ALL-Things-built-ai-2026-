@@ -133,10 +133,15 @@ namespace cAlgo.Robots
         [Parameter("Max range as x ATR, 0 = off", Group = "3. Signal", DefaultValue = 3.0)]
         public double MaxRangeAtr { get; set; }
 
-        // Relative volume: the one selection filter with published evidence
-        // behind it. Zarattini, Barbon & Aziz (2024) found the opening-range
-        // edge lives in WHICH DAYS you trade, not in the entry trigger.
-        [Parameter("Min relative volume, 0 = off", Group = "3. Signal", DefaultValue = 1.5)]
+        // Relative volume. DEFAULT OFF, deliberately.
+        // Zarattini, Barbon & Aziz (2024) found the opening-range edge lives
+        // in which days you trade — but that was US equities with a different
+        // RVOL definition, and it did NOT replicate here. Measured on 125
+        // sessions of real tick data, the opening-window RVOL distribution is
+        // clustered around 1.0 (gold median 1.00, p95 1.24), so a 1.5 gate
+        // rejects every session. Calibrated to 1.05-1.10 it helped gold and
+        // hurt Nasdaq and AUDJPY. Measure your own instrument before enabling.
+        [Parameter("Min relative volume, 0 = off", Group = "3. Signal", DefaultValue = 0.0)]
         public double MinRvol { get; set; }
 
         [Parameter("RVOL baseline sessions", Group = "3. Signal", DefaultValue = 20)]

@@ -80,7 +80,16 @@ input double            InpMaxRangeATR       = 2.5;   // Skip the day if range >
                                                       // overnight range is not a consolidation
 input bool              InpUseMidnightOpen   = true;  // Require entry on the correct side of the NY midnight open
 
-input double            InpMinRVOL           = 1.3;   // Min relative volume to trade the day (0 = off)
+input double            InpMinRVOL           = 0;     // Min relative volume, 0 = OFF (see note below)
+//  RVOL DEFAULT IS OFF, DELIBERATELY.
+//  Measured on 125 sessions of real tick data: the opening-window relative
+//  volume distribution is tightly clustered around 1.0 (gold median 1.00,
+//  95th percentile 1.24). A threshold of 1.5 sits beyond the 95th percentile
+//  and rejects essentially every session — the EA would never trade.
+//  Calibrated to 1.05-1.10 it does trade, but it did not replicate: it helped
+//  gold (PF 0.97 -> 1.31) and hurt Nasdaq (1.06 -> 0.92) and AUDJPY
+//  (1.00 -> 0.88). Two of three worse is noise, not a filter.
+//  Turn it on only after measuring the distribution on YOUR instrument.
 input int               InpRVOLLookbackDays  = 20;    // Sessions averaged for the RVOL baseline
 
 input group             "===  4. DIRECTIONAL BIAS — NOT optional here  ==="
