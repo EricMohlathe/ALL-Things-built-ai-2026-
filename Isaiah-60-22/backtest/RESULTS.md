@@ -201,43 +201,50 @@ Zarattini result stands, but it was US equities with a different RVOL
 definition; it does not transfer to a 5-minute FX/metals opening window
 unexamined.
 
-## Strategy 02, the Asian sweep — first test, weak variant only
+## Strategy 02, the Asian sweep — now tested as designed
 
-Overnight hours fetched (23:00-17:00 UTC) and the sweep run on gold, 90
-sessions:
+MSS, the higher-timeframe bias and the midnight-open filter are implemented in
+the engine, so the EA's actual default configuration can be measured. Gold,
+overnight hours, filters added one at a time:
 
-| Target | WR | Break-even | PF | E[R] |
-|---|---|---|---|---|
-| 1.5R | 30.0% | 40.0% | 0.57 | −0.301 |
-| 2.0R | 24.4% | 33.3% | 0.54 | −0.348 |
-| 3.0R | 21.1% | 25.0% | 0.62 | −0.296 |
+| Configuration | Trades | Sessions | WR | PF | E[R] |
+|---|---|---|---|---|---|
+| Reclaim only | 90 | 90 | 24.4% | 0.54 | −0.348 |
+| + MSS | 89 | 89 | 25.8% | 0.59 | −0.307 |
+| + MSS + bias | 40 | 40 | 25.0% | 0.52 | −0.362 |
+| + MSS + bias + midnight open (**EA default**) | 38 | 38 | 28.9% | 0.65 | −0.250 |
 
-Below break-even at every target, by 10 points at 1.5R. This is materially
-worse than the opening range, which at least sat on 1.0.
+Break-even at 2R is 33.3%. The best configuration reaches 28.9% — **4.4 points
+short, with every variant deeply negative.** The full stack of filters moved
+profit factor from 0.54 to 0.65 and never crossed 1.0.
 
-**Read the caveat before drawing a conclusion from this.** The engine
-implements `sweep_reclaim` — sweep the level, close back inside, enter. That
-is the variant the strategy document itself labels *"deliberately weaker: no
-MSS. Included so you can measure what the MSS filter is actually worth."*
+### The MSS filter barely filtered
 
-Two filters the EA defaults to are NOT in this test:
+Adding the market structure shift removed **one trade out of ninety**.
 
-- **The market structure shift.** The EA's default model is `SWEEP_MSS`,
-  which requires price to break the opposing swing after the reclaim before
-  entering. The engine does not implement MSS.
-- **The higher-timeframe bias.** The EA defaults it ON with "no bias, no
-  trade", and `strategies/02` states plainly that the sweep predicts
-  volatility rather than direction, so direction must come from elsewhere.
-  The engine ran with bias OFF.
+The source material calls the MSS *"the single most important filter for this
+strategy"* and *"the confirmation that price has rejected the swept level."*
+As implemented here it is very nearly a no-op, and the reason is mechanical:
+on M1 bars with a 2-bar fractal, confirmed swings print constantly and price
+breaks one within a few bars almost every time. A filter that passes 99% of
+candidates is not selecting anything.
 
-So what this measures is the sweep with both of its directional filters
-removed — and it comes out at −0.3R per trade. That is not evidence against
-the strategy as designed. If anything it is consistent with the
-documentation's own claim that a reclaim on its own is not a tradeable
-signal, which is exactly why those filters exist.
+**Caveat that cuts the other way:** the EA defaults the sweep's entry
+timeframe to **M5**, and this engine runs the signal on **M1**. On M5 the
+swings are fewer and further apart, so MSS would bite harder and could behave
+quite differently. That is the single most important untested detail left in
+Strategy 02, and it is a data-resampling change rather than new logic.
 
-**Testing the real thing needs MSS and bias in the engine.** Until that is
-built, Strategy 02 is untested and should be treated as such.
+### The bias filter cut the sample in half and did not help
+
+Requiring a higher-timeframe bias took 89 trades to 40 and moved profit factor
+from 0.59 to 0.52 — slightly worse. `strategies/02` predicted the opposite,
+on the reasoning that the sweep predicts volatility rather than direction so
+direction must come from elsewhere. On this sample it did not.
+
+That is the falsification run the strategy document asked for, and the answer
+came back negative. Per `strategies/02`: *"if the bias filter does not improve
+the result, the strategy has no premise left."*
 
 ## What this does and does not prove
 
@@ -250,7 +257,8 @@ instrument with a 100+ session sample returned a profit factor of 1.0.
 **Does not:** prove the strategy family is worthless everywhere and forever.
 Six months is one regime. Specifically untested here:
 
-- The **Asian sweep** strategy — needs overnight hours that were not fetched.
+- The sweep on an **M5 entry timeframe** rather than M1, which is the EA
+  default and the one change most likely to make MSS behave differently.
 - **Break-even stops and runners** — `pf_lab.py` says these are the biggest
   untested lever, and they cannot be settled from these journals.
 - **Longer history** — 125 sessions is the minimum, not a comfortable sample.

@@ -124,10 +124,128 @@ def atr_from_daily(day_ranges: list[float], period: int = 14) -> float:
     return float(np.mean(day_ranges[-period:]))
 
 
+# ── Market structure, mirroring DetectMSS in the EAs ─────────────────
+
+def find_swing(bars: pd.DataFrame, upto: int, want_high: bool,
+               fractal_right: int = 2, lookback: int = 40) -> tuple[float, int] | None:
+    """
+    Most recent CONFIRMED swing at or before bar `upto`.
+
+    A swing needs `fractal_right` bars on each side, so it is only confirmed
+    that many bars after it printed — which is exactly why the EA cannot act
+    on it instantly either. Returns (level, index) or None.
+    """
+    n = fractal_right
+    hi = bars["high"].to_numpy()
+    lo = bars["low"].to_numpy()
+
+    start = upto - n
+    stop = max(0, upto - lookback)
+    for i in range(start, stop, -1):
+        if i - n < 0 or i + n > upto:
+            continue
+        pivot = hi[i] if want_high else lo[i]
+        ok = True
+        for k in range(1, n + 1):
+            left = hi[i - k] if want_high else lo[i - k]
+            right = hi[i + k] if want_high else lo[i + k]
+            if want_high:
+                if left >= pivot or right >= pivot:
+                    ok = False
+                    break
+            else:
+                if left <= pivot or right <= pivot:
+                    ok = False
+                    break
+        if ok:
+            return float(pivot), i
+    return None
+
+
+def detect_mss(bars: pd.DataFrame, i: int, trade_dir: int,
+               fractal_right: int = 2, lookback: int = 40) -> float | None:
+    """
+    After a sweep of the low we need price to close above the most recent
+    swing HIGH (and vice versa). That displacement is what says the reversal
+    has intent — a wick alone is not the trade.
+
+    Returns the protected extreme to stop behind, or None if no MSS yet.
+    """
+    c = float(bars["close"].iloc[i])
+
+    if trade_dir > 0:
+        sw = find_swing(bars, i, True, fractal_right, lookback)
+        if sw is None or c <= sw[0]:
+            return None
+        lows = bars["low"].to_numpy()[sw[1]:i + 1]
+        return float(lows.min()) if len(lows) else None
+
+    sw = find_swing(bars, i, False, fractal_right, lookback)
+    if sw is None or c >= sw[0]:
+        return None
+    highs = bars["high"].to_numpy()[sw[1]:i + 1]
+    return float(highs.max()) if len(highs) else None
+
+
+def build_bias_series(df: pd.DataFrame, mode: str, period: int = 50):
+    """
+    Higher-timeframe bias, computed so it can never see the future: the value
+    used at time t comes from the last H4 bar that CLOSED strictly before t.
+    """
+    if mode == "off":
+        return None
+
+    if mode == "htf_ema":
+        h4 = df.set_index("time_utc")["close"].resample("4h").last().dropna()
+        if len(h4) < period + 2:
+            return None
+        ema = h4.ewm(span=period, adjust=False).mean()
+        out = pd.DataFrame({"close": h4, "ema": ema})
+        out["prev_ema"] = out["ema"].shift(1)
+        out["bias"] = 0
+        out.loc[(out["close"] > out["ema"]) & (out["ema"] >= out["prev_ema"]), "bias"] = 1
+        out.loc[(out["close"] < out["ema"]) & (out["ema"] <= out["prev_ema"]), "bias"] = -1
+        # shift so a bar's bias is only usable AFTER it closes
+        out["bias"] = out["bias"].shift(1)
+        return out["bias"].dropna()
+
+    if mode == "prev_day":
+        d = df.set_index("time_utc")["close"].resample("1D")
+        mid = (d.max() + d.min()) / 2.0
+        return mid.shift(1).dropna()
+
+    return None
+
+
+def bias_at(series, mode: str, when: pd.Timestamp, price: float) -> int:
+    if series is None or len(series) == 0:
+        return 0
+    idx = series.index.searchsorted(when, side="right") - 1
+    if idx < 0:
+        return 0
+    val = series.iloc[idx]
+    if mode == "htf_ema":
+        return int(val)
+    if mode == "prev_day":
+        if price > val:
+            return 1
+        if price < val:
+            return -1
+    return 0
+
+
+def bars_midnight(g: pd.DataFrame) -> float:
+    """Opening price of the 00:00 New York bar for this session."""
+    m = g[g["ny_min"] == 0]
+    return float(m["open"].iloc[0]) if len(m) else 0.0
+
+
 def run(symbol: str, strategy: str, model: str, target_r: float,
         exit_mode: str, min_rvol: float, be_at_r: float,
         partial_at_r: float, partial_pct: float,
-        risk_pct: float, run_tag: str) -> pd.DataFrame:
+        risk_pct: float, run_tag: str,
+        bias_mode: str = "off", require_bias: bool = False,
+        use_midnight_open: bool = False) -> pd.DataFrame:
 
     path = os.path.join(DATA_DIR, f"{symbol}_M1.csv.gz")
     if not os.path.exists(path):
@@ -144,6 +262,8 @@ def run(symbol: str, strategy: str, model: str, target_r: float,
     df["ny"] = df["time_utc"] + pd.to_timedelta(shifts, unit="h")
     df["ny_min"] = df["ny"].dt.hour * 60 + df["ny"].dt.minute
     df["ny_date"] = df["ny"].dt.date
+
+    bias_series = build_bias_series(df, bias_mode)
 
     p = PRESETS[strategy]
     wraps = p["range_end"] <= p["range_start"]
@@ -203,6 +323,11 @@ def run(symbol: str, strategy: str, model: str, target_r: float,
         hold_idx = np.where(hold_mask)[0]
         last_hold = int(hold_idx[-1]) if len(hold_idx) else last_trd
 
+        midnight_open = 0.0
+        if use_midnight_open:
+            mid = bars_midnight(g)
+            midnight_open = mid if mid else 0.0
+
         trades_today = 0
         break_dir = 0
         break_level = 0.0
@@ -257,11 +382,33 @@ def run(symbol: str, strategy: str, model: str, target_r: float,
                         if inside:
                             reclaimed = True
                         elif bars_since_sweep > 6:
+                            # not a sweep, a breakout — stand down
                             sweep_side, reclaimed = 0, False
                     else:
-                        sig_dir = -sweep_side
-                        stop_price = sweep_extreme
-                        trigger = "sweep_reclaim"
+                        want = -sweep_side
+
+                        # bias: the sweep predicts volatility, not direction,
+                        # so direction has to come from here
+                        b = bias_at(bias_series, bias_mode,
+                                    bars.iloc[i]["time_utc"], c)
+                        blocked = (require_bias and b == 0) or (b != 0 and b != want)
+
+                        # midnight open: buy BELOW it, sell ABOVE it
+                        if not blocked and midnight_open > 0:
+                            side_ok = (c < midnight_open) if want > 0 else (c > midnight_open)
+                            blocked = not side_ok
+
+                        if not blocked:
+                            if model == "sweep_mss":
+                                prot = detect_mss(bars, i, want)
+                                if prot is not None:
+                                    sig_dir = want
+                                    stop_price = prot
+                                    trigger = "sweep_mss"
+                            else:
+                                sig_dir = want
+                                stop_price = sweep_extreme
+                                trigger = "sweep_reclaim"
 
             if sig_dir == 0 or i + 1 > last_trd:
                 i += 1
@@ -362,7 +509,7 @@ def run(symbol: str, strategy: str, model: str, target_r: float,
                    range_high=f"{rh:.5f}", range_low=f"{rl:.5f}",
                    range_pts=f"{rng_pts:.1f}", atr_pts=f"{atr_pts:.1f}",
                    range_atr_ratio=f"{(rng_pts / atr_pts) if atr_pts else 0:.3f}",
-                   rvol=f"{rvol:.3f}", bias="OFF", lots="0.00",
+                   rvol=f"{rvol:.3f}", bias=bias_mode.upper(), lots="0.00",
                    profit_ccy=f"{profit:.2f}", balance_after=f"{balance:.2f}",
                    bars_held=str(exit_idx - i - 1), exit_reason=exit_reason)
 
@@ -377,7 +524,7 @@ def main() -> None:
     ap.add_argument("--symbol", required=True)
     ap.add_argument("--strategy", choices=["orb", "sweep"], default="orb")
     ap.add_argument("--model", default="break_direct",
-                    choices=["break_direct", "retest", "sweep_reclaim"])
+                    choices=["break_direct", "retest", "sweep_reclaim", "sweep_mss"])
     ap.add_argument("--target-r", type=float, default=2.0)
     ap.add_argument("--exit", dest="exit_mode", default="fixed_r",
                     choices=["fixed_r", "time_only", "r_then_time"])
@@ -386,6 +533,9 @@ def main() -> None:
     ap.add_argument("--partial-at-r", type=float, default=0.0)
     ap.add_argument("--partial-pct", type=float, default=50.0)
     ap.add_argument("--risk-pct", type=float, default=0.5)
+    ap.add_argument("--bias", default="off", choices=["off", "htf_ema", "prev_day"])
+    ap.add_argument("--require-bias", action="store_true")
+    ap.add_argument("--midnight-open", action="store_true")
     ap.add_argument("--tag", default=None)
     ap.add_argument("--out", default=None)
     args = ap.parse_args()
@@ -396,7 +546,8 @@ def main() -> None:
 
     df = run(args.symbol, args.strategy, args.model, args.target_r,
              args.exit_mode, args.min_rvol, args.be_at_r,
-             args.partial_at_r, args.partial_pct, args.risk_pct, tag)
+             args.partial_at_r, args.partial_pct, args.risk_pct, tag,
+             args.bias, args.require_bias, args.midnight_open)
 
     if df.empty:
         print(f"{args.symbol:14s} {tag:34s} NO TRADES")
