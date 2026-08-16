@@ -35,6 +35,26 @@ if (htmlFiles.length === 0) {
   process.exit(1);
 }
 
+/**
+ * The build emits the artefact twice under two names: `CoachMillaWellness.html`
+ * for the copy she keeps, and `index.html` so a static host serves it at the
+ * root URL. That is still one file, and this proves it — the regression worth
+ * catching is the two becoming genuinely different pages, at which point the
+ * deployed site and the file she downloaded would no longer be the same app.
+ */
+const ARTIFACT = 'CoachMillaWellness.html';
+const HOSTED = 'index.html';
+
+if (htmlFiles.includes(ARTIFACT) && htmlFiles.includes(HOSTED)) {
+  const a = readFileSync(join(DIST, ARTIFACT));
+  const b = readFileSync(join(DIST, HOSTED));
+  if (!a.equals(b)) {
+    console.error(`  ${ARTIFACT} and ${HOSTED} are not byte-identical.`);
+    console.error('  They must be the same build — the download and the site cannot diverge.\n');
+    process.exit(1);
+  }
+}
+
 // The whole point of Build 1 is that it is ONE file. More than one shipped
 // asset means the inliner silently let something escape.
 const strays = entries.filter((f) => !f.endsWith('.html') && statSync(join(DIST, f)).isFile());
@@ -42,7 +62,12 @@ const strays = entries.filter((f) => !f.endsWith('.html') && statSync(join(DIST,
 let failed = false;
 console.log('\nBuild 1 — single-file budget\n');
 
-for (const file of htmlFiles) {
+// Reported once. The second name is the same bytes, proven above, so printing
+// two identical measurements would only invite the reader to look for a
+// difference that cannot exist.
+const reported = htmlFiles.filter((f) => !(f === HOSTED && htmlFiles.includes(ARTIFACT)));
+
+for (const file of reported) {
   const raw = readFileSync(join(DIST, file));
   const gzipped = gzipSync(raw, { level: 9 });
   const pct = ((gzipped.length / BUDGET_GZIP_BYTES) * 100).toFixed(1);
@@ -53,6 +78,10 @@ for (const file of htmlFiles) {
   console.log(`    raw      ${human(raw.length)}`);
   console.log(`    gzipped  ${human(gzipped.length)}  (${pct}% of the 1.2MB budget)`);
   console.log(`    ${ok ? 'within budget' : 'OVER BUDGET'}\n`);
+}
+
+if (htmlFiles.includes(HOSTED) && htmlFiles.includes(ARTIFACT)) {
+  console.log(`  also emitted as ${HOSTED} (identical) so a static host serves it at /\n`);
 }
 
 if (strays.length > 0) {

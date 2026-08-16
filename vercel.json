@@ -1,0 +1,44 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "cd coachmillawellness && pnpm --filter @cmw/single build",
+  "installCommand": "cd coachmillawellness && pnpm install --frozen-lockfile",
+  "outputDirectory": "coachmillawellness/apps/single/dist",
+  "framework": null,
+  "github": { "silent": true },
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' https://api.anthropic.com; base-uri 'none'; form-action 'none'; frame-ancestors 'none'; object-src 'none'"
+        },
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "Referrer-Policy", "value": "no-referrer" },
+        { "key": "X-Frame-Options", "value": "DENY" },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+        }
+      ]
+    },
+    {
+      "source": "/index.html",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }]
+    },
+    {
+      "source": "/CoachMillaWellness.html",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" },
+        {
+          "key": "Content-Disposition",
+          "value": "attachment; filename=\"CoachMillaWellness.html\""
+        }
+      ]
+    }
+  ],
+  "redirects": [
+    { "source": "/app", "destination": "/#/deck", "permanent": false },
+    { "source": "/download", "destination": "/CoachMillaWellness.html", "permanent": false }
+  ]
+}

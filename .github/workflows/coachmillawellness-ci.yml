@@ -75,11 +75,26 @@ jobs:
       - name: G2, G5, G6 — browser gates
         run: pnpm --filter @cmw/single exec playwright test --project=desktop
 
+      # The deployed shape: HTTP origin under the production CSP and cache
+      # headers. Separate from the gates above because those all run over
+      # `file://` and cannot see a header that blanks the page in a browser.
+      - name: Hosted gate — production headers, http origin
+        run: pnpm --filter @cmw/single exec playwright test --project=hosted
+
       - name: Upload the artefact she receives
         uses: actions/upload-artifact@v4
         with:
           name: CoachMillaWellness.html
           path: coachmillawellness/apps/single/dist/CoachMillaWellness.html
+          if-no-files-found: error
+
+      # The deployable folder, so a release can be dropped onto any static host
+      # without rebuilding it.
+      - name: Upload the deployable site
+        uses: actions/upload-artifact@v4
+        with:
+          name: site
+          path: coachmillawellness/apps/single/dist
           if-no-files-found: error
 
       - name: Upload failure traces

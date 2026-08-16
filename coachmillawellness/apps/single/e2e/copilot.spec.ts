@@ -66,6 +66,15 @@ test.describe('the Copilot with no key configured', () => {
     await expect(page.getByLabel('Session Analyzer')).toHaveCount(0);
   });
 
+  test('does not offer a download of the file she already has open', async ({ page }) => {
+    // The hosted build offers the offline copy; over `file://` she is holding it,
+    // and a button offering to download it reads as a bug.
+    await seeded(page);
+    await page.goto(`${ARTIFACT}#/vault`);
+    await expect(page.getByRole('heading', { name: 'Your data' })).toBeVisible();
+    await expect(page.getByRole('button', { name: /download the offline copy/i })).toHaveCount(0);
+  });
+
   test('the ledger reads zero, not blank', async ({ page }) => {
     await seeded(page);
     await page.goto(`${ARTIFACT}#/insights`);

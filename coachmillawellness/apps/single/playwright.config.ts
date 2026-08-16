@@ -22,6 +22,14 @@ const executablePath = PREINSTALLED.find((candidate) => existsSync(candidate));
 
 export default defineConfig({
   testDir: './e2e',
+  // Only the `hosted` project needs it; Playwright starts it once and the
+  // `file://` projects simply ignore it.
+  webServer: {
+    command: 'node e2e/serve-dist.mjs',
+    url: 'http://localhost:4173/index.html',
+    reuseExistingServer: !process.env.CI,
+    stdout: 'ignore',
+  },
   fullyParallel: true,
   forbidOnly: Boolean(process.env.CI),
   retries: process.env.CI ? 1 : 0,
@@ -37,7 +45,15 @@ export default defineConfig({
   },
 
   projects: [
-    { name: 'desktop', use: { ...devices['Desktop Chrome'] } },
+    { name: 'desktop', use: { ...devices['Desktop Chrome'] }, testIgnore: /hosted\.spec\.ts/ },
+    {
+      // The deployed shape: HTTP origin, production headers. Split out because it
+      // needs a server, and because every other project deliberately runs over
+      // `file://` — the environment she opens the downloaded copy in.
+      name: 'hosted',
+      use: { ...devices['Desktop Chrome'] },
+      testMatch: /hosted\.spec\.ts/,
+    },
     {
       name: 'mobile',
       // A real phone viewport, so the bottom tab bar and the ≥44px targets are

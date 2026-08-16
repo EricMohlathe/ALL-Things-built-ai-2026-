@@ -8,9 +8,17 @@ import { viteSingleFile } from 'vite-plugin-singlefile';
 const root = resolve(import.meta.dirname, '../..');
 
 /**
- * Ships the artefact under the name §6 specifies. She receives this file directly
- * — over WhatsApp, on a USB stick, in her Files app — so `index.html` sitting in
- * her downloads folder among a dozen others is the wrong deliverable.
+ * Ships the artefact under the name §6 specifies, and again as `index.html`.
+ *
+ * Two names, one file, for two ways of receiving it. She gets the artefact
+ * directly — over WhatsApp, on a USB stick, in her Files app — where
+ * `index.html` sitting in her downloads folder among a dozen others is the wrong
+ * deliverable. A static host, meanwhile, serves `index.html` at the root URL and
+ * nothing else, so without the copy the deployed site is a 404.
+ *
+ * They are byte-identical by construction, and gate G3 asserts it — the failure
+ * this guards against is the two drifting into genuinely different pages, which
+ * would quietly end the "one file" promise.
  */
 function nameOutput(filename: string): Plugin {
   return {
@@ -19,9 +27,7 @@ function nameOutput(filename: string): Plugin {
     generateBundle(_options, bundle) {
       const entry = bundle['index.html'];
       if (!entry) return;
-      delete bundle['index.html'];
-      entry.fileName = filename;
-      bundle[filename] = entry;
+      bundle[filename] = { ...entry, fileName: filename };
     },
   };
 }

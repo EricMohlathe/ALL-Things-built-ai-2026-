@@ -44,6 +44,7 @@ coachmillawellness/
 ├─ packages/ai/          The Copilot — prompts from her methodology, contracts, cost ledger
 ├─ packages/ui/          The shared React UI — primitives, wheel, all screens
 ├─ supabase/functions/   The AI proxy Edge Function (Deno — outside every tsconfig)
+├─ docs/DEPLOY.md        Hosting — Netlify is configured; any static host works
 └─ scripts/              Gate scripts (bundle budget, secret scan)
 ```
 
@@ -100,7 +101,7 @@ pnpm --filter @cmw/single dev   # dev server for Build 1
 pnpm --filter @cmw/single build # emits apps/single/dist/CoachMillaWellness.html
 pnpm -r test                    # unit tests, all packages
 pnpm --filter @cmw/core test:coverage   # gate G1 — 100% branch on the rules
-pnpm --filter @cmw/single exec playwright test   # gates G2, G5, G6
+pnpm --filter @cmw/single exec playwright test   # gates G2, G5, G6, G11
 node scripts/gate-no-secrets.mjs        # gate G7
 ```
 
@@ -118,6 +119,7 @@ A phase ships when its gates are green. Current state:
 | G6 | 12-step smoke script over `file://` | green |
 | G7 | No credential in any shipped file | green (script) |
 | G8 | 14-day backup nudge | green |
+| G11 | Hosted shape — production headers over http | green |
 | G9 | Store pre-flight | not started (P4/P5) |
 | G10 | Engagement — Progress Links, Share Kit, push | not started (P3/P4) |
 
@@ -156,6 +158,11 @@ would make her own adherence chart a record of the machine's opinion.
 on `updated_at`, with same-millisecond ties broken by canonical JSON so two
 devices independently pick the same winner. `MemoryRemote` in that file is the
 executable specification the Postgres side must match — not a test double.
+
+**The site and the file are one build.** `index.html` and `CoachMillaWellness.html`
+are emitted byte-identically and gate G3 fails if they diverge, so the hosted app
+and the copy she downloads can never be different apps. The router is hash-based,
+so no host needs an SPA rewrite.
 
 **Every call is on the ledger, including the ones that failed.** A response that
 fails its contract was still billed, so `AiError` carries the `ai_run` row and

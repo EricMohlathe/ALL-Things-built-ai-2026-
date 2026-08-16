@@ -15,6 +15,10 @@ pnpm --filter @cmw/single build
 
 Open that file directly in a browser. No server.
 
+The same build is also a website: `dist/` contains a byte-identical `index.html`,
+so any static host serves it as-is. Netlify is configured — see
+**docs/DEPLOY.md**.
+
 ---
 
 ## What it does
@@ -64,7 +68,7 @@ Not aspirations — commands.
 ```bash
 pnpm -r test                                      # 558 unit tests
 pnpm --filter @cmw/core test:coverage             # 100% branch on the rules
-pnpm --filter @cmw/single exec playwright test    # 25 browser tests over file://
+pnpm --filter @cmw/single exec playwright test    # 35 browser tests, file:// and http
 node scripts/gate-no-secrets.mjs                  # no credential in any bundle
 ```
 

@@ -237,6 +237,8 @@ export function Vault({
                 backup before you close the tab.
               </p>
             ) : null}
+
+            <TakeItWithYou />
           </Card>
         </section>
 
@@ -372,6 +374,57 @@ export function Vault({
           Download a backup first
         </Button>
       </Modal>
+    </div>
+  );
+}
+
+/**
+ * "Take the app with you" — shown only when this is a hosted copy.
+ *
+ * §6's artefact and the deployed site are the same build, emitted twice under
+ * two names, so the site can hand her the offline copy of itself. That closes
+ * the loop the compendium describes: she finds it at a URL, and leaves with a
+ * file that keeps working when the URL does not.
+ *
+ * Hidden over `file://` because there she is already holding it, and a button
+ * offering to download the thing she opened from her own disk reads as a bug.
+ */
+function TakeItWithYou() {
+  // `file:` has no host. Checking the protocol rather than the hostname keeps
+  // this correct on localhost, on a preview URL and on her own domain alike.
+  const hosted = typeof window !== 'undefined' && window.location.protocol.startsWith('http');
+  if (!hosted) return null;
+
+  return (
+    <div className="mt-3 border-t border-edge pt-3">
+      <p className="text-sm text-hi">Take this app with you</p>
+      <p className="mt-1 text-sm text-lo">
+        The same app as one file. Keep it on your phone and it opens with no internet, no login and
+        no website — even if this address stops working.
+      </p>
+      <Button
+        variant="quiet"
+        className="mt-3"
+        icon={<Download size={16} />}
+        onClick={() => {
+          // An anchor with `download` rather than a navigation, so this works on
+          // a host that does not send `Content-Disposition`. Setting
+          // `location.href` would depend on that header and otherwise replace the
+          // app with a second copy of itself in the same tab.
+          const link = document.createElement('a');
+          link.href = 'CoachMillaWellness.html';
+          link.download = 'CoachMillaWellness.html';
+          document.body.append(link);
+          link.click();
+          link.remove();
+        }}
+      >
+        Download the offline copy
+      </Button>
+      <p className="mt-2 text-xs text-lo">
+        Your coachees live in this browser, not in the file — download a backup as well, and restore
+        it once on the copy you keep.
+      </p>
     </div>
   );
 }
