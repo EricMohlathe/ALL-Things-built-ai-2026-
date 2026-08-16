@@ -1,0 +1,232 @@
+/**
+ * FIRST LIGHT — token stylesheet. Compendium §4.2 / §4.4 / §4.7.
+ *
+ * Dawn is the default shell; Morning is applied with `data-theme="morning"` on
+ * the root element. Every value here is mirrored by a TypeScript constant in
+ * this package, and `__tests__/parity.test.ts` fails the build if the two ever
+ * disagree — so a colour can only change in one place.
+ *
+ * Components must reference these variables (or the Tailwind utilities built on
+ * them in theme.css). Raw hex in a component is a review failure.
+ */
+
+:root {
+  color-scheme: dark;
+
+  /* ── Dawn: colour roles ─────────────────────────────────────────────── */
+  --cmw-bg: #0e0f1a;
+  --cmw-surface: #161827;
+  --cmw-surface-raised: #1f2233;
+  --cmw-glass: rgba(255, 255, 255, 0.06);
+  --cmw-glass-border: rgba(255, 255, 255, 0.08);
+  --cmw-border: rgba(255, 255, 255, 0.1);
+  --cmw-border-strong: rgba(255, 255, 255, 0.18);
+  --cmw-text-hi: #f4f2ed;
+  --cmw-text-lo: #9da0b4;
+  --cmw-text-inverse: #0e0f1a;
+  --cmw-accent: #9a7bff;
+  --cmw-accent-text: #9a7bff;
+  --cmw-accent-quiet: #282645;
+  --cmw-success: #5fbf9f;
+  --cmw-success-text: #5fbf9f;
+  --cmw-warn: #f5a524;
+  --cmw-warn-text: #f5a524;
+  --cmw-energy: #f87a6d;
+  --cmw-energy-text: #f87a6d;
+  --cmw-error: #f0564f;
+  --cmw-error-text: #f0564f;
+  --cmw-info: #6fa8f5;
+  --cmw-info-text: #6fa8f5;
+  --cmw-focus: #9a7bff;
+  --cmw-shadow: rgba(0, 0, 0, 0.45);
+
+  /* Elevation — Dawn steps the surface and adds an inner highlight. */
+  --cmw-elev-flat: none;
+  --cmw-elev-raised: inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
+  --cmw-elev-overlay: 0 16px 48px -12px rgba(0, 0, 0, 0.65),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
+
+  /* ── Identity ───────────────────────────────────────────────────────── */
+  --cmw-gradient-dawn: linear-gradient(135deg, #f5a524 0%, #f87a6d 50%, #9a7bff 100%);
+  --cmw-blur-glass: 16px;
+
+  /* Wheel-of-Life domain hues, walked around the dawn ramp. */
+  --cmw-wheel-1: #f5a524;
+  --cmw-wheel-2: #f79240;
+  --cmw-wheel-3: #f87a6d;
+  --cmw-wheel-4: #ee6f86;
+  --cmw-wheel-5: #d96fa6;
+  --cmw-wheel-6: #b873c8;
+  --cmw-wheel-7: #9a7bff;
+  --cmw-wheel-8: #7c93f0;
+  --cmw-wheel-9: #5fb0d8;
+  --cmw-wheel-10: #5fbf9f;
+
+  /* ── Typography ─────────────────────────────────────────────────────── */
+  --cmw-font-display: 'Gambetta', 'Fraunces', 'Iowan Old Style', Georgia, serif;
+  --cmw-font-body: 'General Sans', 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --cmw-font-data: 'Space Grotesk', 'JetBrains Mono', ui-monospace, 'SFMono-Regular', monospace;
+
+  --cmw-text-xs: 0.75rem;
+  --cmw-text-sm: 0.875rem;
+  --cmw-text-base: 1rem;
+  --cmw-text-lg: 1.125rem;
+  --cmw-text-xl: 1.375rem;
+  --cmw-text-2xl: 1.75rem;
+  --cmw-text-3xl: 2.25rem;
+  --cmw-text-4xl: 3rem;
+
+  --cmw-leading-heading: 1.15;
+  --cmw-leading-body: 1.5;
+
+  /* ── Space & shape ──────────────────────────────────────────────────── */
+  --cmw-space-1: 0.25rem;
+  --cmw-space-2: 0.5rem;
+  --cmw-space-3: 0.75rem;
+  --cmw-space-4: 1rem;
+  --cmw-space-6: 1.5rem;
+  --cmw-space-8: 2rem;
+  --cmw-space-12: 3rem;
+  --cmw-space-16: 4rem;
+
+  --cmw-radius-sm: 8px;
+  --cmw-radius-md: 14px;
+  --cmw-radius-lg: 20px;
+  --cmw-radius-pill: 999px;
+
+  --cmw-touch-target: 44px;
+
+  /* ── Motion (§4.4) ──────────────────────────────────────────────────── */
+  --cmw-dur-instant: 120ms;
+  --cmw-dur-fast: 200ms;
+  --cmw-dur-base: 300ms;
+  --cmw-dur-slow: 600ms;
+  --cmw-dur-hero: 1200ms;
+
+  --cmw-ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --cmw-ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --cmw-ease-out-quad: cubic-bezier(0.4, 0, 1, 1);
+}
+
+/* ── Morning: designed in parallel with Dawn, never inverted from it ───── */
+:root[data-theme='morning'] {
+  color-scheme: light;
+
+  --cmw-bg: #f7f5f0;
+  --cmw-surface: #ffffff;
+  --cmw-surface-raised: #efece4;
+  --cmw-glass: rgba(255, 255, 255, 0.65);
+  --cmw-glass-border: rgba(26, 28, 43, 0.08);
+  --cmw-border: rgba(26, 28, 43, 0.12);
+  --cmw-border-strong: rgba(26, 28, 43, 0.22);
+  --cmw-text-hi: #1a1c2b;
+  --cmw-text-lo: #55596e;
+  --cmw-text-inverse: #ffffff;
+  --cmw-accent: #6e4fe0;
+  --cmw-accent-text: #6e4fe0;
+  --cmw-accent-quiet: #f1edfc;
+  --cmw-success: #2f8f6f;
+  --cmw-success-text: #26775c;
+  --cmw-warn: #c4820e;
+  --cmw-warn-text: #8a5a09;
+  --cmw-energy: #d9503f;
+  --cmw-energy-text: #b23a2e;
+  --cmw-error: #d8382d;
+  --cmw-error-text: #b3271e;
+  --cmw-info: #1a5fb4;
+  --cmw-info-text: #1a5fb4;
+  --cmw-focus: #6e4fe0;
+  --cmw-shadow: rgba(26, 28, 43, 0.12);
+
+  /* Morning layers soft shadows instead of stepping the surface. */
+  --cmw-elev-flat: none;
+  --cmw-elev-raised: 0 1px 2px 0 rgba(26, 28, 43, 0.06), 0 4px 12px -4px rgba(26, 28, 43, 0.08);
+  --cmw-elev-overlay: 0 16px 48px -12px rgba(26, 28, 43, 0.18);
+}
+
+/* ── Base ───────────────────────────────────────────────────────────────── */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background-color: var(--cmw-bg);
+  color: var(--cmw-text-hi);
+  font-family: var(--cmw-font-body);
+  font-size: var(--cmw-text-base);
+  line-height: var(--cmw-leading-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--cmw-font-display);
+  line-height: var(--cmw-leading-heading);
+  letter-spacing: -0.015em;
+  margin: 0;
+  font-weight: 500;
+}
+
+/**
+ * Focus ring (§4.7): 2px, jacaranda, never removed. `:focus-visible` keeps it
+ * off pointer interactions while guaranteeing it for keyboard users.
+ */
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--cmw-focus);
+  outline-offset: 2px;
+  border-radius: var(--cmw-radius-sm);
+}
+
+/** Numerics — scores, timers, table figures — always in the data face. */
+.cmw-numeric {
+  font-family: var(--cmw-font-data);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+.cmw-glass {
+  background-color: var(--cmw-glass);
+  backdrop-filter: blur(var(--cmw-blur-glass));
+  -webkit-backdrop-filter: blur(var(--cmw-blur-glass));
+  border: 1px solid var(--cmw-glass-border);
+}
+
+/** Screen-reader-only, for the labels that must exist but must not show. */
+.cmw-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/**
+ * Global reduced-motion kill-switch (§4.4, non-negotiable). Transitions are
+ * flattened rather than removed so state changes still crossfade instead of
+ * snapping — a snap reads as a bug, not as calm.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

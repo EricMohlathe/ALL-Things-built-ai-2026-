@@ -1,0 +1,23 @@
+{
+  "name": "@cmw/data",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Persistence — DataStore contract, Dexie/IndexedDB adapter, in-memory adapter, JSON+CSV export/import, seed data.",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@cmw/core": "workspace:*",
+    "dexie": "^4.0.0"
+  },
+  "devDependencies": {
+    "fake-indexeddb": "^6.0.0",
+    "typescript": "^5.7.0",
+    "vitest": "^3.0.0"
+  }
+}

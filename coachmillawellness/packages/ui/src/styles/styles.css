@@ -1,0 +1,149 @@
+/**
+ * Component CSS — only what Tailwind utilities cannot express.
+ *
+ * Keyframes live here rather than inline because they are shared, and because the
+ * global `prefers-reduced-motion` kill-switch in @cmw/tokens can only reach
+ * declared animations. Each one is written so that collapsing its duration to
+ * ~0ms lands on a sensible final frame instead of a half-finished pose.
+ */
+
+/* ── The Living Wheel ────────────────────────────────────────────────────── */
+
+/**
+ * Idle breathing: ±2% over 4s (§4.3). Ends where it starts, so the reduced-motion
+ * override leaves the wheel at its true size rather than 2% too large.
+ */
+@keyframes cmw-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+}
+
+.cmw-wheel-breathe {
+  animation: cmw-breathe 4s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+  will-change: transform;
+}
+
+/**
+ * Sage particle drift on an improved domain. Fades out as it travels, so the
+ * final frame is invisible and nothing is left sitting on the wheel.
+ */
+@keyframes cmw-drift {
+  0% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  25% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.28);
+  }
+}
+
+.cmw-wheel-particles circle {
+  animation: cmw-drift 1.8s cubic-bezier(0.16, 1, 0.3, 1) 1 both;
+  transform-origin: 250px 250px;
+}
+
+/**
+ * Fixed navigation bars.
+ *
+ * The plain glass panel is right for a rail in its own column, but the mobile
+ * header and tab bar sit *over* scrolling content, and at 6% white the page text
+ * passing underneath competes with the nav labels. These get a near-opaque
+ * surface instead: still glass in character, but the navigation always wins.
+ */
+.cmw-glass-bar {
+  background-color: color-mix(in srgb, var(--cmw-surface) 92%, transparent);
+  backdrop-filter: blur(var(--cmw-blur-glass)) saturate(140%);
+  -webkit-backdrop-filter: blur(var(--cmw-blur-glass)) saturate(140%);
+  border: 1px solid var(--cmw-glass-border);
+}
+
+/* ── Command Deck hero ───────────────────────────────────────────────────── */
+
+/**
+ * The slow dawn sweep behind the Deck header — a 20s loop at low opacity (§2 M0).
+ * Animating background-position would repaint every frame, so a wide gradient
+ * layer is translated instead, which stays on the compositor.
+ */
+@keyframes cmw-dawn-sweep {
+  0% {
+    transform: translate3d(-18%, 0, 0);
+  }
+  50% {
+    transform: translate3d(18%, 0, 0);
+  }
+  100% {
+    transform: translate3d(-18%, 0, 0);
+  }
+}
+
+.cmw-dawn-sweep {
+  position: absolute;
+  inset: -40% -30%;
+  background: var(--cmw-gradient-dawn);
+  /* §4.2 caps the dawn gradient at ≤10% of any screen; this keeps it ambient. */
+  opacity: 0.13;
+  filter: blur(56px);
+  animation: cmw-dawn-sweep 20s ease-in-out infinite;
+  pointer-events: none;
+  will-change: transform;
+}
+
+/* ── Streak flame ────────────────────────────────────────────────────────── */
+
+@keyframes cmw-flicker {
+  0%,
+  100% {
+    opacity: 0.85;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.06);
+  }
+}
+
+.cmw-streak-live {
+  animation: cmw-flicker 2.4s ease-in-out infinite;
+}
+
+/* ── Utility ─────────────────────────────────────────────────────────────── */
+
+/** Horizontal scrollers keep their own overflow so the page body never shifts. */
+.cmw-scroll-x {
+  overflow-x: auto;
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+}
+
+.cmw-scroll-x::-webkit-scrollbar {
+  height: 6px;
+}
+
+.cmw-scroll-x::-webkit-scrollbar-thumb {
+  background: var(--cmw-border-strong);
+  border-radius: var(--cmw-radius-pill);
+}
+
+/** Line clamps for card copy. */
+.cmw-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.cmw-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}

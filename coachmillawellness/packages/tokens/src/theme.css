@@ -1,0 +1,94 @@
+/**
+ * Tailwind v4 theme bridge. Maps the `--cmw-*` tokens onto Tailwind's utility
+ * namespaces so `bg-surface`, `text-hi`, `rounded-md` and `ease-out-expo` are
+ * the only vocabulary a component ever needs.
+ *
+ * `@theme inline` is deliberate: it emits `var(--cmw-*)` straight into the
+ * utility, so flipping `data-theme` on the root element re-themes the whole app
+ * with no re-render and no second source of truth.
+ *
+ * Naming convention: a colour role that needs a deeper value to stay legible as
+ * text gets an `-ink` sibling (`bg-success` fills, `text-success-ink` labels).
+ * In Dawn both resolve to the same hue; Morning deepens the ink one step to
+ * hold 4.5:1. Consumers never have to know which theme is active.
+ */
+
+@theme inline {
+  /* ── Surfaces & edges ───────────────────────────────────────────────── */
+  --color-ink: var(--cmw-bg);
+  --color-surface: var(--cmw-surface);
+  --color-raised: var(--cmw-surface-raised);
+  --color-glass: var(--cmw-glass);
+  --color-glass-edge: var(--cmw-glass-border);
+  --color-edge: var(--cmw-border);
+  --color-edge-strong: var(--cmw-border-strong);
+
+  /* ── Text ───────────────────────────────────────────────────────────── */
+  --color-hi: var(--cmw-text-hi);
+  --color-lo: var(--cmw-text-lo);
+  --color-inverse: var(--cmw-text-inverse);
+
+  /* ── Semantic ───────────────────────────────────────────────────────── */
+  --color-accent: var(--cmw-accent);
+  --color-accent-ink: var(--cmw-accent-text);
+  --color-accent-quiet: var(--cmw-accent-quiet);
+  --color-success: var(--cmw-success);
+  --color-success-ink: var(--cmw-success-text);
+  --color-warn: var(--cmw-warn);
+  --color-warn-ink: var(--cmw-warn-text);
+  --color-energy: var(--cmw-energy);
+  --color-energy-ink: var(--cmw-energy-text);
+  --color-danger: var(--cmw-error);
+  --color-danger-ink: var(--cmw-error-text);
+  --color-info: var(--cmw-info);
+  --color-info-ink: var(--cmw-info-text);
+  --color-focus: var(--cmw-focus);
+
+  /* Wheel domain hues, addressable as `fill-wheel-1` … `fill-wheel-10`. */
+  --color-wheel-1: var(--cmw-wheel-1);
+  --color-wheel-2: var(--cmw-wheel-2);
+  --color-wheel-3: var(--cmw-wheel-3);
+  --color-wheel-4: var(--cmw-wheel-4);
+  --color-wheel-5: var(--cmw-wheel-5);
+  --color-wheel-6: var(--cmw-wheel-6);
+  --color-wheel-7: var(--cmw-wheel-7);
+  --color-wheel-8: var(--cmw-wheel-8);
+  --color-wheel-9: var(--cmw-wheel-9);
+  --color-wheel-10: var(--cmw-wheel-10);
+
+  /* ── Type ───────────────────────────────────────────────────────────── */
+  --font-display: var(--cmw-font-display);
+  --font-body: var(--cmw-font-body);
+  --font-data: var(--cmw-font-data);
+
+  --text-xs: var(--cmw-text-xs);
+  --text-sm: var(--cmw-text-sm);
+  --text-base: var(--cmw-text-base);
+  --text-lg: var(--cmw-text-lg);
+  --text-xl: var(--cmw-text-xl);
+  --text-2xl: var(--cmw-text-2xl);
+  --text-3xl: var(--cmw-text-3xl);
+  --text-4xl: var(--cmw-text-4xl);
+
+  /* ── Shape ──────────────────────────────────────────────────────────── */
+  --radius-sm: var(--cmw-radius-sm);
+  --radius-md: var(--cmw-radius-md);
+  --radius-lg: var(--cmw-radius-lg);
+  --radius-pill: var(--cmw-radius-pill);
+
+  /**
+   * The 4-pt scale is exactly Tailwind's default step, so one base unit buys
+   * the whole §4.2 ladder (p-1=4 … p-16=64) with nothing to keep in sync.
+   */
+  --spacing: 0.25rem;
+
+  /* ── Motion ─────────────────────────────────────────────────────────── */
+  --ease-out-expo: var(--cmw-ease-out-expo);
+  --ease-morph: var(--cmw-ease-in-out);
+  --ease-out-quad: var(--cmw-ease-out-quad);
+
+  /* ── Depth ──────────────────────────────────────────────────────────── */
+  --shadow-raised: var(--cmw-elev-raised);
+  --shadow-overlay: var(--cmw-elev-overlay);
+  --blur-glass: var(--cmw-blur-glass);
+}

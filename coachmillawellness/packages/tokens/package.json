@@ -1,0 +1,21 @@
+{
+  "name": "@cmw/tokens",
+  "version": "1.0.0",
+  "private": true,
+  "description": "First Light design system — §4.2 as CSS variables, Tailwind v4 theme, and TS constants. Single source of truth.",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./tokens.css": "./src/tokens.css",
+    "./theme.css": "./src/theme.css"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.2",
+    "typescript": "^5.7.0",
+    "vitest": "^3.0.0"
+  }
+}

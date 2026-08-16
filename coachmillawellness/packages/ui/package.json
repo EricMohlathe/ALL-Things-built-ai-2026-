@@ -1,0 +1,36 @@
+{
+  "name": "@cmw/ui",
+  "version": "1.0.0",
+  "private": true,
+  "description": "The shared React UI \u2014 primitives, the Living Wheel, and every module screen. Web, single-HTML and desktop all mount this.",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./styles.css": "./src/styles/styles.css"
+  },
+  "scripts": {
+    "test": "vitest run --passWithNoTests",
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@cmw/ai": "workspace:*",
+    "@cmw/core": "workspace:*",
+    "@cmw/data": "workspace:*",
+    "@cmw/tokens": "workspace:*",
+    "lucide-react": "^0.470.0",
+    "motion": "^12.0.0",
+    "zustand": "^5.0.0"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "typescript": "^5.7.0",
+    "vitest": "^3.0.0"
+  }
+}

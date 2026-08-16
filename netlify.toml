@@ -1,0 +1,86 @@
+# Netlify — deploys CoachMillaWellness.
+#
+# This file sits at the *repository* root because that is the only place Netlify
+# reads it from, while the app is a monorepo one level down. `base` is what
+# bridges the two: every path below is relative to it, and it is also the
+# directory Netlify installs dependencies in — without it the build runs at the
+# root, finds no lockfile, and installs nothing.
+#
+# The deployed site and the file she downloads are the same build. `index.html`
+# and `CoachMillaWellness.html` are emitted byte-identically (gate G3 proves it),
+# so the site is the app and the app is downloadable from the site.
+
+[build]
+  base = "coachmillawellness"
+  command = "pnpm --filter @cmw/single build"
+  publish = "apps/single/dist"
+
+[build.environment]
+  # Pinned rather than floating. The build is a static artefact she will still be
+  # opening in two years; a toolchain that drifts under it is how a rebuild stops
+  # matching the file she has.
+  #
+  # pnpm itself needs no flag — Netlify selects it from `pnpm-lock.yaml` in the
+  # base directory, and `packageManager` in package.json pins the exact version
+  # the lockfile was written by.
+  NODE_VERSION = "22"
+  PNPM_VERSION = "10.33.0"
+
+# ── Headers ───────────────────────────────────────────────────────────────
+#
+# The app is one self-contained document. That makes its security posture
+# unusually easy to state precisely: it loads nothing from anywhere, and the only
+# outbound request it can ever make is to Anthropic, and only if she has pasted
+# in a key.
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    # `unsafe-inline` for script and style is not a concession — it is the direct
+    # consequence of §6's zero-external-requests rule. Everything is inlined into
+    # the document, so there is no external origin to allow and nothing to hash
+    # against. What the policy still buys is real: no other origin can be
+    # contacted, framed, or loaded from.
+    Content-Security-Policy = "default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' https://api.anthropic.com; base-uri 'none'; form-action 'none'; frame-ancestors 'none'; object-src 'none'"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "no-referrer"
+    X-Frame-Options = "DENY"
+    # Her coachees' notes are on this device. Nothing here needs a camera, a
+    # microphone or a location, so nothing here may ask for one.
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    # Revalidate every load. The document *is* the application, so a stale cache
+    # is a stale app — and at ~248KB gzipped the check costs nothing worth saving.
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/CoachMillaWellness.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+    # Offered as a download rather than opened in the tab: this is the copy she
+    # keeps, and clicking it should put a file on her device.
+    Content-Disposition = "attachment; filename=\"CoachMillaWellness.html\""
+
+# ── Routing ───────────────────────────────────────────────────────────────
+#
+# There is no SPA rewrite here, and that is deliberate. The router is
+# hash-based (§6, so the file works over `file://` where no server exists to
+# answer a path), which means every route is already served by the one document
+# and a catch-all rewrite would be dead configuration pretending to be load
+# bearing.
+#
+# The single redirect that earns its place sends bare `/app` to the Deck, so a
+# link she types from memory lands somewhere rather than 404ing.
+
+[[redirects]]
+  from = "/app"
+  to = "/#/deck"
+  status = 302
+
+[[redirects]]
+  from = "/download"
+  to = "/CoachMillaWellness.html"
+  status = 302

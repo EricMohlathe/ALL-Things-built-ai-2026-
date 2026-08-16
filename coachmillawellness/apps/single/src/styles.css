@@ -1,0 +1,88 @@
+/**
+ * Style entry for Build 1.
+ *
+ * Order matters: Tailwind first, then the token variables it will reference, then
+ * the `@theme` bridge that maps them onto utilities, then component keyframes.
+ *
+ * The two `@source` lines are load-bearing. Tailwind v4 scans the project for
+ * class names but ignores node_modules, and the workspace packages are symlinked
+ * in there — without these, every utility used inside @cmw/ui would be dropped
+ * from the build and the app would render unstyled.
+ */
+
+@import 'tailwindcss';
+
+@source "../src";
+@source "../../../packages/ui/src";
+
+@import '@cmw/tokens/tokens.css';
+@import '@cmw/tokens/theme.css';
+@import '@cmw/ui/styles.css';
+
+/**
+ * Fonts: the shell falls back to the system stack (§4.2 declares a fallback for
+ * each face). Build 1 must make zero network requests, so a webfont has to be
+ * subsetted and base64-inlined rather than linked — that is a build step, and
+ * `scripts/inline-fonts.mjs` is where it will live. Until then the fallback chain
+ * carries the typography, which degrades in shape but never in legibility.
+ */
+
+/** The app owns the full viewport; the shell manages its own scrolling. */
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+/**
+ * Range inputs are used for scores, the timeline scrubber and the wheel sliders,
+ * so they get a deliberate treatment rather than the browser default — including
+ * a thumb large enough to hit on a phone.
+ */
+input[type='range'] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+input[type='range']::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: var(--cmw-radius-pill);
+  background: var(--cmw-border-strong);
+}
+
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  margin-top: -8px;
+  height: 20px;
+  width: 20px;
+  border: 2px solid var(--cmw-surface);
+  border-radius: var(--cmw-radius-pill);
+  background: var(--cmw-accent);
+}
+
+input[type='range']::-moz-range-track {
+  height: 4px;
+  border-radius: var(--cmw-radius-pill);
+  background: var(--cmw-border-strong);
+}
+
+input[type='range']::-moz-range-thumb {
+  height: 18px;
+  width: 18px;
+  border: 2px solid var(--cmw-surface);
+  border-radius: var(--cmw-radius-pill);
+  background: var(--cmw-accent);
+}
+
+/** Date inputs render a dark-on-dark picker icon without this. */
+input[type='date']::-webkit-calendar-picker-indicator {
+  filter: invert(0.7);
+  cursor: pointer;
+}
+
+:root[data-theme='morning'] input[type='date']::-webkit-calendar-picker-indicator {
+  filter: none;
+}

@@ -1,0 +1,106 @@
+# CI for CoachMillaWellness.
+#
+# The validation gates from §12, as a pipeline. Each step is a named gate rather
+# than a vague "test", so a failure says which standard was missed.
+#
+# This file lives at the *repository* root, not inside `coachmillawellness/`.
+# GitHub Actions only reads workflows from the root `.github/workflows/`, so a
+# copy under the subdirectory looks right and never runs. `defaults.run.
+# working-directory` is what points it at the monorepo; after MIGRATION.md's
+# extraction the monorepo becomes the root and that block is the only thing to
+# delete.
+
+name: CoachMillaWellness CI
+
+on:
+  push:
+    paths: ['coachmillawellness/**']
+  pull_request:
+    paths: ['coachmillawellness/**']
+
+defaults:
+  run:
+    working-directory: coachmillawellness
+
+jobs:
+  verify:
+    name: Gates G1–G7
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: coachmillawellness/pnpm-lock.yaml
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Typecheck — strict, no any
+        run: |
+          for pkg in tokens core data ai ui single; do
+            pnpm --filter "@cmw/$pkg" exec tsc -p tsconfig.json --noEmit
+          done
+
+      # G1: 100% branch coverage on scoring, checklist, coherence and the wheel.
+      # These are the rules of her practice — an untested branch is a session
+      # graded wrongly.
+      - name: G1 — domain logic coverage
+        run: pnpm --filter @cmw/core test:coverage
+
+      - name: Unit tests — tokens, data, ai
+        run: |
+          pnpm --filter @cmw/tokens test
+          pnpm --filter @cmw/data test
+          pnpm --filter @cmw/ai test
+
+      # G3: the single file must stay inside its 1.2MB gzipped budget, and must
+      # remain a single file.
+      - name: G3 — build and budget
+        run: pnpm --filter @cmw/single build
+
+      # G7: no credential in any shipped artefact.
+      - name: G7 — secret scan
+        run: node scripts/gate-no-secrets.mjs
+
+      - name: Install Chromium
+        run: pnpm --filter @cmw/single exec playwright install --with-deps chromium
+
+      # G2 (round-trip), G5 (axe, both themes), G6 (12-step smoke over file://).
+      - name: G2, G5, G6 — browser gates
+        run: pnpm --filter @cmw/single exec playwright test --project=desktop
+
+      # The deployed shape: HTTP origin under the production CSP and cache
+      # headers. Separate from the gates above because those all run over
+      # `file://` and cannot see a header that blanks the page in a browser.
+      - name: Hosted gate — production headers, http origin
+        run: pnpm --filter @cmw/single exec playwright test --project=hosted
+
+      - name: Upload the artefact she receives
+        uses: actions/upload-artifact@v4
+        with:
+          name: CoachMillaWellness.html
+          path: coachmillawellness/apps/single/dist/CoachMillaWellness.html
+          if-no-files-found: error
+
+      # The deployable folder, so a release can be dropped onto any static host
+      # without rebuilding it.
+      - name: Upload the deployable site
+        uses: actions/upload-artifact@v4
+        with:
+          name: site
+          path: coachmillawellness/apps/single/dist
+          if-no-files-found: error
+
+      - name: Upload failure traces
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-traces
+          path: coachmillawellness/apps/single/test-results
+          if-no-files-found: ignore

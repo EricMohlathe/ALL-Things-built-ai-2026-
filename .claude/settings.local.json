@@ -4,7 +4,10 @@
       "Bash(dotnet build *)",
       "Bash(git init *)",
       "Bash(git branch *)",
-      "Bash(git add *)"
+      "Bash(git add *)",
+      "Bash(mkdir -p /home/user/ALL-Things-built-ai-2026-/coachmillawellness/docs)",
+      "Bash(cp \"/root/.claude/uploads/c8dc7262-5e93-5c85-96c9-aaf553d95e14/541ad7ee-COACHMILLAWELLNESS__GODMODE_MASTER_COMPENDIUM.md\" /home/user/ALL-Things-built-ai-2026-/coachmillawellness/docs/COMPENDIUM.md)",
+      "Bash(rm -f /home/user/ALL-Things-built-ai-2026-/coachmillawellness/apps/single/shots.mjs)"
     ]
   }
 }

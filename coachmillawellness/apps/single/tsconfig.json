@@ -1,0 +1,30 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "types": [
+      "vite/client"
+    ],
+    "paths": {
+      "@cmw/ai": [
+        "../../packages/ai/src/index.ts"
+      ],
+      "@cmw/core": [
+        "../../packages/core/src/index.ts"
+      ],
+      "@cmw/data": [
+        "../../packages/data/src/index.ts"
+      ],
+      "@cmw/tokens": [
+        "../../packages/tokens/src/index.ts"
+      ],
+      "@cmw/ui": [
+        "../../packages/ui/src/index.ts"
+      ]
+    }
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "vite.config.ts"
+  ]
+}
