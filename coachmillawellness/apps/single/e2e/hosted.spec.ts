@@ -18,7 +18,15 @@
 
 import { expect, test, type Page } from '@playwright/test';
 
-const BASE = process.env.CMW_HOSTED_BASE ?? 'http://localhost:4173';
+/**
+ * `CMW_HOSTED_BASE` points these at a real deployment:
+ *
+ *   CMW_HOSTED_BASE=https://coachmillawellness.netlify.app \
+ *     pnpm --filter @cmw/single exec playwright test --project=hosted
+ *
+ * Otherwise the local server, on the same port `playwright.config.ts` waits for.
+ */
+const BASE = process.env.CMW_HOSTED_BASE ?? `http://localhost:${process.env.PORT ?? '4173'}`;
 
 async function open(page: Page, path = '/'): Promise<string[]> {
   const errors: string[] = [];

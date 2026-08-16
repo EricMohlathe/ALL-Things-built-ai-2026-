@@ -20,13 +20,24 @@ const PREINSTALLED = [
 ];
 const executablePath = PREINSTALLED.find((candidate) => existsSync(candidate));
 
+/**
+ * One port, read once.
+ *
+ * `serve-dist.mjs` honours `PORT`, so hard-coding the URL here meant setting
+ * `PORT=4174` started the server on 4174 while Playwright waited on 4173 —
+ * sixty seconds of silence, then "Timed out waiting for config.webServer", which
+ * points at the server rather than at the mismatch that actually caused it.
+ * Deriving both from the same value makes the override work instead of misfire.
+ */
+const HOSTED_PORT = process.env.PORT ?? '4173';
+
 export default defineConfig({
   testDir: './e2e',
   // Only the `hosted` project needs it; Playwright starts it once and the
   // `file://` projects simply ignore it.
   webServer: {
     command: 'node e2e/serve-dist.mjs',
-    url: 'http://localhost:4173/index.html',
+    url: `http://localhost:${HOSTED_PORT}/index.html`,
     reuseExistingServer: !process.env.CI,
     stdout: 'ignore',
   },
