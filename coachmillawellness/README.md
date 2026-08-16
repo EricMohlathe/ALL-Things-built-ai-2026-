@@ -16,8 +16,8 @@ pnpm --filter @cmw/single build
 Open that file directly in a browser. No server.
 
 The same build is also a website: `dist/` contains a byte-identical `index.html`,
-so any static host serves it as-is. Netlify is configured — see
-**docs/DEPLOY.md**.
+so any static host serves it as-is. Netlify builds it from the committed
+`netlify.toml` with no dashboard setup — see **docs/DEPLOY.md**.
 
 ---
 

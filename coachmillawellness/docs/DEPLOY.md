@@ -58,10 +58,28 @@ directory instead.
 
 ## Vercel
 
-`vercel.json` at the repository root configures the same build, the same headers
-and the same redirects. It exists because this repository is already connected to
-a Vercel project; without it that project deploys the repo root, which is not a
-site.
+**Set the Root Directory to `coachmillawellness` in the project's dashboard**
+(Settings → General → Root Directory). Everything else follows from that:
+
+- **Build command:** `pnpm --filter @cmw/single build`
+- **Output directory:** `apps/single/dist`
+
+There is deliberately **no `vercel.json`** in this repository, and the reason is
+worth recording because it is not obvious. This repository's root is a trading
+workspace with no `package.json`; the app is a monorepo one directory down.
+Vercel decides whether a build is a Node project — and therefore whether `pnpm`
+exists at all — by inspecting the *root directory* it is pointed at. A
+`vercel.json` cannot set that; `rootDirectory` is a project setting, not a file
+key. A config that tries to work around it with `cd coachmillawellness && …`
+fails before it runs, because the install step never provisioned a package
+manager.
+
+Netlify does not have this problem: its `base` key is exactly the equivalent
+setting, and it lives in the committed file.
+
+Headers and redirects on Vercel are then configured either in the dashboard or in
+a `vercel.json` placed **inside** `coachmillawellness/` once the root directory
+points there. The values to use are the ones in `netlify.toml`.
 
 ## Cloudflare Pages
 
