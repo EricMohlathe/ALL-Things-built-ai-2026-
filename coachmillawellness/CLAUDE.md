@@ -119,9 +119,9 @@ A phase ships when its gates are green. Current state:
 | G6 | 12-step smoke script over `file://` | green |
 | G7 | No credential in any shipped file | green (script) |
 | G8 | 14-day backup nudge | green |
-| G11 | Hosted shape — production headers over http | green |
 | G9 | Store pre-flight | not started (P4/P5) |
 | G10 | Engagement — Progress Links, Share Kit, push | not started (P3/P4) |
+| G11 | Hosted shape — production headers over http | green |
 
 ## Where the phases stand
 
