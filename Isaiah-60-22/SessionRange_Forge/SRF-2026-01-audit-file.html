@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Session-Range Strategies — Audit File SRF-2026/01</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&family=Spectral:ital,wght@0,300;0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pad:#E9EFE3;
+  --pad-deep:#DFE8D7;
+  --card:#F4F7F0;
+  --ink:#16211C;
+  --ink-soft:#4A5B50;
+  --ink-faint:#7A8B80;
+  --rule:#A9C1A4;
+  --rule-soft:#C6D6C1;
+  --tick:#C8102E;
+  --verify:#1F5C3A;
+  --amber:#B0710A;
+  --shadow:0 1px 0 rgba(22,33,28,.14), 0 12px 28px -22px rgba(22,33,28,.6);
+  --measure:74ch;
+}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;
+  background:var(--pad);
+  background-image:repeating-linear-gradient(
+    to bottom,
+    transparent 0px, transparent 31px,
+    var(--rule-soft) 31px, var(--rule-soft) 32px
+  );
+  color:var(--ink);
+  font-family:'Spectral',Georgia,serif;
+  font-size:17px;
+  line-height:32px;
+  font-weight:400;
+}
+
+.sheet{max-width:1180px;margin:0 auto;padding:0 clamp(16px,4vw,56px) 120px}
+
+/* ── masthead ───────────────────────────────────────────── */
+.masthead{
+  border-bottom:2px solid var(--ink);
+  padding:64px 0 24px;
+  margin-bottom:8px;
+}
+.stamp{
+  display:inline-block;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--tick);
+  border:1.5px solid var(--tick);
+  padding:6px 12px;
+  line-height:1;
+  transform:rotate(-1.4deg);
+  margin-bottom:28px;
+}
+h1{
+  font-family:'Zilla Slab',serif;
+  font-weight:700;
+  font-size:clamp(38px,6.4vw,68px);
+  line-height:1.02;
+  letter-spacing:-.022em;
+  margin:0 0 20px;
+  max-width:20ch;
+}
+h1 em{font-style:normal;color:var(--tick)}
+.standfirst{
+  font-size:clamp(18px,2.1vw,21px);
+  line-height:34px;
+  max-width:64ch;
+  color:var(--ink-soft);
+  margin:0 0 36px;
+}
+.engagement{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+  gap:0;
+  border-top:1px solid var(--rule);
+  font-family:'IBM Plex Mono',monospace;
+  font-size:12px;line-height:19px;
+}
+.engagement div{
+  padding:14px 18px 14px 0;
+  border-right:1px solid var(--rule);
+}
+.engagement div:last-child{border-right:0}
+.engagement dt{
+  color:var(--ink-faint);
+  text-transform:uppercase;letter-spacing:.13em;font-size:10px;
+  margin:0 0 4px;
+}
+.engagement dd{margin:0;color:var(--ink);font-weight:500}
+
+/* ── tick legend ────────────────────────────────────────── */
+.legend{
+  margin:44px 0 0;
+  background:var(--card);
+  border:1px solid var(--ink);
+  box-shadow:var(--shadow);
+  padding:22px 26px;
+}
+.legend h4{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--ink-faint);margin:0 0 14px;font-weight:500;
+}
+.legend ul{list-style:none;margin:0;padding:0;display:grid;gap:8px;
+  grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+.legend li{display:flex;gap:12px;align-items:baseline;font-size:14.5px;line-height:22px}
+.tk{
+  font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:16px;
+  color:var(--tick);flex:0 0 22px;text-align:center;
+}
+
+/* ── working paper sections ─────────────────────────────── */
+.wp{
+  display:grid;
+  grid-template-columns:96px minmax(0,1fr);
+  gap:0 32px;
+  padding-top:76px;
+  scroll-margin-top:20px;
+}
+.wp-ref{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:13px;font-weight:600;
+  color:var(--tick);
+  letter-spacing:.06em;
+  padding-top:12px;
+  position:sticky;top:24px;align-self:start;
+}
+.wp-ref span{display:block;color:var(--ink-faint);font-weight:400;font-size:10.5px;
+  letter-spacing:.14em;text-transform:uppercase;margin-top:6px;line-height:15px}
+.wp-body{min-width:0;max-width:var(--measure)}
+
+h2{
+  font-family:'Zilla Slab',serif;font-weight:700;
+  font-size:clamp(27px,3.5vw,38px);line-height:1.14;
+  letter-spacing:-.016em;
+  margin:0 0 8px;padding-bottom:14px;
+  border-bottom:2px solid var(--ink);
+}
+h3{
+  font-family:'Zilla Slab',serif;font-weight:600;
+  font-size:21px;line-height:1.3;margin:44px 0 10px;
+}
+h4{
+  font-family:'IBM Plex Mono',monospace;font-weight:600;
+  font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ink-faint);margin:32px 0 8px;
+}
+p{margin:0 0 20px}
+.lede{font-size:19px;line-height:34px;color:var(--ink-soft);margin-top:20px}
+strong{font-weight:600}
+em{font-style:italic}
+a{color:var(--verify);text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px}
+
+ul.body,ol.body{margin:0 0 22px;padding-left:22px}
+ul.body li,ol.body li{margin-bottom:9px}
+
+/* ── data tables ────────────────────────────────────────── */
+.tw{overflow-x:auto;margin:0 0 26px;border:1px solid var(--ink);background:var(--card);
+  box-shadow:var(--shadow)}
+table{border-collapse:collapse;width:100%;font-family:'IBM Plex Mono',monospace;
+  font-size:12.5px;line-height:19px}
+caption{
+  caption-side:top;text-align:left;padding:14px 18px 12px;
+  font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.15em;
+  text-transform:uppercase;color:var(--ink-faint);border-bottom:1px solid var(--rule);
+}
+th,td{padding:10px 14px;text-align:left;vertical-align:top;border-bottom:1px solid var(--rule-soft)}
+thead th{
+  background:var(--pad-deep);font-weight:600;font-size:11px;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--ink);border-bottom:1.5px solid var(--ink);
+  position:sticky;top:0;
+}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:nth-child(even){background:rgba(169,193,164,.13)}
+td.num{text-align:right;font-variant-numeric:tabular-nums}
+td.mk{color:var(--tick);font-weight:600;text-align:center;width:34px}
+.ok{color:var(--verify);font-weight:600}
+.no{color:var(--tick);font-weight:600}
+.qq{color:var(--amber);font-weight:600}
+
+/* ── callouts ───────────────────────────────────────────── */
+.finding{
+  border-left:3px solid var(--tick);
+  background:var(--card);
+  padding:20px 24px;margin:0 0 26px;
+  box-shadow:var(--shadow);
+}
+.finding h5{
+  font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--tick);margin:0 0 8px;font-weight:600;
+}
+.finding p:last-child{margin-bottom:0}
+.finding.green{border-left-color:var(--verify)}
+.finding.green h5{color:var(--verify)}
+.finding.amber{border-left-color:var(--amber)}
+.finding.amber h5{color:var(--amber)}
+
+.pull{
+  font-family:'Zilla Slab',serif;font-weight:600;
+  font-size:clamp(21px,2.7vw,26px);line-height:1.32;
+  border-top:2px solid var(--ink);border-bottom:2px solid var(--ink);
+  padding:26px 0;margin:34px 0;color:var(--ink);
+}
+
+pre{
+  font-family:'IBM Plex Mono',monospace;font-size:12px;line-height:20px;
+  background:var(--ink);color:#DCE6D8;padding:20px 22px;overflow-x:auto;
+  margin:0 0 26px;border-radius:0;
+}
+pre .c{color:#8FA98C}
+pre .k{color:#E8B4B8}
+code{font-family:'IBM Plex Mono',monospace;font-size:.88em;
+  background:rgba(169,193,164,.3);padding:1px 5px}
+
+/* ── state machine ──────────────────────────────────────── */
+.fsm{margin:0 0 28px;border:1px solid var(--ink);background:var(--card);
+  box-shadow:var(--shadow);padding:4px 0}
+.fsm-row{display:grid;grid-template-columns:30px 1fr;gap:14px;padding:13px 20px;
+  border-bottom:1px solid var(--rule-soft);align-items:start}
+.fsm-row:last-child{border-bottom:0}
+.fsm-n{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;
+  color:var(--tick);padding-top:2px}
+.fsm-t{font-family:'IBM Plex Mono',monospace;font-size:12.5px;font-weight:600;
+  letter-spacing:.04em;margin-bottom:3px}
+.fsm-d{font-size:14.5px;line-height:23px;color:var(--ink-soft)}
+
+/* ── opinion ────────────────────────────────────────────── */
+.opinion{
+  border:2px solid var(--ink);background:var(--card);
+  padding:clamp(26px,4vw,44px);margin-top:22px;box-shadow:var(--shadow);
+}
+.opinion h3{margin-top:28px;font-size:19px}
+.opinion h3:first-of-type{margin-top:0}
+.sig{
+  margin-top:38px;padding-top:22px;border-top:1px solid var(--rule);
+  font-family:'IBM Plex Mono',monospace;font-size:11.5px;line-height:20px;
+  color:var(--ink-faint);
+}
+
+/* ── footer ─────────────────────────────────────────────── */
+.colophon{
+  margin-top:96px;padding-top:28px;border-top:2px solid var(--ink);
+  font-family:'IBM Plex Mono',monospace;font-size:11.5px;line-height:21px;
+  color:var(--ink-faint);max-width:78ch;
+}
+.colophon strong{color:var(--ink-soft)}
+
+@media (max-width:820px){
+  body{font-size:16px;line-height:29px}
+  .wp{grid-template-columns:1fr;gap:0}
+  .wp-ref{position:static;padding:0 0 10px;border-bottom:1px solid var(--rule);
+    margin-bottom:20px;display:flex;gap:12px;align-items:baseline}
+  .wp-ref span{margin:0}
+  .engagement div{border-right:0;border-bottom:1px solid var(--rule)}
+}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@supports (animation-timeline:view()){
+  @media (prefers-reduced-motion:no-preference){
+    .wp{animation:rise .5s ease-out both;animation-timeline:view();
+        animation-range:entry 0% cover 18%}
+  }
+}
+</style>
+</head>
+<body>
+<div class="sheet">
+
+<!-- ══════════════════════════════════════════════════════ -->
+<header class="masthead">
+  <div class="stamp">Working papers · adverse opinion issued</div>
+  <h1>The 9:30 candle and the Asian range, <em>audited</em>.</h1>
+  <p class="standfirst">
+    Six sources describe two strategies that are really one strategy. This file
+    extracts every mechanical rule from them, tests each claim against the
+    evidence available, and states which rules survive. It is written the way an
+    audit file is written, because the question here is identical to an audit
+    question: is the assertion supported, and by what.
+  </p>
+  <dl class="engagement">
+    <div><dt>File reference</dt><dd>SRF-2026/01</dd></div>
+    <div><dt>Subject</dt><dd>Session-range breakout family</dd></div>
+    <div><dt>Assertion tested</dt><dd>Positive expectancy net of costs</dd></div>
+    <div><dt>Sources examined</dt><dd>6 documents, 4 video rule-sets</dd></div>
+    <div><dt>Opinion</dt><dd style="color:var(--tick)">Adverse, with a restated model</dd></div>
+  </dl>
+
+  <div class="legend">
+    <h4>Tick marks used throughout this file</h4>
+    <ul>
+      <li><span class="tk">✓</span><span>Vouched — supported by evidence outside the source claiming it.</span></li>
+      <li><span class="tk">~</span><span>Partly substantiated — mechanism is real, the claimed magnitude is not.</span></li>
+      <li><span class="tk">⌀</span><span>No evidence obtained — the claim may be true; nothing supports it.</span></li>
+      <li><span class="tk">✗</span><span>Contradicted — direct testing found the opposite.</span></li>
+      <li><span class="tk">Ω</span><span>Untestable as written — the rule is not specified precisely enough to test.</span></li>
+    </ul>
+  </div>
+</header>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<section class="wp" id="a">
+  <div class="wp-ref">A<span>Scope</span></div>
+  <div class="wp-body">
+    <h2>What is being tested, and what would count as passing</h2>
+
+    <p class="lede">
+      Every one of these six sources is describing the same structure: mark a
+      price range formed during a defined clock window, wait for price to leave
+      it, trade the leaving. The disagreement is only over which window, which
+      confirmation, and which target.
+    </p>
+
+    <p>
+      That shared structure is what makes the family testable as one thing. The
+      9:30 sources mark the first five minutes of the New York equity open. The
+      ICT source marks 19:00–00:00 New York. The Goldmine source marks 22:00–00:00
+      GMT. All three then wait for a break, a sweep, or a retest, and enter on
+      it. Same machine, different clocks.
+    </p>
+
+    <h4>The assertion</h4>
+    <p>
+      <em>Trading this structure produces a positive expected return after
+      spread, slippage and commission, on data the rules were not fitted to.</em>
+      Nothing weaker is worth testing. A strategy that is profitable before costs
+      is not profitable. A strategy that is profitable on the period it was tuned
+      on has not been tested at all.
+    </p>
+
+    <h4>Materiality</h4>
+    <p>
+      An edge is material only if it exceeds the round-trip cost of harvesting
+      it, with margin. Throughout this file, cost is expressed in <strong>R</strong> —
+      multiples of the money risked on the trade — because that makes it directly
+      comparable to the edge. On a gold trade risking 300 points with a 25-point
+      spread, one round trip plus modest slippage costs roughly 0.2 R. An edge of
+      0.04 R per trade does not survive that. This is the single arithmetic fact
+      that kills most retail systems, and almost no source in this file mentions
+      it.
+    </p>
+
+    <h4>Scope limitations, stated up front</h4>
+    <ul class="body">
+      <li>Three of the six sources are marketing artifacts for paid products. They
+        are treated as claims to be tested, not as evidence.</li>
+      <li>No peer-reviewed test of the ICT sweep-and-shift model exists. A search
+        of the literature returns vendor content and platform blogs only. That
+        absence is a finding, not a gap in this review.</li>
+      <li>The largest available test of the 9:30 rules was run on US equities, not
+        FX or gold. Its conclusions transfer as a strong prior, not as proof.</li>
+      <li>This file cannot test what a discretionary trader sees on a live tape.
+        It can only test the teachable, mechanical version — which is the version
+        being sold.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<section class="wp" id="b">
+  <div class="wp-ref">B<span>Extraction</span></div>
+  <div class="wp-body">
+    <h2>Every rule in the file, reconciled</h2>
+
+    <p class="lede">
+      Before anything can be tested it has to be written down without ambiguity.
+      This is the reconciliation: what each source actually specifies, and where
+      they contradict each other.
+    </p>
+
+    <h3>B-1 · The 9:30 family</h3>
+
+    <div class="tw">
+      <table>
+        <caption>Rule comparison — four sources describing the 9:30 opening range</caption>
+        <thead>
+          <tr><th>Parameter</th><th>TradingView script</th><th>Video rule-set</th><th>MQL5 job spec</th><th>Backtest article</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Range window</td><td>09:30–09:35 EST</td><td>09:30–09:35 EST</td><td>Single candle at 09:30</td><td>09:30–09:35 ET</td></tr>
+          <tr><td>Entry timeframe</td><td>1-minute</td><td>1 or 2-minute</td><td>Same as range TF</td><td>1-minute</td></tr>
+          <tr><td>Break definition</td><td>Body close outside</td><td>Body close, not wick</td><td>Close beyond prior candle extreme</td><td>1-min close beyond range</td></tr>
+          <tr><td>Confirmation</td><td>FVG, or trap, or reversal</td><td>Rejection candle at retest</td><td>None specified</td><td>Rejection candle required</td></tr>
+          <tr><td>Retest required</td><td>Only in the TRAP model</td><td>Yes, always</td><td>No</td><td>Yes, as taught</td></tr>
+          <tr><td>Stop placement</td><td>Extreme of first candle closing outside</td><td>Other side of retest candle</td><td>Not specified</td><td>Other side of the candle</td></tr>
+          <tr><td>Target</td><td>Fixed 2:1</td><td>2:1 or 3:1</td><td>Not specified</td><td>2:1 tested, 13 targets swept</td></tr>
+          <tr><td>Trading window</td><td>09:30–10:30 only</td><td>First 1–2 hours</td><td>5m to 4h, adjustable</td><td>Open-ended</td></tr>
+          <tr><td>Higher-timeframe bias</td><td>Explicitly none</td><td>Not required</td><td>Prior-candle direction</td><td>Tested separately</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>
+      Note row three from the bottom against row two. The TradingView script says
+      <em>"no complicated indicators, no higher timeframe bias, no guesswork"</em>
+      and fixes the payout at 2:1. The video rule-set says target 2:1 <em>or</em>
+      3:1. Those are different systems: 2:1 needs a 33.3% win rate to break even,
+      3:1 needs 25%. A source that leaves the payout to taste has not specified
+      the strategy, because the payout is the strategy — it is what sets the bar
+      the entry has to clear.
+    </p>
+
+    <div class="finding amber">
+      <h5>Extraction note — the MQL5 job specification</h5>
+      <p>
+        The MQL5 document is not a strategy source. It is a freelance job posting
+        from June 2024 asking fourteen developers to build something from a
+        description that contradicts itself between paragraphs — it defines an
+        uptrend twice, identically, and then defines a downtrend as the same
+        condition. It is evidence that people want this coded, not evidence that
+        it works. Tick: <span class="no">Ω</span>
+      </p>
+    </div>
+
+    <h3>B-2 · The Asian-range family</h3>
+
+    <div class="tw">
+      <table>
+        <caption>Rule comparison — two sources describing the overnight range</caption>
+        <thead>
+          <tr><th>Parameter</th><th>ICT Asian range</th><th>Goldmine strategy</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Range window</td><td>19:00–00:00 New York</td><td>22:00–00:00 GMT</td></tr>
+          <tr><td>Anchor price</td><td>New York midnight open</td><td>Not used</td></tr>
+          <tr><td>Trigger</td><td>Sweep of range high or low</td><td>Breakout of the consolidation</td></tr>
+          <tr><td>Direction</td><td><em>Against</em> the sweep, with daily bias</td><td><em>With</em> the breakout</td></tr>
+          <tr><td>Confirmation</td><td>Market structure shift on M5/M15</td><td>EMA alignment plus volume spike</td></tr>
+          <tr><td>Entry</td><td>Retrace into order block or FVG</td><td>Immediate, tight stop under range</td></tr>
+          <tr><td>Stop</td><td>10–20 pips beyond the MSS swing</td><td>20–30 pips gold, 10–20 pips JPY</td></tr>
+          <tr><td>Target</td><td>Next low-resistance liquidity run</td><td>1:3 R, then trail</td></tr>
+          <tr><td>Execution window</td><td>London or NY-AM open</td><td>20–45 min after Tokyo open</td></tr>
+          <tr><td>Instruments</td><td>GBP/USD, EUR/USD, NQ, ES, XAU/USD</td><td>XAU/USD, JPY crosses, BTC/USD</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="pull">
+      These two sources trade the same level in opposite directions. One buys the
+      breakout of the range; the other waits for that breakout to fail and sells
+      it. Both cannot be the edge.
+    </div>
+
+    <p>
+      This is not a detail. It is the most informative thing in the entire source
+      set. When a level produces two mutually exclusive systems that both claim
+      high win rates, the level is doing less work than either author believes.
+      Section C-3 explains what is actually happening at that boundary, and it
+      turns out both authors have hold of a real mechanism — just not the one
+      they think.
+    </p>
+
+    <h3>B-3 · The unified state machine</h3>
+
+    <p>
+      Everything above collapses into one machine with a selectable entry model.
+      This is what the accompanying Expert Advisor implements, and writing it out
+      this way is what makes the family falsifiable.
+    </p>
+
+    <div class="fsm">
+      <div class="fsm-row"><div class="fsm-n">0</div><div>
+        <div class="fsm-t">IDLE</div>
+        <div class="fsm-d">Outside the range window. Clock converted from broker time to New York time with the US daylight-saving rule applied, because every source anchors to New York and none of them mention that this shifts twice a year.</div></div></div>
+      <div class="fsm-row"><div class="fsm-n">1</div><div>
+        <div class="fsm-t">RANGE_FORMING</div>
+        <div class="fsm-d">Accumulate high and low across the window. For a window that crosses midnight, the range belongs to the following trade day.</div></div></div>
+      <div class="fsm-row"><div class="fsm-n">2</div><div>
+        <div class="fsm-t">RANGE_SET</div>
+        <div class="fsm-d">Range fixed. Structural filters applied: minimum width, maximum width as a multiple of ATR. A range far wider than normal volatility is not a range, it is a trend already in progress.</div></div></div>
+      <div class="fsm-row"><div class="fsm-n">3</div><div>
+        <div class="fsm-t">ARMED</div>
+        <div class="fsm-d">Inside the entry window, waiting for the selected model to fire. Directional bias evaluated here, not at entry, so it cannot be quietly relaxed when a trade looks good.</div></div></div>
+      <div class="fsm-row"><div class="fsm-n">4a</div><div>
+        <div class="fsm-t">BREAK_DIRECT</div>
+        <div class="fsm-d">First body close beyond the boundary. No retest, no confirmation candle. This is the variant the evidence supports — see C-2.</div></div></div>
+      <div class="fsm-row"><div class="fsm-n">4b</div><div>
+        <div class="fsm-t">BREAK_FVG</div>
+        <div class="fsm-d">Break plus a three-candle fair value gap in the displacement leg. The TradingView script's BREAK entry.</div></div></div>
+      <div class="fsm-row"><div class="fsm-n">4c</div><div>
+        <div class="fsm-t">TRAP</div>
+        <div class="fsm-d">Break out, close back inside, close back outside again in the original direction. The script's TRAP entry.</div></div></div>
+      <div class="fsm-row"><div class="fsm-n">4d</div><div>
+        <div class="fsm-t">RETEST</div>
+        <div class="fsm-d">Break, pullback to the broken level, rejection close. The version taught in every video. Implemented so it can be measured against the others, not because it is recommended.</div></div></div>
+      <div class="fsm-row"><div class="fsm-n">4e</div><div>
+        <div class="fsm-t">SWEEP_MSS</div>
+        <div class="fsm-d">Wick through the boundary with a close back inside, then a body close through the last confirmed fractal swing in the opposite direction. The ICT model, made mechanical.</div></div></div>
+      <div class="fsm-row"><div class="fsm-n">5</div><div>
+        <div class="fsm-t">SIZED</div>
+        <div class="fsm-d">Structural stop clamped between an ATR floor and ceiling, position sized from account equity, spread checked against both an absolute cap and a percentage of the stop. A 25-point spread against a 40-point stop is not a trade at any win rate.</div></div></div>
+      <div class="fsm-row"><div class="fsm-n">6</div><div>
+        <div class="fsm-t">MANAGED</div>
+        <div class="fsm-d">Peak favourable and adverse excursion recorded tick by tick. Optional breakeven, partial, ATR trail. Forced flat at session end.</div></div></div>
+      <div class="fsm-row"><div class="fsm-n">7</div><div>
+        <div class="fsm-t">JOURNALLED</div>
+        <div class="fsm-d">Row written with realised R, excursions in R, entry spread, range width relative to ATR, and the session date — the last of which is the field that makes honest statistics possible.</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<section class="wp" id="c">
+  <div class="wp-ref">C<span>Tests of detail</span></div>
+  <div class="wp-body">
+    <h2>What the evidence says</h2>
+
+    <h3>C-1 · The direct test of the taught rules</h3>
+
+    <p>
+      One of the uploaded sources is a mechanical backtest of exactly the rules
+      in B-1: 165,336 simulated trades across 359 US stocks, 2020 to mid-2026,
+      spanning a bear market, a crash, two calm bull stretches, a choppy period
+      and a volatility spike. It is by a wide margin the most useful document in
+      the file, and its findings are unflattering.
+    </p>
+
+    <div class="tw">
+      <table>
+        <caption>Findings — 165,336 mechanical trades on the taught rule set</caption>
+        <thead><tr><th>Configuration</th><th class="num">Win rate</th><th class="num">Required</th><th class="num">Gap</th><th>Tick</th></tr></thead>
+        <tbody>
+          <tr><td>Base rules, 2:1 target</td><td class="num">32.6%</td><td class="num">33.33%</td><td class="num no">−0.73 pp</td><td class="mk">✗</td></tr>
+          <tr><td>Loose confirmation, holdout period</td><td class="num">33.0%</td><td class="num">33.33%</td><td class="num">−0.33 pp</td><td class="mk">✗</td></tr>
+          <tr><td>Strict confirmation, holdout period</td><td class="num">31.9%</td><td class="num">33.33%</td><td class="num no">−1.43 pp</td><td class="mk">✗</td></tr>
+          <tr><td>Full stack: trend + volume + strict</td><td class="num">30.2%</td><td class="num">33.33%</td><td class="num no">−3.13 pp</td><td class="mk">✗</td></tr>
+          <tr><td>Index ETFs, pooled</td><td class="num">32.7%</td><td class="num">33.33%</td><td class="num">−0.63 pp</td><td class="mk">✗</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>
+      Read the last column of that table as an audit finding rather than a
+      statistic. The win rate does not merely fail to beat the payout-implied
+      break-even — it tracks it, at every one of thirteen target sizes tested from
+      1:1 to 10:1. That tracking is the signature of a process carrying no
+      directional information. The payout sets the win rate; the entry
+      contributes nothing.
+    </p>
+
+    <div class="finding">
+      <h5>Finding C-1.1 — the confirmation rule is the most expensive rule in the system</h5>
+      <p>
+        Every video source insists on waiting for a decisive rejection candle at
+        the retest. Tested, that rule moved the win rate <em>down</em>, from 33.0%
+        to 31.9% on untouched holdout data, significant at p &lt; 0.001. The
+        mechanism is not mysterious: a large obvious rejection candle means the
+        move already happened. You enter later, at a worse price, and the stop is
+        wider because it is placed beyond a bigger candle. The rule sold as the
+        thing that separates winners from losers is measurably the thing making
+        results worse. Tick: <span class="no">✗</span>
+      </p>
+    </div>
+
+    <div class="finding">
+      <h5>Finding C-1.2 — the excursion symmetry</h5>
+      <p>
+        After entry, the average trade travelled about as far in the trader's
+        favour (1.29 R) as against them (1.23 R). A signal with directional
+        content produces lopsided excursions. These are not lopsided. The
+        accompanying forensics tool measures this on your own data, with the
+        correction described in F-2. Tick: <span class="no">✗</span>
+      </p>
+    </div>
+
+    <div class="finding amber">
+      <h5>Finding C-1.3 — the eleven Mondays</h5>
+      <p>
+        The same author searched for any pocket where the strategy worked and
+        found one: long trades, Mondays, bull markets. It survived a fresh data
+        slice. Then he counted the underlying sessions — the hundreds of "Monday
+        trades" came from <strong>eleven distinct Mondays</strong>, and two of
+        those eleven produced 92% of the apparent edge. Counted correctly, the
+        result vanished. Keep this in view for E-2: it is the exact failure mode
+        that makes bad backtests look rigorous.
+      </p>
+    </div>
+
+    <h3>C-2 · The version that does work, and what it deletes</h3>
+
+    <p>
+      Against that, there is a peer-reviewed opening-range study with the opposite
+      conclusion: Zarattini, Barbon and Aziz, <em>A Profitable Day Trading
+      Strategy For The U.S. Equity Market</em> (Swiss Finance Institute Research
+      Paper 24-98, February 2024), covering more than 7,000 US stocks from 2016 to
+      2023. It finds the 5-minute opening range breakout profitable, with a large
+      improvement from restricting trades to <strong>stocks in play</strong> —
+      names with abnormal volume driven by company news — and it holds after
+      transaction costs. A public QuantConnect replication reports a Sharpe near
+      2.4 with beta close to zero.
+    </p>
+
+    <p>
+      The interesting part is what that strategy does <em>not</em> contain.
+    </p>
+
+    <div class="tw">
+      <table>
+        <caption>What the profitable version deletes from the taught version</caption>
+        <thead><tr><th>Rule</th><th>Taught version</th><th>Profitable version</th></tr></thead>
+        <tbody>
+          <tr><td>Wait for a retest</td><td>Required</td><td class="ok">Deleted — entry is on the break</td></tr>
+          <tr><td>Rejection candle confirmation</td><td>Required</td><td class="ok">Deleted</td></tr>
+          <tr><td>Direction</td><td>Trader's read</td><td class="ok">Colour of the first range candle</td></tr>
+          <tr><td>Exit</td><td>Fixed 2:1</td><td class="ok">Held to the session close</td></tr>
+          <tr><td>Instrument selection</td><td>Any liquid name</td><td class="ok">Abnormal relative volume only</td></tr>
+          <tr><td>Cost model</td><td>Not mentioned</td><td class="ok">Explicit, and it binds</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="finding green">
+      <h5>Finding C-2.1 — the edge, where there is one, lives in selection and exit, not entry</h5>
+      <p>
+        The backtest article independently reproduced this. Filtering to the top
+        quartile by pre-market relative volume lifted the win rate from 38.2% to
+        39.9% and average return from +0.031 R to +0.041 R per trade, significant
+        at p = 0.004. That is a genuine, measurable selection effect. It is also
+        <em>smaller than a five-basis-point round trip</em>, which erased it
+        entirely. So: a real effect, correctly identified, that still did not
+        clear the cost floor at that implementation. Tick: <span class="qq">~</span>
+      </p>
+    </div>
+
+    <p>
+      The practical instruction from C-1 and C-2 together is unusually crisp.
+      Every rule that sources add to <em>improve</em> the entry — retest,
+      confirmation, structure shift — subtracts. Every element that survives
+      testing sits either before the entry (what you trade, and when) or after it
+      (how long you hold, and what it costs). Direct your effort accordingly.
+    </p>
+
+    <h3>C-3 · What actually happens at a swept boundary</h3>
+
+    <p>
+      No peer-reviewed test of the ICT sweep model exists. But the mechanism it
+      describes has been documented, and the documentation is more interesting
+      than either source in this file realises.
+    </p>
+
+    <p>
+      Carol Osler's work at the New York Fed, published in the <em>Journal of
+      Finance</em> in 2003, examined the complete order book of a major FX dealing
+      bank — 9,655 orders worth over $55 billion. She found that price-contingent
+      orders cluster, and crucially that <strong>the two kinds cluster in
+      different places</strong>. Take-profit orders bunch <em>at</em> round
+      numbers; stop-loss orders bunch <em>just beyond</em> them. Her follow-up work
+      on price cascades showed exchange rates move unusually fast after reaching
+      levels where stop-losses cluster.
+    </p>
+
+    <p>
+      Map that onto the disagreement in B-2 and it resolves cleanly:
+    </p>
+
+    <ul class="body">
+      <li><strong>Take-profit clustering produces reversals.</strong> Resting
+        profit-taking absorbs the move and turns it. This is the ICT sweep — the
+        trap, the reversal — and it is a real documented mechanism.</li>
+      <li><strong>Stop-loss clustering produces continuations.</strong> Triggered
+        stops become market orders in the direction of the break, which triggers
+        more of them. This is the Goldmine breakout — also real, also
+        documented.</li>
+      <li><strong>Both order types sit around the same boundary.</strong> Which
+        cluster dominates on any given touch is not something the touch itself
+        tells you.</li>
+    </ul>
+
+    <div class="finding amber">
+      <h5>Finding C-3.1 — the sweep is a volatility signal, not a direction signal</h5>
+      <p>
+        Crossing a session boundary reliably predicts that something will happen.
+        It does not predict which way. That is precisely why two authors can build
+        opposite systems on the same level and both show winning screenshots.
+        Any workable version of this needs a directional input from somewhere
+        other than the sweep — which is, to be fair to the ICT source, exactly
+        what its insistence on a higher-timeframe bias is trying to supply.
+        Tick: <span class="qq">~</span> on the mechanism, <span class="no">⌀</span>
+        on the trading edge.
+      </p>
+    </div>
+
+    <h3>C-4 · The base rate you are trading against</h3>
+
+    <p>
+      Before any of this, there is a prior. Chague, De-Losso and Giovannetti
+      tracked every individual who began day trading Brazilian equity futures
+      between 2013 and 2015. Of those who persisted beyond 300 sessions,
+      <strong>97% lost money</strong>; 1.1% earned more than the Brazilian minimum
+      wage; 0.5% earned more than a bank teller's starting salary. Barber, Lee,
+      Liu and Odean, using complete Taiwan Stock Exchange records from 1992 to
+      2006, found fewer than 1% predictably profitable net of fees. Both studies
+      found no evidence of learning over time.
+    </p>
+
+    <p>
+      This does not prove that no strategy works. It sets the prior odds that any
+      given mechanical intraday system, arrived at by reading six articles, is one
+      of them. Update accordingly, and note that both papers used complete
+      exchange records — not surveys, not self-reports, not screenshots.
+    </p>
+
+    <h3>C-5 · Exception schedule — vendor claims</h3>
+
+    <p>
+      Three of the six sources exist to sell something. Their claims are tested
+      here on internal consistency and arithmetic, since no external verification
+      is available.
+    </p>
+
+    <div class="tw">
+      <table>
+        <caption>Exceptions noted — claims made by the Goldmine sources</caption>
+        <thead><tr><th>Claim</th><th>Test applied</th><th>Result</th><th>Tick</th></tr></thead>
+        <tbody>
+          <tr><td>"80% win rate" at 1:3 risk-reward</td><td>Expectancy arithmetic</td><td>+2.20 R per trade. At 1% risk over 250 trades that turns $1,000 into $223,000 in a year.</td><td class="mk">✗</td></tr>
+          <tr><td>"90% Win Rate Gold Strategy"</td><td>Same</td><td>+2.60 R per trade. $1,000 becomes $601,000. No such track record is shown.</td><td class="mk">✗</td></tr>
+          <tr><td>"$18,500", "$38k", "$15,000", "$34,880 in one trade"</td><td>Cross-source consistency</td><td>Four different headline figures across articles by the same author, none reconciled to any other.</td><td class="mk">⌀</td></tr>
+          <tr><td>"profit is almost guaranteed"</td><td>Plain meaning</td><td>No trading method guarantees profit. This is the sentence that should end the reader's engagement with the source.</td><td class="mk">✗</td></tr>
+          <tr><td>Trade evidence supplied</td><td>Nature of evidence</td><td>Screenshots of an account history table. Not a verified statement, no independent audit, no track record link.</td><td class="mk">⌀</td></tr>
+          <tr><td>Broker recommendation</td><td>Conflict of interest</td><td>Specific broker promoted inside the strategy article. Standard affiliate structure. Disclose-and-discount.</td><td class="mk">⌀</td></tr>
+          <tr><td>"20–45 mins after Tokyo open"</td><td>Testability</td><td>A 25-minute window with no rule for choosing within it. Cannot be coded as written.</td><td class="mk">Ω</td></tr>
+          <tr><td>"Wait for clean opportunity when it presents itself"</td><td>Testability</td><td>Not a rule. This is the sentence doing all the work, and it is unspecified.</td><td class="mk">Ω</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>
+      The arithmetic rows are the ones that matter. An 80% win rate at 1:3 is not
+      a good strategy — it is a claim that, if true, would compound a small
+      account into a fortune inside a year and would therefore never be sold as a
+      PDF. The claim refutes itself. This test takes thirty seconds and should be
+      applied to every strategy anyone ever offers you.
+    </p>
+
+    <div class="finding">
+      <h5>A note on the ICT source specifically</h5>
+      <p>
+        The ICT Asian range document is a different animal from the Goldmine ones.
+        It sells an ebook, but the strategy content is specific, internally
+        consistent, honest about failure modes — it explicitly says price does not
+        sweep the range every day and that you should sit out — and it lists its
+        own common mistakes. That is materially better epistemic conduct than the
+        others. It still supplies no evidence of profitability, and no such
+        evidence exists in the literature. Good faith is not a substitute for a
+        track record. Tick: <span class="no">⌀</span>
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<section class="wp" id="d">
+  <div class="wp-ref">D<span>Restated model</span></div>
+  <div class="wp-body">
+    <h2>What survives, restated as a testable system</h2>
+
+    <p class="lede">
+      An adverse opinion on the strategy as taught is not the end of the exercise.
+      This is the version that carries only the rules with evidence behind them —
+      offered as the hypothesis worth testing next, not as a recommendation.
+    </p>
+
+    <div class="tw">
+      <table>
+        <caption>Restated configuration, with the reason for each choice</caption>
+        <thead><tr><th>Component</th><th>Setting</th><th>Because</th></tr></thead>
+        <tbody>
+          <tr><td>Entry model</td><td class="ok">BREAK_DIRECT</td><td>C-2: the profitable published version enters on the break. Retest and confirmation both tested worse.</td></tr>
+          <tr><td>Break definition</td><td>Body close beyond boundary</td><td>The one rule all six sources agree on, and it costs nothing to keep.</td></tr>
+          <tr><td>Direction</td><td>Range-candle colour</td><td>C-2: mechanical, pre-committed, cannot be rationalised after the fact.</td></tr>
+          <tr><td>Selection filter</td><td>Relative volume or ATR percentile</td><td>C-2.1: the only filter that measurably improved anything.</td></tr>
+          <tr><td>Exit</td><td>Session-close, stop only</td><td>C-2: fixed R targets convert an unknown edge into a payout-driven coin flip. Time exits let winners run.</td></tr>
+          <tr><td>Stop</td><td>Range boundary, ATR-clamped</td><td>Structural, but bounded so an unusually tight range cannot produce a stop the spread eats.</td></tr>
+          <tr><td>Bias filter</td><td>Off initially, then tested</td><td>C-1: adding it made things worse in equities. Test it on your instrument rather than assuming either way.</td></tr>
+          <tr><td>Risk per trade</td><td>0.5%</td><td>A system under test is not a system with an edge. Size for the possibility that C-1 applies to you too.</td></tr>
+          <tr><td>Sweep model</td><td>Tested separately, never blended</td><td>C-3: it is a different hypothesis. Blending two models makes both untestable.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="finding green">
+      <h5>The one addition not in any source</h5>
+      <p>
+        Cost, as a first-class parameter. The restated model refuses any entry
+        where the spread exceeds a set percentage of the stop distance, and the
+        journal records the spread on every fill so the forensics tool can find
+        the exact cost level at which the edge dies. If that number is close to
+        what you actually pay, you do not have a strategy — you have a rebate
+        scheme running in the wrong direction.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<section class="wp" id="e">
+  <div class="wp-ref">E<span>Evidence standard</span></div>
+  <div class="wp-body">
+    <h2>The standard a backtest has to meet before it means anything</h2>
+
+    <p class="lede">
+      These are the gates the accompanying forensics tool enforces. They are not
+      optional rigour. Each one corresponds to a specific way the sources in this
+      file went wrong.
+    </p>
+
+    <h4>E-1 · Sessions, not trades</h4>
+    <p>
+      Two trades on the same morning share the same news, the same regime, the
+      same range. They are one observation, not two. Sample size is the number of
+      distinct sessions. A thousand trades over sixty days is sixty pieces of
+      evidence. Every confidence interval in the forensics tool is computed by
+      resampling whole sessions.
+    </p>
+
+    <h4>E-2 · Concentration</h4>
+    <p>
+      Compute the share of gross profit produced by the best two sessions. If it
+      exceeds half, you have two lucky days wearing a strategy costume. This is
+      the eleven-Mondays test from C-1.3, generalised.
+    </p>
+
+    <h4>E-3 · Cost sweep, not cost assumption</h4>
+    <p>
+      Do not test at one cost level. Sweep the round-trip cost upward until
+      expectancy crosses zero and report that number. Then compare it to what you
+      actually pay. Margin, not sign, is the answer.
+    </p>
+
+    <h4>E-4 · Held-out data, decided in advance</h4>
+    <p>
+      Split by session, chronologically, before you look. The held-out slice is
+      spent once. If you tune after seeing it, it is no longer held out and you
+      have to find a new period.
+    </p>
+
+    <h4>E-5 · Pay for what you searched</h4>
+    <p>
+      Every parameter set, symbol, timeframe and entry model you tried is a
+      lottery ticket. Testing twelve variants at the 5% level means you should
+      expect roughly one to look significant by chance. The forensics tool applies
+      a Šidák correction: at twelve variants, the bar moves from p &lt; 0.05 to
+      p &lt; 0.0043. Count your variants honestly, including the ones you
+      abandoned.
+    </p>
+
+    <div class="pull">
+      A failed gate is not a prompt to keep tuning. Tuning until the gate passes
+      is the mechanism by which a coin flip becomes a backtest.
+    </div>
+
+    <h4>E-6 · Kill criteria, written before the test</h4>
+    <p>
+      Decide now what result makes you stop. Suggested: fewer than 100 sessions,
+      or a lower confidence bound at or below zero, or an edge that dies below
+      your real cost, or a failed out-of-sample slice. Write it down before you
+      run anything, because the version of you looking at a promising equity curve
+      is not the person you want setting this threshold.
+    </p>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<section class="wp" id="f">
+  <div class="wp-ref">F<span>Implementation</span></div>
+  <div class="wp-body">
+    <h2>Running it</h2>
+
+    <h3>F-1 · The Expert Advisor</h3>
+
+    <p>
+      <code>GODMODE_SessionRange_Forge.mq5</code> implements the full state
+      machine from B-3 with all five entry models selectable, so the same code
+      produces the taught version and the restated version and the difference
+      between them is one dropdown. That is deliberate: the comparison is the
+      experiment.
+    </p>
+
+    <p>Notable implementation details, since they are where this kind of code usually breaks:</p>
+    <ul class="body">
+      <li><strong>Clock.</strong> Broker time is converted to New York time with
+        the actual US daylight-saving rule — second Sunday of March, first Sunday
+        of November. Sessions anchored to New York shift against a fixed-offset
+        broker twice a year, and a backtest that ignores this silently trades the
+        wrong window for several months of every year.</li>
+      <li><strong>Midnight-crossing ranges.</strong> The Asian preset's 19:00–00:00
+        window belongs to the following trade day. Handled explicitly.</li>
+      <li><strong>No lookahead.</strong> Every signal reads closed bars only. New-bar
+        gating on both the range and entry timeframes.</li>
+      <li><strong>Rounding down.</strong> Position sizing floors to the lot step and
+        refuses the trade if the floor is below the broker minimum, rather than
+        rounding up and quietly over-risking.</li>
+      <li><strong>Optimiser guard.</strong> <code>OnTester</code> returns zero below
+        100 trades and scales by the square root of trade count, so the optimiser
+        cannot rank a nine-trade fluke at the top.</li>
+    </ul>
+
+    <p>Install path and setup:</p>
+    <pre><span class="c">// MT5 → File → Open Data Folder → MQL5/Experts/</span>
+GODMODE_SessionRange_Forge.mq5
+<span class="c">// Compile in MetaEditor (F7), then attach to a chart.</span>
+
+<span class="c">// First run, do this exactly:</span>
+InpPreset            = PRESET_NY_ORB_0930   <span class="c">// or PRESET_ASIAN_ICT</span>
+InpModel             = MODEL_BREAK_DIRECT   <span class="c">// the restated version</span>
+InpBrokerGMTOffset   = 2.0                  <span class="c">// YOUR broker's winter offset — check it</span>
+InpRiskPercent       = 0.5
+InpWriteJournal      = true
+InpRunTag            = "orb_direct_v1"      <span class="c">// change this every run</span>
+
+<span class="c">// Strategy Tester: "Every tick based on real ticks", 2+ years,</span>
+<span class="c">// and set the spread to REAL, never to a fixed low value.</span></pre>
+
+    <p>
+      On the M1 MacBook: MetaTrader 5 has a native macOS build and the Strategy
+      Tester works, though multi-core optimisation is limited. For long
+      optimisation runs the Windows-on-ARM VM is the better host. Single backtests
+      are fine natively.
+    </p>
+
+    <h3>F-2 · The forensics engine</h3>
+
+    <p>
+      <code>srf_forensics.py</code> reads the journal and runs the E-series gates.
+      It has a <code>--demo</code> mode that generates a synthetic 2:1 coin flip
+      with realistic session clustering; run that first, because watching the tool
+      correctly refuse to certify a known-worthless process is how you learn to
+      trust it on a real one.
+    </p>
+
+    <pre>python3 srf_forensics.py --demo --variants 12 --plots demo.png
+python3 srf_forensics.py journal.csv --target-r 2.0 --variants 12 --plots out.png</pre>
+
+    <div class="finding amber">
+      <h5>One correction this tool makes that the source article does not</h5>
+      <p>
+        Comparing raw mean favourable excursion to raw mean adverse excursion is
+        confounded: a winner's favourable excursion is truncated at the take
+        profit and a loser's adverse excursion is truncated at the stop, so the
+        exit rule manufactures part of the asymmetry. The tool therefore reports
+        the two quantities that are free to vary — favourable excursion
+        <em>given a loss</em>, and adverse excursion <em>given a win</em> — each
+        as a fraction of its own ceiling. When both sit near half their ceiling,
+        the path is wandering between two barriers, which is what a directionless
+        entry looks like. It is reported as a diagnostic rather than a pass/fail
+        gate, because the clean version of the test is directionally informative
+        but not sharp enough to hang a verdict on.
+      </p>
+    </div>
+
+    <h3>F-3 · Order of operations</h3>
+
+    <ol class="body">
+      <li>Run <code>--demo</code>. Read the output until the gates make sense.</li>
+      <li>Backtest <code>MODEL_BREAK_DIRECT</code> on one instrument, two years,
+        real spread. One instrument. Resist the sweep.</li>
+      <li>Run the forensics with <code>--variants 1</code>. Record every gate.</li>
+      <li>Now run <code>MODEL_RETEST</code> on identical settings. You are
+        testing finding C-1.1 on your own market. If the retest version is worse,
+        you have replicated the central result and you can stop believing the
+        videos on your own evidence rather than on mine.</li>
+      <li>Only then vary anything else — and increment <code>--variants</code>
+        every single time you do.</li>
+      <li>Forward-test on demo for a minimum of forty sessions before any live
+        capital. The forward test is the only sample nobody tuned on.</li>
+    </ol>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<section class="wp" id="g">
+  <div class="wp-ref">G<span>Opinion</span></div>
+  <div class="wp-body">
+    <h2>Opinion</h2>
+
+    <div class="opinion">
+      <h3>Adverse opinion on the strategy as taught</h3>
+      <p>
+        In my judgement, the session-range breakout strategy as specified across
+        these six sources — mark the range, wait for the break, wait for the
+        retest, enter on a confirmation candle, target a fixed 2:1 — does not
+        support the assertion of positive expectancy net of costs. Direct
+        mechanical testing across 165,336 trades finds a win rate tracking the
+        payout-implied break-even at every target size, and the confirmation rule
+        promoted most heavily by the sources measurably reduces performance.
+      </p>
+
+      <h3>Basis for the adverse opinion</h3>
+      <ul class="body">
+        <li>The tested win rate sits at or below break-even before costs, in every
+          configuration, including every filter the sources recommend.</li>
+        <li>Excursions after entry are close to symmetric, indicating the entry
+          carries no directional information.</li>
+        <li>The one filter that produced a real, statistically significant
+          improvement did not survive a five-basis-point round trip.</li>
+        <li>Two sources build opposite systems on the same level, and the
+          microstructure evidence explains why both can show winning examples
+          without either having an edge.</li>
+        <li>The commercial sources make win-rate claims that fail an elementary
+          expectancy check by two to three orders of magnitude.</li>
+      </ul>
+
+      <h3>Qualified opinion on the restated model</h3>
+      <p>
+        The restated model in section D — break-direct entry, mechanical
+        direction, volume-based selection, time-based exit, explicit cost gate —
+        is consistent with the published research and with the parts of the
+        backtest evidence that survived. I express no opinion on whether it is
+        profitable on your instrument, at your costs, in the current regime. That
+        is a question your own out-of-sample test answers, and section E specifies
+        what would count as an answer.
+      </p>
+
+      <h3>Emphasis of matter</h3>
+      <p>
+        Nothing here is financial advice, and I am not a financial adviser. Two
+        studies using complete exchange records found that 97% of persistent
+        retail day traders lost money and fewer than 1% were reliably profitable
+        after fees. That is the population you would be joining. The best outcome
+        available from this file may well be the tooling and the evidence
+        standard, applied to something else — the forensics gates in section E are
+        the transferable asset here, and they work on any strategy, including the
+        next one somebody sells you.
+      </p>
+
+      <div class="sig">
+        Prepared for: B. E. Mohlathe · File SRF-2026/01 · 9 August 2026<br>
+        Sources examined: 6 documents, 4 video rule-sets, 5 academic papers<br>
+        Deliverables: GODMODE_SessionRange_Forge.mq5 · srf_forensics.py · this file<br>
+        Opinion: adverse on the taught model; qualified on the restated model,
+        subject to independent out-of-sample verification.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="colophon">
+  <strong>Evidence relied upon.</strong>
+  Zarattini, Barbon &amp; Aziz, <em>A Profitable Day Trading Strategy For The U.S.
+  Equity Market</em>, Swiss Finance Institute Research Paper 24-98 (2024).
+  Zarattini &amp; Aziz, <em>Can Day Trading Really Be Profitable?</em> (2023).
+  Osler, <em>Currency Orders and Exchange Rate Dynamics</em>, Journal of Finance
+  58(5) (2003); <em>Stop-Loss Orders and Price Cascades in Currency Markets</em>,
+  Journal of International Money and Finance (2005).
+  Chague, De-Losso &amp; Giovannetti, <em>Day Trading for a Living?</em> (2020).
+  Barber, Lee, Liu &amp; Odean, Taiwan Stock Exchange day-trader studies
+  (1992–2006 records). Plus the six uploaded sources, cited in place.
+  <br><br>
+  <strong>Standing limitation.</strong> This file measures strategies. It does not
+  predict them. Every number above describes what already happened to somebody
+  else's money.
+</div>
+
+</div>
+</body>
+</html>

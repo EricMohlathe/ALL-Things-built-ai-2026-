@@ -1,0 +1,2 @@
+run_tag,symbol,preset,model,ticket,direction,ny_day,entry_time_ny,exit_time_ny,entry_price,exit_price,sl_price,tp_price,risk_points,r_realized,mfe_r,mae_r,spread_pts_entry,range_high,range_low,range_pts,atr_pts,range_atr_ratio,bias,lots,profit_ccy,balance_after,bars_held,exit_reason
+manual_v1,XAUUSD,NY_ORB_0930,BreakDirect,1,LONG,2026-01-05,2026-01-05 09:36:00,2026-01-05 10:14:00,2651.20,2653.70,2649.70,2653.70,150.0,2.0000,2.0000,0.3200,18.0,2651.05,2649.70,135.0,220.0,0.614,OFF,0.10,25.00,10025.00,38,take_profit
