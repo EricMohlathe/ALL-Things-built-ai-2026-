@@ -1,0 +1,16 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "godmode-trader",
+  "description": "The GODMODE multi-asset trader skill pack for Claude",
+  "owner": {
+    "name": "GODMODE Trader contributors"
+  },
+  "plugins": [
+    {
+      "name": "godmode-trader",
+      "description": "Eleven Claude skills for forex, commodities, indices and crypto: a chart scanner, a news monitor, an economic calendar with news blackouts, an entry timer and an exit planner (long and short, every session), a time machine that replays 10,000 sessions, a budget manager in lots and contracts, a risk manager with leverage, margin and currency exposure, an order executor for OANDA, Alpaca, MT5, cTrader and IBKR (paper by default, never without your yes), price alerts with a world market clock, and a COT positioning tracker.",
+      "source": "./",
+      "category": "productivity"
+    }
+  ]
+}

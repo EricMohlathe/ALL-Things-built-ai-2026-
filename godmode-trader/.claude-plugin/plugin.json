@@ -1,0 +1,23 @@
+{
+  "name": "godmode-trader",
+  "description": "11 Claude skills for trading forex, commodities, indices and crypto: scan every session, track the news and the economic calendar, time every entry and exit long or short, and replay every outcome before you risk a cent.",
+  "version": "3.0.0",
+  "author": {
+    "name": "GODMODE Trader contributors"
+  },
+  "license": "MIT",
+  "keywords": [
+    "claude-code",
+    "claude-skills",
+    "forex",
+    "commodities",
+    "indices",
+    "crypto",
+    "day-trading",
+    "session-breakout",
+    "position-sizing",
+    "risk-management",
+    "paper-trading"
+  ],
+  "skills": "./"
+}
