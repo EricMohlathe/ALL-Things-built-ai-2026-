@@ -25,10 +25,21 @@ class TimeZones(unittest.TestCase):
         for z in tc.ZONES:
             t = UTC(2025, 1, 1)
             while t < UTC(2029, 1, 1):
-                if tc.offset_minutes(z, t) != zoneinfo_offset(z, t):
+                if z == "FX/NewYork_Close":          # not an IANA zone: New York + 7 hours, always
+                    want = zoneinfo_offset("America/New_York", t) + 420
+                else:
+                    want = zoneinfo_offset(z, t)
+                if tc.offset_minutes(z, t) != want:
                     bad.append((z, t))
                 t += datetime.timedelta(hours=3)
         self.assertEqual(bad, [])
+
+    def test_mt5_server_time_is_new_york_plus_seven(self):
+        self.assertEqual(tc.zone_name("MT5"), "FX/NewYork_Close")
+        self.assertEqual(tc.offset_minutes("MT5", UTC(2026, 1, 15)), 120)
+        self.assertEqual(tc.offset_minutes("MT5", UTC(2026, 3, 8, 7, 0)), 180)   # with New York, not Europe
+        self.assertEqual(tc.offset_minutes("MT5", UTC(2026, 3, 8, 6, 59)), 120)
+        self.assertEqual(tc.offset_minutes("Europe/Prague", UTC(2026, 7, 1)), 120)
 
     def test_dst_switch_moments_2026(self):
         # US: 2026-03-08 07:00 UTC and 2026-11-01 06:00 UTC; EU: last Sundays 01:00 UTC

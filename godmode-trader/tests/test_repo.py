@@ -8,11 +8,12 @@ import unittest
 from _load import ROOT
 
 SKILLS = ["trader-scanner", "trader-news", "trader-calendar", "trader-entry", "trader-exit", "trader-timemachine",
-          "trader-risk", "trader-budget", "trader-broker", "trader-alerts", "trader-cot"]
+          "trader-risk", "trader-budget", "trader-broker", "trader-alerts", "trader-cot", "trader-data", "trader-lab"]
 TOOLS = {"trader-scanner": "scan.py", "trader-news": "news.py", "trader-calendar": "econ.py",
          "trader-entry": "entry.py", "trader-exit": "exit.py", "trader-timemachine": "timemachine.py",
          "trader-risk": "check.py", "trader-budget": "size.py", "trader-broker": "ticket.py",
-         "trader-alerts": "alerts.py", "trader-cot": "cot.py", "trader-core": "tradercore.py"}
+         "trader-alerts": "alerts.py", "trader-cot": "cot.py", "trader-core": "tradercore.py",
+         "trader-data": "data.py", "trader-lab": "lab.py"}
 ORDER_PATH = ["trader-scanner", "trader-entry", "trader-exit", "trader-timemachine", "trader-budget", "trader-risk",
               "trader-broker", "trader-alerts"]
 EQUITY_ONLY = ["trader-analyst", "trader-pelosi", "place_stock_order", "SEC_USER_AGENT", "nasdaqlisted"]
@@ -34,7 +35,7 @@ def text_files():
 
 
 class Repo(unittest.TestCase):
-    def test_eleven_skills_and_the_core(self):
+    def test_skills_and_the_core(self):
         found = sorted(d for d in os.listdir(ROOT) if os.path.isfile(os.path.join(ROOT, d, "SKILL.md")))
         self.assertEqual(found, sorted(SKILLS))
         self.assertFalse(os.path.exists(os.path.join(ROOT, "trader-core", "SKILL.md")))   # a library, not a skill

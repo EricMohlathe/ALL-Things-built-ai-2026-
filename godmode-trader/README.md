@@ -69,6 +69,8 @@ Set `account_currency`, `balance`, `timezone`, `broker` and your limits in it.
 | `/trader-broker` | Order Executor | The ticket and the exact call for OANDA, Alpaca (crypto), MT5, cTrader or IBKR, never without your yes. |
 | `/trader-alerts` | Price Alerts | The world market clock, quotes, and alerts on levels, stops, targets, session opens and news. |
 | `/trader-cot` | COT Tracker | Where the big speculators stand in each market's futures, and which trades are crowded. |
+| `/trader-data` | Market Data | Years of free history into a local cache: Dukascopy M1 and ticks, Binance with taker delta, HistData, Yahoo, Stooq, FRED macro. |
+| `/trader-lab` | Setup Lab | Every GODMODE setup (GM01-GM26) and the claude-trader strategies backtested one at a time, ranked with multiple-testing correction, walk-forward, Monte Carlo, FTMO odds. |
 
 ## What it trades
 
@@ -252,6 +254,8 @@ trader-risk/        SKILL.md, check.py
 trader-broker/      SKILL.md, ticket.py, claude_desktop_config.example.json
 trader-alerts/      SKILL.md, alerts.py, alerts.example.json
 trader-cot/         SKILL.md, cot.py
+trader-data/        SKILL.md, data.py: the history cache (trader-core/history.py, bars.py)
+trader-lab/         SKILL.md, lab.py, setups.py: the Setup Lab (trader-core/engine.py, stats.py, prop.py)
 tests/              unittest suite + synthetic offline fixtures
 ```
 

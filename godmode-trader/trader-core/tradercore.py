@@ -108,6 +108,11 @@ ZONES = {
     "Europe/Zurich": (60, "eu"),
     "Europe/Amsterdam": (60, "eu"),
     "Europe/Madrid": (60, "eu"),
+    "Europe/Prague": (60, "eu"),
+    "Europe/Athens": (120, "eu"),
+    "Europe/Helsinki": (120, "eu"),
+    "Asia/Jerusalem": (120, "il"),
+    "FX/NewYork_Close": (120, "usfx"),       # most MT5 servers: midnight = 17:00 New York, UTC+2 / +3
     "Africa/Johannesburg": (120, None),
     "Africa/Lagos": (60, None),
     "Africa/Nairobi": (180, None),
@@ -134,13 +139,17 @@ ZONE_ALIASES = {
     "JST": "Asia/Tokyo", "TOKYO": "Asia/Tokyo",
     "AEST": "Australia/Sydney", "AEDT": "Australia/Sydney", "SYDNEY": "Australia/Sydney",
     "NZST": "Pacific/Auckland", "NZDT": "Pacific/Auckland", "AUCKLAND": "Pacific/Auckland",
+    "PRAGUE": "Europe/Prague", "FTMO": "Europe/Prague", "ATHENS": "Europe/Athens", "EET": "Europe/Athens",
+    "EEST": "Europe/Athens", "MT5": "FX/NewYork_Close", "MT5_SERVER": "FX/NewYork_Close",
+    "NY_CLOSE": "FX/NewYork_Close", "SERVER": "FX/NewYork_Close",
 }
 ZONE_LABEL = {
     "UTC": "UTC", "America/New_York": "New York", "America/Chicago": "Chicago", "Europe/London": "London",
     "Europe/Berlin": "Frankfurt", "Europe/Paris": "Paris", "Europe/Zurich": "Zurich",
     "Africa/Johannesburg": "Johannesburg", "Asia/Tokyo": "Tokyo", "Asia/Hong_Kong": "Hong Kong",
     "Asia/Singapore": "Singapore", "Australia/Sydney": "Sydney", "Pacific/Auckland": "Auckland",
-    "Asia/Dubai": "Dubai", "Asia/Kolkata": "Mumbai", "Asia/Shanghai": "Shanghai",
+    "Asia/Dubai": "Dubai", "Asia/Kolkata": "Mumbai", "Asia/Shanghai": "Shanghai", "Europe/Prague": "Prague",
+    "Europe/Athens": "Athens", "FX/NewYork_Close": "MT5 server (New York close)",
 }
 
 
@@ -202,6 +211,11 @@ def _dst_window(rule, year, std):
         return at(_nth_weekday(year, 10, 6, 1), 2, std), at(_nth_weekday(year, 4, 6, 1), 3, std + 60)
     if rule == "nz":   # 2:00 standard, last Sunday of September; ends 3:00 daylight, 1st Sunday of April
         return at(_nth_weekday(year, 9, 6, -1), 2, std), at(_nth_weekday(year, 4, 6, 1), 3, std + 60)
+    if rule == "usfx":  # switches with New York: 2:00 NY on the US dates, whatever the zone's own offset
+        return at(_nth_weekday(year, 3, 6, 2), 2, -300), at(_nth_weekday(year, 11, 6, 1), 2, -240)
+    if rule == "il":   # Israel: Friday before the last Sunday of March 2:00, last Sunday of October 2:00
+        return (at(_nth_weekday(year, 3, 6, -1) - datetime.timedelta(days=2), 2, std),
+                at(_nth_weekday(year, 10, 6, -1), 2, std + 60))
     raise TraderError("unknown DST rule %r" % rule)
 
 
