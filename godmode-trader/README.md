@@ -71,6 +71,13 @@ Set `account_currency`, `balance`, `timezone`, `broker` and your limits in it.
 | `/trader-cot` | COT Tracker | Where the big speculators stand in each market's futures, and which trades are crowded. |
 | `/trader-data` | Market Data | Years of free history into a local cache: Dukascopy M1 and ticks, Binance with taker delta, HistData, Yahoo, Stooq, FRED macro. |
 | `/trader-lab` | Setup Lab | Every GODMODE setup (GM01-GM26) and the claude-trader strategies backtested one at a time, ranked with multiple-testing correction, walk-forward, Monte Carlo, FTMO odds. |
+| `/trader-structure` | Market Structure | The SMC / ICT read on several timeframes: BOS, CHoCH, FVGs, order blocks, liquidity, premium / discount, OTE, key levels, killzones, labelled order flow. |
+| `/trader-propfirm` | Prop Firm Guardian | FTMO-style rules as numbers: daily and overall floors, room, the largest safe risk, an order check, pass odds by risk size. |
+| `/trader-macro` | Macro Backdrop | CPI, core PCE, jobs, the Fed, yields, the curve, real yields, the dollar compass, rate differentials, Fear & Greed, central-bank news. |
+| `/trader-dex` | DEX Research | DEX Screener snapshots with pool-identity checks, WATCH / REVIEW / SKIP labels, analyst and reviewer prompts. Paper mode only. |
+| `/trader-journal` | Trading Journal | Decisions before outcomes, results in R after costs, a dashboard, an HTML page and a lessons file. |
+| `/trader-mt5` | MetaTrader 5 | The terminal's account and history into the pack, one approved order out, and the MT5 Agent Toolkit for building EAs. |
+| `/trader-desk` | Desk Brief | Every skill's latest output for your markets on one page, ideas ranked by tested evidence. |
 
 ## What it trades
 
@@ -256,6 +263,13 @@ trader-alerts/      SKILL.md, alerts.py, alerts.example.json
 trader-cot/         SKILL.md, cot.py
 trader-data/        SKILL.md, data.py: the history cache (trader-core/history.py, bars.py)
 trader-lab/         SKILL.md, lab.py, setups.py: the Setup Lab (trader-core/engine.py, stats.py, prop.py)
+trader-structure/   SKILL.md, structure.py
+trader-propfirm/    SKILL.md, propfirm.py
+trader-macro/       SKILL.md, macro.py
+trader-dex/         SKILL.md, dex.py
+trader-journal/     SKILL.md, journal.py
+trader-mt5/         SKILL.md, bridge.py, toolkit/ (the MT5 Agent Toolkit, MIT)
+trader-desk/        SKILL.md, desk.py
 tests/              unittest suite + synthetic offline fixtures
 ```
 

@@ -166,7 +166,8 @@ def save(r):
     summ["%s:%s:%s" % (r["setup"], r["symbol"], r["tf"])] = {
         "setup": r["setup"], "symbol": r["symbol"], "tf": r["tf"], "family": r["family"], "span": r["span"],
         "trades": m["trades"], "win_rate": m.get("win_rate"), "expectancy_r": m.get("expectancy_r"),
-        "profit_factor": m.get("profit_factor"), "p_value": m.get("p_value"), "max_dd_r": m.get("max_dd_r"),
+        "profit_factor": m.get("profit_factor"), "p_value": m.get("p_value"), "p_adjusted_in_run": m.get("p_adjusted"),
+        "max_dd_r": m.get("max_dd_r"),
         "verdict": m["verdict"], "params": r["params"], "saved": tc.iso(tc.utc_now())}
     tc.write_json(summ_path, summ)
     return path
@@ -275,13 +276,13 @@ def cmd_rank(a, cfg):
             if "skipped" in r:
                 skipped.append(r)
                 continue
-            if a.save:
-                save(r)
             rows.append(r)
     rows.sort(key=lambda r: -stats.score(r["metrics"], a.min_trades))
     adj = stats.holm({i: r["metrics"].get("p_value") for i, r in enumerate(rows) if r["metrics"]["trades"]})
     for i, r in enumerate(rows):
         r["metrics"]["p_adjusted"] = adj.get(i)
+        if a.save:
+            save(r)
     if a.json:
         print(json.dumps({"ranked": [public(r) for r in rows], "not_applicable": skipped}, indent=2, default=str))
         return 0

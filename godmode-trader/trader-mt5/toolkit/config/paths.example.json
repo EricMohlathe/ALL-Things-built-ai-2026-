@@ -1,0 +1,9 @@
+{
+  "_comment": "Copy this file to paths.json and edit for your machine. paths.json is gitignored because it is machine specific.",
+
+  "metaEditor": "C:\\Program Files\\MetaTrader 5\\MetaEditor64.exe",
+  "terminal": "C:\\Program Files\\MetaTrader 5\\terminal64.exe",
+
+  "_includePathComment": "MQL5 folder that contains Include\\. MetaEditor resolves <Trade\\Trade.mqh> against its own data folder, not against your source folder, so this must be set explicitly. Find it in MetaTrader: File, Open Data Folder.",
+  "includePath": "C:\\Users\\YOURNAME\\AppData\\Roaming\\MetaQuotes\\Terminal\\YOURHASH\\MQL5"
+}

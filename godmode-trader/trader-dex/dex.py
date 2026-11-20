@@ -176,7 +176,7 @@ def cmd_scan(a, cfg):
     rows, errors = [], []
     for term in a.terms or ["SOL/USDC", "ETH/USDC"]:
         try:
-            doc = get_json(SEARCH % urllib.parse.quote(term))
+            doc = get_json(SEARCH % urllib.parse.quote(term, safe=""))
         except tc.TraderError as e:
             errors.append("%s: %s" % (term, e))
             continue
@@ -203,7 +203,7 @@ def cmd_scan(a, cfg):
 
 def cmd_pair(a, cfg):
     now = tc.utc_now()
-    doc = get_json(PAIR % (urllib.parse.quote(a.chain), urllib.parse.quote(a.address)))
+    doc = get_json(PAIR % (urllib.parse.quote(a.chain, safe=""), urllib.parse.quote(a.address, safe="")))
     pairs = doc.get("pairs") or ([doc["pair"]] if doc.get("pair") else [])
     if not pairs:
         raise tc.TraderError("no pool %s on %s" % (a.address, a.chain))

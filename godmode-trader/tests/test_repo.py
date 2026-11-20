@@ -8,14 +8,18 @@ import unittest
 from _load import ROOT
 
 SKILLS = ["trader-scanner", "trader-news", "trader-calendar", "trader-entry", "trader-exit", "trader-timemachine",
-          "trader-risk", "trader-budget", "trader-broker", "trader-alerts", "trader-cot", "trader-data", "trader-lab"]
+          "trader-risk", "trader-budget", "trader-broker", "trader-alerts", "trader-cot", "trader-data", "trader-lab",
+          "trader-structure", "trader-propfirm", "trader-macro", "trader-dex", "trader-journal", "trader-mt5",
+          "trader-desk"]
 TOOLS = {"trader-scanner": "scan.py", "trader-news": "news.py", "trader-calendar": "econ.py",
          "trader-entry": "entry.py", "trader-exit": "exit.py", "trader-timemachine": "timemachine.py",
          "trader-risk": "check.py", "trader-budget": "size.py", "trader-broker": "ticket.py",
          "trader-alerts": "alerts.py", "trader-cot": "cot.py", "trader-core": "tradercore.py",
-         "trader-data": "data.py", "trader-lab": "lab.py"}
+         "trader-data": "data.py", "trader-lab": "lab.py", "trader-structure": "structure.py",
+         "trader-propfirm": "propfirm.py", "trader-macro": "macro.py", "trader-dex": "dex.py",
+         "trader-journal": "journal.py", "trader-mt5": "bridge.py", "trader-desk": "desk.py"}
 ORDER_PATH = ["trader-scanner", "trader-entry", "trader-exit", "trader-timemachine", "trader-budget", "trader-risk",
-              "trader-broker", "trader-alerts"]
+              "trader-broker", "trader-alerts", "trader-mt5"]
 EQUITY_ONLY = ["trader-analyst", "trader-pelosi", "place_stock_order", "SEC_USER_AGENT", "nasdaqlisted"]
 
 
