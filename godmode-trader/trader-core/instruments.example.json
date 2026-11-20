@@ -1,0 +1,11 @@
+{
+  "instruments": {
+    "XAUUSD": {"broker_symbol": "XAUUSD.m", "contract": 100, "spread": 0.20},
+    "US500": {"feed": "ES=F", "contract": 1, "lot_step": 0.01},
+    "GBPJPY": {"session": "tokyo"},
+    "USOUSD": {"name": "WTI (my broker's name)", "class": "commodity", "kind": "cfd", "feed": "CL=F",
+               "base": "WTI", "quote": "USD", "tick": 0.001, "pip": 0.01, "pip_label": "ticks",
+               "contract": 1000, "lot_step": 0.01, "session": "nymex", "leverage": 10, "spread": 0.03,
+               "currencies": ["USD"]}
+  }
+}

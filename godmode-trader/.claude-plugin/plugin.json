@@ -1,0 +1,33 @@
+{
+  "name": "godmode-trader",
+  "description": "20 Claude skills, 7 desk agents and an approval gate for forex, commodities, indices and crypto: years of free history, a Setup Lab that tests all 26 GODMODE setups with honest statistics, SMC / ICT structure and order flow, macro, news and the calendar, entries and exits long or short, prop-firm rules, a journal, DEX research, MetaTrader 5, and a desk brief. Paper by default, never without your yes.",
+  "version": "4.0.0",
+  "author": {
+    "name": "GODMODE Trader contributors"
+  },
+  "license": "MIT",
+  "keywords": [
+    "backtesting",
+    "claude-code",
+    "claude-skills",
+    "commodities",
+    "crypto",
+    "day-trading",
+    "forex",
+    "ftmo",
+    "ict",
+    "indices",
+    "journal",
+    "macro",
+    "metatrader5",
+    "order-flow",
+    "paper-trading",
+    "position-sizing",
+    "prop-firm",
+    "risk-management",
+    "session-breakout",
+    "smc",
+    "walk-forward"
+  ],
+  "skills": "./"
+}

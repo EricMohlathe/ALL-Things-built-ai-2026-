@@ -1,0 +1,17 @@
+{
+  "description": "GODMODE Trader approval gate: an MCP tool that can open a position is denied unless it matches an order trader-risk passed today and the user approved with an explicit yes; a match still asks.",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "mcp__.*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/approval_gate.py\"",
+            "timeout": 15
+          }
+        ]
+      }
+    ]
+  }
+}

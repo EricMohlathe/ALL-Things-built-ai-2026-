@@ -1,0 +1,16 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "godmode-trader",
+  "description": "The GODMODE multi-asset trader skill pack for Claude",
+  "owner": {
+    "name": "GODMODE Trader contributors"
+  },
+  "plugins": [
+    {
+      "name": "godmode-trader",
+      "description": "Twenty Claude skills, seven agents and an approval gate for forex, commodities, indices and crypto: market data, a Setup Lab for the 26 GODMODE setups, SMC / ICT structure, macro, news and calendar, entry and exit timing, a time machine, sizing, risk, prop-firm guardian, journal, DEX research, MetaTrader 5 and a desk brief. Paper by default, never without your yes.",
+      "source": "./",
+      "category": "productivity"
+    }
+  ]
+}

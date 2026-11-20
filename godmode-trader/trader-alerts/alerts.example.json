@@ -1,0 +1,11 @@
+{
+  "rules": [
+    {"id": "london-open", "type": "session_open", "session": "london"},
+    {"id": "ny-open", "type": "session_open", "session": "ny"},
+    {"id": "eurusd-plan-stop", "symbol": "EURUSD", "type": "below", "price": 1.1616, "note": "plan stop (long)", "date": "2026-11-16"},
+    {"id": "eurusd-plan-target", "symbol": "EURUSD", "type": "above", "price": 1.16535, "note": "plan target (long)", "date": "2026-11-16"},
+    {"id": "eurusd-flat-by", "symbol": "EURUSD", "type": "time", "at": "16:55", "tz": "Europe/London", "label": "flat by: close EURUSD long", "date": "2026-11-16"},
+    {"id": "xauusd-move-1", "symbol": "XAUUSD", "type": "pct_move", "pct": 1},
+    {"id": "news-usd-eur", "type": "event", "currencies": ["USD", "EUR"], "impact": ["High"], "minutes": 15}
+  ]
+}

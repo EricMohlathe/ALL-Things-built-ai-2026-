@@ -1,0 +1,36 @@
+# Build output. Never commit compiled binaries.
+*.ex5
+*.ex4
+
+# MetaEditor compile logs. UTF-16, regenerated on every build.
+# Ignore the contents but keep the folder, scripts write into it.
+logs/*
+!logs/.gitkeep
+*.log
+
+# Strategy Tester output
+reports/*
+!reports/.gitkeep
+Tester/
+*.tkc
+
+# Local machine configuration.
+# Only the *.example.json files are committed. Real config may contain
+# account numbers and local paths.
+config/*.json
+!config/*.example.json
+
+# Secrets. Never commit.
+.env
+*.key
+**/credentials*
+
+# Editor and tool configuration. Personal, not part of the deliverable.
+.obsidian/
+.vscode/
+.idea/
+
+# OS noise
+Thumbs.db
+desktop.ini
+.DS_Store

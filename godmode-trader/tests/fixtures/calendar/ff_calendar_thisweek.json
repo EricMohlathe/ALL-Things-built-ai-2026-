@@ -1,0 +1,106 @@
+[
+ {
+  "title": "Bank Holiday",
+  "country": "JPY",
+  "date": "2026-11-16T00:00:00-05:00",
+  "impact": "Holiday",
+  "forecast": "",
+  "previous": ""
+ },
+ {
+  "title": "ECB President Lagarde Speaks",
+  "country": "EUR",
+  "date": "2026-11-16T05:00:00-05:00",
+  "impact": "High",
+  "forecast": "",
+  "previous": ""
+ },
+ {
+  "title": "Empire State Manufacturing Index",
+  "country": "USD",
+  "date": "2026-11-16T08:30:00-05:00",
+  "impact": "Medium",
+  "forecast": "-2.1",
+  "previous": "-3.4"
+ },
+ {
+  "title": "RBA Monetary Policy Meeting Minutes",
+  "country": "AUD",
+  "date": "2026-11-16T19:30:00-05:00",
+  "impact": "Medium",
+  "forecast": "",
+  "previous": ""
+ },
+ {
+  "title": "CPI y/y",
+  "country": "GBP",
+  "date": "2026-11-18T02:00:00-05:00",
+  "impact": "High",
+  "forecast": "3.4%",
+  "previous": "3.6%"
+ },
+ {
+  "title": "Core Retail Sales m/m",
+  "country": "USD",
+  "date": "2026-11-17T08:30:00-05:00",
+  "impact": "High",
+  "forecast": "0.3%",
+  "previous": "0.2%"
+ },
+ {
+  "title": "Retail Sales m/m",
+  "country": "USD",
+  "date": "2026-11-17T08:30:00-05:00",
+  "impact": "High",
+  "forecast": "0.2%",
+  "previous": "0.4%"
+ },
+ {
+  "title": "FOMC Meeting Minutes",
+  "country": "USD",
+  "date": "2026-11-18T14:00:00-05:00",
+  "impact": "High",
+  "forecast": "",
+  "previous": ""
+ },
+ {
+  "title": "Crude Oil Inventories",
+  "country": "USD",
+  "date": "2026-11-18T10:30:00-05:00",
+  "impact": "Medium",
+  "forecast": "-1.2M",
+  "previous": "2.0M"
+ },
+ {
+  "title": "Unemployment Claims",
+  "country": "USD",
+  "date": "2026-11-19T08:30:00-05:00",
+  "impact": "Medium",
+  "forecast": "221K",
+  "previous": "218K"
+ },
+ {
+  "title": "Flash Manufacturing PMI",
+  "country": "EUR",
+  "date": "2026-11-20T04:00:00-05:00",
+  "impact": "Medium",
+  "forecast": "49.6",
+  "previous": "49.4"
+ },
+ {
+  "title": "Retail Sales m/m",
+  "country": "GBP",
+  "date": "2026-11-20T02:00:00-05:00",
+  "impact": "High",
+  "forecast": "0.3%",
+  "previous": "-0.4%"
+ },
+ {
+  "title": "National Core CPI y/y",
+  "country": "JPY",
+  "date": "2026-11-19T18:30:00-05:00",
+  "impact": "Medium",
+  "forecast": "2.9%",
+  "previous": "3.0%"
+ }
+]

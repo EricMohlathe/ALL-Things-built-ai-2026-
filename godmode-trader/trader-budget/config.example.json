@@ -1,0 +1,36 @@
+{
+  "account_currency": "USD",
+  "balance": 5000,
+  "timezone": "Europe/London",
+  "broker": "paper",
+  "paper": true,
+  "max_loss_per_trade": 50,
+  "max_daily_loss": 150,
+  "max_trades_per_day": 3,
+  "max_consecutive_losses": 3,
+  "max_orders_per_day": 10,
+  "min_reward_risk": 1.0,
+  "require_stop": true,
+  "max_account_leverage": 10,
+  "max_margin_use_pct": 50,
+  "max_currency_exposure_x": 10,
+  "max_position_notional": null,
+  "allowed_classes": ["forex", "commodity", "index", "crypto"],
+  "allow_short": true,
+  "allow_futures": true,
+  "blocked": [],
+  "leverage": {"crypto": 2},
+  "news_blackout_minutes": 30,
+  "news_blackout_impact": ["High"],
+  "entry_cutoff_minutes": 30,
+  "flat_by_minutes": 5,
+  "sessions": {
+    "london": {"range": 30},
+    "us_cash": {"no_entries_before": "09:45", "no_entries_after": "15:30", "flat_by": "15:55"}
+  },
+  "instruments": {
+    "XAUUSD": {"broker_symbol": "XAUUSD"}
+  },
+  "rates": {},
+  "symbol_suffix": ""
+}
