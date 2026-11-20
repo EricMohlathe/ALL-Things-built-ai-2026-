@@ -902,6 +902,7 @@ DEFAULTS = {
     "max_loss_per_trade": 50,          # account currency, at the stop
     "max_daily_loss": 150,
     "max_trades_per_day": 3,
+    "max_consecutive_losses": 3,       # losses in a row today (trader/journal.csv) before entries pause
     "max_orders_per_day": 10,
     "min_reward_risk": 1.0,
     "require_stop": True,

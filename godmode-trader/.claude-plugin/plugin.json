@@ -1,23 +1,33 @@
 {
   "name": "godmode-trader",
-  "description": "11 Claude skills for trading forex, commodities, indices and crypto: scan every session, track the news and the economic calendar, time every entry and exit long or short, and replay every outcome before you risk a cent.",
-  "version": "3.0.0",
+  "description": "20 Claude skills, 7 desk agents and an approval gate for forex, commodities, indices and crypto: years of free history, a Setup Lab that tests all 26 GODMODE setups with honest statistics, SMC / ICT structure and order flow, macro, news and the calendar, entries and exits long or short, prop-firm rules, a journal, DEX research, MetaTrader 5, and a desk brief. Paper by default, never without your yes.",
+  "version": "4.0.0",
   "author": {
     "name": "GODMODE Trader contributors"
   },
   "license": "MIT",
   "keywords": [
+    "backtesting",
     "claude-code",
     "claude-skills",
-    "forex",
     "commodities",
-    "indices",
     "crypto",
     "day-trading",
-    "session-breakout",
+    "forex",
+    "ftmo",
+    "ict",
+    "indices",
+    "journal",
+    "macro",
+    "metatrader5",
+    "order-flow",
+    "paper-trading",
     "position-sizing",
+    "prop-firm",
     "risk-management",
-    "paper-trading"
+    "session-breakout",
+    "smc",
+    "walk-forward"
   ],
   "skills": "./"
 }

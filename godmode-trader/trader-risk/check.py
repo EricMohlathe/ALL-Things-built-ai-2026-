@@ -47,6 +47,11 @@ What blocks an entry (on top):
   exposure    the net exposure to any one currency or asset (EUR, JPY, XAU,
               BTC ...; your account currency is home and left out) over
               max_currency_exposure_x x equity
+  streak      max_consecutive_losses losing results in a row today in your journal
+              (trader/journal.csv): stop for the day and review
+  prop firm   with a challenge tracked (trader/propfirm.json): no room left today, or a
+              loss at the stop (alone, or with the batch so far) over the guardian's
+              largest safe risk
   window      outside the session's entry window (after the opening range, until
               entry_cutoff_minutes before the close), or the session is closed
               (weekend, holiday, the FX week's Sunday-to-Friday hours)
@@ -59,6 +64,7 @@ shows an order as ready if THIS exact order passed today.
 """
 
 import argparse
+import csv
 import datetime
 import hashlib
 import json
@@ -178,8 +184,38 @@ def news_check(inst, now_utc, calendar, cfg):
     return reasons, warns
 
 
+def losing_streak(journal_rows, today, zone):
+    """Losing results in a row at the end of today's observed PAPER / LIVE journal outcomes."""
+    done = [r for r in journal_rows or [] if r.get("R") not in (None, "") and r.get("Observed at")
+            and r.get("Decision") in ("PAPER", "LIVE")]
+    done = [r for r in done if tc.to_local(zone, tc.parse_utc(r["Observed at"])).date().isoformat() == today]
+    done.sort(key=lambda r: r["Observed at"])
+    n = 0
+    for r in reversed(done):
+        if float(r["R"]) <= 0:
+            n += 1
+        else:
+            break
+    return n
+
+
+def prop_guard(path, cfg):
+    """The prop-firm guardian for today, or None when no challenge is tracked."""
+    st = tc.read_json(path, "prop-firm state", required=False)
+    if not st:
+        return None
+    import prop
+    rl = prop.rules(dict(cfg.get("prop_firm") or {}, preset=st.get("preset", "ftmo_2step")))
+    days = st.get("days") or {}
+    start = (days.get(st.get("today")) or {}).get("start", st["balance"])
+    g = prop.guardian(rl, st["size"], st["balance"], st.get("equity", st["balance"]), start, st.get("peak"),
+                      st.get("phase", 1), sum(1 for d in days.values() if d.get("traded")))
+    g["label"] = rl["label"]
+    return g
+
+
 def check(orders, cfg, portfolio=None, prices=None, price_times=None, rates=None, state=None, calendar=None,
-          now=None, today=None):
+          now=None, today=None, journal=None, prop=None):
     """Pure function. {"results": [...], "pass": n, "block": n, "warnings": [...]}."""
     c = dict(tc.DEFAULTS)
     c.update(cfg or {})
@@ -211,6 +247,8 @@ def check(orders, cfg, portfolio=None, prices=None, price_times=None, rates=None
     equity = st["equity"]
     seen, results = set(), []
     batch_entries, batch_loss = 0, 0.0
+    streak_cap = int(c.get("max_consecutive_losses") or 0)
+    streak = losing_streak(journal, today, c["timezone"]) if journal else 0
 
     for i, o in enumerate(orders, 1):
         reasons, warns, info, later = [], [], [], []
@@ -366,6 +404,20 @@ def check(orders, cfg, portfolio=None, prices=None, price_times=None, rates=None
                 later.append("daily loss: %s already at risk today plus %s for this one = %s, over your %s daily "
                              "loss limit" % (tc.money(loss_today + batch_loss, acct), tc.money(max_loss, acct),
                                              tc.money(loss_today + batch_loss + max_loss, acct), tc.money(daily, acct)))
+            if streak_cap and streak >= streak_cap:
+                later.append("streak: %d losing results in a row today in your journal (limit %d): stop for the day "
+                             "and review (journal.py stats)" % (streak, streak_cap))
+            if prop:
+                if prop["breached"] or prop["status"].startswith("NO ROOM"):
+                    later.append("prop firm: %s (%s)" % (prop["status"], prop["label"]))
+                elif max_loss is not None and max_loss > prop["max_risk_per_trade"] + 0.005:
+                    later.append("prop firm: %s at the stop is over the %s that %d losses in a row allow inside today's "
+                                 "room (propfirm.py status)" % (tc.money(max_loss, acct),
+                                                               tc.money(prop["max_risk_per_trade"], acct),
+                                                               prop["streak_assumed"]))
+                elif max_loss is not None and batch_loss + max_loss > prop["room"] * 0.8 + 0.005:
+                    later.append("prop firm: this batch would risk %s of today's %s room" % (
+                        tc.money(batch_loss + max_loss, acct), tc.money(prop["room"], acct)))
             cap_t = int(c.get("max_trades_per_day") or 0)
             if cap_t and len(entries_today) + batch_entries >= cap_t:
                 later.append("trades: %d entries placed today plus %d passed earlier in this batch, your limit is %d a "
@@ -472,7 +524,8 @@ def check(orders, cfg, portfolio=None, prices=None, price_times=None, rates=None
                     "notional_after": round(st["notional"], 2), "margin_after": round(st["margin"], 2),
                     "exposure_after": {k: round(v, 2) for k, v in sorted(st["exposure"].items())}},
         "today": {"orders_placed": len(done_today), "entries_placed": len(entries_today),
-                  "loss_at_risk": round(loss_today, 2)},
+                  "loss_at_risk": round(loss_today, 2), "losing_streak": streak},
+        "prop_firm": {k: prop[k] for k in ("label", "status", "room", "max_risk_per_trade")} if prop else None,
     }
 
 
@@ -500,6 +553,12 @@ def report(res):
         lines.append("Net exposure after: " + ", ".join("%s %s %s" % (k, "long" if v > 0 else "short",
                                                                      tc.money(abs(v), acct))
                                                         for k, v in a["exposure_after"].items()) + ".")
+    if res.get("prop_firm"):
+        pf = res["prop_firm"]
+        lines.append("Prop firm (%s): %s, room %s, largest safe risk %s a trade." % (
+            pf["label"], pf["status"], tc.money(pf["room"], acct), tc.money(pf["max_risk_per_trade"], acct)))
+    if res["today"].get("losing_streak"):
+        lines.append("Losing results in a row today: %d." % res["today"]["losing_streak"])
     if res["block"]:
         lines.append("Blocked orders do not go to the broker. Fix the order or your rules, then check again.")
     else:
@@ -516,6 +575,8 @@ def main(argv=None):
     ap.add_argument("--prices", default="trader/prices.json")
     ap.add_argument("--calendar", default="trader/calendar.json")
     ap.add_argument("--state", default="trader/state/broker.json")
+    ap.add_argument("--journal", default="trader/journal.csv", help="for the losing-streak pause")
+    ap.add_argument("--prop", default="trader/propfirm.json", help="a tracked prop-firm challenge, if any")
     ap.add_argument("--rate", action="append", metavar="PAIR=RATE")
     ap.add_argument("--now", help='pretend it is this time, e.g. "2026-11-16 08:45 London"')
     ap.add_argument("--today", help="YYYY-MM-DD (default: today in the config's time zone)")
@@ -538,7 +599,12 @@ def main(argv=None):
         rates = tc.rates_from(pdoc, cfg, tc.parse_rates(a.rate))
         state = tc.read_json(a.state, "broker state", required=False)
         calendar = tc.read_json(a.calendar, "calendar", required=False)
-        res = check(orders, cfg, portfolio, prices, times, rates, state, calendar, now, a.today)
+        journal = None
+        if os.path.exists(a.journal):
+            with open(a.journal, newline="", encoding="utf-8") as fh:
+                journal = list(csv.DictReader(fh))
+        res = check(orders, cfg, portfolio, prices, times, rates, state, calendar, now, a.today, journal,
+                    prop_guard(a.prop, cfg))
         if pdoc.get("as_of"):
             res["prices_as_of"] = pdoc["as_of"]
         if not a.no_write:

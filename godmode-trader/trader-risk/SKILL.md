@@ -39,6 +39,8 @@ python3 "${CLAUDE_SKILL_DIR}/check.py" --now "2026-11-16 08:45 London"
 | `trader/portfolio.json` | balance and open positions (signed units, average price); else the config's `balance` |
 | `trader/prices.json` | prices and conversion rates (trader-alerts); a price over 15 minutes old is not used for the entry |
 | `trader/calendar.json` | the week's events (trader-calendar), for the news blackout |
+| `trader/journal.csv` | your journal (trader-journal), for the losing-streak pause |
+| `trader/propfirm.json` | a tracked prop challenge (trader-propfirm), for its daily room |
 | `trader/state/broker.json` | what was placed today (trader-broker) |
 
 ## What blocks an order
@@ -58,6 +60,8 @@ An entry, on top:
 | reward:risk | under `min_reward_risk` |
 | daily loss | today's max losses at the stops plus this one over `max_daily_loss` |
 | trades / orders | over `max_trades_per_day` / `max_orders_per_day`; a duplicate |
+| streak | `max_consecutive_losses` (3) losing results in a row today in `trader/journal.csv`: stop for the day |
+| prop firm | with `trader/propfirm.json` tracked: no room left today, or a loss at the stop over the guardian's largest safe risk |
 | leverage | total notional after over `max_account_leverage` x equity |
 | margin | margin in use after over `max_margin_use_pct` of equity |
 | exposure | net long or short in one currency or asset over `max_currency_exposure_x` x equity |

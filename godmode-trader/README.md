@@ -1,13 +1,18 @@
 # GODMODE Trader: the multi-asset trader skill
 
-11 Claude skills for trading forex, commodities, indices and crypto: scan every
-session, track the news and the economic calendar, time every entry and exit
-long or short, and replay every outcome before you risk a cent.
+20 Claude skills, 7 desk agents and an approval gate for trading forex,
+commodities, indices and crypto: prove a setup on years of history before you
+trade it, read the structure the SMC and ICT way, follow the macro, the news and
+the economic calendar, time every entry and exit long or short, size it for your
+account or your prop-firm challenge, and replay every outcome before you risk a
+cent.
 
 Free, MIT, no signup, no API key. The tools are plain Python (3.8 or newer,
 nothing to pip install) that read free public data: Yahoo Finance charts and
-headlines, the Forex Factory calendar export and the CFTC's Commitments of
-Traders report.
+headlines, Dukascopy M1 candles and ticks, Binance klines with taker volume,
+HistData, Stooq, FRED macro series, the Forex Factory calendar export, the
+CFTC's Commitments of Traders report, DEX Screener and the crypto Fear & Greed
+index.
 
 One scans 70+ instruments for setups in their own sessions: the London open on
 EURUSD, the COMEX open on gold, the NYMEX open on oil, the US cash open on the
@@ -19,6 +24,15 @@ honest odds. The Budget Manager sizes it in lots, contracts or coins, in your
 account's currency, under your leverage and margin limits. The Risk Manager
 blocks anything over your limits, including two trades that are both short the
 dollar, and anything opened in the half hour around a central banker.
+
+The Setup Lab runs all 26 GODMODE setups (opening-range breakouts, session
+sweeps, FVGs, order blocks, the ICT Unicorn and Silver Bullet, OTE, Wyckoff
+springs, VWAP reversion, CRT, turtle soup, supply and demand, harmonics, RSI(2),
+gap fades, SMT divergence and more) one at a time on years of history, with
+every cost in and no look-ahead, and ranks them with the multiple-testing
+correction most backtests leave out. The desk puts it all on one page each
+morning and only calls something an idea when a setup has a tested record on
+that market.
 
 And no trade goes through until you say yes. Nothing in this pack can place an
 order on its own. Paper trading is the default.
@@ -54,7 +68,7 @@ mkdir -p trader && cp ~/.claude/skills/trader-budget/config.example.json trader/
 
 Set `account_currency`, `balance`, `timezone`, `broker` and your limits in it.
 
-## The eleven
+## The skills
 
 | command | job | what it does |
 | --- | --- | --- |
@@ -184,6 +198,15 @@ python3 trader-broker/ticket.py show                               # the tickets
 python3 trader-alerts/alerts.py add --from-plan                    # stop, target, flat-by
 python3 trader-alerts/alerts.py check                              # rings what hit, once
 python3 trader-cot/cot.py latest                                   # speculators' positioning
+python3 trader-data/data.py get XAUUSD --from 2022                 # years of history -> trader/data
+python3 trader-lab/lab.py rank EURUSD XAUUSD --save                # every setup, ranked honestly
+python3 trader-structure/structure.py read EURUSD                  # the SMC / ICT read
+python3 trader-macro/macro.py dollar                               # the dollar compass
+python3 trader-propfirm/propfirm.py check                          # orders vs the prop room
+python3 trader-dex/dex.py scan                                     # DEX research snapshots
+python3 trader-journal/journal.py stats                            # your record
+python3 trader-mt5/bridge.py status                                # MetaTrader 5 (Windows)
+python3 trader-desk/desk.py brief                                  # the morning brief
 ```
 
 ```bash
@@ -192,6 +215,52 @@ python3 -m unittest discover -s tests -v
 
 The tests run offline on the fixtures in `tests/fixtures` (synthetic, made by
 `make_fixtures.py` from fixed seeds) and check every number in the example above.
+
+## Prove it first: the Setup Lab
+
+```bash
+python3 trader-data/data.py get EURUSD --from 2022-01-01          # years of M1 into trader/data
+python3 trader-data/data.py get BTCUSD --tf 5m --from 2023-01-01   # crypto with real taker delta
+python3 trader-lab/lab.py rank EURUSD XAUUSD US500 BTCUSD --save  # 28 setups x 4 markets, best first
+python3 trader-lab/lab.py optimize GM03 XAUUSD                    # grid, robustness, walk-forward
+python3 trader-lab/lab.py mc GM03 XAUUSD --risk 0.5               # Monte Carlo drawdowns
+python3 trader-lab/lab.py prop GM03 XAUUSD --preset ftmo_2step    # pass odds at each risk size
+```
+
+Each setup is a small Python rule (`trader-lab/setups.py`) that decides at a
+bar's close from what was known then, and names its MT5 Expert Advisor and
+cTrader cBot in `MT5_MasterLibrary/` and `cTrader_MasterLibrary/`. Fills are at
+the next open with half the spread and slippage; a bar touching both stop and
+target is a loss; every signal not taken is logged with its reason. Results are
+in R. With 28 setups on 6 markets about 8 results show p < 0.05 by luck alone,
+so the ranking reads the Holm-adjusted p, and only the walk-forward
+out-of-sample line counts as an expectation. A test checks every setup for
+look-ahead.
+
+On the synthetic fixtures (random walks) nearly every setup loses, which is the
+right answer: no setup should find an edge in noise.
+
+## The desk, the agents and the approval gate
+
+```bash
+python3 trader-structure/structure.py read XAUUSD           # BOS, CHoCH, FVGs, OBs, liquidity, levels, flow
+python3 trader-macro/macro.py dashboard                     # CPI, PCE, jobs, Fed, yields, curve, dollar, VIX
+python3 trader-propfirm/propfirm.py status                  # FTMO floors, room, the largest safe risk
+python3 trader-dex/dex.py scan                              # DEX Screener research snapshots, paper only
+python3 trader-journal/journal.py stats                     # your own record, in R after costs
+python3 trader-desk/desk.py brief --write                   # all of it on one page -> trader/brief.md
+```
+
+Installed as a plugin, the pack adds seven agents (`agents/`): a strategist,
+an SMC analyst, a macro analyst, a quant researcher, a risk skeptic that looks
+for reasons to reject, a position monitor and a reflector that turns the
+journal into lessons. None of them can place, approve or send an order.
+
+It also adds a `PreToolUse` hook (`hooks/`): any MCP tool that can open a
+position (place, submit, create, send or execute an order) is denied unless it
+matches an order that trader-risk passed today and you approved with an
+explicit yes; a match still shows Claude Code's own Allow / Deny card. Closing,
+cancelling and reading are never blocked. If the gate cannot verify, it denies.
 
 ## Brokers
 
@@ -243,6 +312,18 @@ and the LSE, Xetra and Euronext holidays are built in. Tokyo, Hong Kong and
 Sydney holidays are not: the tools say so and trust the feed (no bars on a
 weekday means closed).
 
+**A backtest is the best case, and nothing here is a promise.** The Setup Lab
+reports what a rule did on past data with the costs you gave it. Real fills,
+news spikes, outages and your own discipline make live results worse. No
+setup, score or simulation in this pack guarantees a profit, and most
+strategies that look good in a backtest do not survive live trading.
+
+**Prop-firm rules change.** The FTMO preset follows the published objectives
+at the time of writing; check the firm's current rules and your account type.
+
+**DEX research is paper only.** trader-dex has no wallet, no keys and no order
+function. The same symbol on two pools is not proof of the same token.
+
 **Positioning and headlines are context.** A crowded COT reading can stay
 crowded for months; a headline is a lead, not a fact.
 
@@ -270,8 +351,27 @@ trader-dex/         SKILL.md, dex.py
 trader-journal/     SKILL.md, journal.py
 trader-mt5/         SKILL.md, bridge.py, toolkit/ (the MT5 Agent Toolkit, MIT)
 trader-desk/        SKILL.md, desk.py
+agents/             the seven desk agents (strategist, smc-analyst, macro-analyst, quant-researcher,
+                    risk-skeptic, position-monitor, reflector)
+hooks/              hooks.json, approval_gate.py: the PreToolUse approval gate
 tests/              unittest suite + synthetic offline fixtures
 ```
 
-MIT. Original day-trader-skill by [Jake Schincariol](https://opusjake.ai); the
-multi-asset refactor by the GODMODE Trader contributors.
+## Credits and licenses
+
+- [day-trader-skill](https://github.com/Jakeschincariol/day-trader-skill) by Jake Schincariol (MIT): the
+  design this pack is refactored from. Its notice is kept in LICENSE.
+- claude-trader (MIT, Copyright (c) 2026 Claude Trader): the HistData download method, the EMA-pullback
+  baseline (GM22), and the SMC-trend and Ichimoku strategies (CT01, CT02), re-implemented here.
+- MT5 Agent Toolkit by Giang Vuong Hoang (MIT): bundled unchanged in `trader-mt5/toolkit/` with its license.
+- OpenTrade (Elastic License 2.0): its idea of guardrails and monitors around an agent that trades
+  informed the approval gate and the position monitor. No OpenTrade code is included.
+- ai-trading-agent (private): read for ideas only (per-market agents on MetaTrader 5). None of its code
+  is included.
+- AI Flow Lab, "AI Trader + Web Crawler" setup guide: the DEX scanner method, the analyst and
+  risk-review prompts, and the journal columns follow it.
+- The GODMODE compendium, Expert Advisors and cBots in this repository: the 26 setups and the
+  isolation, logging and tiering rules the Setup Lab implements.
+
+See THIRD_PARTY_NOTICES.md. MIT. Original day-trader-skill by [Jake Schincariol](https://opusjake.ai);
+the multi-asset refactor by the GODMODE Trader contributors.
