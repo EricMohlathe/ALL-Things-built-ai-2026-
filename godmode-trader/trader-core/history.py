@@ -113,6 +113,24 @@ def load(symbol, tf, root=CACHE, t_from=None, t_to=None):
     return b
 
 
+def series(inst, tf, root=CACHE, offline=None, live=False, t_from=None, t_to=None):
+    """(Bars at tf, source) from the cache, a saved Yahoo chart (offline: file or folder) or
+    the last 60 days of live 5-minute bars (live=True). Finer bars are resampled up."""
+    step = tf_seconds(tf)
+    if offline or live:
+        ch = tc.get_chart(inst, "5m", "60d", offline=offline, tag="60d5m")
+        b = Bars.from_chart(ch, symbol=inst["symbol"])
+        source = ch.get("source", "yahoo")
+    else:
+        b = load(inst["symbol"], tf, root)
+        source = "cache"
+    if b.step < step:
+        b = b.resample(tf, 0 if step < 86400 or inst["class"] == "crypto" else 22 * 3600)
+    if t_from is not None or t_to is not None:
+        b = b.between(t_from or 0, t_to or 2 ** 40)
+    return b, source
+
+
 def inventory(root=CACHE):
     """[{symbol, tf, bars, first, last}] of everything cached."""
     out = []

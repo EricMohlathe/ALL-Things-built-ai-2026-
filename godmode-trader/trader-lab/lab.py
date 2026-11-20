@@ -60,19 +60,7 @@ def _ts(text, end=False):
 
 def load_bars(a, inst, tf):
     """The series for one instrument at `tf`, from the cache, an offline chart or Yahoo."""
-    step = tf_seconds(tf)
-    if a.offline or a.yahoo:
-        ch = tc.get_chart(inst, "5m", "60d", offline=a.offline, tag="60d5m")
-        b = Bars.from_chart(ch, symbol=inst["symbol"])
-        source = ch.get("source", "yahoo")
-    else:
-        b = hist.load(inst["symbol"], tf, a.data)
-        source = "cache"
-    if b.step < step:
-        b = b.resample(tf)
-    t0, t1 = _ts(a.frm), _ts(a.to, True)
-    if t0 or t1:
-        b = b.between(t0 or 0, t1 or 2 ** 40)
+    b, source = hist.series(inst, tf, a.data, a.offline, a.yahoo, _ts(a.frm), _ts(a.to, True))
     if len(b) < 200:
         raise tc.TraderError("only %d %s bars of %s: too few to test (download more with data.py get)"
                              % (len(b), TF_NAME.get(b.step, b.step), inst["symbol"]))
